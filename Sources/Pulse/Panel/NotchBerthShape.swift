@@ -22,12 +22,14 @@ struct NotchBerthShape: Shape {
     /// How far each fillet sweeps along and down from the screen's top edge:
     /// the housing's own fillet, so the surface continues the notch rather
     /// than meeting it with a bigger curve beside a smaller one. Apple
-    /// publishes no figure; 6pt is the one notch apps converge on for the
-    /// closed housing (boring.notch, after DynamicNotchKit). Fixed rather
+    /// publishes no figure. Notch apps use 6pt (boring.notch, after
+    /// DynamicNotchKit), which beside the housing on a 14-inch MacBook Pro
+    /// read a touch less round than the housing's own; 8 and 10 read rounder.
+    /// 6.5 was picked by eye against the hardware. Fixed rather
     /// than scaled with `PanelMetrics` — it matches hardware, which does not
     /// change size with the panel. The rail elsewhere keeps
     /// `DockLayout.flareWidth` / `flareHeight`.
-    static var filletRadius: CGFloat { 6 }
+    static var filletRadius: CGFloat { 6.5 }
 
     var animatableData: CGFloat {
         get { openness }
