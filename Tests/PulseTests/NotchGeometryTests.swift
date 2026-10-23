@@ -69,6 +69,33 @@ extension PanelGlobalsSuite {
             #expect(layout.frame.maxY == screen.maxY)
         }
 
+        /// With few rings the housing can be the widest thing in the window,
+        /// and at the small size it is wider than the card too. Budgeted at
+        /// the housing alone, the window cut the fillets off at its own edges.
+        @Test("The window holds the fillets beside the housing however few rings there are")
+        func windowHoldsFillets() {
+            let previousSize = PanelSize.allCases.first { $0.scale == PanelMetrics.scale } ?? .default
+            defer { PanelMetrics.use(previousSize) }
+            for size in PanelSize.allCases {
+                PanelMetrics.use(size)
+                for count in 1...12 {
+                    let panel = FloatingPanelController.Layout.size(for: .top, notchSize: notch.size, capacity: count)
+                    let placement = PanelPlacement(dock: .edge(.top), horizontalRatio: 0.5)
+                    placement.notch = notch
+                    let rail = DockLayout.size(for: count, on: .horizontal)
+                    let layout = placement.layout(in: visible, topEdge: visible.maxY, panel: panel, rail: rail)
+                    let offsets = PanelPlacement.offsets(forRailTopLeft: layout.railOrigin, in: layout.frame, rail: rail)
+                    let localRail = CGRect(x: offsets.leading, y: offsets.top, width: rail.width, height: rail.height)
+                    let drawn = NotchBerthShape(notchSize: notch.size)
+                        .path(in: PanelHitArea.notchSurface(rail: localRail, notchSize: notch.size)
+                            .insetBy(dx: -DockLayout.flareWidth, dy: 0))
+                        .boundingRect
+                    #expect(drawn.minX >= -0.01, "\(size) \(count)")
+                    #expect(drawn.maxX <= panel.width + 0.01, "\(size) \(count)")
+                }
+            }
+        }
+
         @Test("The housing costs its own height and nothing else, at every scale", arguments: [false, true])
         func paddingBudget(roundEnds: Bool) {
             let previousEnds = PanelMetrics.usesRoundEnds

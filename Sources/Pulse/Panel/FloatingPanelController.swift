@@ -73,9 +73,15 @@ final class FloatingPanelController {
                     height: max(DockLayout.maximumLength(on: .vertical, capacity: capacity), DetailCardLayout.maximumHeight)
                 )
             case .horizontal:
+                // At a notch, the housing **and** the fillets either side of
+                // it, which sweep out past the housing into the screen edge.
+                // The housing alone left them cut off square whenever it was
+                // the widest thing — a few rings at the small size (205pt card
+                // against a 221pt housing).
+                let notchWidth = notchSize.map { $0.width + NotchBerthShape.filletRadius * 2 } ?? 0
                 return CGSize(
                     // Wide enough for whichever is wider, for the same reason.
-                    width: max(DockLayout.maximumLength(on: .horizontal, capacity: capacity), DetailCardLayout.width, notchSize?.width ?? 0),
+                    width: max(DockLayout.maximumLength(on: .horizontal, capacity: capacity), DetailCardLayout.width, notchWidth),
                     height: DockLayout.thickness(on: .horizontal, docked: docked)
                         + (notchSize?.height ?? 0)
                         + DetailCardLayout.horizontalGap
