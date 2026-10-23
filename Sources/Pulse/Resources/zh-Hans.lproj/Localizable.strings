@@ -1275,3 +1275,4 @@
 "Sends one now, so you can see that notifications reach you." = "立即发送一条通知，确认通知能正常送达。";
 "Sent. If nothing appeared, check Focus and System Settings › Notifications." = "已发送。如果没有看到，请检查专注模式和「系统设置 › 通知」。";
 "This is a test notification. Pulse's notifications look like this." = "这是一条测试通知。Pulse 的通知会以这种样式显示。";
+"Pulse has not been allowed to post notifications yet. Press Send again to be asked." = "Pulse 还没有获得发送通知的许可。再按一次「发送」会重新询问。";

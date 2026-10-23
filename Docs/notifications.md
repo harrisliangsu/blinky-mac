@@ -112,7 +112,7 @@ It is updated even when a grant was refused or the build is unbundled, so neithe
 
 ## Test notification
 
-**Test notification → Send**, at the foot of the Notifications pane, posts one notification now (`UsageAlerts.sendTest`) so the reader can see that notifications reach them. It is the one notification about nothing Pulse saw — the reader asked for exactly that, and its text says it is a test. It asks for permission whatever is switched on (pressing the button is the request), is remembered nowhere, and uses the default sound. The row then says what came of it: sent (with where to look if no banner appeared: Focus, System Settings › Notifications), or turned off for Pulse in System Settings. Greyed out in an unbundled build.
+**Test notification → Send**, at the foot of the Notifications pane, posts one notification now (`UsageAlerts.sendTest`) so the reader can see that notifications reach them. It is the one notification about nothing Pulse saw — the reader asked for exactly that, and its text says it is a test. It asks for permission whatever is switched on (pressing the button is the request), is remembered nowhere, and uses the default sound. The row then says what came of it: sent (with where to look if no banner appeared: Focus, System Settings › Notifications), turned off for Pulse in System Settings, or not yet allowed (the prompt closed without an answer; pressing again asks again). Greyed out in an unbundled build.
 
 ## Permission, and the unbundled build
 

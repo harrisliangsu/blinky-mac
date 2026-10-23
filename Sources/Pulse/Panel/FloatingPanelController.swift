@@ -660,7 +660,12 @@ private final class FloatingPanel: NSPanel {
         //
         // Screen coordinates run bottom-up, so the rail's bottom edge is its
         // distance from the window's top subtracted from the window's top.
-        let origin = CGPoint(x: frame.minX + rail.minX, y: frame.maxY - rail.maxY)
+        var origin = CGPoint(x: frame.minX + rail.minX, y: frame.maxY - rail.maxY)
+        // Against the rail as it is drawn: one still springing back onto its
+        // edge stands `pull` in from where the dock holds it.
+        if let placement, case .edge(let edge) = placement.dock, placement.pull > 0 {
+            origin = Self.moved(origin, into: edge, by: placement.pull)
+        }
         let pointer = NSEvent.mouseLocation
         grab = CGSize(width: pointer.x - origin.x, height: pointer.y - origin.y)
         pressedAt = location
@@ -866,7 +871,7 @@ private final class FloatingPanel: NSPanel {
         guard liquid else {
             follow = nil
             velocity = .zero
-            if let target { place(at: goal, on: target) }
+            if let target { place(at: goal, on: target, persist: true) }
             self.target = nil
             return true
         }
@@ -970,10 +975,21 @@ private final class FloatingPanel: NSPanel {
     }
 
     @objc private func step(_ link: CADisplayLink) {
-        guard let target, var at = follow, let placement else { stopFollowing(); return }
+        guard var target, var at = follow, let placement else { stopFollowing(); return }
         let now = link.targetTimestamp
         let dt = min(max(now - (lastTick ?? now - 1.0 / 60), 0), 1.0 / 30)
         lastTick = now
+
+        // The rail can change size while it follows — a ring added by a
+        // refresh, the panel size changed — and is placed at its size now.
+        let axis: PanelEdge.Axis = switch target.dock {
+        case .edge(let edge): edge.axis
+        case .floating(let axis): axis
+        }
+        if let current = railSize?(axis, target.dock.isDocked), current != target.rail {
+            target.rail = current
+            self.target = target
+        }
 
         let goal = settling ? target.rest : target.goal
         let (response, damping): (CGFloat, CGFloat) = settling ? (0.3, 0.74) : (0.2, 0.84)
@@ -997,7 +1013,9 @@ private final class FloatingPanel: NSPanel {
             placement.parted = 1 - (1 - progress) * (1 - progress)
             if progress >= 1 {
                 if grab == nil || !carry() { standFree() }
-                guard self.target != nil else { return }
+                // The target has just been replaced; the rest of this frame
+                // was worked out for the old one. The next frame carries on.
+                return
             }
         }
 
@@ -1016,7 +1034,7 @@ private final class FloatingPanel: NSPanel {
             settling = false
             placement.motion = .zero
             placement.tension = 0
-            place(at: target.rest, on: target)
+            place(at: target.rest, on: target, persist: true)
             placement.pull = 0
             self.target = nil
         }
@@ -1025,7 +1043,9 @@ private final class FloatingPanel: NSPanel {
     /// Puts the window where a rail drawn at `origin` (bottom-left, screen
     /// coordinates) belongs on `target`'s dock, and the rest of the way —
     /// what a docked rail stands in from its edge — into the pull.
-    private func place(at origin: CGPoint, on target: FollowTarget) {
+    /// `persist`: written to disk as well, which the follow does only when it
+    /// stops — not on each of the display's frames.
+    private func place(at origin: CGPoint, on target: FollowTarget, persist: Bool = false) {
         guard let placement else { return }
         let visible = target.screen.visibleFrame
         let ratios = PanelPlacement.ratios(forRailAt: origin, in: target.room, rail: target.rail)
@@ -1033,7 +1053,8 @@ private final class FloatingPanel: NSPanel {
             dock: target.dock,
             horizontalRatio: ratios.h,
             verticalRatio: ratios.v,
-            display: PanelScreen.identifier(of: target.screen)
+            display: PanelScreen.identifier(of: target.screen),
+            persist: persist
         )
 
         placement.notch = target.notch
@@ -1086,7 +1107,7 @@ private final class FloatingPanel: NSPanel {
         let ratios = PanelPlacement.ratios(forRailAt: origin, in: room, rail: rail)
         placement.record(
             dock: dock, horizontalRatio: ratios.h, verticalRatio: ratios.v,
-            display: PanelScreen.identifier(of: screen)
+            display: PanelScreen.identifier(of: screen), persist: false
         )
         placement.notch = notch
         let layout = placement.layout(

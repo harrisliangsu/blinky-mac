@@ -232,13 +232,18 @@ enum DropletTether {
         let dx = to.x - from.x, dy = to.y - from.y
         let first = dx * along.dx + dy * along.dy
         let second = dx * then.dx + dy * then.dy
-        return unitTurn(ramp: ramp).dropFirst().map { point in
+        let unit = ramp == 0 ? roundTurn : ramp == flareRamp ? flareTurn : unitTurn(ramp: ramp)
+        return unit.dropFirst().map { point in
             CGPoint(
                 x: from.x + along.dx * point.x * first + then.dx * point.y * second,
                 y: from.y + along.dy * point.x * first + then.dy * point.y * second
             )
         }
     }
+
+    /// The two turns drawn on every frame, worked out once.
+    private static let roundTurn = unitTurn(ramp: 0)
+    private static let flareTurn = unitTurn(ramp: flareRamp)
 
     /// The turn from (0, 0) heading along x to (1, 1) heading along y.
     private static func unitTurn(ramp: CGFloat) -> [CGPoint] {

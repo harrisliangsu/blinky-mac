@@ -1275,3 +1275,4 @@
 "Sends one now, so you can see that notifications reach you." = "立即傳送一則通知，確認通知能正常送達。";
 "Sent. If nothing appeared, check Focus and System Settings › Notifications." = "已傳送。如果沒有看到，請檢查專注模式和「系統設定 › 通知」。";
 "This is a test notification. Pulse's notifications look like this." = "這是一則測試通知。Pulse 的通知會以這種樣式顯示。";
+"Pulse has not been allowed to post notifications yet. Press Send again to be asked." = "Pulse 尚未獲得傳送通知的許可。再按一次「傳送」會重新詢問。";

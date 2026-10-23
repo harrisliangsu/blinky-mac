@@ -1275,3 +1275,4 @@
 "Sends one now, so you can see that notifications reach you." = "지금 알림을 하나 보내 알림이 제대로 오는지 확인합니다.";
 "Sent. If nothing appeared, check Focus and System Settings › Notifications." = "보냈습니다. 보이지 않으면 집중 모드와 시스템 설정 › 알림을 확인하세요.";
 "This is a test notification. Pulse's notifications look like this." = "테스트 알림입니다. Pulse의 알림은 이렇게 표시됩니다.";
+"Pulse has not been allowed to post notifications yet. Press Send again to be asked." = "Pulse에 아직 알림 권한이 없습니다. '보내기'를 다시 누르면 다시 묻습니다.";

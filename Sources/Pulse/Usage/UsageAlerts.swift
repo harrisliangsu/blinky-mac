@@ -596,6 +596,9 @@ final class UsageAlerts {
         /// macOS will not show Pulse's notifications: refused at the prompt,
         /// or turned off in System Settings since.
         case denied
+        /// The permission prompt was closed without an answer; pressing
+        /// again asks again.
+        case undecided
         /// No app bundle (`isSupported`).
         case unsupported
     }
@@ -615,6 +618,7 @@ final class UsageAlerts {
             _ = try? await center.requestAuthorization(options: [.alert, .sound])
         }
         await readAuthorization()
+        if authorization == .notDetermined { return .undecided }
         guard authorization == .authorized || authorization == .provisional else { return .denied }
 
         let content = UNMutableNotificationContent()

@@ -1275,3 +1275,4 @@
 "Sends one now, so you can see that notifications reach you." = "Sends one now, so you can see that notifications reach you.";
 "Sent. If nothing appeared, check Focus and System Settings › Notifications." = "Sent. If nothing appeared, check Focus and System Settings › Notifications.";
 "This is a test notification. Pulse's notifications look like this." = "This is a test notification. Pulse's notifications look like this.";
+"Pulse has not been allowed to post notifications yet. Press Send again to be asked." = "Pulse has not been allowed to post notifications yet. Press Send again to be asked.";

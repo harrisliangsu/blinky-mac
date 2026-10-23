@@ -148,6 +148,7 @@ Behind **Settings → Experimental → Liquid docking** (`AppSettings.liquidDock
 - **Drawn onto an edge**, the rail starts where it was, on a thin neck (`attachThinning`) that thickens as the spring carries it in.
 - **A quick throw stretches the surface**, up to 14% at 2600pt/s, front staying with the hand, 35% of that thinner across; docked, only along the edge (across it, the neck was pushed off the edge). The rings are not stretched.
 - **Flares are fluid turns** (`DropletTether.fluidTurn`): heading a mix of a straight ramp and half a cosine, half each (`flareRamp`), so curvature eases in and out at both ends; the neck's own turns are round (ramp 0) — fully eased, a long thin neck read as a stick with corners. The docked berth's flares use it whether or not this is on.
+- The follow records the placement in memory on each frame and **writes it once, when it stops** (`record(persist:)`). A press while a rail is still springing back is measured against the rail as drawn, `pull` in from its edge; the rail's size is re-read each frame, so a ring added mid-settle is placed at once.
 - Everything pulled is drawn **outside the frame**, into the panel; the light panel's hairline mask reaches past the frame on every side but the screen's for that reason.
 - Not verified: Liquid Glass on the pulled part.
 

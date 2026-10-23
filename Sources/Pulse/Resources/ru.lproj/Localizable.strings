@@ -1275,3 +1275,4 @@
 "Sends one now, so you can see that notifications reach you." = "Отправляет уведомление сейчас, чтобы проверить, что уведомления доходят.";
 "Sent. If nothing appeared, check Focus and System Settings › Notifications." = "Отправлено. Если ничего не появилось, проверьте режим фокусирования и Системные настройки › Уведомления.";
 "This is a test notification. Pulse's notifications look like this." = "Это тестовое уведомление. Так выглядят уведомления Pulse.";
+"Pulse has not been allowed to post notifications yet. Press Send again to be asked." = "Pulse пока не получил разрешения на уведомления. Нажмите «Отправить» ещё раз, чтобы запрос появился снова.";

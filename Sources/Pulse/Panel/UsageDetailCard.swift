@@ -118,9 +118,11 @@ enum DetailCardLayout {
     static var metricTrendLimit: Int { 2 }
 
     /// The whole activity section: rule, heading, figures, chart, top model,
-    /// cache hit rate, the prompt cache's lapse, the line saying what the
-    /// money is. Each part is drawn at the height
-    /// named here, so the budget and the drawing cannot drift.
+    /// cache hit rate, the prompt cache's lapse, the line saying whose figures
+    /// they are. Each part is drawn at the height named here, so the budget
+    /// and the drawing cannot drift; that last line is only drawn for an
+    /// account's own or charged figures, and this Mac's records leave its
+    /// height unused (the card is measured, the window budgets the most).
     static var activityHeight: CGFloat {
         1
             + activitySpacing + figureLabelHeight

@@ -394,11 +394,14 @@ final class PanelPlacement {
     /// Used by the drag handle, which moves the window itself as the pointer
     /// goes: asking for it to be moved again would fight the drag over the
     /// same frame.
-    func record(dock: PanelDock, horizontalRatio: Double, verticalRatio: Double, display: String?) {
+    /// `persist: false` keeps it in memory only: the liquid follow records a
+    /// place on every display frame and writes it once, when it stops.
+    func record(dock: PanelDock, horizontalRatio: Double, verticalRatio: Double, display: String?, persist: Bool = true) {
         self.dock = dock
         self.horizontalRatio = horizontalRatio.clampedToUnitRange
         self.verticalRatio = verticalRatio.clampedToUnitRange
         self.display = display
+        guard persist else { return }
 
         let defaults = UserDefaults.standard
         defaults.set(!dock.isDocked, forKey: Key.floating)
