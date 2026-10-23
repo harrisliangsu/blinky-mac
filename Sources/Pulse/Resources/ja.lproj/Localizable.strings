@@ -465,6 +465,7 @@
 "Uses the session the Claude desktop app is signed in with." = "Claude デスクトップ App がサインインしているセッションを使います。";
 "Sign in to the Claude desktop app to see usage." = "Claude デスクトップ App にサインインすると使用量が表示されます。";
 "Pulse needs your keychain to read the Claude desktop app's session. Refresh to be asked again." = "Claude デスクトップ App のセッションを読むにはキーチェーンの許可が必要です。更新するともう一度尋ねます。";
+"Pulse needs your keychain to read Cursor's saved login. Refresh to be asked again." = "Cursor の保存済みログインを読むにはキーチェーンの許可が必要です。更新するともう一度尋ねます。";
 "The Claude desktop app's session was refused. Open it and sign in again." = "Claude デスクトップ App のセッションが拒否されました。App を開いてサインインし直してください。";
 
 /* Notifications */

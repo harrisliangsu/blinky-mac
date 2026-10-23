@@ -566,6 +566,10 @@ struct ProviderUsage: Identifiable, Equatable, Sendable {
         case cursorSignInRequired
         /// There is a login, and the account refused it.
         case cursorLoginExpired
+        /// The editor sealed its token and the keychain did not hand the key
+        /// over — denied, dismissed, or not yet asked. Opening Cursor will
+        /// not help; Refresh asks again.
+        case cursorKeyRefused
         /// Grok Build's CLI has never signed in on this Mac, so there is no
         /// login to borrow. Its own case rather than `.signInRequired`, which
         /// names Codex — the trap the rest of this enum was fixed for once
@@ -728,6 +732,7 @@ struct ProviderUsage: Identifiable, Equatable, Sendable {
             case .antigravityNotAnswering: .localized("Antigravity is open but didn't answer. Restarting it usually helps.")
             case .cursorSignInRequired: .localized("Sign in to Cursor to see usage.")
             case .cursorLoginExpired: .localized("Cursor's saved login was refused. Open Cursor to renew it.")
+            case .cursorKeyRefused: .localized("Pulse needs your keychain to read Cursor's saved login. Refresh to be asked again.")
             case .grokSignInRequired: .localized("Sign in to Grok to see usage.")
             case .grokLoginExpired: .localized("Grok's saved login expired. Use Grok to renew it.")
             case .grokBotNotIncluded: .localized("This Cursor plan doesn't include Grok Bot.")

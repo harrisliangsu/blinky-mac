@@ -465,6 +465,7 @@
 "Uses the session the Claude desktop app is signed in with." = "Uses the session the Claude desktop app is signed in with.";
 "Sign in to the Claude desktop app to see usage." = "Sign in to the Claude desktop app to see usage.";
 "Pulse needs your keychain to read the Claude desktop app's session. Refresh to be asked again." = "Pulse needs your keychain to read the Claude desktop app's session. Refresh to be asked again.";
+"Pulse needs your keychain to read Cursor's saved login. Refresh to be asked again." = "Pulse needs your keychain to read Cursor's saved login. Refresh to be asked again.";
 "The Claude desktop app's session was refused. Open it and sign in again." = "The Claude desktop app's session was refused. Open it and sign in again.";
 
 /* Notifications */

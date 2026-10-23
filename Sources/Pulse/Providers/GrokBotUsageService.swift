@@ -37,15 +37,21 @@ struct GrokBotUsageService: Sendable {
     }
 
     func fetch() async -> ProviderUsage {
-        guard let session = CursorAppLogin.session() else {
-            // The login is Cursor's, so the remedy names Cursor. That is not
-            // the wrong-provider trap the rest of `Unavailability` was fixed
-            // for — it is where this credential actually comes from, and
-            // sending someone to Grok Bot's own app would not produce one.
-            return .unavailable(
-                .grokBot,
-                reason: CursorAppLogin.hasStoredToken() ? .cursorLoginExpired : .cursorSignInRequired
-            )
+        // The login is Cursor's, so the remedy names Cursor. That is not
+        // the wrong-provider trap the rest of `Unavailability` was fixed
+        // for — it is where this credential actually comes from, and
+        // sending someone to Grok Bot's own app would not produce one.
+        let session: CursorAppLogin.Session
+        switch CursorAppLogin.load() {
+        case .token(let token):
+            guard let built = CursorAppLogin.session(from: token) else {
+                return .unavailable(.grokBot, reason: .cursorLoginExpired)
+            }
+            session = built
+        case .keychainRefused:
+            return .unavailable(.grokBot, reason: .cursorKeyRefused)
+        case .absent:
+            return .unavailable(.grokBot, reason: .cursorSignInRequired)
         }
         return await fetch(session: session, for: AccountKey(.grokBot))
     }

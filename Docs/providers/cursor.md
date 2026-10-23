@@ -18,6 +18,8 @@ Opened **read-only and in place**. Cursor is usually running, so the database is
 
 The row is normally TEXT but has been seen as a BLOB. When it is, it is UTF-16 with no BOM; read as UTF-8 that yields the token with a null after every character, which parses as nothing and explains itself to nobody.
 
+**Newer Cursor builds seal the cell.** When `cursor.storage.authTokenEncryptionAtRest` is on, the value is `cursor-safe-storage:v1:` plus standard base64 of a Chromium `v10`/`v11` ciphertext — Electron's safeStorage, the same scheme `BrowserCookies.decrypt` already knows. The key is `Cursor Safe Storage` in the login keychain (account `Cursor Key`), opened through `BrowserCookies.safeStorageKey`. A plaintext JWT from an older editor is still accepted. A sealed row whose key was denied or dismissed is `.cursorKeyRefused`, not `.cursorLoginExpired`: opening Cursor will not help, and Refresh asks the keychain again.
+
 Redirects are refused. The session goes out as a `Cookie` header, which `URLSession` will carry across a redirect to another host (unlike `Authorization`, which it strips).
 
 Nothing here renews the editor token. Cursor does that the next time it is used. A minute’s expiry headroom is applied before a request is sent.

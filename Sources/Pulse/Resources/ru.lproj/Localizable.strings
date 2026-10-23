@@ -465,6 +465,7 @@
 "Uses the session the Claude desktop app is signed in with." = "Использует сеанс, в котором выполнен вход в приложении Claude для Mac.";
 "Sign in to the Claude desktop app to see usage." = "Войдите в приложение Claude для Mac, чтобы видеть расход.";
 "Pulse needs your keychain to read the Claude desktop app's session. Refresh to be asked again." = "Pulse нужен доступ к связке ключей, чтобы прочитать сеанс приложения Claude для Mac. Нажмите «Обновить», чтобы запрос появился снова.";
+"Pulse needs your keychain to read Cursor's saved login. Refresh to be asked again." = "Pulse нужен доступ к связке ключей, чтобы прочитать сохранённый вход Cursor. Нажмите «Обновить», чтобы запрос появился снова.";
 "The Claude desktop app's session was refused. Open it and sign in again." = "Сеанс приложения Claude для Mac отклонён. Откройте приложение и войдите снова.";
 
 /* Notifications */

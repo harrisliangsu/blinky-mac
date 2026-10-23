@@ -390,7 +390,7 @@ struct AlertMemory: Codable, Sendable, Equatable {
     static func standing(of reason: ProviderUsage.Unavailability) -> Standing {
         switch reason {
         case .claudeLoginExpired, .claudeDesktopKeyRefused, .claudeDesktopSessionExpired,
-             .cursorLoginExpired, .grokLoginExpired, .signedOut, .apiKeyRefused,
+             .cursorLoginExpired, .cursorKeyRefused, .grokLoginExpired, .signedOut, .apiKeyRefused,
              .ollamaSessionExpired, .ollamaPageChanged, .xiaomiSessionExpired,
              .qoderSessionExpired, .stepFunSessionExpired,
              .unreachable, .unreadableReply, .rateLimited, .serverError,

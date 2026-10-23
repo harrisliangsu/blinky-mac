@@ -465,6 +465,7 @@
 "Uses the session the Claude desktop app is signed in with." = "Claude 데스크탑 앱이 로그인한 세션을 씁니다.";
 "Sign in to the Claude desktop app to see usage." = "Claude 데스크탑 앱에 로그인하면 사용량이 표시됩니다.";
 "Pulse needs your keychain to read the Claude desktop app's session. Refresh to be asked again." = "Claude 데스크탑 앱의 세션을 읽으려면 키체인 권한이 필요합니다. 새로 고치면 다시 물어봅니다.";
+"Pulse needs your keychain to read Cursor's saved login. Refresh to be asked again." = "Cursor에 저장된 로그인을 읽으려면 키체인 권한이 필요합니다. 새로 고치면 다시 물어봅니다.";
 "The Claude desktop app's session was refused. Open it and sign in again." = "Claude 데스크탑 앱의 세션이 거부되었습니다. 앱을 열고 다시 로그인하십시오.";
 
 /* Notifications */

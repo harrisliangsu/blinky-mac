@@ -20,7 +20,8 @@ Cursor does not support adding a second account in Pulse: usage always comes fro
 |---|---|
 | Sign in to Cursor to see usage. | Open Cursor and sign in, then click Retry. |
 | Cursor's saved login was refused. Open Cursor to renew it. | Open Cursor and use it for a moment — it renews its own login automatically — then click Retry. |
+| Pulse needs your keychain to read Cursor's saved login. Refresh to be asked again. | Click Retry and approve the keychain prompt when macOS asks. Newer Cursor versions encrypt that login; Pulse needs the same key Cursor keeps in the keychain. |
 
 ## What Pulse reads
 
-Pulse reads Cursor's own sign-in token from the editor's local database on this Mac (the same one Cursor itself uses) and sends it only to Cursor, to build the request that asks for your usage summary. Pulse does not store a Cursor credential of its own, and does not read your browser's cookies to get it.
+Pulse reads Cursor's own sign-in token from the editor's local database on this Mac (the same one Cursor itself uses) and sends it only to Cursor, to build the request that asks for your usage summary. When Cursor has encrypted that token, Pulse also asks the login keychain for `Cursor Safe Storage` once, the same way it asks for a browser or Claude desktop session. Pulse does not store a Cursor credential of its own, and does not read your browser's cookies to get it.

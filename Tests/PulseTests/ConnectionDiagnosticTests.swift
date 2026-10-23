@@ -103,6 +103,7 @@ struct ConnectionDiagnosticTests {
         #expect(ConnectionRemedy.forReason(.awaitingResponse, account: AccountKey(.claudeCode)) == nil)
         #expect(ConnectionRemedy.forReason(.apiKeyRefused, account: AccountKey(.deepSeek)) == .editCredential)
         #expect(ConnectionRemedy.forReason(.claudeDesktopKeyRefused, account: AccountKey(.claudeCode)) == .retry)
+        #expect(ConnectionRemedy.forReason(.cursorKeyRefused, account: AccountKey(.cursor)) == .retry)
     }
 
     @Test("Pinned routes record credential failures without contacting a provider")
