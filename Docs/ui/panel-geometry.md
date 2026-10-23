@@ -120,7 +120,7 @@ Other rules:
 
 **On a notch display, top docking attaches to the physical housing.**
 
-- `PanelScreen.notch` reads `safeAreaInsets.top` and the gap between `auxiliaryTopLeftArea` / `auxiliaryTopRightArea`, in global coordinates; no hardcoded model dimensions or private APIs. Missing housing geometry falls back to the ordinary top dock.
+- `PanelScreen.notch` reads `safeAreaInsets.top` and the width of the gap between `auxiliaryTopLeftArea` / `auxiliaryTopRightArea`, in global coordinates, and **centres it on the display**, not on the gap: the two areas can differ (791 and 788pt on a 14-inch display at 1800pt), which put the rail 1.5pt right of the housing, a red sliver beside its right edge when the surface was painted red and photographed. No hardcoded model dimensions or private APIs. Missing housing geometry falls back to the ordinary top dock.
 - The rail centres beneath the housing without rewriting the remembered horizontal ratio.
 - **Collapsed, nothing is drawn**: no sliver, enlarged housing or invisible grab target. When a limit has crossed the warning threshold and dock alert colour is on, `NotchAlertShape` draws a 2pt status edge just below and inside the housing.
 - **Opening needs a dwell**: a `PointerEntryReporter` over the housing arms it, and the rail opens only if the pointer is still there after `PanelIntent.notchDwell` (250ms); see [input.md](input.md#hover-open--close-the-card). Leaving uses the 320ms grace period. With auto-collapse off it stays expanded; dragging, a held press and the panel menu keep it open.

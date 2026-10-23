@@ -10,14 +10,16 @@ extension PanelGlobalsSuite {
         private let visible = CGRect(x: 0, y: 72, width: 1800, height: 1058)
         private let notch = CGRect(x: 791, y: 1131, width: 221, height: 38)
 
-        @Test("The housing comes from the system areas, including an offset display")
+        @Test("The housing is as wide as the gap between the system areas, centred on the display")
         func housingCoordinates() {
             for origin in [CGPoint.zero, CGPoint(x: -1800, y: 400)] {
                 let frame = screen.offsetBy(dx: origin.x, dy: origin.y)
                 let left = CGRect(x: frame.minX, y: frame.maxY - 38, width: 791, height: 38)
                 let right = CGRect(x: frame.minX + 1012, y: left.minY, width: 788, height: 38)
+                // The gap is 791–1012, but the housing sits in the middle of
+                // the display: the menu-bar areas are 791 and 788 wide.
                 #expect(PanelScreen.notch(in: frame, topInset: 38, left: left, right: right)
-                        == notch.offsetBy(dx: origin.x, dy: origin.y))
+                        == CGRect(x: frame.midX - 110.5, y: frame.maxY - 38, width: 221, height: 38))
                 #expect(PanelScreen.notch(in: frame, topInset: 0, left: left, right: right) == nil)
                 #expect(PanelScreen.notch(in: frame, topInset: 38, left: nil, right: right) == nil)
                 #expect(PanelScreen.notch(in: frame, topInset: 38, left: left, right: left) == nil)
