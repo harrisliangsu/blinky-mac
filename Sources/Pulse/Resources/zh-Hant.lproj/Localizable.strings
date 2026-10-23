@@ -940,8 +940,6 @@
 "On this Mac" = "這台 Mac 的用量";
 "7 days" = "7 天";
 "31 days" = "31 天";
-"Costs are estimates at API prices." = "金額依 API 價格估算。";
-"API-price estimates. * Partly unpriced." = "依 API 價格估算。* 不含未計價的 token。";
 "Whole account" = "整個帳號";
 "Couldn't read the history." = "無法讀取用量紀錄。";
 "From %@, for the whole account." = "來自 %@，涵蓋整個帳號。";

@@ -940,8 +940,6 @@
 "On this Mac" = "На этом Mac";
 "7 days" = "7 дней";
 "31 days" = "31 день";
-"Costs are estimates at API prices." = "Суммы — оценка по ценам API.";
-"API-price estimates. * Partly unpriced." = "Оценка по ценам API. * Часть без цены.";
 "Whole account" = "Весь аккаунт";
 "Couldn't read the history." = "Не удалось прочитать историю.";
 "From %@, for the whole account." = "Данные %@ по всему аккаунту.";

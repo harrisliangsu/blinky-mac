@@ -940,8 +940,6 @@
 "On this Mac" = "この Mac での利用";
 "7 days" = "7 日間";
 "31 days" = "31 日間";
-"Costs are estimates at API prices." = "金額は API 価格での推定です。";
-"API-price estimates. * Partly unpriced." = "API 価格での推定。* は価格未設定分を除く。";
 "Whole account" = "アカウント全体";
 "Couldn't read the history." = "利用履歴を読み取れませんでした。";
 "From %@, for the whole account." = "%@ から取得した、アカウント全体の数値です。";

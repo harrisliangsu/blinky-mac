@@ -940,8 +940,6 @@
 "On this Mac" = "이 Mac의 사용량";
 "7 days" = "7일";
 "31 days" = "31일";
-"Costs are estimates at API prices." = "금액은 API 가격 기준 추정치입니다.";
-"API-price estimates. * Partly unpriced." = "API 가격 기준 추정치. *는 가격 미정 토큰 제외.";
 "Whole account" = "계정 전체";
 "Couldn't read the history." = "사용 기록을 읽지 못했습니다.";
 "From %@, for the whole account." = "%@에서 받은 계정 전체 수치입니다.";

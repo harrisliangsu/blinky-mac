@@ -940,8 +940,6 @@
 "On this Mac" = "本机用量";
 "7 days" = "7 天";
 "31 days" = "31 天";
-"Costs are estimates at API prices." = "金额按 API 价格估算。";
-"API-price estimates. * Partly unpriced." = "按 API 价格估算。* 不含未计价 token。";
 "Whole account" = "整个账号";
 "Couldn't read the history." = "未能读取用量记录。";
 "From %@, for the whole account." = "来自 %@，覆盖整个账号。";

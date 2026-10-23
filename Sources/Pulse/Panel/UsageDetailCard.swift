@@ -791,20 +791,19 @@ private struct ActivitySection: View {
                 topModel(ledger)
                 cacheHitRate(ledger)
                 if let promptCache { PromptCacheRow(reading: promptCache) }
-                Text(isCharged
-                    ? String.localized("Costs as \(provider.displayName) charged them, for the whole account.")
-                    : isAccountWide
-                        ? String.localized("From \(provider.displayName), for the whole account.")
-                        // Only beside a `*`: with no money line there is
-                        // none to explain.
-                        : Self.hasMoneyLine(month, isAccountWide: isAccountWide, isCharged: isCharged) && month.unpriced > 0
-                            ? String.localized("API-price estimates. * Partly unpriced.")
-                            : String.localized("Costs are estimates at API prices."))
-                    .font(.system(size: DetailCardLayout.footnoteFontSize, weight: .regular, design: .rounded))
-                    .foregroundStyle(.primary.opacity(0.4))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
-                    .frame(height: DetailCardLayout.footnoteHeight)
+                // Only where the figures are not this Mac's own: this Mac's
+                // records carry no line saying the money is an estimate (the
+                // Token spend pane says so).
+                if isCharged || isAccountWide {
+                    Text(isCharged
+                        ? String.localized("Costs as \(provider.displayName) charged them, for the whole account.")
+                        : String.localized("From \(provider.displayName), for the whole account."))
+                        .font(.system(size: DetailCardLayout.footnoteFontSize, weight: .regular, design: .rounded))
+                        .foregroundStyle(.primary.opacity(0.4))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
+                        .frame(height: DetailCardLayout.footnoteHeight)
+                }
             }
         }
     }
