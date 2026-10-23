@@ -1270,3 +1270,8 @@
 "Liquid docking" = "水滴式吸附";
 "Pulled off a screen edge, the rail stretches and parts like a drop; brought near one, it is drawn in. While dragged, it follows the pointer with a little give." = "从屏幕边缘拉开时，胶囊会像水滴一样被拉长，然后断开；拖近边缘时会被吸过去。拖动时，胶囊跟随指针会稍有滞后。";
 "These features are still being tuned and may change or be removed." = "这些功能仍在调整中，以后可能改变或移除。";
+"Test notification" = "测试通知";
+"Send" = "发送";
+"Sends one now, so you can see that notifications reach you." = "立即发送一条通知，确认通知能正常送达。";
+"Sent. If nothing appeared, check Focus and System Settings › Notifications." = "已发送。如果没有看到，请检查专注模式和「系统设置 › 通知」。";
+"This is a test notification. Pulse's notifications look like this." = "这是一条测试通知。Pulse 的通知会以这种样式显示。";

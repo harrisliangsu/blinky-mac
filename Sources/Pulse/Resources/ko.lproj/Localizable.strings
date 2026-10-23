@@ -1270,3 +1270,8 @@
 "Liquid docking" = "물방울처럼 붙기";
 "Pulled off a screen edge, the rail stretches and parts like a drop; brought near one, it is drawn in. While dragged, it follows the pointer with a little give." = "화면 가장자리에서 떼어 내면 레일이 물방울처럼 늘어났다가 떨어지고, 가장자리 가까이 가져가면 끌려가 붙습니다. 끄는 동안 레일은 포인터를 조금 늦게 따라옵니다.";
 "These features are still being tuned and may change or be removed." = "이 기능들은 아직 조정 중이며, 앞으로 바뀌거나 없어질 수 있습니다.";
+"Test notification" = "테스트 알림";
+"Send" = "보내기";
+"Sends one now, so you can see that notifications reach you." = "지금 알림을 하나 보내 알림이 제대로 오는지 확인합니다.";
+"Sent. If nothing appeared, check Focus and System Settings › Notifications." = "보냈습니다. 보이지 않으면 집중 모드와 시스템 설정 › 알림을 확인하세요.";
+"This is a test notification. Pulse's notifications look like this." = "테스트 알림입니다. Pulse의 알림은 이렇게 표시됩니다.";

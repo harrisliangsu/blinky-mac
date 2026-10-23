@@ -1270,3 +1270,8 @@
 "Liquid docking" = "しずくのような吸着";
 "Pulled off a screen edge, the rail stretches and parts like a drop; brought near one, it is drawn in. While dragged, it follows the pointer with a little give." = "画面の端から引き離すと、レールがしずくのように伸びてから離れ、端に近づけると吸い寄せられます。ドラッグ中は、ポインタに少し遅れて付いてきます。";
 "These features are still being tuned and may change or be removed." = "これらの機能は調整中のため、今後変更または削除されることがあります。";
+"Test notification" = "テスト通知";
+"Send" = "送信";
+"Sends one now, so you can see that notifications reach you." = "通知を今すぐ1件送って、正しく届くか確認します。";
+"Sent. If nothing appeared, check Focus and System Settings › Notifications." = "送信しました。表示されない場合は、集中モードと「システム設定 › 通知」を確認してください。";
+"This is a test notification. Pulse's notifications look like this." = "これはテスト通知です。Pulse の通知はこのように表示されます。";

@@ -6,6 +6,10 @@ struct NotificationsPane: View {
     let settings: AppSettings
     let alerts: UsageAlerts
 
+    /// What the last test came to, said in the row until the pane closes.
+    @State private var testOutcome: UsageAlerts.TestOutcome?
+    @State private var isSendingTest = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 22) {
             SettingsGroup {
@@ -124,6 +128,34 @@ struct NotificationsPane: View {
                     .disabled(!UsageAlerts.isSupported || (!settings.readsTokenSpend && !settings.alertsOnRecap))
                 }
             }
+
+            SettingsGroup {
+                SettingsRow(
+                    String.localized("Test notification"),
+                    subtitle: testSubtitle
+                ) {
+                    Button(String.localized("Send")) {
+                        isSendingTest = true
+                        Task {
+                            testOutcome = await alerts.sendTest()
+                            isSendingTest = false
+                        }
+                    }
+                    .disabled(!UsageAlerts.isSupported || isSendingTest)
+                }
+            }
+        }
+    }
+
+    /// What the test row says: what the button does, or what came of it when
+    /// that is not a banner on screen.
+    private var testSubtitle: String {
+        guard UsageAlerts.isSupported else { return .localized("Notifications need the bundled app.") }
+        switch testOutcome {
+        case .denied: return .localized("Turned off for Pulse in System Settings › Notifications.")
+        case .sent: return .localized("Sent. If nothing appeared, check Focus and System Settings › Notifications.")
+        case .unsupported: return .localized("Notifications need the bundled app.")
+        case nil: return .localized("Sends one now, so you can see that notifications reach you.")
         }
     }
 

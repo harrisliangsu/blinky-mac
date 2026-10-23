@@ -1270,3 +1270,8 @@
 "Liquid docking" = "Liquid docking";
 "Pulled off a screen edge, the rail stretches and parts like a drop; brought near one, it is drawn in. While dragged, it follows the pointer with a little give." = "Pulled off a screen edge, the rail stretches and parts like a drop; brought near one, it is drawn in. While dragged, it follows the pointer with a little give.";
 "These features are still being tuned and may change or be removed." = "These features are still being tuned and may change or be removed.";
+"Test notification" = "Test notification";
+"Send" = "Send";
+"Sends one now, so you can see that notifications reach you." = "Sends one now, so you can see that notifications reach you.";
+"Sent. If nothing appeared, check Focus and System Settings › Notifications." = "Sent. If nothing appeared, check Focus and System Settings › Notifications.";
+"This is a test notification. Pulse's notifications look like this." = "This is a test notification. Pulse's notifications look like this.";

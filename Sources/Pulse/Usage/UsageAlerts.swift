@@ -590,6 +590,46 @@ final class UsageAlerts {
         }
     }
 
+    /// What sending a test notification came to.
+    enum TestOutcome: Equatable {
+        case sent
+        /// macOS will not show Pulse's notifications: refused at the prompt,
+        /// or turned off in System Settings since.
+        case denied
+        /// No app bundle (`isSupported`).
+        case unsupported
+    }
+
+    /// Posts one notification now, on request, so the reader can see that
+    /// notifications reach them and how they look.
+    ///
+    /// **Asks for permission whatever is switched on**, unlike
+    /// `requestAuthorizationIfNeeded`: pressing the button is the request.
+    /// Not a usage alert and remembered nowhere — the one notification that
+    /// is about nothing Pulse saw, because the reader asked for exactly that,
+    /// and it says so.
+    func sendTest() async -> TestOutcome {
+        guard Self.isSupported else { return .unsupported }
+        let center = UNUserNotificationCenter.current()
+        if await center.notificationSettings().authorizationStatus == .notDetermined {
+            _ = try? await center.requestAuthorization(options: [.alert, .sound])
+        }
+        await readAuthorization()
+        guard authorization == .authorized || authorization == .provisional else { return .denied }
+
+        let content = UNMutableNotificationContent()
+        content.title = "Pulse"
+        content.body = .localized("This is a test notification. Pulse's notifications look like this.")
+        content.sound = .default
+        let request = UNNotificationRequest(identifier: "pulse.test", content: content, trigger: nil)
+        do {
+            try await center.add(request)
+            return .sent
+        } catch {
+            return .denied
+        }
+    }
+
     /// Injectable authorization operation: tests never contact the system centre.
     func requestAuthorizationIfNeeded(using request: @escaping @MainActor () async -> Bool) async -> Bool {
         guard settings.wantsAlerts else { return false }
