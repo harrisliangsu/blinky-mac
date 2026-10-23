@@ -137,6 +137,20 @@ Other rules:
 - Do **not** infer a turn from rail size: floating drops end padding, so `landingRail != rail` off an edge re-centred and snapped. On that size change re-measure the grab to the rail **centre** so rings do not move.
 - The landing **axis** comes from the dock being landed on, never `placement.edge` (a frame behind during a drag); its side, which only decides where the card opens, from the placement after `record` stores the new ratios.
 
+## Liquid docking (experimental)
+
+Behind **Settings → Experimental → Liquid docking** (`AppSettings.liquidDocking`, off by default; copied to `PanelPlacement.liquidDocking` like `snapsToEdges`). Off, a drag places the rail under the pointer on every event, exactly as before. On (studied from [codenotch](https://github.com/vinzdg/codenotch), MIT, which the user had used; approaches and some figures taken, no code):
+
+- **The rail follows the hand on a spring** (`FloatingPanel.step`, driven by the screen's `CADisplayLink`, not a timer). A drag event only moves the goal; each display frame integrates a spring toward it (0.2s response, 0.84 damping carried; 0.3 / 0.74 settling after mouse-up, until within 0.3pt and 6pt/s) and places the window for where the rail is drawn. Joining an edge, letting go and settling back are the same spring aiming elsewhere.
+- **A docked rail is pulled off, not dropped off.** It keeps its edge until the pointer has carried it `DropletTether.breakDistance` (80pt) away; another edge still wins at once. Meanwhile it is drawn `displayPull` in from the edge — 15% of the hand's speed at first (`grip`), meeting the pointer at the hand's speed at the break, so letting go is neither a jump in place nor in speed (the first version, `d²/break`, arrived at twice the hand's speed).
+- **The gap is a neck** (`DropletTether.bridge`, unioned with the body): first the flare simply slides with the edge; then the contact narrows to a broad foot on the edge (at most 0.4 of a short rail's half length, or it read as a slab) and a waist that holds its width, then gives (`1 − u^2.2`). It thins with the pointer's pull (`PanelPlacement.tension`) as well as with how far the trailing rail has got, so a quick pull does not part a thick neck in one frame. At a notch the foot is the housing with its own 6.5pt fillets and the waist is kept below the housing (`mergesFoot` off).
+- **Letting go keeps the docked window for `partingDuration` (0.22s)**: the rail already follows the hand inside it while the parted neck's two pieces draw back — into the body and into the edge (at a notch, into the housing). Only then does it stand free (`standFree`), the corners rounding into the capsule (`fusion`, ~0.14s); cut short if the rail would leave the window. A rail let go of beside the Dock glides above it on the spring instead of jumping.
+- **Drawn onto an edge**, the rail starts where it was, on a thin neck (`attachThinning`) that thickens as the spring carries it in.
+- **A quick throw stretches the surface**, up to 14% at 2600pt/s, front staying with the hand, 35% of that thinner across; docked, only along the edge (across it, the neck was pushed off the edge). The rings are not stretched.
+- **Flares are fluid turns** (`DropletTether.fluidTurn`): heading a mix of a straight ramp and half a cosine, half each (`flareRamp`), so curvature eases in and out at both ends; the neck's own turns are round (ramp 0) — fully eased, a long thin neck read as a stick with corners. The docked berth's flares use it whether or not this is on.
+- Everything pulled is drawn **outside the frame**, into the panel; the light panel's hairline mask reaches past the frame on every side but the screen's for that reason.
+- Not verified: Liquid Glass on the pulled part.
+
 ## Flare, sliver, labels, scale
 
 - `DockLayout.endPadding(docked:)`: floating drops the flare's padding so visible breathing room matches docked. Anything measuring the rail (ring centres, `PanelHitArea.slot`) must be told docked or not.

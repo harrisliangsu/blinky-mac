@@ -150,11 +150,34 @@ final class PanelPlacement {
     /// Present only while attached to a physical notch; never persisted.
     var notch: CGRect?
 
+    /// How far a docked rail is drawn off its edge while it is being pulled
+    /// away or drawn on (`DropletTether`); zero at rest. Never persisted.
+    var pull: CGFloat = 0
+    /// Extra thinning of the neck while a rail is being drawn onto an edge.
+    var thinning: CGFloat = 0
+    /// How hard the hand is pulling a docked rail off its edge, 0 to 1: the
+    /// pointer's pull, not where the rail has been drawn, which trails it.
+    var tension: CGFloat = 0
+    /// How far a parted neck's two pieces have drawn back, 0 to 1, while the
+    /// rail is letting go of an edge (`DropletTether.partingDuration`).
+    var parted: CGFloat = 0
+    /// How much a rail that has just let go of an edge still has its docked
+    /// corners, easing to 0 (`DockBerthShape.fusion`).
+    var fusion: CGFloat = 0
+    /// How fast the rail is being carried, in points a second, screen
+    /// coordinates; zero at rest.
+    var motion: CGVector = .zero
+
     /// `AppSettings.snapsToEdges`, copied here by the panel controller
     /// whenever settings change; never persisted by this class. It decides
     /// what a drag lands on (`dragDock`) and how close to a side a free
     /// upright rail may stand (`sideMargin`).
     var snapsToEdges = true
+
+    /// `AppSettings.liquidDocking`, copied here like `snapsToEdges`: whether a
+    /// drag pulls the rail off an edge like a drop and carries it on a
+    /// spring (`DropletTether`).
+    var liquidDocking = false
 
     /// How far a free rail is kept from the left and right of the screen.
     ///
@@ -581,6 +604,27 @@ final class PanelPlacement {
             across > 0 ? Double((origin.x - visible.minX) / across) : 0.5,
             down > 0 ? 1 - Double((origin.y - visible.minY) / down) : 0.5
         )
+    }
+
+    /// How far a rail whose bottom-left corner is at `railOrigin` stands off
+    /// `edge`, where the docked rail would be flush: positive into the
+    /// screen. What a pull is measured by, and where a rail being drawn on
+    /// starts from.
+    static func distance(
+        from edge: PanelEdge,
+        railOrigin origin: CGPoint,
+        rail: CGSize,
+        screen: CGRect,
+        visible: CGRect,
+        topEdge: CGFloat,
+        notch: CGRect?
+    ) -> CGFloat {
+        switch edge {
+        case .top: (notch?.minY ?? topEdge) - (origin.y + rail.height)
+        case .bottom: origin.y - screen.minY
+        case .left: origin.x - visible.minX
+        case .right: visible.maxX - (origin.x + rail.width)
+        }
     }
 
     /// How close the rail has to get to a side of the screen before it fuses

@@ -65,6 +65,7 @@ The former single General pane is split by subject (`SettingsPane`). Panel and A
 | Application | **General** | *Application*: open at login, show Dock icon, hide menu bar icon, show usage in the menu bar (+ menu bar shows, menu bar style), usage panel in the menu. *Shortcuts*. *Language* |
 | Application | **Notifications** | Warn at, when a limit comes back, when a reading stops arriving, when a service is down, when a recap is ready |
 | Application | **Network and refresh** | Check every; proxy ([../networking.md](../networking.md)) |
+| Application | **Experimental** | Liquid docking (off by default; [panel-geometry.md](panel-geometry.md#liquid-docking-experimental)); a line saying these may change or go |
 | Enabled | every account switched on, both kinds, in rail order | What somebody opens Settings for, first. An enabled account is not listed again below — two rows with one selection tag highlight together |
 | Subscriptions | one per subscription account not switched on | Split from API accounts by `Provider.Billing`: a plan with limits that turn over on a clock |
 | API and pay-as-you-go | one per API account not switched on | Money put in and drawn down by the call — DeepSeek, the gateways, the API platforms. A provider with both is filed under the one its buyers mostly pay for |
@@ -124,6 +125,10 @@ An account pane gets a **Notifications** group of its own where `Provider.report
 ### Network and refresh
 
 The usage-interval group is named **Refresh**, not Updates. The manual proxy host and port are view-local text while edited. Return or leaving either field tries the pair; only a non-empty host and a whole port from 1 through 65535 replace the saved endpoint. Invalid text stays visible with the explanation on its own row, and nothing refetches on each keystroke.
+
+### Experimental
+
+Features still being tuned, each off until switched on here, under a line saying they may change or be removed. A feature leaves this pane when it is settled: its switch moves to the pane its subject belongs to, or goes. **Liquid docking** (`AppSettings.liquidDocking`) is the only one so far.
 
 ### Token spend
 

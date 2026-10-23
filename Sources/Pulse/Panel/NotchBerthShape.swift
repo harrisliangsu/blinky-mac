@@ -13,6 +13,13 @@ import SwiftUI
 struct NotchBerthShape: Shape {
     var notchSize: CGSize
     var openness: CGFloat = 1
+    /// How far the rail is drawn below the housing while it is pulled away
+    /// or drawn back: it hangs from the housing like a drop (`DropletTether`).
+    var pull: CGFloat = 0
+    /// Extra thinning of that neck while the rail is being drawn back.
+    var thinning: CGFloat = 0
+    /// The neck's two pieces drawing back after it has parted, 0 to 1.
+    var parted: CGFloat = 0
 
     /// Pulls each fillet's control points off its endpoints, the same 0.55
     /// circular-arc approximation `DockBerthShape` uses, so the two curves
@@ -31,9 +38,13 @@ struct NotchBerthShape: Shape {
     /// `DockLayout.flareWidth` / `flareHeight`.
     static var filletRadius: CGFloat { 6.5 }
 
-    var animatableData: CGFloat {
-        get { openness }
-        set { openness = newValue }
+    var animatableData: AnimatablePair<CGFloat, AnimatablePair<CGFloat, CGFloat>> {
+        get { AnimatablePair(openness, AnimatablePair(pull, thinning)) }
+        set {
+            openness = newValue.first
+            pull = newValue.second.first
+            thinning = newValue.second.second
+        }
     }
 
     /// `rect` is the body **plus** `DockLayout.flareWidth` on each side, which
@@ -43,6 +54,7 @@ struct NotchBerthShape: Shape {
     func path(in rect: CGRect) -> Path {
         let progress = min(max(openness, 0), 1)
         guard progress > 0 else { return Path() }
+        if progress >= 1, pull > 0.01 { return tethered(in: rect) }
 
         let flareWidth = Self.filletRadius * progress
         let flareHeight = min(Self.filletRadius * progress, rect.height)
@@ -101,5 +113,59 @@ struct NotchBerthShape: Shape {
 
         path.closeSubpath()
         return path
+    }
+
+    /// The rail hanging `pull` below the housing on a neck that thins as it
+    /// is pulled. The foot stays on the screen's top edge with the housing's
+    /// own fillets, narrowing to the housing; the waist is kept below the
+    /// housing, where it can be seen.
+    private func tethered(in rect: CGRect) -> Path {
+        let bodyWidth = rect.width - DockLayout.flareWidth * 2
+        let thickness = max(rect.height - notchSize.height, 0)
+        let fillet = Self.filletRadius
+        let length = bodyWidth + fillet * 2
+        let gap = notchSize.height + pull
+
+        let bridge = DropletTether.bridge(.init(
+            bodyWidth: thickness,
+            gap: gap,
+            pull: pull,
+            centre: length / 2,
+            contact: bodyWidth / 2,
+            flareAlong: fillet,
+            flareIn: fillet,
+            flareGives: 0,
+            flareShrinks: 0,
+            joinHalf: thickness * 0.45,
+            footHalf: notchSize.width / 2,
+            waistClearance: notchSize.height,
+            thinning: thinning,
+            mergesFoot: false,
+            parted: parted
+        ))
+
+        let far = min(DockLayout.cornerRadius, bodyWidth / 2, thickness)
+        let near = max(min(far, bodyWidth / 2 - bridge.joinHalf), 0)
+        let w = thickness
+        let top = fillet
+        let bottom = length - fillet
+
+        var body = Path()
+        body.move(to: CGPoint(x: far, y: top))
+        body.addLine(to: CGPoint(x: w - near, y: top))
+        if near > 0 { body.addArc(tangent1End: CGPoint(x: w, y: top), tangent2End: CGPoint(x: w, y: bottom), radius: near) }
+        body.addLine(to: CGPoint(x: w, y: bottom - near))
+        if near > 0 { body.addArc(tangent1End: CGPoint(x: w, y: bottom), tangent2End: CGPoint(x: 0, y: bottom), radius: near) }
+        body.addLine(to: CGPoint(x: far, y: bottom))
+        body.addArc(tangent1End: CGPoint(x: 0, y: bottom), tangent2End: CGPoint(x: 0, y: top), radius: far)
+        body.addLine(to: CGPoint(x: 0, y: top + far))
+        body.addArc(tangent1End: CGPoint(x: 0, y: top), tangent2End: CGPoint(x: w, y: top), radius: far)
+        body.closeSubpath()
+
+        // Facing right turned a quarter: the edge, at `x = w + gap`, onto the
+        // screen's top; the run along it centred on the frame.
+        let place = CGAffineTransform(a: 0, b: -1, c: 1, d: 0,
+                                      tx: rect.midX - length / 2, ty: rect.minY + w + gap)
+        return body.union(bridge.path).applying(place)
     }
 }

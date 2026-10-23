@@ -472,6 +472,21 @@ struct UsageDockView: View {
     /// Open, or wound down to the sliver.
     var isExpanded: Bool = true
     var notchSize: CGSize?
+    /// How far the rail is drawn off its edge while it is pulled away or drawn
+    /// on, and how thin the neck is on the way on (`DropletTether`).
+    var pull: CGFloat = 0
+    var thinning: CGFloat = 0
+    /// How far a parted neck's pieces have drawn back (`DropletTether`).
+    var parted: CGFloat = 0
+    /// How hard the hand is pulling, 0 to 1, which thins the neck as well as
+    /// how far the rail has got: on a quick pull the rail trails the hand.
+    var tension: CGFloat = 0
+    /// How much a rail that has just let go of an edge still has its docked
+    /// corners (`DockBerthShape.fusion`).
+    var fusion: CGFloat = 0
+    /// How fast the rail is being carried, in points a second, for the
+    /// stretch a quick throw gives it.
+    var motion: CGVector = .zero
     /// Colours the sliver when a limit is close enough that hiding the rail
     /// would be hiding something worth seeing.
     var alert: Color?
@@ -491,6 +506,39 @@ struct UsageDockView: View {
     var onOpen: () -> Void = {}
 
     private var railSize: CGSize { DockLayout.size(for: entries.count, on: edge.axis, docked: isDocked) }
+
+    /// The pull while it can be seen: docked, open, and not past the edge.
+    private var shownPull: CGFloat { isDocked && isExpanded ? max(pull, 0) : 0 }
+
+    /// How much a throw at `motion` stretches the surface: up to 14% at
+    /// 2600pt a second along the way it is going, and 35% of that thinner
+    /// across. The figures are codenotch's, which the user liked.
+    private var stretch: (scale: CGSize, anchor: UnitPoint) {
+        // **Docked, only along the edge.** Stretched across it, the neck and
+        // its foot were pushed off the edge they are joined to.
+        let motion = isDocked
+            ? (edge.isVertical ? CGVector(dx: 0, dy: motion.dy) : CGVector(dx: motion.dx, dy: 0))
+            : motion
+        let speed = hypot(motion.dx, motion.dy)
+        let amount = min(speed / 2600, 1) * 0.14
+        guard amount > 0.001 else { return (CGSize(width: 1, height: 1), .center) }
+        // Screen coordinates run up; SwiftUI's run down.
+        if abs(motion.dx) >= abs(motion.dy) {
+            return (CGSize(width: 1 + amount, height: 1 - 0.35 * amount), motion.dx > 0 ? .trailing : .leading)
+        }
+        return (CGSize(width: 1 - 0.35 * amount, height: 1 + amount), motion.dy > 0 ? .top : .bottom)
+    }
+
+    /// The pull as a move into the panel, away from the edge.
+    private var pullOffset: CGSize {
+        let p = shownPull
+        return switch edge {
+        case .right: CGSize(width: -p, height: 0)
+        case .left: CGSize(width: p, height: 0)
+        case .top: CGSize(width: 0, height: p)
+        case .bottom: CGSize(width: 0, height: -p)
+        }
+    }
     private var currentSize: CGSize {
         isExpanded ? railSize : DockLayout.collapsedSize(on: edge.axis)
     }
@@ -500,8 +548,14 @@ struct UsageDockView: View {
         // moves as it opens and closes.
         ZStack(alignment: edge.stackAlignment) {
             berth
+                // A quick throw draws the surface out behind the rings, the
+                // front staying with the hand, and thins it a little.
+                .scaleEffect(stretch.scale, anchor: stretch.anchor)
 
             rings
+                // Carried with the body as it is pulled off the edge. Never
+                // past the edge: a spring settling back overshoots below zero.
+                .offset(pullOffset)
                 // Still in the tree while collapsed, so nothing moves as it
                 // opens; but nothing in it may animate for nobody.
                 .environment(\.botMarksPaused, !isExpanded)
@@ -540,7 +594,8 @@ struct UsageDockView: View {
         if let notchSize {
             let surface = PanelHitArea.notchSurface(rail: CGRect(origin: .zero, size: railSize), notchSize: notchSize)
             PanelSurface(
-                shape: NotchBerthShape(notchSize: notchSize, openness: isExpanded ? 1 : 0),
+                shape: NotchBerthShape(notchSize: notchSize, openness: isExpanded ? 1 : 0,
+                                       pull: shownPull, thinning: max(thinning, tension), parted: parted),
                 usesGlass: usesGlass,
                 screenEdge: .top
             )
@@ -566,7 +621,8 @@ struct UsageDockView: View {
     }
 
     private var ordinaryBerth: some View {
-        let shape = DockBerthShape(edge: edge, isDocked: isDocked, openness: isExpanded ? 1 : 0)
+        let shape = DockBerthShape(edge: edge, isDocked: isDocked, openness: isExpanded ? 1 : 0,
+                                   pull: shownPull, thinning: max(thinning, tension), parted: parted, fusion: fusion)
 
         return PanelSurface(
             shape: shape,
@@ -861,12 +917,29 @@ struct DockBerthShape: Shape {
     /// width, leaving exactly the rounded-on-one-side sliver.
     var openness: CGFloat = 1
 
+    /// How far a docked rail is drawn off its edge while it is being pulled
+    /// away or drawn onto it; the gap is the liquid neck
+    /// (`DropletTether`). Drawn outside the frame, into the panel.
+    var pull: CGFloat = 0
+    /// Extra thinning of that neck while the rail is being drawn on.
+    var thinning: CGFloat = 0
+    /// The neck's two pieces drawing back after it has parted, 0 to 1.
+    var parted: CGFloat = 0
+    /// Standing free, how much it still has the docked rail's corners: 1 the
+    /// moment it lets go of an edge, easing to 0, the capsule. So the outline
+    /// rounds off rather than being swapped for another in one frame.
+    var fusion: CGFloat = 0
+
     /// Lets the outline itself be interpolated, so the silhouette is redrawn
     /// at every step of the animation instead of one shape being faded into
     /// another.
-    var animatableData: CGFloat {
-        get { openness }
-        set { openness = newValue }
+    var animatableData: AnimatablePair<CGFloat, AnimatablePair<CGFloat, CGFloat>> {
+        get { AnimatablePair(openness, AnimatablePair(pull, thinning)) }
+        set {
+            openness = newValue.first
+            pull = newValue.second.first
+            thinning = newValue.second.second
+        }
     }
 
     private var flareHeight: CGFloat { DockLayout.flareHeight * openness }
@@ -878,6 +951,8 @@ struct DockBerthShape: Shape {
 
     func path(in rect: CGRect) -> Path {
         guard isDocked else { return floating(in: rect) }
+        let pulled = pull * min(max(openness, 0), 1)
+        if pulled > 0.01 { return tethered(in: rect, pull: pulled) }
 
         switch edge {
         case .right:
@@ -920,7 +995,9 @@ struct DockBerthShape: Shape {
     /// `AppSettings.usesRoundEnds` is on they are the docked rail's ends too,
     /// less the flare.
     private func floating(in rect: CGRect) -> Path {
-        let radius = min(rect.width, rect.height) / 2
+        let capsule = min(rect.width, rect.height) / 2
+        let docked = min(DockLayout.cornerRadius, capsule)
+        let radius = capsule + (docked - capsule) * min(max(fusion, 0), 1)
         return Path(
             roundedRect: rect,
             cornerSize: CGSize(width: radius, height: radius),
@@ -939,37 +1016,43 @@ struct DockBerthShape: Shape {
         // and the path would fold in on itself.
         let fw = max(min(flareWidth, w - r), 0)
 
-        // Pulls each fillet's control points off its endpoints. 0.55 is the
-        // usual circular-arc approximation; it keeps the sweep full instead
-        // of flattening it into a sliver.
-        let k: CGFloat = 0.55
-
         var path = Path()
 
         // Body's flat top edge, left to right.
         path.move(to: CGPoint(x: r, y: f))
         path.addLine(to: CGPoint(x: w - fw, y: f))
 
-        // Concave fillet sweeping up into the screen edge.
-        path.addCurve(
-            to: CGPoint(x: w, y: 0),
-            control1: CGPoint(x: w - fw * (1 - k), y: f),
-            control2: CGPoint(x: w, y: f * k)
-        )
+        // Concave fillet sweeping up into the screen edge: a turn whose
+        // curvature eases in and out, so neither end reads as a corner
+        // (`DropletTether.fluidTurn`).
+        path.addLines([CGPoint(x: w - fw, y: f)] + DropletTether.fluidTurn(
+            from: CGPoint(x: w - fw, y: f), along: CGVector(dx: 1, dy: 0),
+            to: CGPoint(x: w, y: 0), then: CGVector(dx: 0, dy: -1)
+        ))
 
         // Flush against the screen for the full height.
         path.addLine(to: CGPoint(x: w, y: h))
 
         // Mirrored fillet back down into the body's bottom edge.
-        path.addCurve(
-            to: CGPoint(x: w - fw, y: h - f),
-            control1: CGPoint(x: w, y: h - f * k),
-            control2: CGPoint(x: w - fw * (1 - k), y: h - f)
-        )
+        for point in DropletTether.fluidTurn(
+            from: CGPoint(x: w, y: h), along: CGVector(dx: 0, dy: -1),
+            to: CGPoint(x: w - fw, y: h - f), then: CGVector(dx: -1, dy: 0)
+        ) {
+            path.addLine(to: point)
+        }
 
         // Body's flat bottom edge, right to left.
         path.addLine(to: CGPoint(x: r, y: h - f))
 
+        appendFarEnd(to: &path, width: w, height: h, flare: f, radius: r)
+
+        path.closeSubpath()
+        return path
+    }
+
+    /// The body's two corners away from the edge and the side between them,
+    /// from the bottom edge round to the top one.
+    private func appendFarEnd(to path: inout Path, width w: CGFloat, height h: CGFloat, flare f: CGFloat, radius r: CGFloat) {
         // The two convex corners. Round ends draw them as circular arcs —
         // see `DockLayout.cornerRadius` for why not a squircle — each
         // starting at the tangent point the path is already on: bottom edge
@@ -1014,9 +1097,65 @@ struct DockBerthShape: Shape {
                 to: CGVector(dx: 0, dy: -1)
             )
         }
+    }
 
-        path.closeSubpath()
-        return path
+    /// The rail drawn `pull` off its edge, joined to it by the neck.
+    ///
+    /// Built facing right, like `facingRight`, in a frame `pull` wider: the
+    /// body keeps its place at the left and the edge moves out. Each dock
+    /// then turns it into place, with the body moved `pull` into the panel
+    /// and the edge where the frame's edge always was.
+    private func tethered(in rect: CGRect, pull: CGFloat) -> Path {
+        let vertical = edge.isVertical
+        let w = vertical ? rect.width : rect.height
+        let h = vertical ? rect.height : rect.width
+        let f = min(flareHeight, h / 2)
+        let r = max(min(cornerRadius, min(w, (h - f * 2) / 2)), 0)
+        let fw = max(min(flareWidth, w - r), 0)
+
+        let bridge = DropletTether.bridge(.init(
+            bodyWidth: w,
+            gap: pull,
+            pull: pull,
+            centre: h / 2,
+            contact: (h - f * 2) / 2,
+            flareAlong: f,
+            flareIn: fw,
+            // A broad foot on the edge narrowing to a waist, like the drop
+            // that hangs from the notch.
+            joinHalf: w * 0.45,
+            // Never most of a short rail's length, which read as a slab.
+            footHalf: min(w * 0.9, (h - f * 2) / 2 * 0.4),
+            thinning: thinning,
+            parted: parted
+        ))
+
+        // The corners on the edge side round off only where the neck has
+        // drawn away from them.
+        let rr = max(min(r, (h - f * 2) / 2 - bridge.joinHalf), 0)
+        var body = Path()
+        body.move(to: CGPoint(x: r, y: f))
+        body.addLine(to: CGPoint(x: w - rr, y: f))
+        if rr > 0 {
+            body.addArc(tangent1End: CGPoint(x: w, y: f), tangent2End: CGPoint(x: w, y: h - f), radius: rr)
+        }
+        body.addLine(to: CGPoint(x: w, y: h - f - rr))
+        if rr > 0 {
+            body.addArc(tangent1End: CGPoint(x: w, y: h - f), tangent2End: CGPoint(x: 0, y: h - f), radius: rr)
+        }
+        body.addLine(to: CGPoint(x: r, y: h - f))
+        appendFarEnd(to: &body, width: w, height: h, flare: f, radius: r)
+        body.closeSubpath()
+
+        let canonical = body.union(bridge.path)
+        let reach = w + pull
+        let place: CGAffineTransform = switch edge {
+        case .right: CGAffineTransform(translationX: rect.minX - pull, y: rect.minY)
+        case .left: CGAffineTransform(a: -1, b: 0, c: 0, d: 1, tx: rect.minX + reach, ty: rect.minY)
+        case .top: CGAffineTransform(a: 0, b: -1, c: 1, d: 0, tx: rect.minX, ty: rect.minY + reach)
+        case .bottom: CGAffineTransform(a: 0, b: 1, c: -1, d: 0, tx: rect.minX + rect.width, ty: rect.minY - pull)
+        }
+        return canonical.applying(place)
     }
 
     /// Appends a quarter of a superellipse — the continuously curved

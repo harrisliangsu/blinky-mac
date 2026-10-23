@@ -74,11 +74,19 @@ struct PanelSurface<S: Shape>: View {
                         .stroke(PanelLight.edge, lineWidth: PanelLight.edgeWidth * 2)
                         .clipShape(shape)
                     // Masked only where a side lies on the screen; the card and
-                    // a free rail have none, and need no extra pass.
+                    // a free rail have none, and need no extra pass. **Only
+                    // that side:** the mask reaches far past the frame on the
+                    // others, because a rail pulled off its edge is drawn
+                    // outside the frame (`DropletTether`), and a mask the size
+                    // of the frame cut its hairline off there.
                     if screenEdge.isEmpty {
                         outline
                     } else {
-                        outline.mask { Rectangle().padding(screenEdge, PanelLight.edgeWidth) }
+                        outline.mask {
+                            Rectangle()
+                                .padding(screenEdge, PanelLight.edgeWidth)
+                                .padding(Edge.Set.all.subtracting(screenEdge), -2000)
+                        }
                     }
                 }
         } else {

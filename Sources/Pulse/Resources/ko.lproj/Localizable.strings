@@ -1266,3 +1266,7 @@
 "Top tool" = "주력 도구";
 "Tokens · token share" = "토큰 · 토큰 비중";
 "The plan price is the monthly price prorated by the days of this period." = "요금제 가격은 월 요금을 이 기간의 일수로 나눠 계산했습니다.";
+"Experimental" = "실험적 기능";
+"Liquid docking" = "물방울처럼 붙기";
+"Pulled off a screen edge, the rail stretches and parts like a drop; brought near one, it is drawn in. While dragged, it follows the pointer with a little give." = "화면 가장자리에서 떼어 내면 레일이 물방울처럼 늘어났다가 떨어지고, 가장자리 가까이 가져가면 끌려가 붙습니다. 끄는 동안 레일은 포인터를 조금 늦게 따라옵니다.";
+"These features are still being tuned and may change or be removed." = "이 기능들은 아직 조정 중이며, 앞으로 바뀌거나 없어질 수 있습니다.";

@@ -1266,3 +1266,7 @@
 "Top tool" = "Основной инструмент";
 "Tokens · token share" = "Токены · доля токенов";
 "The plan price is the monthly price prorated by the days of this period." = "Цена тарифа пересчитана из месячной пропорционально дням этого периода.";
+"Experimental" = "Экспериментальные функции";
+"Liquid docking" = "Прикрепление каплей";
+"Pulled off a screen edge, the rail stretches and parts like a drop; brought near one, it is drawn in. While dragged, it follows the pointer with a little give." = "Если оттянуть ленту от края экрана, она вытягивается и отрывается, как капля; рядом с краем она притягивается к нему. При перетаскивании лента следует за указателем с небольшой задержкой.";
+"These features are still being tuned and may change or be removed." = "Эти функции ещё дорабатываются и могут измениться или быть удалены.";

@@ -211,6 +211,13 @@ final class AppSettings {
         didSet { snapsToEdgesChanged(from: oldValue) }
     }
 
+    /// Experimental: the rail is pulled off an edge like a drop and drawn
+    /// onto one, and follows the pointer on a spring (`DropletTether`). Off
+    /// by default; off, a drag places the rail under the pointer as before.
+    var liquidDocking: Bool {
+        didSet { liquidDockingChanged(from: oldValue) }
+    }
+
     /// How big the floating panel is drawn.
     var panelSize: PanelSize {
         didSet { panelSizeChanged(from: oldValue) }
@@ -977,6 +984,7 @@ final class AppSettings {
         hidesFromScreenCapture: Bool = Default.hidesFromScreenCapture,
         followsActiveDisplay: Bool = Default.followsActiveDisplay,
         snapsToEdges: Bool = Default.snapsToEdges,
+        liquidDocking: Bool = Default.liquidDocking,
         openSettingsShortcut: GlobalShortcut? = nil,
         togglePanelShortcut: GlobalShortcut? = nil,
         deepSeekBasis: BalanceBasis = .default,
@@ -1041,6 +1049,7 @@ final class AppSettings {
         self.hidesFromScreenCapture = hidesFromScreenCapture
         self.followsActiveDisplay = followsActiveDisplay
         self.snapsToEdges = snapsToEdges
+        self.liquidDocking = liquidDocking
         self.openSettingsShortcut = openSettingsShortcut
         self.togglePanelShortcut = togglePanelShortcut
         self.deepSeekBasis = deepSeekBasis
@@ -1151,6 +1160,7 @@ final class AppSettings {
                 Key.followsActiveDisplay, default: Default.followsActiveDisplay
             ),
             snapsToEdges: defaults.settingsFlag(Key.snapsToEdges, default: Default.snapsToEdges),
+            liquidDocking: defaults.settingsFlag(Key.liquidDocking, default: Default.liquidDocking),
             openSettingsShortcut: defaults.string(forKey: Key.openSettingsShortcut)
                 .flatMap(GlobalShortcut.init(storage:)),
             togglePanelShortcut: defaults.string(forKey: Key.togglePanelShortcut)

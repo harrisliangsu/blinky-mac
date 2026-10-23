@@ -1266,3 +1266,7 @@
 "Top tool" = "主力工具";
 "Tokens · token share" = "Token 數 · 佔比";
 "The plan price is the monthly price prorated by the days of this period." = "訂閱價格按這段時間的天數從月費折算。";
+"Experimental" = "實驗性功能";
+"Liquid docking" = "水滴式貼齊";
+"Pulled off a screen edge, the rail stretches and parts like a drop; brought near one, it is drawn in. While dragged, it follows the pointer with a little give." = "從螢幕邊緣拉開時，膠囊會像水滴一樣被拉長，然後斷開；拖近邊緣時會被吸過去。拖移時，膠囊跟隨指標會稍有延遲。";
+"These features are still being tuned and may change or be removed." = "這些功能仍在調整中，日後可能改變或移除。";
