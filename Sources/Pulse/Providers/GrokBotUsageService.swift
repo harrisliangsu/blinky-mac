@@ -50,6 +50,10 @@ struct GrokBotUsageService: Sendable {
             session = built
         case .keychainRefused:
             return .unavailable(.grokBot, reason: .cursorKeyRefused)
+        // A key that opens nothing even read afresh: what Cursor wrote is not
+        // something this can read, and opening Cursor rewrites it.
+        case .unreadable:
+            return .unavailable(.grokBot, reason: .cursorLoginExpired)
         case .absent:
             return .unavailable(.grokBot, reason: .cursorSignInRequired)
         }

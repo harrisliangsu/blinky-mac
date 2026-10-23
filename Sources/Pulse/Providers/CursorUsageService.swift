@@ -45,6 +45,10 @@ struct CursorUsageService: Sendable {
             session = built
         case .keychainRefused:
             return .unavailable(.cursor, reason: .cursorKeyRefused)
+        // A key that opens nothing even read afresh: what Cursor wrote is not
+        // something this can read, and opening Cursor rewrites it.
+        case .unreadable:
+            return .unavailable(.cursor, reason: .cursorLoginExpired)
         case .absent:
             return .unavailable(.cursor, reason: .cursorSignInRequired)
         }

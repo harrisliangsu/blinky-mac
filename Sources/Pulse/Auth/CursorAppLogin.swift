@@ -45,6 +45,9 @@ enum CursorAppLogin {
         /// denied, dismissed, or not yet asked. Distinct from a spent login:
         /// opening Cursor will not help, and Refresh will ask again.
         case keychainRefused
+        /// The row is sealed, a key was handed over, and it does not open
+        /// it — Cursor has a new key, or wrote something this cannot read.
+        case unreadable
     }
 
     private static var database: URL {
@@ -80,9 +83,14 @@ enum CursorAppLogin {
     /// reasons drive.
     static func load() -> Load {
         guard let stored = storedValue() else { return .absent }
-        return plaintext(fromStored: stored, keychainKey: {
-            BrowserCookies.safeStorageKey(service: keychainService)
-        })
+        let loaded = plaintext(fromStored: stored, keychainKey: { CursorKeychain.key() })
+        guard loaded == .unreadable else { return loaded }
+        // The kept key no longer opens the row: Cursor has made a new one
+        // (reinstalled, or its keychain item deleted). Forget it and read the
+        // keychain once more — macOS asks about the new item once, whatever
+        // was allowed for the old one.
+        CursorKeychain.forget()
+        return plaintext(fromStored: stored, keychainKey: { CursorKeychain.key() })
     }
 
     /// Unwrap a stored cell into a JWT.
@@ -103,7 +111,7 @@ enum CursorAppLogin {
             let encrypted = Data(base64Encoded: encoded),
             let plain = BrowserCookies.decrypt(encrypted, with: key),
             !plain.isEmpty
-        else { return .absent }
+        else { return .unreadable }
 
         return .token(plain)
     }
@@ -157,6 +165,13 @@ enum CursorAppLogin {
 
     /// The cell as Cursor wrote it — plaintext JWT or sealed blob — before any
     /// keychain touch.
+    ///
+    /// Opened read-only, in place. Cursor is usually running, which means the
+    /// database is in WAL mode and its `-wal` and `-shm` sidecars belong to
+    /// that process. Copying the file aside would take the main database
+    /// without the journal holding the newest writes, and opening it writable
+    /// would touch a directory that isn't ours. Read-only leaves all three
+    /// alone.
     private static func storedValue() -> String? {
         guard FileManager.default.fileExists(atPath: database.path) else { return nil }
 
@@ -240,6 +255,63 @@ enum CursorAppLogin {
         case let value as Int: Double(value)
         case let value as NSNumber: value.doubleValue
         default: nil
+        }
+    }
+}
+
+/// Cursor's safeStorage key, asked of the login keychain as seldom as the
+/// reader allows.
+///
+/// **Not once per refresh.** Every read of the item raises macOS's "Pulse
+/// wants to use your confidential information" unless the reader chose Always
+/// Allow, and Cursor and Grok Bot both borrow this login — so asking on each
+/// automatic pass put the dialog up every few minutes, twice. Instead:
+///
+/// - A key handed over is kept in memory until Pulse quits; never written.
+/// - Refused (denied or dismissed), it is not asked again by an automatic
+///   pass until Pulse is next launched, but a manual refresh of Cursor or
+///   Grok Bot asks at once (`allowAsking`).
+/// - The two providers' reads wait on one another, so one pass asks once.
+/// - A kept key that stops opening the row is forgotten (`forget`) and the
+///   keychain is read once more.
+enum CursorKeychain {
+    private static let lock = NSLock()
+    nonisolated(unsafe) private static var kept: Data?
+    nonisolated(unsafe) private static var refused = false
+
+    /// The key, from memory or the keychain; nil when refused, or when asking
+    /// is held back after a refusal. `read` stands in for the keychain in
+    /// tests.
+    static func key(
+        read: () -> Data? = { BrowserCookies.safeStorageKey(service: CursorAppLogin.keychainService) }
+    ) -> Data? {
+        // Held across the read, so a second caller waits for the first
+        // dialog's answer instead of raising its own.
+        lock.lock()
+        defer { lock.unlock() }
+        if let kept { return kept }
+        guard !refused else { return nil }
+        let key = read()
+        kept = key
+        refused = key == nil
+        return key
+    }
+
+    /// A manual refresh: the next read may ask the keychain again.
+    static func allowAsking() {
+        lock.withLock { refused = false }
+    }
+
+    /// The kept key no longer opens the row.
+    static func forget() {
+        lock.withLock { kept = nil }
+    }
+
+    /// Back to a fresh launch, for tests.
+    static func reset() {
+        lock.withLock {
+            kept = nil
+            refused = false
         }
     }
 }

@@ -576,6 +576,9 @@ final class UsageStore {
         // Provider panes stay reachable while their rail slot is switched
         // off. Their controls must not turn that into an unadvertised fetch.
         guard !settings.needsProviderSelection, settings.isEnabled(account) else { return }
+        // Asked for by hand: the keychain may be asked again for Cursor's
+        // sealed login, which an automatic pass does not do after a refusal.
+        if account.provider == .cursor || account.provider == .grokBot { CursorKeychain.allowAsking() }
         // The same ceiling as the full pass, and for the same reason: this
         // path sets the flag too, so a ring click that never came back would
         // block every refresh after it.
