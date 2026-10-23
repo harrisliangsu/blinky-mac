@@ -431,8 +431,9 @@ enum SpendAgent: String, CaseIterable, Identifiable, Sendable {
     /// test never touches the machine it runs on.
     ///
     /// The seven legacy agents keep the exact home-relative paths they have
-    /// always used and do not honour an environment override; the rest are
-    /// resolved by their family, which does.
+    /// always used and do not honour an environment override, except Kimi
+    /// Code's store beside the Kimi CLI's, which honours `KIMI_CODE_HOME`; the
+    /// rest are resolved by their family, which does.
     func inputs(home: URL, environment: [String: String]) -> [URL] {
         guard !Task.isCancelled else { return [] }
         return switch self {
@@ -442,7 +443,13 @@ enum SpendAgent: String, CaseIterable, Identifiable, Sendable {
         case .openCode: [home.appending(path: ".local/share/opencode/opencode.db")]
         case .kiloCLI: [home.appending(path: ".local/share/kilo/kilo.db")]
         case .grok: [home.appending(path: ".grok/sessions")]
-        case .kimiCLI: [home.appending(path: ".kimi/sessions")]
+        // Kimi Code took over from the Kimi CLI and keeps its own store;
+        // `KimiCLIStore` reads both, and counts a request found in both once.
+        case .kimiCLI: [
+            home.appending(path: ".kimi/sessions"),
+            (StructuredLogSupport.directory(environment, "KIMI_CODE_HOME") ?? home.appending(path: ".kimi-code"))
+                .appending(path: "sessions"),
+        ]
         case .devinCLI: [home.appending(path: ".local/share/devin/cli/sessions.db")]
         // Every other case is a catalog client, routed by its canonical id.
         default: AgentRecordReaders.inputs(client: sourceID, home: home, environment: environment)

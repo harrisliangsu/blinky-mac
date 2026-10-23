@@ -174,6 +174,92 @@ struct AgentStoreTests {
         #expect(day.tally == TokenTally(input: 100, cacheWrite: 20, cacheRead: 300, output: 15))
     }
 
+    /// One Kimi Code request in all three places its log writes it.
+    private static func kimiCodeRequest(ms: Int, model: String, agent: String, fresh: Int) -> String {
+        let usage = #"{"inputOther":\#(fresh),"output":15,"inputCacheRead":300,"inputCacheCreation":20}"#
+        return [
+            #"{"type":"usage.record","time":\#(ms),"agentId":"\#(agent)","model":"\#(model)","usageScope":"turn","usage":\#(usage)}"#,
+            #"{"type":"context.append_loop_event","time":\#(ms),"agentId":"\#(agent)","event":{"type":"step.end","step":1,"usage":\#(usage)}}"#,
+            #"{"type":"agent.message.appended","time":\#(ms),"kind":"event","message":{"meta":{"model":{"model":"agent-loop"},"usage":\#(usage)}}}"#,
+        ].joined(separator: "\n")
+    }
+
+    @Test("Kimi Code's request is counted once, by the model its usage record names")
+    func kimiCodeIsRead() throws {
+        let root = try Self.temporary("kimi-code")
+        defer { try? FileManager.default.removeItem(at: root) }
+        let sessions = root.appending(path: "sessions")
+        let session = sessions.appending(path: "wd_pulse_0123456789ab/session_0001")
+        for agent in ["main", "agent-1"] {
+            try FileManager.default.createDirectory(
+                at: session.appending(path: "agents/\(agent)"), withIntermediateDirectories: true
+            )
+        }
+        try Self.kimiCodeRequest(ms: 1_789_372_800_000, model: "work-endpoint/priced", agent: "main", fresh: 100)
+            .write(to: session.appending(path: "agents/main/wire.jsonl"), atomically: true, encoding: .utf8)
+        try Self.kimiCodeRequest(ms: 1_789_372_860_000, model: "kimi-code/kimi-for-coding", agent: "agent-1", fresh: 200)
+            .write(to: session.appending(path: "agents/agent-1/wire.jsonl"), atomically: true, encoding: .utf8)
+        try #"{"title":"Fix the ring","cwd":"/Users/someone/Pulse"}"#
+            .write(to: session.appending(path: "state.json"), atomically: true, encoding: .utf8)
+
+        let ledger = KimiCLIStore.ledger(at: [sessions], prices: Self.prices)
+        let tally = ledger.days.reduce(TokenTally()) { $0 + $1.tally }
+        #expect(tally == TokenTally(input: 300, cacheWrite: 40, cacheRead: 600, output: 30))
+
+        // The endpoint prefix is dropped, so `priced` is priced; the plan's
+        // moving alias is counted and never given a rate.
+        #expect(ledger.sessions.count == 1)
+        let run = try #require(ledger.sessions.first)
+        #expect(run.tokens == 970)
+        #expect(run.unpricedTokens == 535)
+        #expect(run.cost > 0)
+        #expect(run.title == "Fix the ring")
+        #expect(run.project?.path == "/Users/someone/Pulse")
+        #expect(run.name == "session_0001")
+    }
+
+    @Test("A request in both Kimi stores is counted once, from Kimi Code's copy")
+    func kimiStoresDoNotDoubleCount() throws {
+        let root = try Self.temporary("kimi-both")
+        defer { try? FileManager.default.removeItem(at: root) }
+        let legacy = root.appending(path: "kimi/sessions")
+        let code = root.appending(path: "kimi-code/sessions")
+        let legacyRun = legacy.appending(path: "hash/uuid")
+        let codeRun = code.appending(path: "wd_pulse_0123456789ab/session_uuid/agents/main")
+        for directory in [legacyRun, codeRun] {
+            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        }
+
+        // The same request, migrated: seconds with a fraction in the legacy
+        // log, milliseconds in Kimi Code's. A second, different request stays
+        // only in the legacy store.
+        let legacyLines = [
+            #"{"timestamp":1789372800.25,"message":{"payload":{"token_usage":{"input_other":100,"output":15,"input_cache_read":300,"input_cache_creation":20}}}}"#,
+            #"{"timestamp":1789372900.5,"message":{"payload":{"token_usage":{"input_other":7,"output":1,"input_cache_read":0,"input_cache_creation":0}}}}"#,
+        ]
+        try legacyLines.joined(separator: "\n")
+            .write(to: legacyRun.appending(path: "wire.jsonl"), atomically: true, encoding: .utf8)
+        try Self.kimiCodeRequest(ms: 1_789_372_800_250, model: "kimi-code/priced", agent: "main", fresh: 100)
+            .write(to: codeRun.appending(path: "wire.jsonl"), atomically: true, encoding: .utf8)
+
+        let ledger = KimiCLIStore.ledger(at: [legacy, code], prices: Self.prices)
+        let tally = ledger.days.reduce(TokenTally()) { $0 + $1.tally }
+        #expect(tally == TokenTally(input: 107, cacheWrite: 20, cacheRead: 300, output: 16))
+        #expect(ledger.sessions.map(\.tokens).sorted() == [8, 435])
+        // The shared request is priced from Kimi Code's model, and only the
+        // legacy-only request is unpriced.
+        #expect(ledger.sessions.reduce(0) { $0 + $1.unpricedTokens } == 8)
+    }
+
+    @Test("Kimi's roots are the legacy store and Kimi Code's, which `KIMI_CODE_HOME` moves")
+    func kimiRoots() {
+        let home = URL(fileURLWithPath: "/tmp/pulse-home")
+        #expect(SpendAgent.kimiCLI.inputs(home: home, environment: ["KIMI_CODE_HOME": "/custom/kimi"])
+            == [home.appending(path: ".kimi/sessions"), URL(fileURLWithPath: "/custom/kimi/sessions")])
+        #expect(SpendAgent.kimiCLI.inputs(home: home, environment: ["KIMI_CODE_HOME": "  "])
+            == [home.appending(path: ".kimi/sessions"), home.appending(path: ".kimi-code/sessions")])
+    }
+
     // MARK: - Nothing to read
 
     @Test("A store that is not there is not an empty account")

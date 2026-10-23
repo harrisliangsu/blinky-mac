@@ -143,7 +143,7 @@ struct SpendAgentCatalogTests {
         #expect(SpendAgent.grok.inputs(home: home, environment: [:])
             == [home.appending(path: ".grok/sessions")])
         #expect(SpendAgent.kimiCLI.inputs(home: home, environment: [:])
-            == [home.appending(path: ".kimi/sessions")])
+            == [home.appending(path: ".kimi/sessions"), home.appending(path: ".kimi-code/sessions")])
         #expect(SpendAgent.devinCLI.inputs(home: home, environment: [:])
             == [home.appending(path: ".local/share/devin/cli/sessions.db")])
     }

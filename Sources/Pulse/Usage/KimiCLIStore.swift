@@ -1,7 +1,10 @@
 // Copyright (c) 2026 qunqin24. Licensed under the Apache License, Version 2.0.
 import Foundation
 
-/// Kimi's CLI, which writes the raw exchange to `wire.jsonl`.
+/// Kimi's CLI and its successor Kimi Code, which both write the raw exchange
+/// to `wire.jsonl` — in two different shapes, told apart line by line.
+///
+/// **The legacy Kimi CLI** (`~/.kimi/sessions/<hash>/<uuid>/wire.jsonl`):
 ///
 /// ```json
 /// { "timestamp": …,
@@ -10,101 +13,211 @@ import Foundation
 ///     "input_cache_read": 9216, "input_cache_creation": 0 } } } }
 /// ```
 ///
-/// **`input_other` is fresh input**, as the name says: the cache figures are
-/// counted beside it rather than inside it, which is the same arrangement
-/// Claude Code uses and the opposite of Codex's.
-///
-/// **It names no model, anywhere.** Neither the wire log nor the session state
+/// It names no model, anywhere. Neither the wire log nor the session state
 /// carries one, so its tokens are counted and never costed — the same answer
 /// Pulse gives for any model with no published price, arrived at one step
-/// earlier. The id below is a placeholder so the buckets have a key, and is
+/// earlier. `unnamedModel` is a placeholder so the buckets have a key, and is
 /// deliberately one no price list can match.
+///
+/// **Kimi Code** (`~/.kimi-code/sessions/wd_<project>_<hash>/session_<uuid>/
+/// agents/<agent>/wire.jsonl`, one log for `main` and one per subagent):
+///
+/// ```json
+/// { "type": "usage.record", "time": 1789699677719, "agentId": "main",
+///   "model": "kimi-code/k3-256k", "usageScope": "turn",
+///   "usage": { "inputOther": 4340, "output": 38,
+///              "inputCacheRead": 9216, "inputCacheCreation": 0 } }
+/// ```
+///
+/// **Every request is written three times**: as this `usage.record`, as the
+/// `step.end` event's `event.usage`, and as the assistant message's
+/// `meta.usage`, with identical counts — checked on a real store, line for
+/// line. Only `usage.record` is counted: it is the one that names the model.
+/// The model is `<provider>/<id>`, where the provider is the user's own
+/// configured name for an endpoint, so the prefix is dropped before pricing
+/// (`EditorLog.modelID`). `kimi-for-coding` is the plan's moving alias for
+/// whatever Kimi currently serves on it and stays unpriced.
+///
+/// **`input_other` / `inputOther` is fresh input**, as the name says: the
+/// cache figures are counted beside it rather than inside it, which is the
+/// same arrangement Claude Code uses and the opposite of Codex's.
+///
+/// **A request found in both stores is counted once**, from Kimi Code's copy,
+/// which names the model. Kimi Code's migrator can carry sessions over from
+/// the legacy store; the key is the request's second and its four counts.
 enum KimiCLIStore {
+    static let unnamedModel = "kimi (unnamed)"
+
     static func ledger(at root: URL, prices: [String: ModelPrice]) -> UsageLedger {
+        ledger(at: [root], prices: prices)
+    }
+
+    static func ledger(at roots: [URL], prices: [String: ModelPrice]) -> UsageLedger {
         var lookup = ModelPriceLookup(prices)
-        var buckets: [String: [String: TokenTally]] = [:]
-        var sessions: [UsageLedger.Session] = []
+        var requests: [Request] = []
 
-        for file in AgentLogIO.files(in: [root], names: ["wire.jsonl"]) {
+        for file in AgentLogIO.files(in: roots, names: ["wire.jsonl"]) {
             guard !Task.isCancelled else { return .empty }
-
-            var tokens = 0
-            var cost = 0.0
-            var unpricedTokens = 0
-            var first: Date?
-            var last: Date?
-            var sessionSlots: [String: (tokens: Int, cost: Double, unpriced: Int)] = [:]
-            let model = "kimi (unnamed)"
-
-            for root in AgentLogIO.jsonLines(at: file) {
-                guard let message = root["message"] as? [String: Any],
-                      let payload = message["payload"] as? [String: Any]
-                else { continue }
-
-                guard let usage = payload["token_usage"] as? [String: Any] else { continue }
-
-                let tally = TokenTally(
-                    input: int(usage["input_other"]),
-                    cacheWrite: int(usage["input_cache_creation"]),
-                    cacheRead: int(usage["input_cache_read"]),
-                    output: int(usage["output"])
-                )
-                guard tally.total > 0 else { continue }
-
-                let seconds = (root["timestamp"] as? Double)
-                    ?? (root["timestamp"] as? Int).map(Double.init)
-                    ?? 0
-                guard seconds > 0 else { continue }
-
-                let at = Date(timeIntervalSince1970: seconds > 10_000_000_000 ? seconds / 1000 : seconds)
-                first = min(first ?? at, at)
-                last = max(last ?? at, at)
-
-                let key = UsageLedgerReader.slotKey(for: at)
-                let price = lookup.price(for: model)
-                let money = price.map { tally.cost(at: $0) } ?? 0
-                let unpriced = price == nil ? tally.total : 0
-                buckets[key, default: [:]][model] = (buckets[key]?[model] ?? TokenTally()) + tally
-                tokens += tally.total
-                cost += money
-                unpricedTokens += unpriced
-
-                var slot = sessionSlots[key] ?? (tokens: 0, cost: 0, unpriced: 0)
-                slot.tokens += tally.total
-                slot.cost += money
-                slot.unpriced += unpriced
-                sessionSlots[key] = slot
+            for line in AgentLogIO.jsonLines(at: file) {
+                if let request = Self.request(in: line, file: file) { requests.append(request) }
             }
+        }
 
-            guard tokens > 0, let first, let last else { continue }
-            sessions.append(
-                UsageLedger.Session(
-                    id: file.path,
-                    name: file.deletingLastPathComponent().lastPathComponent,
-                    // The session's own state file keeps the title beside the
-                    // wire log. Neither carries a working directory.
-                    title: Self.title(besideWire: file),
-                    project: nil,
-                    start: first, end: last, tokens: tokens, cost: cost, unpricedTokens: unpricedTokens,
-                    slots: UsageLedgerReader.sessionSlots(sessionSlots)
-                )
-            )
+        let migrated = Set(requests.lazy.filter { !$0.legacy }.map(\.identity))
+        var buckets: [String: [String: TokenTally]] = [:]
+        var runs: [URL: Run] = [:]
+
+        for request in requests where !request.legacy || !migrated.contains(request.identity) {
+            let key = UsageLedgerReader.slotKey(for: request.at)
+            let price = lookup.price(for: request.model)
+            let money = price.map { request.tally.cost(at: $0) } ?? 0
+            let unpriced = price == nil ? request.tally.total : 0
+            buckets[key, default: [:]][request.model] =
+                (buckets[key]?[request.model] ?? TokenTally()) + request.tally
+
+            var run = runs[request.session] ?? Run(legacy: request.legacy)
+            run.tokens += request.tally.total
+            run.cost += money
+            run.unpriced += unpriced
+            run.first = min(run.first ?? request.at, request.at)
+            run.last = max(run.last ?? request.at, request.at)
+            var slot = run.slots[key] ?? (tokens: 0, cost: 0, unpriced: 0)
+            slot.tokens += request.tally.total
+            slot.cost += money
+            slot.unpriced += unpriced
+            run.slots[key] = slot
+            runs[request.session] = run
         }
 
         guard !buckets.isEmpty else { return .empty }
+        var workspaces: [URL: [String: String]] = [:]
+        let sessions = runs.compactMap { directory, run -> UsageLedger.Session? in
+            guard run.tokens > 0, let first = run.first, let last = run.last else { return nil }
+            let state = Self.state(in: directory)
+            let project: UsageProject?
+            if run.legacy {
+                // Neither the legacy wire log nor its state carries a working
+                // directory.
+                project = nil
+            } else {
+                let bucket = directory.deletingLastPathComponent()
+                let home = bucket.deletingLastPathComponent().deletingLastPathComponent()
+                if workspaces[home] == nil { workspaces[home] = Self.workspaces(in: home) }
+                project = UsageProject(state?["cwd"] as? String)
+                    ?? UsageProject(workspaces[home]?[bucket.lastPathComponent])
+            }
+            return UsageLedger.Session(
+                // The legacy store keeps one log per session and has always
+                // been keyed by it; Kimi Code's session is the directory that
+                // holds its agents' logs.
+                id: run.legacy ? directory.appending(path: "wire.jsonl").path : directory.path,
+                name: directory.lastPathComponent,
+                title: Self.title(in: state, legacy: run.legacy),
+                project: project,
+                start: first, end: last, tokens: run.tokens, cost: run.cost, unpricedTokens: run.unpriced,
+                slots: UsageLedgerReader.sessionSlots(run.slots)
+            )
+        }
+
         var ledger = UsageLedgerReader.price(buckets, with: prices)
         ledger.sessions = sessions.sorted { $0.end > $1.end }
         return ledger
     }
 
-    private static func title(besideWire file: URL) -> String? {
-        let state = file.deletingLastPathComponent().appending(path: "state.json")
-        guard
-            let data = try? Data(contentsOf: state),
-            let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-            let custom = root["custom_title"] as? String
+    // MARK: - Lines
+
+    private struct Request {
+        let at: Date
+        let tally: TokenTally
+        let model: String
+        let legacy: Bool
+        /// The session directory the request belongs to.
+        let session: URL
+
+        /// What makes two copies of one request the same request.
+        var identity: String {
+            "\(Int(at.timeIntervalSince1970.rounded(.down)))|\(tally.input)|\(tally.cacheWrite)|\(tally.cacheRead)|\(tally.output)"
+        }
+    }
+
+    private struct Run {
+        let legacy: Bool
+        var tokens = 0
+        var cost = 0.0
+        var unpriced = 0
+        var first: Date?
+        var last: Date?
+        var slots: [String: (tokens: Int, cost: Double, unpriced: Int)] = [:]
+    }
+
+    private static func request(in line: [String: Any], file: URL) -> Request? {
+        let parent = file.deletingLastPathComponent()
+
+        if line["type"] as? String == "usage.record" {
+            guard let usage = line["usage"] as? [String: Any] else { return nil }
+            let tally = TokenTally(
+                input: int(usage["inputOther"]),
+                cacheWrite: int(usage["inputCacheCreation"]),
+                cacheRead: int(usage["inputCacheRead"]),
+                output: int(usage["output"])
+            )
+            guard tally.total > 0, let at = date(line["time"]) else { return nil }
+            // `session_<uuid>/agents/<agent>/wire.jsonl`; a log anywhere else
+            // is its own session.
+            let agents = parent.deletingLastPathComponent()
+            let session = agents.lastPathComponent == "agents" ? agents.deletingLastPathComponent() : parent
+            return Request(
+                at: at, tally: tally,
+                model: EditorLog.modelID(line["model"] as? String) ?? unnamedModel,
+                legacy: false, session: session
+            )
+        }
+
+        guard let message = line["message"] as? [String: Any],
+              let payload = message["payload"] as? [String: Any],
+              let usage = payload["token_usage"] as? [String: Any]
         else { return nil }
-        return UsageLedgerReader.title(from: custom)
+        let tally = TokenTally(
+            input: int(usage["input_other"]),
+            cacheWrite: int(usage["input_cache_creation"]),
+            cacheRead: int(usage["input_cache_read"]),
+            output: int(usage["output"])
+        )
+        guard tally.total > 0, let at = date(line["timestamp"]) else { return nil }
+        return Request(at: at, tally: tally, model: unnamedModel, legacy: true, session: parent)
+    }
+
+    /// Seconds in the legacy log, milliseconds in Kimi Code's; told apart by
+    /// size, since no date this century reaches ten billion seconds.
+    private static func date(_ value: Any?) -> Date? {
+        let seconds = (value as? Double) ?? (value as? Int).map(Double.init) ?? 0
+        guard seconds > 0 else { return nil }
+        return Date(timeIntervalSince1970: seconds > 10_000_000_000 ? seconds / 1000 : seconds)
+    }
+
+    // MARK: - Session state
+
+    private static func state(in directory: URL) -> [String: Any]? {
+        guard let data = try? Data(contentsOf: directory.appending(path: "state.json")) else { return nil }
+        return (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+    }
+
+    /// The legacy state keeps only a title the user set; Kimi Code's keeps the
+    /// title its own session list shows.
+    private static func title(in state: [String: Any]?, legacy: Bool) -> String? {
+        guard let text = state?[legacy ? "custom_title" : "title"] as? String else { return nil }
+        return UsageLedgerReader.title(from: text)
+    }
+
+    /// Kimi Code's `workspaces.json`: each `wd_…` session bucket's folder, for
+    /// a session whose state does not name its own.
+    private static func workspaces(in home: URL) -> [String: String] {
+        guard
+            let data = try? Data(contentsOf: home.appending(path: "workspaces.json")),
+            let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+            let entries = root["workspaces"] as? [String: [String: Any]]
+        else { return [:] }
+        return entries.compactMapValues { $0["root"] as? String }
     }
 
     private static func int(_ value: Any?) -> Int {
