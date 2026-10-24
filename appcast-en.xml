@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.14</title>
-            <pubDate>Sat, 24 Oct 2026 17:54:59 -0000</pubDate>
-            <sparkle:version>1.5.14</sparkle:version>
-            <sparkle:shortVersionString>1.5.14</sparkle:shortVersionString>
+            <title>1.5.15</title>
+            <pubDate>Sat, 24 Oct 2026 21:16:50 -0000</pubDate>
+            <sparkle:version>1.5.15</sparkle:version>
+            <sparkle:shortVersionString>1.5.15</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.14</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.15</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.14</h2><ul><li><strong>Token spend opens beside the usage card.</strong> The time range, the agent and model lists, Token activity, and a model&#x27;s details are in that window, Settings → Token spend keeps Read local usage records and the Usage recaps Open button, and a new install starts on Today. <a href="https://github.com/harrisliangsu/blinky-mac/pull/75">#75</a></li><li><strong>Share copies what the window is showing.</strong> Share places an image of the visible total and lists on the clipboard, and the confirmation appears over the window so the lists stay where they are. <a href="https://github.com/harrisliangsu/blinky-mac/pull/75">#75</a></li><li><strong>The Token spend button appears only while reading is on.</strong> The chart button in the usage card&#x27;s header is absent while Read local usage records is off, and the first click after Blinky launches opens the window. <a href="https://github.com/harrisliangsu/blinky-mac/pull/75">#75</a></li><li><strong>The main window opens in front.</strong> The grid icon on the usage card, the Dock, and a launch from Launchpad or Spotlight bring the main window in front of other apps. <a href="https://github.com/harrisliangsu/blinky-mac/pull/75">#75</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.14">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.14/Blinky-1.5.14.zip"
-                       length="22589296"
+</style><h2>Blinky 1.5.15</h2><ul><li><strong>Install silently installs and relaunches.</strong> With Settings → About → When an update is found set to Install silently, a scheduled check downloads the update, installs it, and opens Blinky again, without waiting for Blinky to quit. Check now still opens the update window. <a href="https://github.com/harrisliangsu/blinky-mac/pull/76">#76</a></li><li><strong>Opening the main window makes Blinky the frontmost app.</strong> The grid icon on the usage card, the Dock, and a launch from Launchpad or Spotlight put Blinky&#x27;s name in the menu bar. <a href="https://github.com/harrisliangsu/blinky-mac/pull/76">#76</a></li><li><strong>The Token window closes when you click outside it.</strong> Escape and the close button still close it. A click on its menu does not. <a href="https://github.com/harrisliangsu/blinky-mac/pull/76">#76</a></li><li><strong>The Token window lists one breakdown at a time.</strong> Token activity comes first, then the usage rhythm, then a menu for By model, By agent, By project, or By session. A new install starts on By model, and the choice is remembered. The rhythm&#x27;s figures spread across the row. The token total and the estimate under it are centered. &quot;No usage data read&quot; stays, in smaller secondary type. <a href="https://github.com/harrisliangsu/blinky-mac/pull/76">#76</a></li><li><strong>Zhipu and z.ai show 5-hour and weekly reset cards.</strong> The usage card lists each kind the way Codex lists limit reset credits, including how many are left. <a href="https://github.com/harrisliangsu/blinky-mac/pull/76">#76</a></li><li><strong>A reset card is used only after you confirm.</strong> On the Codex, Zhipu, or z.ai usage card, Use asks first and spends one card only when you confirm. <a href="https://github.com/harrisliangsu/blinky-mac/pull/76">#76</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.15">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.15/Blinky-1.5.15.zip"
+                       length="22710061"
                        type="application/octet-stream"
-                       sparkle:edSignature="c5fYRk00AViVpXwNeU6F1Z+nSX9WqnseAcTFJc8ugbi6U3NjKke0rFCL1GT1egUzzNB0yd3F1wPTLZxN7L2oCw==" />
+                       sparkle:edSignature="vntkK5cWz+MaK3DYHzY9WxtHnSjrRE2Qg/HgsNswefQMbOUUPT1gWV6RI4+1sCDc4eLlZbT3nC8aweDtXoB9Cw==" />
         </item>
     </channel>
 </rss>

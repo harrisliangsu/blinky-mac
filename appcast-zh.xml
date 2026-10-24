@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.14</title>
-            <pubDate>Sat, 24 Oct 2026 17:54:59 -0000</pubDate>
-            <sparkle:version>1.5.14</sparkle:version>
-            <sparkle:shortVersionString>1.5.14</sparkle:shortVersionString>
+            <title>1.5.15</title>
+            <pubDate>Sat, 24 Oct 2026 21:16:50 -0000</pubDate>
+            <sparkle:version>1.5.15</sparkle:version>
+            <sparkle:shortVersionString>1.5.15</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.14</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.15</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.14</h2><ul><li><strong>Token 消耗改在用量卡片旁边的窗口里看。</strong> 时间范围、Agent 和模型列表、Token 活动以及某个模型的明细都在这扇窗口里，设置里的「Token 消耗」只保留「读取本机用量记录」和用量报告的「打开」，新安装从今天开始统计。<a href="https://github.com/harrisliangsu/blinky-mac/pull/75">#75</a></li><li><strong>分享复制的是窗口上正在显示的内容。</strong> 分享会把可见的合计和列表做成图片放到剪贴板，确认显示在窗口上方，列表留在原处。<a href="https://github.com/harrisliangsu/blinky-mac/pull/75">#75</a></li><li><strong>只有开启「读取本机用量记录」时，标题栏才显示 Token 消耗按钮。</strong> 关闭这项读取后，用量卡片标题栏上的图表按钮不会出现，Blinky 启动后的第一次点击也会打开这扇窗口。<a href="https://github.com/harrisliangsu/blinky-mac/pull/75">#75</a></li><li><strong>主窗口会打开到其他应用前面。</strong> 用量卡片上的四格图标、Dock，以及从启动台或 Spotlight 启动，都会把主窗口放到最前面。<a href="https://github.com/harrisliangsu/blinky-mac/pull/75">#75</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.14">在 GitHub 查看更新说明</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.14/Blinky-1.5.14.zip"
-                       length="22589296"
+</style><h2>Blinky 1.5.15</h2><ul><li><strong>自动安装会在下载完成后安装并重新打开 Blinky。</strong> 在「设置 → 关于 → 发现更新时」选择「自动安装」后，定时检查会下载更新、安装，并重新打开 Blinky，不必先退出。现在检查仍会打开更新窗口。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/76">#76</a></li><li><strong>打开主窗口后，Blinky 成为最前面的应用。</strong> 用量卡片上的四格图标、Dock，以及从启动台或 Spotlight 启动，都会让菜单栏显示 Blinky。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/76">#76</a></li><li><strong>在 Token 窗口外点击会关闭它。</strong> Esc 和关闭按钮仍可关闭。点击窗口自己的菜单不会关闭。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/76">#76</a></li><li><strong>Token 窗口一次只列出一种划分。</strong> 先是 Token 活动，然后是使用节奏，再是划分方式菜单，可选按模型、按 Agent、按项目或按会话。新安装默认按模型，这个选择会被记住。使用节奏的数字在整行均匀排列。Token 合计和下面的费用估算居中。「未读取到用量」仍在，字号更小、颜色更淡。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/76">#76</a></li><li><strong>智谱和 z.ai 会显示 5 小时重置券和每周重置券。</strong> 用量卡片分别列出这两种券，方式和 Codex 列出额度重置券相同，并写出还剩几张。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/76">#76</a></li><li><strong>使用重置券前会先确认。</strong> 在 Codex、智谱或 z.ai 的用量卡片上，点使用只是询问，确认之后才会用掉一张。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/76">#76</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.15">在 GitHub 查看更新说明</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.15/Blinky-1.5.15.zip"
+                       length="22710061"
                        type="application/octet-stream"
-                       sparkle:edSignature="c5fYRk00AViVpXwNeU6F1Z+nSX9WqnseAcTFJc8ugbi6U3NjKke0rFCL1GT1egUzzNB0yd3F1wPTLZxN7L2oCw==" />
+                       sparkle:edSignature="vntkK5cWz+MaK3DYHzY9WxtHnSjrRE2Qg/HgsNswefQMbOUUPT1gWV6RI4+1sCDc4eLlZbT3nC8aweDtXoB9Cw==" />
         </item>
     </channel>
 </rss>
