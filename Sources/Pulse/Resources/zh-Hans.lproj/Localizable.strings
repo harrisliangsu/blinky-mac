@@ -1401,7 +1401,7 @@
 "Notify if it will not last until the reset" = "撑不到重置时通知";
 "The card's forecast and the exhaustion notifications both use this list." = "卡片上的用尽预估和用尽通知都按这份名单。";
 "Install silently" = "自动安装";
-"A scheduled check downloads the update and installs it the next time Blinky quits, with no notification and no update window. Check now still opens the window." = "定时检查会下载更新，并在下次退出 Blinky 时安装，不发通知，也不打开更新窗口。现在检查仍会打开窗口。";
+"A scheduled check downloads the update, installs it, and relaunches Blinky, with no notification and no update window. Check now still opens the window." = "定时检查会下载更新，安装后重新打开 Blinky，不发通知，也不打开更新窗口。现在检查仍会打开窗口。";
 "Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking." = "每两小时一次。下面的选项决定是通知、打开更新窗口，还是直接安装。";
 "By hour" = "按小时";
 "Copied to the clipboard." = "已复制到剪贴板。";
@@ -1429,3 +1429,24 @@
 "Each part also shows the credits, such as 5,843 / 6,000. The rings keep their percentages." = "每一部分同时写出积分数，例如 5,843 / 6,000。圆环仍显示百分比。";
 "Sends a separate notice when the current pace will not last until the reset, on that same limit." = "按当前速度撑不到重置时，另发一次，并且只针对同一条限额。";
 "Each stage notifies once, at its own hours left, on that same limit. A new install starts with 24 hours." = "每一档通知一次，按各自的剩余小时，并且只针对同一条限额。新安装从 24 小时开始。";
+
+/* 1.5.15 */
+"Break down by" = "划分方式";
+"5-hour reset cards" = "5 小时重置券";
+"Weekly reset cards" = "每周重置券";
+"Use a 5-hour reset card" = "使用一张 5 小时重置券";
+"Use a weekly reset card" = "使用一张每周重置券";
+"Use a Codex reset card" = "使用一张 Codex 额度重置券";
+"Use this card" = "使用这张";
+"Use one 5-hour reset card?" = "要使用一张 5 小时重置券吗？";
+"The 5-hour quota returns to full, and its next reset is counted from now." = "5 小时额度会恢复为全额，下次重置从现在起算。";
+"Use one weekly reset card?" = "要使用一张每周重置券吗？";
+"The weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "每周额度会恢复为全额，5 小时额度一并恢复，两段重置都从现在起算。";
+"Use one Codex reset card?" = "要使用一张 Codex 额度重置券吗？";
+"Codex resets the limits this card covers." = "Codex 会重置这张券对应的额度。";
+"The reset card was used." = "已使用这张重置券。";
+"No reset card is available." = "没有可用的重置券。";
+"Nothing to reset." = "没有需要重置的额度。";
+"That reset card was already used." = "这张重置券已经使用过。";
+"Could not use the reset card." = "未能使用这张重置券。";
+"Could not use the reset card here. The console is open so you can use it there." = "这里未能使用这张重置券。控制台已打开，可以在那里使用。";

@@ -524,7 +524,7 @@ struct SpendGlanceTests {
         let sessions = SpendGlance.rows(summary, dimension: .session)
         #expect(sessions.map(\.name) == ["Newer chat", "Untitled conversation"])
         #expect(sessions.map(\.share).contains(1))
-        #expect(SpendGlanceDimension.default == .agent)
+        #expect(SpendGlanceDimension.default == .model)
 
         let picture = SpendGlancePicture.make(
             span: .week,
@@ -607,10 +607,13 @@ struct SpendGlanceTests {
         let defaults = UserDefaults(suiteName: name)!
         defer { defaults.removePersistentDomain(forName: name) }
         let settings = AppSettings(defaults: defaults)
-        #expect(settings.spendGlanceDimension == .agent)
+        #expect(settings.spendGlanceDimension == .model)
+        defaults.set("agent", forKey: "settings.spendGlanceDimension")
+        let kept = AppSettings.restoredSettings(from: defaults, detected: [], scan: ExtensionCatalog.Scan())
+        #expect(kept.spendGlanceDimension == .agent)
         defaults.set("nope", forKey: "settings.spendGlanceDimension")
         let back = AppSettings.restoredSettings(from: defaults, detected: [], scan: ExtensionCatalog.Scan())
-        #expect(back.spendGlanceDimension == .agent)
+        #expect(back.spendGlanceDimension == .model)
         let model = SpendGlanceModel(settings: settings)
         model.noteCopied(hold: .milliseconds(30))
         #expect(model.didCopy)
@@ -671,6 +674,42 @@ struct SpendGlanceTests {
         #expect(!SpendGlanceDismissal.claimsCloseClick(buttonBounds: .null, pointInButton: CGPoint(x: 1, y: 1)))
     }
 
+    @Test("The glance lists activity, then the rhythm, then one breakdown")
+    func glanceOrder() {
+        #expect(TokenGlanceSection.order == [.tokenActivity, .usageRhythm, .dimension])
+        #expect(UsageRhythm.metricKeys(hoursComplete: true, hasPeakHour: true, hasModel: true) == [
+            "Current streak", "Longest streak", "Peak hour", "Most tokens",
+        ])
+        #expect(UsageRhythm.metricKeys(hoursComplete: false, hasPeakHour: true, hasModel: false) == [
+            "Current streak", "Longest streak",
+        ])
+        #expect(UsageRhythm.metricKeys(hoursComplete: true, hasPeakHour: false, hasModel: true) == [
+            "Current streak", "Longest streak", "Most tokens",
+        ])
+        #expect(UsageRhythm.spreadsAcrossTheRow)
+        #expect(SpendGlanceHeadline.centersFigures)
+        #expect(!SpendQuietCopy.isPrimary)
+        #expect(SpendQuietCopy.pointSize < SpendGlanceHeadline.tokenPointSize)
+
+        let frame = CGRect(x: 100, y: 100, width: 200, height: 200)
+        let entry = CGRect(x: 40, y: 40, width: 20, height: 20)
+        #expect(SpendGlanceOutsideClick.shouldClose(
+            point: CGPoint(x: 10, y: 10), windowFrame: frame, entryRect: entry, auxiliary: false
+        ))
+        #expect(!SpendGlanceOutsideClick.shouldClose(
+            point: CGPoint(x: 150, y: 150), windowFrame: frame, entryRect: entry, auxiliary: false
+        ))
+        #expect(!SpendGlanceOutsideClick.shouldClose(
+            point: CGPoint(x: 45, y: 45), windowFrame: frame, entryRect: entry, auxiliary: false
+        ))
+        #expect(!SpendGlanceOutsideClick.shouldClose(
+            point: CGPoint(x: 10, y: 10), windowFrame: frame, entryRect: entry, auxiliary: true
+        ))
+        #expect(SpendGlanceOutsideClick.shouldClose(
+            point: CGPoint(x: 10, y: 10), windowFrame: frame, entryRect: .null, auxiliary: false
+        ))
+    }
+
     private static func picture(
         summary: SpendSummary = SpendSummary(),
         activity: SpendGlanceActivity = SpendGlanceActivity(),
@@ -684,6 +723,7 @@ struct SpendGlanceTests {
             activity: activity,
             observedAt: observedAt,
             hasReadLimitations: limitations,
+            dimension: .agent,
             now: today,
             calendar: calendar,
             locale: englishLocale,

@@ -145,8 +145,8 @@ struct AppSettingsPersistenceTests {
         #expect(defaults.string(forKey: "settings.spendSpan") == "quarter")
         settings.spendActivityView = .weekly
         #expect(defaults.string(forKey: "settings.spendActivityView") == "weekly")
-        settings.spendGlanceDimension = .model
-        #expect(defaults.string(forKey: "settings.spendGlanceDimension") == "model")
+        settings.spendGlanceDimension = .agent
+        #expect(defaults.string(forKey: "settings.spendGlanceDimension") == "agent")
 
         settings.alertThreshold = .ninetyFive
         #expect(defaults.object(forKey: "settings.alertThreshold") as? Int == 95)

@@ -7,15 +7,15 @@ import Foundation
 /// Arithmetic over a snapshot the pane already holds. Nothing here opens a
 /// store: the window asks `AgentLedgers` for the scan it kept, and only
 /// Refresh reads again.
-/// Which breakdown the glance lists under the total. The Settings page shows
-/// all four at once; this window switches. Agent is the shipped list.
+/// Which breakdown the glance lists under the rhythm. The window shows one
+/// of the four. Model is the shipped list; a stored choice is left as it is.
 enum SpendGlanceDimension: String, CaseIterable, Identifiable, Sendable {
     case model
     case agent
     case project
     case session
 
-    static let `default` = SpendGlanceDimension.agent
+    static let `default` = SpendGlanceDimension.model
 
     var id: String { rawValue }
 
@@ -32,12 +32,41 @@ enum SpendGlanceDimension: String, CaseIterable, Identifiable, Sendable {
 }
 
 /// How large the glance writes the two headline figures. Tokens stay the
-/// large one whether or not a cost was priced.
+/// large one whether or not a cost was priced. Both are centered.
 enum SpendGlanceHeadline {
     static let tokenPointSize: CGFloat = 28
     static let moneyPointSize: CGFloat = 15
     static let posterTokenPointSize: CGFloat = 40
     static let posterMoneyPointSize: CGFloat = 22
+    static let centersFigures = true
+}
+
+/// The glance body, top to bottom, under the span picker.
+enum TokenGlanceSection: String, CaseIterable, Equatable, Hashable, Sendable {
+    case tokenActivity
+    case usageRhythm
+    case dimension
+
+    static let order: [TokenGlanceSection] = [.tokenActivity, .usageRhythm, .dimension]
+}
+
+/// The Pattern row. The four captions already on that row, spread across it.
+enum UsageRhythm {
+    static let spreadsAcrossTheRow = true
+
+    static func metricKeys(hoursComplete: Bool, hasPeakHour: Bool, hasModel: Bool) -> [String] {
+        var keys = ["Current streak", "Longest streak"]
+        if hoursComplete && hasPeakHour { keys.append("Peak hour") }
+        if hasModel { keys.append("Most tokens") }
+        return keys
+    }
+}
+
+/// "No usage data read" and the other sentences that say nothing was measured.
+/// They stay on the page, and they are not the page's headline.
+enum SpendQuietCopy {
+    static let isPrimary = false
+    static let pointSize: CGFloat = 11
 }
 
 /// How long the copied confirmation stays up. A test can pass a shorter one.
@@ -549,7 +578,7 @@ struct SpendGlancePicture: Equatable, Sendable {
         activity: SpendGlanceActivity,
         observedAt: Date?,
         hasReadLimitations: Bool,
-        dimension: SpendGlanceDimension = .agent,
+        dimension: SpendGlanceDimension = .default,
         now: Date = Date(),
         calendar: Calendar = .current,
         locale: Locale = LocalizationSource.locale,

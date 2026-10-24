@@ -268,6 +268,28 @@ struct UpdateAnnouncementTests {
         #expect(UpdateAnnouncement.automaticallyDownloadsUpdates(for: .installSilently))
         #expect(!UpdateAnnouncement.automaticallyDownloadsUpdates(for: .notifyFirst))
         #expect(!UpdateAnnouncement.automaticallyDownloadsUpdates(for: .showWindow))
+        #expect(UpdateAnnouncement.installsImmediately(for: .installSilently))
+        #expect(!UpdateAnnouncement.installsImmediately(for: .notifyFirst))
+        #expect(!UpdateAnnouncement.installsImmediately(for: .showWindow))
+        var installed = false
+        var scheduled = false
+        let accepted = UpdateAnnouncement.immediateInstall(discovery: .installSilently, install: {
+            installed = true
+        }, schedule: { work in
+            scheduled = true
+            #expect(!installed)
+            work()
+        })
+        #expect(accepted)
+        #expect(scheduled)
+        #expect(installed)
+        let declined = UpdateAnnouncement.immediateInstall(discovery: .notifyFirst, install: {
+            installed = false
+        }, schedule: { _ in
+            Issue.record("Install silently is the only choice that installs now")
+        })
+        #expect(!declined)
+        #expect(installed)
         #expect(!SparkleAutomaticCheckbox.allowsSparkleAutomaticCheckbox)
         #expect(SparkleAutomaticCheckbox.buttonType(isBordered: false) == .switch)
         #expect(SparkleAutomaticCheckbox.buttonType(isBordered: true) == .momentaryPushIn)
@@ -321,7 +343,7 @@ struct UpdateAnnouncementTests {
             "A scheduled check posts a notification, and the update window opens when that notification is clicked. Check now still opens the window.",
             "A scheduled check opens the update window.",
             "Install silently",
-            "A scheduled check downloads the update and installs it the next time Blinky quits, with no notification and no update window. Check now still opens the window.",
+            "A scheduled check downloads the update, installs it, and relaunches Blinky, with no notification and no update window. Check now still opens the window.",
             "Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking.",
             "Open this notification to review and install it.",
         ]

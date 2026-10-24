@@ -111,8 +111,9 @@ extension AppSettings {
 
     static var spendActivityViewDefaultsKey: String { Key.spendActivityView }
 
-    /// The glance's breakdown, or By agent when nothing is stored or what is
-    /// stored no longer names one of the four.
+    /// The glance's breakdown, or By model when nothing is stored or what is
+    /// stored no longer names one of the four. A stored agent, project, or
+    /// session stays that choice.
     static func storedSpendGlanceDimension(in defaults: UserDefaults) -> SpendGlanceDimension {
         defaults.string(forKey: Key.spendGlanceDimension)
             .flatMap(SpendGlanceDimension.init(rawValue:)) ?? .default

@@ -28,7 +28,7 @@ import UserNotifications
 /// is what the menu bar shows. A scheduled find follows `UpdateDiscovery`:
 /// notify first posts a notification and leaves the window hidden until that
 /// notification is clicked; show the window is Sparkle's offer immediately;
-/// install silently downloads and installs the next time Blinky quits, with
+/// install silently downloads, then installs and relaunches, with
 /// no notification and no window. The decision is `UpdateAnnouncement`, which
 /// does not touch Sparkle. The one extra step when the offer window does show
 /// is activation: this process is an `.accessory` app, and Sparkle's own
@@ -132,6 +132,12 @@ final class AppUpdate {
         controller?.updater.automaticallyDownloadsUpdates = UpdateAnnouncement.automaticallyDownloadsUpdates(
             for: settings.updateDiscovery
         )
+    }
+
+    /// Install silently installs and relaunches when the download finishes.
+    /// The other choices leave that package until the reader installs it.
+    var installsDownloadedUpdateImmediately: Bool {
+        UpdateAnnouncement.installsImmediately(for: settings.updateDiscovery)
     }
 
     /// This fork's update files on GitHub. Upstream's `update.qunqin.org`
@@ -605,14 +611,32 @@ private final class UpdaterRelay: NSObject, SPUUpdaterDelegate, SPUStandardUserD
         MainActor.assumeIsolated { owner?.endUpdateSession() }
     }
 
-    /// Install silently finishes the next time Blinky quits. Returning true
-    /// would relaunch immediately, which a menu-bar app must not do.
+    /// Install silently installs and relaunches when the download finishes.
+    /// Returning true and running the block is that path. Returning false
+    /// waits until Blinky quits, which is every other choice: a menu-bar app
+    /// often never quits, and a downloaded package would then sit unused.
+    /// The block runs on the next turn so Sparkle can leave this delegate
+    /// before the install starts quitting the process.
     nonisolated func updater(
         _: SPUUpdater,
         willInstallUpdateOnQuit _: SUAppcastItem,
-        immediateInstallationBlock _: @escaping () -> Void
+        immediateInstallationBlock immediateInstallHandler: @escaping () -> Void
     ) -> Bool {
-        false
+        let installNow = MainActor.assumeIsolated {
+            owner?.installsDownloadedUpdateImmediately ?? false
+        }
+        // The block Sparkle hands over is not `Sendable`. The next main turn
+        // is the same isolation this process already runs on; the copy is
+        // only so the queue can take a `@Sendable` closure.
+        nonisolated(unsafe) let handler = immediateInstallHandler
+        return UpdateAnnouncement.immediateInstall(
+            discovery: installNow ? .installSilently : .notifyFirst,
+            install: handler,
+            schedule: { work in
+                nonisolated(unsafe) let scheduled = work
+                DispatchQueue.main.async { scheduled() }
+            }
+        )
     }
 }
 

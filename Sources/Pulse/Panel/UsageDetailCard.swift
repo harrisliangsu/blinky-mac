@@ -196,6 +196,11 @@ struct UsageDetailCard: View {
     /// Codex's limit reset credits, when its switch is on and it has been
     /// asked. Nil draws no row at all.
     var resetCredits: CodexResetCredits?
+    /// Zhipu or z.ai reset cards, when the list was reported. Nil draws nothing.
+    var zhipuResetCards: ZhipuResetInventory? = nil
+    /// Confirmed use. Nil draws the count and no button.
+    var redeemCodex: (() async -> ResetCardRedeemReport)? = nil
+    var redeemZhipu: ((ZhipuResetKind, String) async -> ResetCardRedeemReport)? = nil
     /// The detailed card: the plan, how far through each window the clock is
     /// and the account's recent activity. Set per account.
     var isDetailed = false
@@ -252,6 +257,10 @@ struct UsageDetailCard: View {
     /// the mark or grow the card, or the pointer's own enter and exit would
     /// chase each other.
     @State private var predictionNoteVisible = false
+    /// The first click only asks. Confirm is what sends.
+    @State private var resetPrompt = ResetCardPrompt.idle
+    @State private var resetReport: ResetCardRedeemReport?
+    @State private var resetBusy = false
     /// Height of the Predicted reset title row, so the note starts under it
     /// whether the countdown stayed on one line or wrapped beside the title.
     @State private var predictionHeaderHeight: CGFloat = DetailCardLayout.rowTextLineHeight
@@ -374,6 +383,16 @@ struct UsageDetailCard: View {
                 if let expiry = Self.resetCreditExpiryText(resetCredits) {
                     ValueRow(title: String.localized("Next expiry"), value: expiry)
                 }
+                codexRedeem(resetCredits)
+            }
+            if let zhipuResetCards {
+                zhipuResetRows(zhipuResetCards)
+            }
+            if let resetReport, resetPrompt == .idle {
+                Text(verbatim: resetReport.message)
+                    .font(.system(size: DetailCardLayout.footnoteFontSize, weight: .regular, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
             // An extension may report limits and money both — a relay's
@@ -456,12 +475,165 @@ struct UsageDetailCard: View {
     static func resetCreditsText(_ credits: CodexResetCredits) -> String {
         switch credits {
         case .available(let count, _):
-            count == 1 ? .localized("1 available") : .localized("\("\(count)") available")
+            availableCountText(count)
         case .unreported:
             .localized("Not available")
         case .codexMissing:
             .localized("codex not found")
         }
+    }
+
+    static func availableCountText(_ count: Int) -> String {
+        count == 1 ? .localized("1 available") : .localized("\("\(count)") available")
+    }
+
+    /// The first click records the ask. Confirm is the only action that sends.
+    private func applyReset(_ action: ResetCardPrompt.Action) {
+        let stepped = ResetCardPrompt.step(resetPrompt, action)
+        resetPrompt = stepped.prompt
+        guard let send = stepped.send, !resetBusy else { return }
+        resetReport = nil
+        resetBusy = true
+        Task {
+            let report: ResetCardRedeemReport
+            switch send {
+            case .codex:
+                report = await redeemCodex?() ?? .failed
+            case .zhipu(let kind, let cardID):
+                report = await redeemZhipu?(kind, cardID) ?? .failed
+            }
+            resetReport = report
+            resetBusy = false
+        }
+    }
+
+    @ViewBuilder
+    private func codexRedeem(_ credits: CodexResetCredits) -> some View {
+        if case .available(let count, _) = credits, count > 0, redeemCodex != nil {
+            resetAsk(
+                asking: resetPrompt == .confirmingCodex,
+                title: String.localized("Use a Codex reset card"),
+                question: String.localized("Use one Codex reset card?"),
+                detail: String.localized("Codex resets the limits this card covers."),
+                ask: .askCodex
+            )
+        }
+    }
+
+    @ViewBuilder
+    private func zhipuResetRows(_ inventory: ZhipuResetInventory) -> some View {
+        zhipuResetRow(.fiveHourCard, inventory: inventory)
+        zhipuResetRow(.weeklyCard, inventory: inventory)
+    }
+
+    @ViewBuilder
+    private func zhipuResetRow(_ kind: ZhipuResetKind, inventory: ZhipuResetInventory) -> some View {
+        let cards = inventory.cards(for: kind)
+        ValueRow(title: Self.zhipuKindTitle(kind), value: Self.availableCountText(cards.count))
+        if let soonest = inventory.soonest(kind) {
+            ValueRow(title: String.localized("Next expiry"), value: Self.expiryText(soonest.expiresAt))
+            if redeemZhipu != nil {
+                let asking: Bool = {
+                    if case .confirmingZhipu(kind, soonest.id) = resetPrompt { return true }
+                    return false
+                }()
+                resetAsk(
+                    asking: asking,
+                    title: Self.zhipuUseTitle(kind),
+                    question: Self.zhipuQuestion(kind),
+                    detail: Self.zhipuDetail(kind),
+                    ask: .askZhipu(kind, cardID: soonest.id)
+                )
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func resetAsk(
+        asking: Bool,
+        title: String,
+        question: String,
+        detail: String,
+        ask: ResetCardPrompt.Action
+    ) -> some View {
+        if asking {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(verbatim: question)
+                    .font(.system(size: DetailCardLayout.rowFontSize, weight: .medium, design: .rounded))
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(verbatim: detail)
+                    .font(.system(size: DetailCardLayout.footnoteFontSize, weight: .regular, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                HStack(spacing: 16) {
+                    resetPress(String.localized("Cancel")) { applyReset(.cancel) }
+                    resetPress(String.localized("Use this card")) { applyReset(.confirm) }
+                }
+            }
+        } else {
+            resetPress(title) {
+                resetReport = nil
+                applyReset(ask)
+            }
+        }
+    }
+
+    private func resetPress(_ title: String, action: @escaping () -> Void) -> some View {
+        Text(verbatim: title)
+            .font(.system(size: DetailCardLayout.rowFontSize, weight: .medium, design: .rounded))
+            .foregroundStyle(.primary.opacity(resetBusy ? 0.35 : 0.9))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+            .overlay {
+                PointerHand {
+                    guard !resetBusy else { return }
+                    action()
+                }
+            }
+            .accessibilityElement()
+            .accessibilityLabel(title)
+            .accessibilityAddTraits(.isButton)
+            .accessibilityAction(named: Text(verbatim: title)) {
+                guard !resetBusy else { return }
+                action()
+            }
+    }
+
+    static func zhipuKindTitle(_ kind: ZhipuResetKind) -> String {
+        switch kind {
+        case .fiveHourCard: String.localized("5-hour reset cards")
+        case .weeklyCard: String.localized("Weekly reset cards")
+        }
+    }
+
+    static func zhipuUseTitle(_ kind: ZhipuResetKind) -> String {
+        switch kind {
+        case .fiveHourCard: String.localized("Use a 5-hour reset card")
+        case .weeklyCard: String.localized("Use a weekly reset card")
+        }
+    }
+
+    static func zhipuQuestion(_ kind: ZhipuResetKind) -> String {
+        switch kind {
+        case .fiveHourCard: String.localized("Use one 5-hour reset card?")
+        case .weeklyCard: String.localized("Use one weekly reset card?")
+        }
+    }
+
+    static func zhipuDetail(_ kind: ZhipuResetKind) -> String {
+        switch kind {
+        case .fiveHourCard:
+            String.localized("The 5-hour quota returns to full, and its next reset is counted from now.")
+        case .weeklyCard:
+            String.localized("The weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now.")
+        }
+    }
+
+    static func expiryText(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = LocalizationSource.locale
+        formatter.setLocalizedDateFormatFromTemplate("yMMMdjmm")
+        return formatter.string(from: date)
     }
 
     /// A limit the next card has and this one did not waits for the card to

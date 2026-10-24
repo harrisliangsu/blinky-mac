@@ -80,23 +80,36 @@ struct ZaiUsageService: Sendable {
             return .unavailable(provider, reason: .apiKeyMissing)
         }
 
+        // The reset-card list is a second request. It starts with the quota
+        // call and is dropped when the quota itself fails, so a hung list
+        // cannot add its wait to an error the ring already has.
+        let cards = Task { await ZhipuResetCards.fetch(key: key, provider: provider) }
+
         var request = URLRequest(url: endpoint)
         request.setValue("Bearer \(key)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.timeoutInterval = 15
 
         guard let (data, response) = try? await NetworkSession.shared.recordedData(for: request) else {
+            cards.cancel()
             return .unavailable(provider, reason: .unreachable)
         }
 
         switch (response as? HTTPURLResponse)?.statusCode {
         case 200: break
-        case 401, 403: return .unavailable(provider, reason: .apiKeyRefused)
-        case 429: return .unavailable(provider, reason: .rateLimited)
-        default: return .unavailable(provider, reason: .serverError)
+        case 401, 403:
+            cards.cancel()
+            return .unavailable(provider, reason: .apiKeyRefused)
+        case 429:
+            cards.cancel()
+            return .unavailable(provider, reason: .rateLimited)
+        default:
+            cards.cancel()
+            return .unavailable(provider, reason: .serverError)
         }
 
         guard let reply = try? JSONDecoder().decode(Reply.self, from: data) else {
+            cards.cancel()
             return .unavailable(provider, reason: .unreadableReply)
         }
 
@@ -108,15 +121,17 @@ struct ZaiUsageService: Sendable {
         // to check a credential that is fine. The envelope's own code says
         // which, so it is read rather than assumed.
         guard reply.success == true, reply.code == 200 else {
+            cards.cancel()
             return .unavailable(provider, reason: Self.problem(reply))
         }
 
         let windows = Self.windows(from: reply.data?.limits ?? [], provider: provider)
         guard !windows.isEmpty else {
+            cards.cancel()
             return .unavailable(provider, reason: .noLimitsReported)
         }
 
-        return ProviderUsage(
+        var usage = ProviderUsage(
             account: AccountKey(provider),
             windows: windows,
             observedAt: Date(),
@@ -124,6 +139,8 @@ struct ZaiUsageService: Sendable {
             plan: reply.data?.planLabel,
             creditBalance: nil
         )
+        usage.zhipuResetCards = await cards.value
+        return usage
     }
 
     /// What the envelope's refusal actually was.

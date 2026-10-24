@@ -179,8 +179,12 @@ final class SpendGlanceController {
                     )
                 } ?? false
                 let point = source?.convertPoint(toScreen: locationInWindow) ?? NSEvent.mouseLocation
-                let inside = window.frame.contains(point) || self.entryRect.contains(point)
-                if SpendGlanceWindowLevel.dismisses(inside: inside, auxiliary: auxiliary) {
+                if SpendGlanceOutsideClick.shouldClose(
+                    point: point,
+                    windowFrame: window.frame,
+                    entryRect: self.entryRect,
+                    auxiliary: auxiliary
+                ) {
                     self.close()
                 }
                 return false
@@ -234,6 +238,22 @@ enum SpendGlanceWindowLevel {
 
     static func dismisses(inside: Bool, auxiliary: Bool) -> Bool {
         !inside && !auxiliary
+    }
+}
+
+/// A click outside the Token window closes it. A click on the window, on the
+/// button that opened it, or on a menu or date picker does not.
+enum SpendGlanceOutsideClick {
+    static func shouldClose(
+        point: CGPoint,
+        windowFrame: CGRect,
+        entryRect: CGRect,
+        auxiliary: Bool
+    ) -> Bool {
+        if auxiliary { return false }
+        if windowFrame.contains(point) { return false }
+        if !entryRect.isNull, !entryRect.isInfinite, entryRect.contains(point) { return false }
+        return true
     }
 }
 
@@ -445,6 +465,10 @@ struct SpendGlanceView: View {
                             get: { settings.spendActivityView },
                             set: { settings.spendActivityView = $0 }
                         ),
+                        dimension: Binding(
+                            get: { settings.spendGlanceDimension },
+                            set: { settings.spendGlanceDimension = $0 }
+                        ),
                         isLoading: model.isScanning,
                         isSummarizing: model.summaryIsPending,
                         hidesSpanHeadline: true,
@@ -475,25 +499,34 @@ struct SpendGlanceView: View {
         .controlSize(.small)
     }
 
-    /// Tokens large, the estimate under them. Both follow the selected span.
+    /// Tokens large, the estimate under them. Both follow the selected span,
+    /// and both are centered on the row.
     private var headline: some View {
         let picture = model.picture
-        return VStack(alignment: .leading, spacing: 4) {
+        let centered = SpendGlanceHeadline.centersFigures
+        return VStack(alignment: centered ? .center : .leading, spacing: 4) {
             Text(verbatim: picture.tokens)
                 .font(.system(size: SpendGlanceHeadline.tokenPointSize, weight: .semibold))
                 .monospacedDigit()
+                .multilineTextAlignment(centered ? .center : .leading)
+                .frame(maxWidth: centered ? .infinity : nil, alignment: centered ? .center : .leading)
             if let cost = picture.cost {
                 Text(verbatim: cost)
                     .font(.system(size: SpendGlanceHeadline.moneyPointSize, weight: .medium))
                     .monospacedDigit()
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(centered ? .center : .leading)
+                    .frame(maxWidth: centered ? .infinity : nil, alignment: centered ? .center : .leading)
             }
             if let note = picture.costNote {
                 Text(verbatim: note)
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(centered ? .center : .leading)
+                    .frame(maxWidth: centered ? .infinity : nil, alignment: centered ? .center : .leading)
             }
         }
+        .frame(maxWidth: .infinity, alignment: centered ? .center : .leading)
         .accessibilityIdentifier("spend-glance-headline")
     }
 

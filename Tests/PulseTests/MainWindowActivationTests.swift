@@ -43,6 +43,22 @@ struct MainWindowActivationTests {
         ) != .skip)
     }
 
+    @Test("Opening claims the frontmost app, and claims again on the next turn")
+    func claimsFrontmost() {
+        #expect(MainWindowActivation.claims(for: .skip).isEmpty)
+        #expect(MainWindowActivation.claims(for: .now) == [
+            .claimFrontmost(deferred: false),
+            .claimFrontmost(deferred: true),
+        ])
+        let deferred = [
+            MainWindowActivation.Claim.orderFront,
+            .claimFrontmost(deferred: true),
+            .claimFrontmost(deferred: true),
+        ]
+        #expect(MainWindowActivation.claims(for: .nextTurn) == deferred)
+        #expect(MainWindowActivation.claims(for: .orderOnly) == deferred)
+    }
+
     @Test("A window being shown counts as open before it is visible")
     func showingWindowCountsBeforeItIsVisible() {
         #expect(DockPresence.countsAsOpen(

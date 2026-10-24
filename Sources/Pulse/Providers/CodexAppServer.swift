@@ -62,6 +62,20 @@ actor CodexAppServer {
         return try await send(method: "account/rateLimits/read")
     }
 
+    /// Spends one limit reset credit. The dictionary is built here: a
+    /// `[String: Any]` cannot cross into this actor.
+    ///
+    /// `creditID` empty leaves the choice to the app server. A non-empty id
+    /// is sent as `creditId`, which is the field that route documents.
+    func consumeResetCredit(idempotencyKey: String, creditID: String?) async throws -> Data {
+        try await ensureRunning()
+        var params: [String: Any] = ["idempotencyKey": idempotencyKey]
+        if let creditID, !creditID.isEmpty {
+            params["creditId"] = creditID
+        }
+        return try await send(method: CodexAccountUsageService.ConsumeRequest.method, params: params)
+    }
+
     /// The models the account may use, as `model/list` reports them, still
     /// encoded as JSON.
     func models() async throws -> Data {
