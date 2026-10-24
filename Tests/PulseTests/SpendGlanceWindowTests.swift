@@ -226,6 +226,161 @@ struct SpendGlanceWindowTests {
         #expect(!controller.isOpen)
     }
 
+    @Test("Escape closes the window when it is not key, and a menu keeps Escape")
+    func escapeWithoutKey() throws {
+        let fixture = openGlance()
+        defer { fixture.finish() }
+        let controller = fixture.controller
+        let window = try glanceWindow()
+        let installed = controller.monitorInstallation
+        #expect(installed.local)
+        #expect(installed.global)
+        #expect(installed.resignActive)
+        #expect(installed.becomeActive)
+
+        window.resignKey()
+        let menu = NSWindow(
+            contentRect: NSRect(x: 20, y: 20, width: 120, height: 80),
+            styleMask: [.borderless],
+            backing: .buffered,
+            defer: false
+        )
+        menu.level = .popUpMenu
+        menu.orderFront(nil)
+        defer { menu.orderOut(nil) }
+        NSApp.sendEvent(try Self.keyDown(code: SpendGlanceDismissal.escapeKeyCode, windowNumber: 0))
+        #expect(controller.isOpen)
+        menu.orderOut(nil)
+
+        window.resignKey()
+        NSApp.sendEvent(try Self.keyDown(code: SpendGlanceDismissal.escapeKeyCode, windowNumber: 0))
+        #expect(!controller.isOpen)
+        #expect(!window.isVisible)
+    }
+
+    @Test("A click outside the app, and leaving the app, close the window")
+    func outsideTheAppCloses() throws {
+        let fixture = openGlance()
+        defer { fixture.finish() }
+        let controller = fixture.controller
+
+        // The Token button is not a click outside. The same local monitor
+        // that closes on another Blinky window has to leave this one alone.
+        let entry = NSWindow(
+            contentRect: NSRect(x: 40, y: 40, width: 80, height: 40),
+            styleMask: [.titled],
+            backing: .buffered,
+            defer: false
+        )
+        entry.level = .normal
+        entry.orderFront(nil)
+        defer { entry.orderOut(nil) }
+        controller.entryRect = entry.frame
+        NSApp.sendEvent(try Self.mouseDown(in: entry, eventNumber: 21))
+        #expect(controller.isOpen)
+        controller.entryRect = .null
+        NSApp.sendEvent(try Self.mouseDown(in: entry, eventNumber: 22))
+        #expect(!controller.isOpen)
+
+        controller.show()
+        pump()
+        #expect(controller.monitorInstallation.global)
+        // The handler the global monitor calls. A synthesized `NSApp.sendEvent`
+        // never takes that path: it is a local event.
+        controller.noteClickOutsideTheApp()
+        pump()
+        #expect(!controller.isOpen)
+
+        controller.show()
+        pump()
+        let again = try glanceWindow()
+        again.resignKey()
+        NotificationCenter.default.post(name: NSApplication.didBecomeActiveNotification, object: NSApp)
+        pump()
+        #expect(controller.monitorInstallation.closesWhenAppResigns)
+        if NSApp.isActive {
+            #expect(again.isKeyWindow)
+        }
+        NotificationCenter.default.post(name: NSApplication.didResignActiveNotification, object: NSApp)
+        #expect(!controller.isOpen)
+
+        controller.show()
+        pump()
+        #expect(controller.monitorInstallation.local)
+        controller.close()
+        pump()
+        let gone = controller.monitorInstallation
+        #expect(!gone.local)
+        #expect(!gone.global)
+        #expect(!gone.resignActive)
+        #expect(!gone.becomeActive)
+        #expect(!gone.closesWhenAppResigns)
+    }
+
+    private struct GlanceFixture {
+        let controller: SpendGlanceController
+        let finish: () -> Void
+    }
+
+    private func openGlance() -> GlanceFixture {
+        LocalizationSource.use(.english)
+        let (defaults, cleanup) = AppSettingsPersistenceTests.isolatedDefaults()
+        let settings = AppSettings(defaults: defaults)
+        settings.readsTokenSpend = true
+        let controller = SpendGlanceController(settings: settings)
+        controller.model.presentReadySummary()
+        controller.anchor = {
+            SpendGlanceAnchor(
+                rail: CGRect(x: 800, y: 700, width: 280, height: 36),
+                edge: .right,
+                screen: CGRect(x: 0, y: 0, width: 1440, height: 900),
+                cardClearance: 12,
+                level: .statusBar
+            )
+        }
+        controller.show()
+        pump()
+        return GlanceFixture(controller: controller, finish: {
+            settings.readsTokenSpend = false
+            controller.close()
+            cleanup()
+            LocalizationSource.use(.system)
+        })
+    }
+
+    private func glanceWindow() throws -> SpendGlancePanel {
+        try #require(NSApp.windows.first { $0 is SpendGlancePanel && $0.isVisible } as? SpendGlancePanel)
+    }
+
+    private static func keyDown(code: UInt16, windowNumber: Int) throws -> NSEvent {
+        try #require(NSEvent.keyEvent(
+            with: .keyDown,
+            location: .zero,
+            modifierFlags: [],
+            timestamp: ProcessInfo.processInfo.systemUptime,
+            windowNumber: windowNumber,
+            context: nil,
+            characters: "\u{1b}",
+            charactersIgnoringModifiers: "\u{1b}",
+            isARepeat: false,
+            keyCode: code
+        ))
+    }
+
+    private static func mouseDown(in window: NSWindow, eventNumber: Int) throws -> NSEvent {
+        try #require(NSEvent.mouseEvent(
+            with: .leftMouseDown,
+            location: NSPoint(x: 10, y: 10),
+            modifierFlags: [],
+            timestamp: ProcessInfo.processInfo.systemUptime,
+            windowNumber: window.windowNumber,
+            context: nil,
+            eventNumber: eventNumber,
+            clickCount: 1,
+            pressure: 1
+        ))
+    }
+
     private func pump() {
         RunLoop.current.run(until: Date().addingTimeInterval(0.4))
     }

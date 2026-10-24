@@ -6,6 +6,10 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.16
+
+- **在 Token 窗口外点击，或按 Esc，会关闭窗口。** 点在其他应用、桌面或 Blinky 的其他地方都会关闭，窗口一打开按 Esc 也能关掉它，点 Token 按钮或窗口自己的菜单则不会关。
+
 ## 1.5.15
 
 - **自动安装会在下载完成后安装并重新打开 Blinky。** 在「设置 → 关于 → 发现更新时」选择「自动安装」后，定时检查会下载更新、安装，并重新打开 Blinky，不必先退出。现在检查仍会打开更新窗口。 [#76](https://github.com/harrisliangsu/blinky-mac/pull/76)
