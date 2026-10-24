@@ -104,7 +104,7 @@ final class FloatingPanelController {
     /// Watches which display the pointer is on, while that is switched on.
     private let displayFollower = ActiveDisplayFollower()
 
-    /// Opens the main window from the rail's context menu and the card's window symbol.
+    /// Opens the main window from the rail's context menu and the card's grid symbol.
     /// The panel never becomes key, so the menu-bar shortcuts do not reach it.
     private let openSettings: () -> Void
     /// Opens the Token spend summary from the card header.

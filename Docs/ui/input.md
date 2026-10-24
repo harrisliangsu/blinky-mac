@@ -59,7 +59,7 @@ Taken in `sendEvent` rather than with SwiftUI's `.contextMenu`, for the reason e
 
 ## The card header
 
-Token spend, Open, and Quit sit on the usage card's header. Token spend is there only while that reading is on. Open is the SF Symbol `macwindow`, labelled Open Blinky. It opens the main window on the pane last shown (`settings.lastPane`). Quit is `power`. Blinky's own icon is not a control. Hovering a ring still opens that provider's card.
+Token spend, Open, and Quit sit on the usage card's header. Token spend is there only while that reading is on. Open is the SF Symbol `square.grid.2x2.fill`, labelled Open Blinky. It opens the main window on the pane last shown (`settings.lastPane`). Quit is `power`. Blinky's own icon is not a control. Hovering a ring still opens that provider's card.
 
 The press is taken in `FloatingPanel.sendEvent`, before the rail's drag, from the window rectangle `ControlFrameProbe` reported (`HeaderClickDispatch`). Mouse-up has to land in the same control. The action runs on the next turn, so the main window is not ordered front inside the panel's mouse-up. `PointerHand` still tracks the pointer and remains the fallback when that rectangle is not in yet; VoiceOver uses the button's action. `ScreenRectReporter`, which publishes Token spend's screen rectangle for the summary's outside click, returns nil from `hitTest` so it cannot swallow the press.
 

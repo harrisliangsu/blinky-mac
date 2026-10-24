@@ -13,11 +13,23 @@ import Testing
 @MainActor
 @Suite("Card header")
 struct CardHeaderTests {
-    @Test("Open is a window symbol, beside Token spend and Quit")
+    @Test("Open is a filled grid, beside Token spend and Quit")
     func symbols() {
-        #expect(CardHeaderControl.openApp.symbolName == "macwindow")
+        #expect(CardHeaderControl.allCases.map(\.symbolName) == [
+            "chart.bar",
+            "square.grid.2x2.fill",
+            "power",
+        ])
+        #expect(CardHeaderControl.openApp.symbolName == "square.grid.2x2.fill")
         #expect(CardHeaderControl.tokenSpend.symbolName == "chart.bar")
         #expect(CardHeaderControl.quit.symbolName == "power")
+        for control in CardHeaderControl.allCases {
+            let name = control.symbolName
+            #expect(NSImage(systemSymbolName: name, accessibilityDescription: nil) != nil)
+        }
+        #expect(HeaderIconButton.label(for: .openApp) == String.localized("Open Blinky"))
+        #expect(HeaderIconButton.label(for: .tokenSpend) == String.localized("Token spend"))
+        #expect(HeaderIconButton.label(for: .quit) == String.localized("Quit Blinky"))
         let english = LocalizationSource.bundle(for: .english)
         #expect(english.localizedString(forKey: "Open Blinky", value: nil, table: nil) == "Open Blinky")
         #expect(english.localizedString(forKey: "Token spend", value: nil, table: nil) == "Token spend")

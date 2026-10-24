@@ -4,9 +4,9 @@ import AppKit
 /// The three controls on the usage card's header, in the order they are drawn.
 ///
 /// Token spend is present only while that reading is on. Open and Quit are
-/// the pair that used to be a gear and a power symbol. Open is a window
-/// symbol: it opens the main window on the pane last shown, not a settings
-/// sheet, and Blinky's own icon is not a control.
+/// the pair that used to be a gear and a power symbol. Open is the filled
+/// grid `square.grid.2x2.fill`: it opens the main window on the pane last
+/// shown, not a settings sheet, and Blinky's own icon is not a control.
 enum CardHeaderControl: String, CaseIterable, Equatable, Sendable {
     case tokenSpend
     case openApp
@@ -15,7 +15,7 @@ enum CardHeaderControl: String, CaseIterable, Equatable, Sendable {
     var symbolName: String {
         switch self {
         case .tokenSpend: "chart.bar"
-        case .openApp: "macwindow"
+        case .openApp: "square.grid.2x2.fill"
         case .quit: "power"
         }
     }

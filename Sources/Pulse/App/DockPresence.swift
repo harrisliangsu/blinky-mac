@@ -130,7 +130,7 @@ final class DockPresence {
 /// always-show is off — has no application menu to claim.
 ///
 /// Call sites, all through `DockPresence.apply(showingWindow:)`: the main
-/// window (`SettingsWindowController.show` — the usage card's window symbol, the panel
+/// window (`SettingsWindowController.show` — the usage card's grid symbol, the panel
 /// menu's Settings…, the menu bar item, ⌘,, a reopen, `pulse://settings`, and
 /// a clicked notification), the recap window, and the service chooser. An
 /// update offer uses `apply()` without a window; the offer's own focus runs

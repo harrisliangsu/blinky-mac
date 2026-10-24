@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.13
+
+- **The usage card opens Blinky from a grid icon.** The control beside Token spend in the card header is a filled four-square grid, and clicking it opens the main window on the pane last shown. [#74](https://github.com/harrisliangsu/blinky-mac/pull/74)
+
 ## 1.5.12
 
 - **The exhaustion estimate appears on every shown account.** With Show the estimate on, under Settings → Usage, a weekly limit that is unused or only lightly used says it is expected to last the window, including when the service does not state that window's length. [#73](https://github.com/harrisliangsu/blinky-mac/pull/73)

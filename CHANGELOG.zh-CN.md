@@ -6,6 +6,10 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.13
+
+- **用量卡片用四格图标打开主窗口。** 标题栏上「Token 消耗」旁边的控件改为填满的四格方块，点击后打开主窗口，并回到上次查看的页面。[#74](https://github.com/harrisliangsu/blinky-mac/pull/74)
+
 ## 1.5.12
 
 - **用尽预估会写在每个显示的账号上。** 在「设置 → 用量」打开「显示预估」后，每周限额几乎没用或用得很少时，卡片也会写「预计可维持到本轮重置」；服务商没有给出这段窗口的长度时同样如此。[#73](https://github.com/harrisliangsu/blinky-mac/pull/73)

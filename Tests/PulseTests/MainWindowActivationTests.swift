@@ -6,7 +6,7 @@ import Testing
 /// When opening a tracked window should claim the menu bar.
 ///
 /// The decision is `MainWindowActivation`. The call sites all go through
-/// `DockPresence.apply(showingWindow:)`: Settings (the usage card's window symbol, the
+/// `DockPresence.apply(showingWindow:)`: Settings (the usage card's grid symbol, the
 /// panel menu's Settings…, the menu bar item, ⌘,, a reopen, `pulse://settings`,
 /// and a clicked notification), the recap, and the service chooser. An update
 /// offer uses `apply()` with no window; a policy change still waits a turn.

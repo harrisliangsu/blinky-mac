@@ -1173,7 +1173,7 @@ private struct ScreenRectReporter: NSViewRepresentable {
 }
 
 /// Token spend, Open, and Quit on the card. The same symbol weight as the
-/// others: Open is `macwindow`, not Blinky's own icon. The panel never
+/// others: Open is `square.grid.2x2.fill`, not Blinky's own icon. The panel never
 /// becomes key, so the press is taken in `FloatingPanel.sendEvent` from the
 /// rectangle `ControlFrameProbe` reports. `PointerHand` remains for the
 /// pointer and for VoiceOver's fallback when that rectangle is not in yet.
