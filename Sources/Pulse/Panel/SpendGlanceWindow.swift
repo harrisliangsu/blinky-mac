@@ -451,12 +451,11 @@ final class SpendGlancePanel: NSWindow {
         // Mouse events are not taken here. The previous override closed on a
         // geometry test and returned before the content view, which is how a
         // picker and Share could be clicked and still do nothing.
-        let auxiliary = MainActor.assumeIsolated { SpendGlanceDismissal.auxiliaryIsOpen(besides: self) }
         if event.type == .keyDown,
            SpendGlanceDismissal.shouldCloseOnEscape(
                keyCode: event.keyCode,
                hasModifiers: !event.modifierFlags.intersection([.command, .option, .control, .shift]).isEmpty,
-               auxiliary: auxiliary
+               auxiliary: Self.escapeBelongsToMenu(event, besides: self)
            ) {
             close()
             return
@@ -465,15 +464,26 @@ final class SpendGlancePanel: NSWindow {
     }
 
     override func cancelOperation(_ sender: Any?) {
+        guard !MainActor.assumeIsolated({ SpendGlanceDismissal.auxiliaryIsOpen(besides: self) }) else { return }
         close()
     }
 
+    /// Escape belongs to a menu when the event names one, or one is visible.
+    /// The local monitor lets that event through. This window must not take
+    /// it on the way past.
+    private static func escapeBelongsToMenu(_ event: NSEvent, besides window: NSWindow) -> Bool {
+        MainActor.assumeIsolated {
+            let named = event.window ?? NSApp.window(withWindowNumber: event.windowNumber)
+            if let named, SpendGlanceWindowLevel.isAuxiliary(named) { return true }
+            return SpendGlanceDismissal.auxiliaryIsOpen(besides: window)
+        }
+    }
+
     override func keyDown(with event: NSEvent) {
-        let auxiliary = MainActor.assumeIsolated { SpendGlanceDismissal.auxiliaryIsOpen(besides: self) }
         if SpendGlanceDismissal.shouldCloseOnEscape(
             keyCode: event.keyCode,
             hasModifiers: !event.modifierFlags.intersection([.command, .option, .control, .shift]).isEmpty,
-            auxiliary: auxiliary
+            auxiliary: Self.escapeBelongsToMenu(event, besides: self)
         ) {
             close()
             return

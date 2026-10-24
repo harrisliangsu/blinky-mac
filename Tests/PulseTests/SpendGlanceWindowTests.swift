@@ -241,16 +241,21 @@ struct SpendGlanceWindowTests {
         window.resignKey()
         let menu = NSWindow(
             contentRect: NSRect(x: 20, y: 20, width: 120, height: 80),
-            styleMask: [.borderless],
+            styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
         )
+        menu.contentView = NSView(frame: NSRect(x: 0, y: 0, width: 120, height: 80))
         menu.level = .popUpMenu
         // `orderFront` does nothing while the app is inactive, so the menu
         // never became visible and Escape closed the glance.
-        menu.orderFrontRegardless()
+        MainWindowActivation.orderFront(menu)
         defer { menu.orderOut(nil) }
-        NSApp.sendEvent(try Self.keyDown(code: SpendGlanceDismissal.escapeKeyCode, windowNumber: menu.windowNumber))
+        #expect(menu.isVisible)
+        #expect(SpendGlanceDismissal.auxiliaryIsOpen(besides: window))
+        let escape = try Self.keyDown(code: SpendGlanceDismissal.escapeKeyCode, windowNumber: menu.windowNumber)
+        #expect(escape.windowNumber == menu.windowNumber)
+        NSApp.sendEvent(escape)
         #expect(controller.isOpen)
         menu.orderOut(nil)
 
