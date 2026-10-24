@@ -400,10 +400,14 @@ enum SpendGlanceDismissal {
 
     /// A menu or a date picker is on screen besides `window`. Escape and a
     /// click there belong to that control.
+    @MainActor
     static func auxiliaryIsOpen(besides window: NSWindow) -> Bool {
-        NSApp.windows.contains {
-            $0 !== window && $0.isVisible && SpendGlanceWindowLevel.isAuxiliary($0)
+        for candidate in NSApp.windows where candidate !== window {
+            if candidate.isVisible, SpendGlanceWindowLevel.isAuxiliary(candidate) {
+                return true
+            }
         }
+        return false
     }
 
     static func claimsCloseClick(buttonBounds: CGRect, pointInButton: CGPoint) -> Bool {
@@ -447,11 +451,12 @@ final class SpendGlancePanel: NSWindow {
         // Mouse events are not taken here. The previous override closed on a
         // geometry test and returned before the content view, which is how a
         // picker and Share could be clicked and still do nothing.
+        let auxiliary = MainActor.assumeIsolated { SpendGlanceDismissal.auxiliaryIsOpen(besides: self) }
         if event.type == .keyDown,
            SpendGlanceDismissal.shouldCloseOnEscape(
                keyCode: event.keyCode,
                hasModifiers: !event.modifierFlags.intersection([.command, .option, .control, .shift]).isEmpty,
-               auxiliary: SpendGlanceDismissal.auxiliaryIsOpen(besides: self)
+               auxiliary: auxiliary
            ) {
             close()
             return
@@ -464,10 +469,11 @@ final class SpendGlancePanel: NSWindow {
     }
 
     override func keyDown(with event: NSEvent) {
+        let auxiliary = MainActor.assumeIsolated { SpendGlanceDismissal.auxiliaryIsOpen(besides: self) }
         if SpendGlanceDismissal.shouldCloseOnEscape(
             keyCode: event.keyCode,
             hasModifiers: !event.modifierFlags.intersection([.command, .option, .control, .shift]).isEmpty,
-            auxiliary: SpendGlanceDismissal.auxiliaryIsOpen(besides: self)
+            auxiliary: auxiliary
         ) {
             close()
             return
