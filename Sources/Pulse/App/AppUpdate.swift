@@ -625,10 +625,17 @@ private final class UpdaterRelay: NSObject, SPUUpdaterDelegate, SPUStandardUserD
         let installNow = MainActor.assumeIsolated {
             owner?.installsDownloadedUpdateImmediately ?? false
         }
+        // The block Sparkle hands over is not `Sendable`. The next main turn
+        // is the same isolation this process already runs on; the copy is
+        // only so the queue can take a `@Sendable` closure.
+        nonisolated(unsafe) let handler = immediateInstallHandler
         return UpdateAnnouncement.immediateInstall(
             discovery: installNow ? .installSilently : .notifyFirst,
-            install: immediateInstallHandler,
-            schedule: { work in DispatchQueue.main.async(execute: work) }
+            install: handler,
+            schedule: { work in
+                nonisolated(unsafe) let scheduled = work
+                DispatchQueue.main.async { scheduled() }
+            }
         )
     }
 }

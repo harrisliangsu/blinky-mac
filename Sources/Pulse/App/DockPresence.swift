@@ -264,13 +264,14 @@ enum MainWindowActivation {
 
     /// Asks macOS to make this process the frontmost app.
     ///
-    /// Both calls: `NSRunningApplication.activate(options:)` is the one that
-    /// still ignores the other app, and `NSApp.activate` is the call the
-    /// rest of AppKit's window ordering is watching.
+    /// `NSRunningApplication.activate(options: [.activateAllWindows])` brings
+    /// this process's windows forward. `NSApp.activate(ignoringOtherApps:)` is
+    /// the call the rest of AppKit's window ordering is watching. Unhide
+    /// first, so a hidden process can become frontmost.
     @MainActor
     static func claimFrontmostApplication() {
         NSApp.unhide(nil)
-        NSRunningApplication.current.activate(options: [.activateAllWindows, .activateIgnoringOtherApps])
+        NSRunningApplication.current.activate(options: [.activateAllWindows])
         NSApp.activate(ignoringOtherApps: true)
     }
 
