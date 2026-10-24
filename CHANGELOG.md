@@ -7,6 +7,40 @@ shows in the update window — see [Scripts/changelog.py](Scripts/changelog.py).
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.12.4
+
+**中文**
+
+**新功能**
+
+- **实验性功能：水滴式吸附。** 在「设置 → 实验性功能」中开启后，从屏幕边缘拉开胶囊时，它会像水滴一样被拉长再断开，拖近边缘时会被吸过去；默认关闭。
+- **测试通知。** 在「设置 → 通知」中点「发送」，立即收到一条测试通知，确认通知能正常送达。
+
+**改进与修复**
+
+- **Cursor 加密保存登录后仍能读取用量。** Pulse 向钥匙串请求 Cursor 的密钥来读取登录，被拒绝后只在下次启动或手动刷新时再次询问。感谢 [@Hill-1024](https://github.com/qunqin24/Pulse/pull/93) 贡献。
+- **显示 Cursor 企业账号的额度。** 只报告一个总额度的企业账号，卡片显示为月度额度，金额以美元显示。感谢 [@lexleizou](https://github.com/qunqin24/Pulse/pull/97) 贡献。
+- **Kimi Code 的用量记录包含新版 Kimi Code。** 「Token 消耗」和 Kimi Code 设置页同时读取新版 Kimi Code 的会话记录，能识别模型时按公开价格估算。
+- **Codex 会话不再重复计算。** 同一会话同时出现在 `sessions` 和 `archived_sessions` 中时只计算一次。感谢 [@Drswith](https://github.com/qunqin24/Pulse/issues/95) 发现。
+- **刘海处的胶囊与刘海对齐。** 胶囊按屏幕居中，过渡到屏幕边缘的圆角与刘海一致；尺寸为「小」且服务商较少时，顶部圆角不再被截成直角。
+- **详细卡片不再显示「按 API 价格估算」的说明行。** 估算说明保留在「设置 → Token 消耗」中。
+
+**English**
+
+**New**
+
+- **Experimental: liquid docking.** Turned on in Settings → Experimental, the rail stretches and parts like a drop when pulled off a screen edge, and is drawn in when brought near one; off by default.
+- **Test notification.** Press Send in Settings → Notifications to receive a test notification and check that notifications reach you.
+
+**Changed and fixed**
+
+- **Cursor usage is read again when Cursor encrypts its saved login.** Pulse asks the keychain for Cursor's key, and after a refusal asks again only at the next launch or on a manual refresh. Thanks to [@Hill-1024](https://github.com/qunqin24/Pulse/pull/93) for the contribution.
+- **Cursor Enterprise allowances are shown.** An Enterprise account that reports a single allowance shows it as the monthly limit, with amounts in dollars. Thanks to [@lexleizou](https://github.com/qunqin24/Pulse/pull/97) for the contribution.
+- **Kimi Code's usage records include the new Kimi Code.** Token spend and the Kimi Code pane also read the new Kimi Code's session store, estimating money at published prices where the model is known.
+- **Codex sessions are no longer counted twice.** A session found in both `sessions` and `archived_sessions` is counted once. Thanks to [@Drswith](https://github.com/qunqin24/Pulse/issues/95) for finding it.
+- **The rail at the notch lines up with the notch.** It is centred on the display and its corners into the screen edge match the notch's; at the small size with few providers, its top corners are no longer cut off square.
+- **The detailed card no longer shows the "estimated at API prices" line.** The explanation stays in Settings → Token spend.
+
 ## 1.12.3
 
 **中文**
