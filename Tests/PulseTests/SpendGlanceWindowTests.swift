@@ -250,7 +250,7 @@ struct SpendGlanceWindowTests {
         // never became visible and Escape closed the glance.
         menu.orderFrontRegardless()
         defer { menu.orderOut(nil) }
-        NSApp.sendEvent(try Self.keyDown(code: SpendGlanceDismissal.escapeKeyCode, windowNumber: 0))
+        NSApp.sendEvent(try Self.keyDown(code: SpendGlanceDismissal.escapeKeyCode, windowNumber: menu.windowNumber))
         #expect(controller.isOpen)
         menu.orderOut(nil)
 
@@ -261,7 +261,7 @@ struct SpendGlanceWindowTests {
     }
 
     @Test("A click outside the app, and leaving the app, close the window")
-    func outsideTheAppCloses() throws {
+    func outsideTheAppCloses() async throws {
         let fixture = openGlance()
         defer { fixture.finish() }
         let controller = fixture.controller
@@ -290,7 +290,9 @@ struct SpendGlanceWindowTests {
         // The handler the global monitor calls. A synthesized `NSApp.sendEvent`
         // never takes that path: it is a local event.
         controller.noteClickOutsideTheApp()
-        pump()
+        // `RunLoop.run` does not drain `DispatchQueue.main` while this test
+        // holds the main actor. A continuation resumed from that queue does.
+        await Self.settle()
         #expect(!controller.isOpen)
 
         controller.show()
@@ -298,20 +300,20 @@ struct SpendGlanceWindowTests {
         let again = try glanceWindow()
         again.resignKey()
         NotificationCenter.default.post(name: NSApplication.didBecomeActiveNotification, object: NSApp)
-        pump()
+        await Self.settle()
         #expect(controller.monitorInstallation.closesWhenAppResigns)
         if NSApp.isActive {
             #expect(again.isKeyWindow)
         }
         NotificationCenter.default.post(name: NSApplication.didResignActiveNotification, object: NSApp)
-        pump()
+        await Self.settle()
         #expect(!controller.isOpen)
 
         controller.show()
         pump()
         #expect(controller.monitorInstallation.local)
         controller.close()
-        pump()
+        await Self.settle()
         let gone = controller.monitorInstallation
         #expect(!gone.local)
         #expect(!gone.global)
@@ -386,6 +388,16 @@ struct SpendGlanceWindowTests {
 
     private func pump() {
         RunLoop.current.run(until: Date().addingTimeInterval(0.4))
+    }
+
+    /// Drains main-queue blocks. Spinning the run loop does not, while the
+    /// test holds the main actor.
+    private static func settle() async {
+        for _ in 0..<4 {
+            await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+                DispatchQueue.main.async { continuation.resume() }
+            }
+        }
     }
 
     private static func flatten(_ view: NSView?) -> [NSView] {

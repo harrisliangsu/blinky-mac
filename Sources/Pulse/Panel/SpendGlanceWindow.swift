@@ -233,14 +233,15 @@ final class SpendGlanceController {
             let locationInWindow = event.locationInWindow
             let swallowEscape = MainActor.assumeIsolated { () -> Bool in
                 guard let self, let window = self.window, window.isVisible else { return false }
+                let source = NSApp.window(withWindowNumber: windowNumber)
                 if eventType == .keyDown {
                     // A menu or a date popover owns Escape. Closing the summary
                     // here used to throw the picker away as it opened.
-                    // The event's window is not consulted. Right after the
-                    // card opens this window it is often not key, so Escape
-                    // arrives with no window, or aimed at whichever Blinky
-                    // window was key. It still belongs to the glance.
-                    let menuOpen = SpendGlanceDismissal.auxiliaryIsOpen(besides: window)
+                    // Escape with no window, or aimed at another Blinky window
+                    // that is not a menu, still belongs to the glance: it is
+                    // often not key in the turn the card opens it.
+                    let menuOpen = (source.map { SpendGlanceWindowLevel.isAuxiliary($0) } ?? false)
+                        || SpendGlanceDismissal.auxiliaryIsOpen(besides: window)
                     guard SpendGlanceDismissal.shouldCloseOnEscape(
                         keyCode: keyCode,
                         hasModifiers: hasModifiers,
@@ -249,7 +250,6 @@ final class SpendGlanceController {
                     window.close()
                     return true
                 }
-                let source = NSApp.window(withWindowNumber: windowNumber)
                 let auxiliary = source.map { window in
                     SpendGlanceWindowLevel.isAuxiliary(
                         level: window.level,
