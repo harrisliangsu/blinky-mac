@@ -12,7 +12,7 @@ bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
 ## 1.5.16
 
-- **Clicking outside the Token window, or pressing Escape, closes it.** A click in another app, on the desktop, or elsewhere in Blinky closes it, Escape closes it as soon as the window is open, and a click on the Token button or the window's own menu does not.
+- **Clicking outside the Token window, or pressing Escape, closes it.** A click in another app, on the desktop, or elsewhere in Blinky closes it, Escape closes it as soon as the window is open, and a click on the Token button or the window's own menu does not. [#77](https://github.com/harrisliangsu/blinky-mac/pull/77)
 
 ## 1.5.15
 

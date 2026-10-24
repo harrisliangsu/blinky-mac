@@ -8,7 +8,7 @@ Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文
 
 ## 1.5.16
 
-- **在 Token 窗口外点击，或按 Esc，会关闭窗口。** 点在其他应用、桌面或 Blinky 的其他地方都会关闭，窗口一打开按 Esc 也能关掉它，点 Token 按钮或窗口自己的菜单则不会关。
+- **在 Token 窗口外点击，或按 Esc，会关闭窗口。** 点在其他应用、桌面或 Blinky 的其他地方都会关闭，窗口一打开按 Esc 也能关掉它，点 Token 按钮或窗口自己的菜单则不会关。 [#77](https://github.com/harrisliangsu/blinky-mac/pull/77)
 
 ## 1.5.15
 
