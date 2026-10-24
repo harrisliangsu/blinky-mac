@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.16
+
+- **Clicking outside the Token window, or pressing Escape, closes it.** A click in another app, on the desktop, or elsewhere in Blinky closes it, Escape closes it as soon as the window is open, and a click on the Token button or the window's own menu does not. [#77](https://github.com/harrisliangsu/blinky-mac/pull/77)
+
 ## 1.5.15
 
 - **Install silently installs and relaunches.** With Settings → About → When an update is found set to Install silently, a scheduled check downloads the update, installs it, and opens Blinky again, without waiting for Blinky to quit. Check now still opens the update window. [#76](https://github.com/harrisliangsu/blinky-mac/pull/76)

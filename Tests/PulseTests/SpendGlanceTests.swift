@@ -641,29 +641,16 @@ struct SpendGlanceTests {
         #expect(!SpendGlanceDismissal.shouldCloseOnEscape(keyCode: 53, hasModifiers: true))
         #expect(!SpendGlanceDismissal.shouldCloseOnEscape(keyCode: 36, hasModifiers: false))
 
-        final class Marker {}
-        // Both have to stay alive. An identifier taken from a temporary can
-        // be reused by the next allocation, and then the two windows compare
-        // equal.
-        let glanceMarker = Marker()
-        let otherMarker = Marker()
-        let glance = ObjectIdentifier(glanceMarker)
-        let other = ObjectIdentifier(otherMarker)
-        #expect(SpendGlanceDismissal.shouldCloseOnEscape(
-            keyCode: 53, hasModifiers: false, eventWindow: nil, glanceWindow: glance
-        ))
-        #expect(SpendGlanceDismissal.shouldCloseOnEscape(
-            keyCode: 53, hasModifiers: false, eventWindow: glance, glanceWindow: glance
-        ))
-        #expect(!SpendGlanceDismissal.shouldCloseOnEscape(
-            keyCode: 53, hasModifiers: false, eventWindow: other, glanceWindow: glance
-        ))
-        #expect(!SpendGlanceDismissal.shouldCloseOnEscape(
-            keyCode: 53, hasModifiers: true, eventWindow: nil, glanceWindow: glance
-        ))
-        #expect(!SpendGlanceDismissal.shouldCloseOnEscape(
-            keyCode: 36, hasModifiers: false, eventWindow: glance, glanceWindow: glance
-        ))
+        // Which window the event names is not part of the decision. Escape
+        // still closes when the glance is not key and the event names nothing,
+        // or names some other Blinky window. An open menu keeps the key.
+        #expect(SpendGlanceDismissal.shouldCloseOnEscape(keyCode: 53, hasModifiers: false, auxiliary: false))
+        #expect(!SpendGlanceDismissal.shouldCloseOnEscape(keyCode: 53, hasModifiers: false, auxiliary: true))
+        #expect(!SpendGlanceDismissal.shouldCloseOnEscape(keyCode: 53, hasModifiers: true, auxiliary: false))
+        #expect(!SpendGlanceDismissal.shouldCloseOnEscape(keyCode: 36, hasModifiers: false, auxiliary: false))
+        #expect(!SpendGlanceAppFocus.closesOnResign(hasBeenActive: false, windowVisible: true))
+        #expect(!SpendGlanceAppFocus.closesOnResign(hasBeenActive: true, windowVisible: false))
+        #expect(SpendGlanceAppFocus.closesOnResign(hasBeenActive: true, windowVisible: true))
 
         let button = CGRect(x: 0, y: 0, width: 14, height: 14)
         #expect(SpendGlanceDismissal.claimsCloseClick(buttonBounds: button, pointInButton: CGPoint(x: 7, y: 7)))
