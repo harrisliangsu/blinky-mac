@@ -135,8 +135,10 @@ final class SpendGlanceController {
 
     /// The global monitor's handler. A click in another app is not delivered
     /// to this process as a local event. Closing inside that monitor is
-    /// dropped, so this waits one turn.
-    nonisolated func noteClickOutsideTheApp() {
+    /// dropped, so this waits one turn. The monitor hops to the main actor
+    /// before calling it: scheduling the close from any other thread never
+    /// ran.
+    func noteClickOutsideTheApp() {
         DispatchQueue.main.async { [weak self] in
             MainActor.assumeIsolated { self?.close() }
         }
@@ -238,9 +240,7 @@ final class SpendGlanceController {
                     // card opens this window it is often not key, so Escape
                     // arrives with no window, or aimed at whichever Blinky
                     // window was key. It still belongs to the glance.
-                    let menuOpen = NSApp.windows.contains {
-                        $0 !== window && $0.isVisible && SpendGlanceWindowLevel.isAuxiliary($0)
-                    }
+                    let menuOpen = SpendGlanceDismissal.auxiliaryIsOpen(besides: window)
                     guard SpendGlanceDismissal.shouldCloseOnEscape(
                         keyCode: keyCode,
                         hasModifiers: hasModifiers,
@@ -274,22 +274,23 @@ final class SpendGlanceController {
         // stays up and `isOpen` has already flipped. The close runs on the
         // next turn, which is the same method a test calls.
         globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
-            self?.noteClickOutsideTheApp()
+            DispatchQueue.main.async {
+                MainActor.assumeIsolated { self?.noteClickOutsideTheApp() }
+            }
         }
-        // `queue: nil` runs the block on the posting thread. AppKit posts
-        // these on the main thread; a main-queue observer would close one
-        // turn late, after the click had already been treated as nothing.
+        // Main queue, same as the monitor removal. A nil queue did not run
+        // the block for a notification this process posted to itself.
         resignObserver = NotificationCenter.default.addObserver(
             forName: NSApplication.didResignActiveNotification,
-            object: NSApp,
-            queue: nil
+            object: nil,
+            queue: .main
         ) { [weak self] _ in
             MainActor.assumeIsolated { self?.appResignedActive() }
         }
         becomeObserver = NotificationCenter.default.addObserver(
             forName: NSApplication.didBecomeActiveNotification,
-            object: NSApp,
-            queue: nil
+            object: nil,
+            queue: .main
         ) { [weak self] _ in
             MainActor.assumeIsolated { self?.appBecameActive() }
         }
@@ -397,6 +398,14 @@ enum SpendGlanceDismissal {
         shouldCloseOnEscape(keyCode: keyCode, hasModifiers: hasModifiers) && !auxiliary
     }
 
+    /// A menu or a date picker is on screen besides `window`. Escape and a
+    /// click there belong to that control.
+    static func auxiliaryIsOpen(besides window: NSWindow) -> Bool {
+        NSApp.windows.contains {
+            $0 !== window && $0.isVisible && SpendGlanceWindowLevel.isAuxiliary($0)
+        }
+    }
+
     static func claimsCloseClick(buttonBounds: CGRect, pointInButton: CGPoint) -> Bool {
         !buttonBounds.isEmpty && buttonBounds.contains(pointInButton)
     }
@@ -441,7 +450,8 @@ final class SpendGlancePanel: NSWindow {
         if event.type == .keyDown,
            SpendGlanceDismissal.shouldCloseOnEscape(
                keyCode: event.keyCode,
-               hasModifiers: !event.modifierFlags.intersection([.command, .option, .control, .shift]).isEmpty
+               hasModifiers: !event.modifierFlags.intersection([.command, .option, .control, .shift]).isEmpty,
+               auxiliary: SpendGlanceDismissal.auxiliaryIsOpen(besides: self)
            ) {
             close()
             return
@@ -456,7 +466,8 @@ final class SpendGlancePanel: NSWindow {
     override func keyDown(with event: NSEvent) {
         if SpendGlanceDismissal.shouldCloseOnEscape(
             keyCode: event.keyCode,
-            hasModifiers: !event.modifierFlags.intersection([.command, .option, .control, .shift]).isEmpty
+            hasModifiers: !event.modifierFlags.intersection([.command, .option, .control, .shift]).isEmpty,
+            auxiliary: SpendGlanceDismissal.auxiliaryIsOpen(besides: self)
         ) {
             close()
             return

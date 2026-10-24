@@ -246,7 +246,9 @@ struct SpendGlanceWindowTests {
             defer: false
         )
         menu.level = .popUpMenu
-        menu.orderFront(nil)
+        // `orderFront` does nothing while the app is inactive, so the menu
+        // never became visible and Escape closed the glance.
+        menu.orderFrontRegardless()
         defer { menu.orderOut(nil) }
         NSApp.sendEvent(try Self.keyDown(code: SpendGlanceDismissal.escapeKeyCode, windowNumber: 0))
         #expect(controller.isOpen)
@@ -302,6 +304,7 @@ struct SpendGlanceWindowTests {
             #expect(again.isKeyWindow)
         }
         NotificationCenter.default.post(name: NSApplication.didResignActiveNotification, object: NSApp)
+        pump()
         #expect(!controller.isOpen)
 
         controller.show()
