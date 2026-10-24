@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.15</title>
-            <pubDate>Sat, 24 Oct 2026 21:16:50 -0000</pubDate>
-            <sparkle:version>1.5.15</sparkle:version>
-            <sparkle:shortVersionString>1.5.15</sparkle:shortVersionString>
+            <title>1.5.16</title>
+            <pubDate>Sat, 24 Oct 2026 23:16:37 -0000</pubDate>
+            <sparkle:version>1.5.16</sparkle:version>
+            <sparkle:shortVersionString>1.5.16</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.15</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.16</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.15</h2><ul><li><strong>自动安装会在下载完成后安装并重新打开 Blinky。</strong> 在「设置 → 关于 → 发现更新时」选择「自动安装」后，定时检查会下载更新、安装，并重新打开 Blinky，不必先退出。现在检查仍会打开更新窗口。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/76">#76</a></li><li><strong>打开主窗口后，Blinky 成为最前面的应用。</strong> 用量卡片上的四格图标、Dock，以及从启动台或 Spotlight 启动，都会让菜单栏显示 Blinky。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/76">#76</a></li><li><strong>在 Token 窗口外点击会关闭它。</strong> Esc 和关闭按钮仍可关闭。点击窗口自己的菜单不会关闭。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/76">#76</a></li><li><strong>Token 窗口一次只列出一种划分。</strong> 先是 Token 活动，然后是使用节奏，再是划分方式菜单，可选按模型、按 Agent、按项目或按会话。新安装默认按模型，这个选择会被记住。使用节奏的数字在整行均匀排列。Token 合计和下面的费用估算居中。「未读取到用量」仍在，字号更小、颜色更淡。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/76">#76</a></li><li><strong>智谱和 z.ai 会显示 5 小时重置券和每周重置券。</strong> 用量卡片分别列出这两种券，方式和 Codex 列出额度重置券相同，并写出还剩几张。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/76">#76</a></li><li><strong>使用重置券前会先确认。</strong> 在 Codex、智谱或 z.ai 的用量卡片上，点使用只是询问，确认之后才会用掉一张。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/76">#76</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.15">在 GitHub 查看更新说明</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.15/Blinky-1.5.15.zip"
-                       length="22710061"
+</style><h2>Blinky 1.5.16</h2><ul><li><strong>在 Token 窗口外点击，或按 Esc，会关闭窗口。</strong> 点在其他应用、桌面或 Blinky 的其他地方都会关闭，窗口一打开按 Esc 也能关掉它，点 Token 按钮或窗口自己的菜单则不会关。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/77">#77</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.16">在 GitHub 查看更新说明</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.16/Blinky-1.5.16.zip"
+                       length="22718440"
                        type="application/octet-stream"
-                       sparkle:edSignature="vntkK5cWz+MaK3DYHzY9WxtHnSjrRE2Qg/HgsNswefQMbOUUPT1gWV6RI4+1sCDc4eLlZbT3nC8aweDtXoB9Cw==" />
+                       sparkle:edSignature="Q4zgXyeb5jSnM5U7B1RMGL+e5lNh/EmR/a23+p1Cq3WjkJoUAmpFfR/VRd/58Ssc6d+lsA6F6Q7gg8kxCCL/Bg==" />
         </item>
     </channel>
 </rss>
