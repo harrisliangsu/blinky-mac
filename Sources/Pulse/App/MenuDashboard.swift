@@ -300,6 +300,16 @@ private struct MenuAccountDetail: View {
                     .compactMap { $0 }.joined(separator: " · ")
             )
         }
+        if let cards = usage.zhipuResetCards {
+            valueRow(
+                String.localized("5-hour reset cards"),
+                Self.zhipuLine(cards.cards(for: .fiveHour))
+            )
+            valueRow(
+                String.localized("Weekly reset cards"),
+                Self.zhipuLine(cards.cards(for: .weekly))
+            )
+        }
         if let balance = usage.creditBalance {
             credit(balance)
         }
@@ -319,6 +329,14 @@ private struct MenuAccountDetail: View {
                 .font(.system(size: 11, weight: .medium).monospacedDigit())
                 .foregroundStyle(.secondary)
         }
+    }
+
+    private static func zhipuLine(_ cards: [ZhipuResetCard]) -> String {
+        var parts = [UsageDetailCard.availableCountText(cards.count)]
+        if let soonest = cards.min(by: { $0.expiresAt < $1.expiresAt }) {
+            parts.append(UsageDetailCard.expiryText(soonest.expiresAt))
+        }
+        return parts.joined(separator: " · ")
     }
 
     private func valueRow(_ title: String, _ value: String) -> some View {

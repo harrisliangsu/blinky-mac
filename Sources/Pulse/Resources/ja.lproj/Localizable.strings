@@ -1403,7 +1403,7 @@
 "Notify if it will not last until the reset" = "リセットまで保たないときに通知";
 "The card's forecast and the exhaustion notifications both use this list." = "カードの予測と使い切りの通知は、どちらもこの一覧を使います。";
 "Install silently" = "自動でインストール";
-"A scheduled check downloads the update and installs it the next time Blinky quits, with no notification and no update window. Check now still opens the window." = "定期的な確認は更新をダウンロードし、次回 Blinky を終了するときにインストールします。通知も更新ウィンドウも出しません。今すぐ確認はウィンドウを開きます。";
+"A scheduled check downloads the update, installs it, and relaunches Blinky, with no notification and no update window. Check now still opens the window." = "定期的な確認は更新をダウンロードし、インストールしたあと Blinky を起動し直します。通知も更新ウィンドウも出しません。今すぐ確認はウィンドウを開きます。";
 "Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking." = "2時間ごと。下の選択で、通知するか、更新ウィンドウを開くか、確認せずにインストールするかを決めます。";
 "By hour" = "時間ごと";
 "Copied to the clipboard." = "クリップボードにコピーしました。";
@@ -1431,3 +1431,24 @@
 "Each part also shows the credits, such as 5,843 / 6,000. The rings keep their percentages." = "各部分のクレジット数も示します。例: 5,843 / 6,000。リングは割合のままです。";
 "Sends a separate notice when the current pace will not last until the reset, on that same limit." = "リセットまで持たないとき、同じ上限について別に一度知らせます。";
 "Each stage notifies once, at its own hours left, on that same limit. A new install starts with 24 hours." = "各段階は、それぞれの残り時間で一度だけ、同じ上限について知らせます。初期状態は 24 時間です。";
+
+/* 1.5.15 */
+"Break down by" = "内訳";
+"5-hour reset cards" = "5時間のリセット券";
+"Weekly reset cards" = "週間のリセット券";
+"Use a 5-hour reset card" = "5時間のリセット券を使う";
+"Use a weekly reset card" = "週間のリセット券を使う";
+"Use a Codex reset card" = "Codex のリセット券を使う";
+"Use this card" = "この券を使う";
+"Use one 5-hour reset card?" = "5時間のリセット券を 1 枚使いますか？";
+"The 5-hour quota returns to full, and its next reset is counted from now." = "5時間の利用枠は全額に戻り、次のリセットは今から数えます。";
+"Use one weekly reset card?" = "週間のリセット券を 1 枚使いますか？";
+"The weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "週間の利用枠は全額に戻ります。5時間の利用枠も戻り、どちらも次のリセットは今から数えます。";
+"Use one Codex reset card?" = "Codex のリセット券を 1 枚使いますか？";
+"Codex resets the limits this card covers." = "Codex は、この券が対象とする利用枠をリセットします。";
+"The reset card was used." = "リセット券を使いました。";
+"No reset card is available." = "使えるリセット券はありません。";
+"Nothing to reset." = "リセットする利用枠はありません。";
+"That reset card was already used." = "このリセット券はすでに使われています。";
+"Could not use the reset card." = "リセット券を使えませんでした。";
+"Could not use the reset card here. The console is open so you can use it there." = "ここではリセット券を使えませんでした。コンソールを開いたので、そちらで使えます。";

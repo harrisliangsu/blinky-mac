@@ -146,6 +146,15 @@ struct FloatingUsagePanelContent: View {
                             exhaustionBeforeReset: settings.exhaustionBeforeReset,
                             showsAmounts: selected.account.provider == .qoder && settings.qoderShowsAmounts,
                             resetCredits: selected.account == AccountKey(.codex) ? store.codexResetCredits : nil,
+                            zhipuResetCards: Self.zhipuCards(of: selected),
+                            redeemCodex: selected.account == AccountKey(.codex)
+                                ? { await store.redeemCodexResetCard() } : nil,
+                            redeemZhipu: Self.offersZhipuRedeem(selected)
+                                ? { kind, cardID in
+                                    await store.redeemZhipuResetCard(
+                                        kind: kind, cardID: cardID, provider: selected.provider
+                                    )
+                                } : nil,
                             isDetailed: settings.showsDetailedCard(for: selected.account),
                             spend: showsSpend(for: selected.account)
                                 ? cardLedgers.spend(for: selected.account.provider) : nil,
@@ -682,6 +691,22 @@ struct FloatingUsagePanelContent: View {
     private func deselect() {
         guard selectedSlot != nil else { return }
         selectedSlot = nil
+    }
+
+    /// The list attached to this reading. Nil when the provider is not Zhipu
+    /// or z.ai, and nil when that check did not report a list.
+    private static func zhipuCards(of usage: ProviderUsage) -> ZhipuResetInventory? {
+        switch usage.provider {
+        case .zai, .glmCoding: usage.zhipuResetCards
+        default: nil
+        }
+    }
+
+    private static func offersZhipuRedeem(_ usage: ProviderUsage) -> Bool {
+        switch usage.provider {
+        case .zai, .glmCoding: true
+        default: false
+        }
     }
 }
 

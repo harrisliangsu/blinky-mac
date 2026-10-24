@@ -906,6 +906,9 @@ struct ProviderUsage: Identifiable, Equatable, Sendable {
     /// its own summary, and a reading restored from disk must not invent a
     /// count the cache never stored.
     var codexResetCredits: CodexCreditSummary? = nil
+    /// Zhipu or z.ai reset cards from the same check as this quota. Nil when
+    /// the list was not reported. An empty list is an inventory of none, not nil.
+    var zhipuResetCards: ZhipuResetInventory? = nil
 
     /// Whether two readings of this account must agree on their source scope
     /// before one may stand in for the other.

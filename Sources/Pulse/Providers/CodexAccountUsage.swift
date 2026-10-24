@@ -196,6 +196,96 @@ struct CodexAccountUsageService: Sendable {
         return Self.resetCredits(in: root)
     }
 
+    /// What `account/rateLimitResetCredit/consume` said.
+    ///
+    /// `unreported` is a reply that named none of the four outcomes, or an
+    /// app server that did not answer. It is not a guess that the card was spent.
+    enum ConsumeOutcome: Equatable, Sendable {
+        case reset
+        case nothingToReset
+        case noCredit
+        case alreadyRedeemed
+        case unreported
+    }
+
+    /// The consume call, without a server. `creditID` is omitted when it is
+    /// empty, and the app server then picks a card.
+    struct ConsumeRequest: Equatable, Sendable {
+        static let method = "account/rateLimitResetCredit/consume"
+        var idempotencyKey: String
+        var creditID: String?
+
+        var includesCreditID: Bool {
+            guard let creditID else { return false }
+            return !creditID.isEmpty
+        }
+    }
+
+    static func consumeRequest(idempotencyKey: String, creditID: String?) -> ConsumeRequest {
+        ConsumeRequest(idempotencyKey: idempotencyKey, creditID: creditID)
+    }
+
+    /// The soonest usable row's id, when the list names one.
+    static func preferredCreditID(in limits: [String: Any], now: Date = Date()) -> String? {
+        guard let block = creditBlock(in: limits),
+              let rows = creditRows(field(block["credits"]))
+        else { return nil }
+        return soonestID(in: rows.filter { isUsable($0, now: now) })
+    }
+
+    /// The consume reply. The app server returns the result object, not the
+    /// JSON-RPC envelope. A name this build does not know is unreported.
+    static func consumeOutcome(in object: [String: Any]) -> ConsumeOutcome {
+        let named = (object["type"] as? String)
+            ?? (object["outcome"] as? String)
+            ?? (object["status"] as? String)
+        if let named, let outcome = namedOutcome(named) { return outcome }
+        for key in ["reset", "nothingToReset", "noCredit", "alreadyRedeemed"] {
+            guard object[key] != nil, let outcome = namedOutcome(key) else { continue }
+            return outcome
+        }
+        return .unreported
+    }
+
+    /// Reads the list, spends the soonest card that names an id, and reports
+    /// what the app server said. Nothing here asks the reader; the card does.
+    func consumeNextResetCredit() async -> ConsumeOutcome {
+        let limits: Data
+        do {
+            limits = try await server.rateLimits()
+        } catch {
+            return .unreported
+        }
+        let root = (try? JSONSerialization.jsonObject(with: limits) as? [String: Any]) ?? [:]
+        let request = Self.consumeRequest(
+            idempotencyKey: UUID().uuidString,
+            creditID: Self.preferredCreditID(in: root)
+        )
+        let data: Data
+        do {
+            data = try await server.consumeResetCredit(
+                idempotencyKey: request.idempotencyKey,
+                creditID: request.includesCreditID ? request.creditID : nil
+            )
+        } catch {
+            return .unreported
+        }
+        guard let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return .unreported
+        }
+        return Self.consumeOutcome(in: object)
+    }
+
+    private static func namedOutcome(_ raw: String) -> ConsumeOutcome? {
+        switch raw.trimmingCharacters(in: .whitespacesAndNewlines) {
+        case "reset": .reset
+        case "nothingToReset", "nothing_to_reset": .nothingToReset
+        case "noCredit", "no_credit": .noCredit
+        case "alreadyRedeemed", "already_redeemed": .alreadyRedeemed
+        default: nil
+        }
+    }
+
     /// Internal and static so the parsing is testable without a server.
     ///
     /// `now` decides which `expiresAt` is still ahead. Callers that care
@@ -326,6 +416,30 @@ struct CodexAccountUsageService: Sendable {
         }
         .min { $0.1 < $1.1 }?
         .0
+    }
+
+    /// The id of the credit that expires first. A usable row with no date
+    /// still counts, and is used when none of the usable rows named a date.
+    private static func soonestID(in rows: [[String: Any]]) -> String? {
+        let dated = rows.compactMap { row -> (String, Date)? in
+            guard let id = creditIdentifier(row), let expires = expiry(of: row) else { return nil }
+            return (id, expires)
+        }
+        if let soonest = dated.min(by: { $0.1 < $1.1 }) {
+            return soonest.0
+        }
+        return rows.compactMap(creditIdentifier).first
+    }
+
+    private static func creditIdentifier(_ row: [String: Any]) -> String? {
+        let value = field(row["id"], or: row["creditId"]) ?? field(row["credit_id"])
+        if let text = value as? String {
+            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+            return trimmed.isEmpty ? nil : trimmed
+        }
+        guard let number = value as? NSNumber else { return nil }
+        if CFGetTypeID(number) == CFBooleanGetTypeID() { return nil }
+        return number.stringValue
     }
 
     /// Unix seconds, as app-server sends them, milliseconds when the number

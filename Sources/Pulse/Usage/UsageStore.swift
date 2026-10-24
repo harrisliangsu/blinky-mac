@@ -194,6 +194,51 @@ final class UsageStore {
         }
     }
 
+    /// Spends one Codex reset card. The card has already confirmed.
+    func redeemCodexResetCard() async -> ResetCardRedeemReport {
+        let outcome = await CodexAccountUsageService(server: appServer).consumeNextResetCredit()
+        refreshCodexResetCredits()
+        return ResetCardRedeemReport.codex(outcome)
+    }
+
+    /// Spends one Zhipu or z.ai reset card. The card has already confirmed.
+    ///
+    /// A missing key or host, or a use route that is not on that host, opens
+    /// the storefront. The card is not reported as spent in that case.
+    func redeemZhipuResetCard(
+        kind: ZhipuResetKind,
+        cardID: String,
+        provider: Provider
+    ) async -> ResetCardRedeemReport {
+        let account = AccountKey(provider)
+        let inventory = usage[account.id]?.zhipuResetCards
+        guard let card = inventory?.card(kind, id: cardID) ?? inventory?.soonest(kind) else {
+            return .noCard
+        }
+        let host = inventory?.serviceHost ?? ""
+        let key = APIKeyStore.key(for: provider).flatMap { $0.isEmpty ? nil : $0 }
+            ?? ZaiUsageService.storedKey(for: provider)
+        guard let key, !host.isEmpty else {
+            return openZhipuConsole(provider)
+        }
+        switch await ZhipuResetCards.use(kind: kind, card: card, key: key, host: host) {
+        case .used:
+            refresh(account)
+            return .used
+        case .unavailable:
+            return openZhipuConsole(provider)
+        case .failed:
+            return .failed
+        }
+    }
+
+    private func openZhipuConsole(_ provider: Provider) -> ResetCardRedeemReport {
+        if let url = ZhipuResetCards.consoleURL(for: provider) {
+            NSWorkspace.shared.open(url)
+        }
+        return .openedConsole
+    }
+
     /// Codex's reset credits and account totals, which only its app server
     /// reports. Fetched when the settings pane asks rather than on the refresh
     /// loop: nothing on the rail shows them, and the call starts a process.

@@ -1395,7 +1395,7 @@
 "Notify if it will not last until the reset" = "Уведомить, если до сброса не хватит";
 "The card's forecast and the exhaustion notifications both use this list." = "Прогноз на карточке и уведомления об исчерпании используют этот список.";
 "Install silently" = "Установить без запроса";
-"A scheduled check downloads the update and installs it the next time Blinky quits, with no notification and no update window. Check now still opens the window." = "Плановая проверка загружает обновление и устанавливает его при следующем выходе из Blinky, без уведомления и без окна. «Проверить сейчас» по-прежнему открывает окно.";
+"A scheduled check downloads the update, installs it, and relaunches Blinky, with no notification and no update window. Check now still opens the window." = "Плановая проверка загружает обновление, устанавливает его и снова открывает Blinky, без уведомления и без окна. «Проверить сейчас» по-прежнему открывает окно.";
 "Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking." = "Каждые два часа. Выбор ниже решает, уведомить, открыть окно обновления или установить без запроса.";
 "By hour" = "По часам";
 "Copied to the clipboard." = "Скопировано в буфер обмена.";
@@ -1423,3 +1423,24 @@
 "Each part also shows the credits, such as 5,843 / 6,000. The rings keep their percentages." = "У каждой части также показывается число кредитов, например 5,843 / 6,000. Кольца по-прежнему показывают проценты.";
 "Sends a separate notice when the current pace will not last until the reset, on that same limit." = "Если при текущем темпе лимита не хватит до сброса, отправляется отдельное уведомление по тому же лимиту.";
 "Each stage notifies once, at its own hours left, on that same limit. A new install starts with 24 hours." = "Каждая ступень уведомляет один раз, по своим оставшимся часам и по тому же лимиту. Новая установка начинает с 24 часов.";
+
+/* 1.5.15 */
+"Break down by" = "Разбивка";
+"5-hour reset cards" = "Карты сброса на 5 часов";
+"Weekly reset cards" = "Карты недельного сброса";
+"Use a 5-hour reset card" = "Использовать карту сброса на 5 часов";
+"Use a weekly reset card" = "Использовать карту недельного сброса";
+"Use a Codex reset card" = "Использовать карту сброса Codex";
+"Use this card" = "Использовать эту карту";
+"Use one 5-hour reset card?" = "Использовать одну карту сброса на 5 часов?";
+"The 5-hour quota returns to full, and its next reset is counted from now." = "Пятичасовой лимит снова становится полным, и следующий сброс считается от этого момента.";
+"Use one weekly reset card?" = "Использовать одну карту недельного сброса?";
+"The weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "Недельный лимит снова становится полным. Пятичасовой лимит восстанавливается вместе с ним, и оба срока сброса считаются от этого момента.";
+"Use one Codex reset card?" = "Использовать одну карту сброса Codex?";
+"Codex resets the limits this card covers." = "Codex сбрасывает лимиты, которые покрывает эта карта.";
+"The reset card was used." = "Карта сброса использована.";
+"No reset card is available." = "Нет доступной карты сброса.";
+"Nothing to reset." = "Сбрасывать нечего.";
+"That reset card was already used." = "Эта карта сброса уже использована.";
+"Could not use the reset card." = "Не удалось использовать карту сброса.";
+"Could not use the reset card here. The console is open so you can use it there." = "Здесь карту сброса использовать не удалось. Консоль открыта, карту можно использовать там.";

@@ -1401,7 +1401,7 @@
 "Notify if it will not last until the reset" = "Notify if it will not last until the reset";
 "The card's forecast and the exhaustion notifications both use this list." = "The card's forecast and the exhaustion notifications both use this list.";
 "Install silently" = "Install silently";
-"A scheduled check downloads the update and installs it the next time Blinky quits, with no notification and no update window. Check now still opens the window." = "A scheduled check downloads the update and installs it the next time Blinky quits, with no notification and no update window. Check now still opens the window.";
+"A scheduled check downloads the update, installs it, and relaunches Blinky, with no notification and no update window. Check now still opens the window." = "A scheduled check downloads the update, installs it, and relaunches Blinky, with no notification and no update window. Check now still opens the window.";
 "Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking." = "Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking.";
 "By hour" = "By hour";
 "Copied to the clipboard." = "Copied to the clipboard.";
@@ -1429,3 +1429,24 @@
 "Each part also shows the credits, such as 5,843 / 6,000. The rings keep their percentages." = "Each part also shows the credits, such as 5,843 / 6,000. The rings keep their percentages.";
 "Sends a separate notice when the current pace will not last until the reset, on that same limit." = "Sends a separate notice when the current pace will not last until the reset, on that same limit.";
 "Each stage notifies once, at its own hours left, on that same limit. A new install starts with 24 hours." = "Each stage notifies once, at its own hours left, on that same limit. A new install starts with 24 hours.";
+
+/* 1.5.15 */
+"Break down by" = "Break down by";
+"5-hour reset cards" = "5-hour reset cards";
+"Weekly reset cards" = "Weekly reset cards";
+"Use a 5-hour reset card" = "Use a 5-hour reset card";
+"Use a weekly reset card" = "Use a weekly reset card";
+"Use a Codex reset card" = "Use a Codex reset card";
+"Use this card" = "Use this card";
+"Use one 5-hour reset card?" = "Use one 5-hour reset card?";
+"The 5-hour quota returns to full, and its next reset is counted from now." = "The 5-hour quota returns to full, and its next reset is counted from now.";
+"Use one weekly reset card?" = "Use one weekly reset card?";
+"The weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "The weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now.";
+"Use one Codex reset card?" = "Use one Codex reset card?";
+"Codex resets the limits this card covers." = "Codex resets the limits this card covers.";
+"The reset card was used." = "The reset card was used.";
+"No reset card is available." = "No reset card is available.";
+"Nothing to reset." = "Nothing to reset.";
+"That reset card was already used." = "That reset card was already used.";
+"Could not use the reset card." = "Could not use the reset card.";
+"Could not use the reset card here. The console is open so you can use it there." = "Could not use the reset card here. The console is open so you can use it there.";

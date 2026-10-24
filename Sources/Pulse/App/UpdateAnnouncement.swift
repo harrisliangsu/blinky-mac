@@ -7,7 +7,7 @@ import UserNotifications
 /// and leaves Sparkle's window hidden until that notification is clicked.
 /// Show the window is the previous behaviour: the offer comes forward as soon
 /// as the check finds a version. Install silently downloads on that scheduled
-/// check and installs the next time Blinky quits, with no notification and no
+/// check, then installs and relaunches Blinky, with no notification and no
 /// window. Check for Updates… and About's Check now are none of those — the
 /// reader asked, so the window opens either way.
 ///
@@ -19,8 +19,8 @@ enum UpdateDiscovery: String, CaseIterable, Identifiable, Sendable {
     case notifyFirst
     /// Sparkle's update window, as soon as a scheduled check finds a version.
     case showWindow
-    /// A scheduled check downloads the update and installs it the next time
-    /// Blinky quits. No notification, and no update window.
+    /// A scheduled check downloads the update, installs it, and relaunches
+    /// Blinky. No notification, and no update window.
     case installSilently
 
     var id: String { rawValue }
@@ -68,7 +68,7 @@ enum UpdateAnnouncement {
         case notify
         /// Ask for notification permission, then `actionAfterPermission`.
         case askPermission
-        /// Download on the scheduled check and install on quit. No notice, no window.
+        /// Download on the scheduled check, then install and relaunch. No notice, no window.
         case installSilently
     }
 
@@ -137,14 +137,41 @@ enum UpdateAnnouncement {
         return .showOffer
     }
 
-    /// Whether Sparkle should download a scheduled find and install it on quit.
+    /// Whether Sparkle should download a scheduled find without an offer window.
     ///
     /// Only Install silently. Notify first and Show the window leave
     /// `automaticallyDownloadsUpdates` false, so a fresh install stays
     /// offer-only until the reader picks this case. `SUAutomaticallyUpdate`
-    /// in the plist stays false for the same reason.
+    /// in the plist stays false for the same reason: the download begins only
+    /// after the reader chooses Install silently.
     static func automaticallyDownloadsUpdates(for discovery: UpdateDiscovery) -> Bool {
         discovery == .installSilently
+    }
+
+    /// Whether a finished download installs and relaunches in this session.
+    ///
+    /// Install silently is that choice. The other two leave the package for
+    /// the reader to install from the offer window. A menu-bar app often
+    /// never quits, so waiting for the next quit leaves the download unused.
+    static func installsImmediately(for discovery: UpdateDiscovery) -> Bool {
+        discovery == .installSilently
+    }
+
+    /// Sparkle's install-on-quit question.
+    ///
+    /// Returning true and running `install` is what installs and relaunches
+    /// now. The block is scheduled, not called here, so Sparkle can finish
+    /// this delegate before the process starts quitting. Returning false
+    /// leaves the package until Blinky quits, which is every choice except
+    /// Install silently.
+    static func immediateInstall(
+        discovery: UpdateDiscovery,
+        install: @escaping () -> Void,
+        schedule: (@escaping () -> Void) -> Void
+    ) -> Bool {
+        guard installsImmediately(for: discovery) else { return false }
+        schedule(install)
+        return true
     }
 
     /// Whether Sparkle's standard driver should present a scheduled find.

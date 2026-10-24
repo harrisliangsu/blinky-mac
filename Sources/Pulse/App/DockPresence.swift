@@ -178,12 +178,14 @@ final class DockPresence {
 ///
 /// Activating in the same turn as `setActivationPolicy(.regular)` is too
 /// early: macOS still treats the process as an accessory, and the click that
-/// opened the window often came from the non-activating usage panel. The
-/// activation waits until the next turn. An app that is already `.regular`
-/// (Always show Dock icon, or another tracked window already open) activates
-/// immediately. Staying `.accessory` — the while-open Dock switch is off, and
-/// always-show is off — has no application menu to claim, and the window is
-/// still ordered in front of other apps.
+/// opened the window often came from the non-activating usage panel. One
+/// `NSApp.activate` in that turn, or on the next one, was still leaving the
+/// previous app as the menu-bar owner. The claim is repeated on the following
+/// turn, through `NSRunningApplication` as well as `NSApp`, and the window is
+/// made main after that claim. Staying `.accessory` — the while-open Dock
+/// switch is off, and always-show is off — still tries; an accessory app has
+/// no application menu for the system to put Blinky's name on, and the
+/// default while-open Dock switch is what makes the policy `.regular`.
 ///
 /// Call sites, all through `DockPresence.apply(showingWindow:)`: the main
 /// window (`SettingsWindowController.show` — the usage card's grid symbol, the panel
@@ -197,7 +199,9 @@ enum MainWindowActivation {
         case now
         /// The policy just became `.regular`. Activate on the next turn.
         case nextTurn
-        /// Staying `.accessory`. No menu bar to claim; the window still comes forward.
+        /// Staying `.accessory`. The window comes forward, and Blinky still
+        /// tries to become the frontmost app. The menu bar names Blinky only
+        /// once the policy is `.regular`.
         case orderOnly
         /// Nothing is asking for attention.
         case skip
@@ -215,33 +219,78 @@ enum MainWindowActivation {
         return wantsAttention ? .now : .skip
     }
 
-    /// Puts `window` in front of other apps and makes it key.
+    /// One step of becoming the frontmost app. The order is `claims(for:)`.
+    enum Claim: Equatable, Sendable {
+        /// Bring the window forward and make it main.
+        case orderFront
+        /// Become the active app. A deferred claim runs on a later turn,
+        /// after a policy change and after the click that opened the window
+        /// has finished.
+        case claimFrontmost(deferred: Bool)
+    }
+
+    /// How `perform` claims the menu bar for this timing.
+    ///
+    /// `.now` claims in this turn and again on the next one: the first claim
+    /// is what an already-regular app can take, and the second is what a
+    /// click from the non-activating panel was swallowing. `.nextTurn` and
+    /// `.orderOnly` order the window now and claim twice after this turn,
+    /// because a policy that just became `.regular` is not visible yet, and
+    /// one deferred activate was not enough to take the menu bar.
+    static func claims(for timing: Timing) -> [Claim] {
+        switch timing {
+        case .skip:
+            []
+        case .now:
+            [.claimFrontmost(deferred: false), .claimFrontmost(deferred: true)]
+        case .nextTurn, .orderOnly:
+            [.orderFront, .claimFrontmost(deferred: true), .claimFrontmost(deferred: true)]
+        }
+    }
+
+    /// Puts `window` in front of other apps and makes it key and main.
     ///
     /// `makeKeyAndOrderFront` only orders among this app's own windows. While
     /// Blinky is still an accessory, or while `activate` has not landed, that
-    /// leaves the window behind whichever app was key.
+    /// leaves the window behind whichever app was key. `makeMain` after the
+    /// app is active is what puts Blinky's name on the menu bar.
     @MainActor
     static func orderFront(_ window: NSWindow?) {
         guard let window else { return }
         window.orderFrontRegardless()
         window.makeKey()
+        window.makeMain()
     }
 
-    /// Activates, then runs `after` (the window being made key again).
+    /// Asks macOS to make this process the frontmost app.
+    ///
+    /// Both calls: `NSRunningApplication.activate(options:)` is the one that
+    /// still ignores the other app, and `NSApp.activate` is the call the
+    /// rest of AppKit's window ordering is watching.
+    @MainActor
+    static func claimFrontmostApplication() {
+        NSApp.unhide(nil)
+        NSRunningApplication.current.activate(options: [.activateAllWindows, .activateIgnoringOtherApps])
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    /// Runs `claims(for:)`. `after` orders the window again once a claim lands.
     @MainActor
     static func perform(_ timing: Timing, after: (@MainActor () -> Void)? = nil) {
-        switch timing {
-        case .skip:
-            break
-        case .orderOnly:
-            after?()
-        case .now:
-            NSApp.activate(ignoringOtherApps: true)
-            after?()
-        case .nextTurn:
-            DispatchQueue.main.async {
-                MainActor.assumeIsolated {
-                    NSApp.activate(ignoringOtherApps: true)
+        for claim in claims(for: timing) {
+            switch claim {
+            case .orderFront:
+                after?()
+            case .claimFrontmost(let deferred):
+                if deferred {
+                    DispatchQueue.main.async {
+                        MainActor.assumeIsolated {
+                            claimFrontmostApplication()
+                            after?()
+                        }
+                    }
+                } else {
+                    claimFrontmostApplication()
                     after?()
                 }
             }

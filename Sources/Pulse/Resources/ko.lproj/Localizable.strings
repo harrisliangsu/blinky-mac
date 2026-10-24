@@ -1403,7 +1403,7 @@
 "Notify if it will not last until the reset" = "초기화까지 버티지 못할 때 알림";
 "The card's forecast and the exhaustion notifications both use this list." = "카드의 소진 예측과 소진 알림이 모두 이 목록을 사용합니다.";
 "Install silently" = "자동으로 설치";
-"A scheduled check downloads the update and installs it the next time Blinky quits, with no notification and no update window. Check now still opens the window." = "예약된 확인은 업데이트를 받아 두고, 다음에 Blinky가 끝날 때 설치합니다. 알림도 업데이트 창도 열지 않습니다. 지금 확인은 창을 엽니다.";
+"A scheduled check downloads the update, installs it, and relaunches Blinky, with no notification and no update window. Check now still opens the window." = "예약된 확인은 업데이트를 받아 설치한 뒤 Blinky를 다시 실행합니다. 알림도 업데이트 창도 열지 않습니다. 지금 확인은 창을 엽니다.";
 "Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking." = "두 시간마다. 아래 선택에 따라 알리거나, 업데이트 창을 열거나, 묻지 않고 설치합니다.";
 "By hour" = "시간별";
 "Copied to the clipboard." = "클립보드에 복사했습니다.";
@@ -1431,3 +1431,24 @@
 "Each part also shows the credits, such as 5,843 / 6,000. The rings keep their percentages." = "각 부분의 크레딧도 함께 보여 줍니다. 예: 5,843 / 6,000. 고리는 백분율을 유지합니다.";
 "Sends a separate notice when the current pace will not last until the reset, on that same limit." = "초기화까지 버티지 못할 때, 같은 한도에 대해 따로 한 번 알립니다.";
 "Each stage notifies once, at its own hours left, on that same limit. A new install starts with 24 hours." = "각 단계는 자신의 남은 시간에 한 번씩, 같은 한도에 대해 알립니다. 처음에는 24시간입니다.";
+
+/* 1.5.15 */
+"Break down by" = "구분";
+"5-hour reset cards" = "5시간 초기화 쿠폰";
+"Weekly reset cards" = "주간 초기화 쿠폰";
+"Use a 5-hour reset card" = "5시간 초기화 쿠폰 사용";
+"Use a weekly reset card" = "주간 초기화 쿠폰 사용";
+"Use a Codex reset card" = "Codex 한도 초기화 쿠폰 사용";
+"Use this card" = "이 쿠폰 사용";
+"Use one 5-hour reset card?" = "5시간 초기화 쿠폰을 사용할까요?";
+"The 5-hour quota returns to full, and its next reset is counted from now." = "5시간 한도가 가득 채워지고, 다음 초기화는 지금부터 계산됩니다.";
+"Use one weekly reset card?" = "주간 초기화 쿠폰을 사용할까요?";
+"The weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "주간 한도가 가득 채워집니다. 5시간 한도도 함께 채워지고, 두 초기화 시각은 지금부터 계산됩니다.";
+"Use one Codex reset card?" = "Codex 한도 초기화 쿠폰을 사용할까요?";
+"Codex resets the limits this card covers." = "Codex가 이 쿠폰이 적용되는 한도를 초기화합니다.";
+"The reset card was used." = "초기화 쿠폰을 사용했습니다.";
+"No reset card is available." = "사용할 수 있는 초기화 쿠폰이 없습니다.";
+"Nothing to reset." = "초기화할 한도가 없습니다.";
+"That reset card was already used." = "이 초기화 쿠폰은 이미 사용되었습니다.";
+"Could not use the reset card." = "초기화 쿠폰을 사용하지 못했습니다.";
+"Could not use the reset card here. The console is open so you can use it there." = "여기서는 초기화 쿠폰을 사용하지 못했습니다. 콘솔을 열었으니 그곳에서 사용할 수 있습니다.";

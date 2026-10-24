@@ -176,6 +176,56 @@ struct SpendGlanceWindowTests {
         #expect(!controller.isOpen)
     }
 
+    @Test("A click on another window closes the Token window")
+    func clickOutsideCloses() throws {
+        LocalizationSource.use(.english)
+        defer { LocalizationSource.use(.system) }
+        let (defaults, cleanup) = AppSettingsPersistenceTests.isolatedDefaults()
+        defer { cleanup() }
+        let settings = AppSettings(defaults: defaults)
+        settings.readsTokenSpend = true
+        let controller = SpendGlanceController(settings: settings)
+        controller.model.presentReadySummary()
+        controller.anchor = {
+            SpendGlanceAnchor(
+                rail: CGRect(x: 800, y: 700, width: 280, height: 36),
+                edge: .right,
+                screen: CGRect(x: 0, y: 0, width: 1440, height: 900),
+                cardClearance: 12,
+                level: .statusBar
+            )
+        }
+        controller.show()
+        defer {
+            settings.readsTokenSpend = false
+            controller.close()
+        }
+        pump()
+        #expect(controller.isOpen)
+        let other = NSWindow(
+            contentRect: NSRect(x: 40, y: 40, width: 80, height: 40),
+            styleMask: [.titled],
+            backing: .buffered,
+            defer: false
+        )
+        other.level = .normal
+        other.orderFront(nil)
+        defer { other.orderOut(nil) }
+        let click = try #require(NSEvent.mouseEvent(
+            with: .leftMouseDown,
+            location: NSPoint(x: 10, y: 10),
+            modifierFlags: [],
+            timestamp: ProcessInfo.processInfo.systemUptime,
+            windowNumber: other.windowNumber,
+            context: nil,
+            eventNumber: 11,
+            clickCount: 1,
+            pressure: 1
+        ))
+        NSApp.sendEvent(click)
+        #expect(!controller.isOpen)
+    }
+
     private func pump() {
         RunLoop.current.run(until: Date().addingTimeInterval(0.4))
     }

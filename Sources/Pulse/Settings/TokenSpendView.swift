@@ -55,6 +55,8 @@ struct TokenSpendView: View {
     /// one. Independent of `span`: the "Token activity" chart is the long view.
     var activity = TokenActivity()
     @Binding var activityView: ActivityView
+    /// Which list sits under the rhythm. Remembered with the other Token choices.
+    @Binding var dimension: SpendGlanceDimension
     let isLoading: Bool
     var isSummarizing = false
     /// The glance window draws the span's token total and estimate itself.
@@ -185,19 +187,7 @@ struct TokenSpendView: View {
             } else if summary.isEmpty {
                 empty
             } else {
-                total(summary)
-                activitySection
-                kinds(summary)
-                streaks(summary)
-                if !isOneDay { hourly(summary) }
-                if !isOneDay { daily(summary) }
-                if summary.months.count > 1 { monthly(summary) }
-                agents
-                // Even one model is an entry point now: tapping it opens that
-                // model's own detail, which is the only place its split lives.
-                if !summary.models.isEmpty { models(summary).id("models") }
-                if !summary.projects.isEmpty { projects(summary) }
-                if !summary.sessions.isEmpty { sessions(summary) }
+                glanceBody(summary)
                 footnote(summary)
             }
 
@@ -218,11 +208,20 @@ struct TokenSpendView: View {
     /// make one produce records. A source that is absent entirely is not here —
     /// fifty-one empty rows would be worse than nothing.
     private var noRecordsGroup: some View {
-        SettingsGroup(String.localized("No usage data read")) {
-            SettingsRow(noRecords.map(\.displayName).joined(separator: " · ")) {
-                EmptyView()
-            }
+        VStack(alignment: .leading, spacing: 2) {
+            quietText(String.localized("No usage data read"))
+            quietText(noRecords.map(\.displayName).joined(separator: " · "))
         }
+        .padding(.horizontal, 4)
+    }
+
+    /// A sentence that says nothing was measured. Smaller and secondary, so
+    /// it does not read as the page's figure.
+    private func quietText(_ text: String) -> some View {
+        Text(verbatim: text)
+            .font(.system(size: SpendQuietCopy.pointSize))
+            .foregroundStyle(SpendQuietCopy.isPrimary ? AnyShapeStyle(.primary) : AnyShapeStyle(.secondary))
+            .fixedSize(horizontal: false, vertical: true)
     }
 
     // MARK: - One agent
@@ -251,14 +250,13 @@ struct TokenSpendView: View {
     }
 
     private func nothingForAgent(_ agent: SpendAgent) -> some View {
-        SettingsGroup(agent.displayName) {
-            SettingsRow(
-                String.localized("Nothing in this span"),
-                subtitle: String.localized("Try a longer span, or rescan.")
-            ) {
-                EmptyView()
-            }
+        VStack(alignment: .leading, spacing: 2) {
+            Text(verbatim: agent.displayName)
+                .font(.system(size: 12, weight: .medium))
+            quietText(String.localized("Nothing in this span"))
+            quietText(String.localized("Try a longer span, or rescan."))
         }
+        .padding(.horizontal, 4)
     }
 
     // MARK: - One model
@@ -288,33 +286,31 @@ struct TokenSpendView: View {
     }
 
     private func nothingForModel(_ name: String) -> some View {
-        SettingsGroup(name) {
-            SettingsRow(
-                String.localized("Nothing in this span"),
-                subtitle: String.localized("Try a longer span, or rescan.")
-            ) {
-                EmptyView()
-            }
+        VStack(alignment: .leading, spacing: 2) {
+            Text(verbatim: name)
+                .font(.system(size: 12, weight: .medium))
+            quietText(String.localized("Nothing in this span"))
+            quietText(String.localized("Try a longer span, or rescan."))
         }
+        .padding(.horizontal, 4)
     }
 
     // MARK: - Nothing to show
 
     private var empty: some View {
-        SettingsGroup(String.localized("Total")) {
-            SettingsRow(
-                isLoading ? String.localized("Reading…") : String.localized("Nothing yet"),
-                // **No agent is promised and none is promised absent.** The
-                // page reads records and exports from a catalogue of sources,
-                // and any of them can be the one that has nothing; naming one
-                // here would be wrong for everyone else.
-                subtitle: isLoading
+        VStack(alignment: .leading, spacing: 2) {
+            quietText(isLoading ? String.localized("Reading…") : String.localized("Nothing yet"))
+            // **No agent is promised and none is promised absent.** The
+            // page reads records and exports from a catalogue of sources,
+            // and any of them can be the one that has nothing; naming one
+            // here would be wrong for everyone else.
+            quietText(
+                isLoading
                     ? String.localized("Going through local records and exports.")
                     : String.localized("No local records or exports have been found yet.")
-            ) {
-                EmptyView()
-            }
+            )
         }
+        .padding(.horizontal, 4)
     }
 
     // MARK: - The figure
@@ -712,37 +708,92 @@ struct TokenSpendView: View {
     /// look alike in a bar chart and are opposites here.
     /// How consistently, and when.
     private func streaks(_ summary: SpendSummary) -> some View {
-        SettingsGroup(String.localized("Pattern")) {
+        let hoursComplete = Self.hoursComplete(summary)
+        let spread = UsageRhythm.spreadsAcrossTheRow
+        return SettingsGroup(String.localized("Pattern")) {
             HStack(spacing: 16) {
-                SpendCaption(
+                rhythmCaption(
                     String.localized("Current streak"),
-                    String.localized("\("\(summary.currentStreak)") days")
+                    String.localized("\("\(summary.currentStreak)") days"),
+                    spread: spread
                 )
-                SpendCaption(
+                rhythmCaption(
                     String.localized("Longest streak"),
-                    String.localized("\("\(summary.longestStreak)") days")
+                    String.localized("\("\(summary.longestStreak)") days"),
+                    spread: spread
                 )
                 // Only a complete hour series has a peak worth naming.
-                if Self.hoursComplete(summary), let hour = summary.peakHour {
-                    SpendCaption(String.localized("Peak hour"), SpendFormat.hour(hour))
+                if hoursComplete, let hour = summary.peakHour {
+                    rhythmCaption(String.localized("Peak hour"), SpendFormat.hour(hour), spread: spread)
                 }
                 // Named for what it ranks by. "Favourite" read as the model
                 // used most often, and the ranking is tokens — cache reads
                 // and all, which puts whichever model re-reads the longest
                 // context first.
                 if let model = summary.models.first {
-                    SpendCaption(String.localized("Most tokens"), model.name)
+                    rhythmCaption(String.localized("Most tokens"), model.name, spread: spread)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: spread ? .center : .leading)
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
         }
     }
 
+    private func rhythmCaption(_ title: String, _ value: String, spread: Bool) -> some View {
+        SpendCaption(title, value)
+            .frame(maxWidth: spread ? .infinity : nil, alignment: .center)
+    }
+
+    /// Token activity, then the rhythm, then one breakdown.
+    @ViewBuilder
+    private func glanceBody(_ summary: SpendSummary) -> some View {
+        ForEach(TokenGlanceSection.order, id: \.self) { section in
+            switch section {
+            case .tokenActivity:
+                activitySection
+            case .usageRhythm:
+                streaks(summary)
+            case .dimension:
+                dimensionBlock(summary)
+            }
+        }
+    }
+
+    /// The menu, and only the list it names. The other three stay off the page.
+    @ViewBuilder
+    private func dimensionBlock(_ summary: SpendSummary) -> some View {
+        Picker(String.localized("Break down by"), selection: $dimension) {
+            ForEach(SpendGlanceDimension.allCases) { item in
+                Text(verbatim: item.title).tag(item)
+            }
+        }
+        .pickerStyle(.menu)
+        .labelsHidden()
+        .accessibilityLabel(String.localized("Break down by"))
+        .accessibilityIdentifier("spend-glance-dimension")
+        .frame(maxWidth: SettingsLayout.controlWidth, alignment: .leading)
+        .padding(.horizontal, 4)
+
+        switch dimension {
+        case .model:
+            if summary.models.isEmpty { quietText(String.localized("Nothing in this span")).padding(.horizontal, 4) }
+            else { models(summary).id("models") }
+        case .agent:
+            if summary.agents.isEmpty { quietText(String.localized("Nothing in this span")).padding(.horizontal, 4) }
+            else { agentRows(summary) }
+        case .project:
+            if summary.projects.isEmpty { quietText(String.localized("Nothing in this span")).padding(.horizontal, 4) }
+            else { projects(summary) }
+        case .session:
+            if summary.sessions.isEmpty { quietText(String.localized("Nothing in this span")).padding(.horizontal, 4) }
+            else { sessions(summary) }
+        }
+    }
+
     // MARK: - Where it went
 
-    private var agents: some View {
+    private func agentRows(_ summary: SpendSummary) -> some View {
         SettingsGroup(String.localized("By agent")) {
             ForEach(Array(summary.agents.enumerated()), id: \.element.id) { index, agent in
                 if index > 0 { SettingsRowDivider() }

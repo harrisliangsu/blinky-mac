@@ -90,6 +90,20 @@ Exception: the MCP lane reports its monthly allowance as “1 minute” — a ma
 
 `nextResetTime` is epoch **milliseconds**.
 
+## Quota reset cards
+
+GLM Coding Plan hands out two kinds of reset card: a 5-hour card and a weekly card. Both storefronts answer the same undocumented route the quota call already uses the key for.
+
+`GET {host}/api/biz/customer-package-reset/list?targetType=PERSONAL`
+
+z.ai is asked only on `https://api.z.ai`. The mainland plan is asked on `https://open.bigmodel.cn` first — the quota host — and on `https://bigmodel.cn` if that host does not return this object. The list captured from the mainland console on 2026-10-22 came from `bigmodel.cn`.
+
+The envelope is `code` 200, `success` true, and `data.fiveHourResets` plus `data.weekResets`. A card counts only when `available` is true, `recordId` is a number, and `expireTime` (`yyyy-MM-dd HH:mm:ss`) is still ahead. That clock is China Standard Time (UTC+8). A missing flag, a non-numeric id, or an expiry that cannot be read drops the row. Empty arrays on a successful envelope are a reported zero. A body that is not this object is unreported: the card draws nothing rather than a zero Pulse made up. The list is asked beside the quota call and dropped when the quota itself fails, so a hung list does not hold the ring.
+
+The usage card shows the two kinds the way Codex shows Limit reset credits: a count, and the soonest expiry when there is one. The menu bar item shows the same counts and does not offer to spend one.
+
+Using one is `POST {host}/api/biz/customer-package-reset/use` on the host that answered the list. The body is `targetType` `PERSONAL`, `resetType` `FIVE_HOUR` or `WEEK`, `recordId` as a number, `requestId`, and `grantType` when the list named one. `WEEK` is the body the mainland console sent; `FIVE_HOUR` is the token the same route uses for the other list. The card asks first. Confirm spends the soonest card of that kind. HTTP 404 or 405 opens the storefront root (`https://z.ai` or `https://open.bigmodel.cn`) and does not say the card was spent. Any other failure says the card could not be used.
+
 ## Keys on disk (mainland only)
 
 GLM also reads a key already on this Mac, first readable line only:
