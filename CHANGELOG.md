@@ -12,12 +12,12 @@ bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
 ## 1.5.15
 
-- **Install silently installs and relaunches.** With Settings → About → When an update is found set to Install silently, a scheduled check downloads the update, installs it, and opens Blinky again, without waiting for Blinky to quit. Check now still opens the update window.
-- **Opening the main window makes Blinky the frontmost app.** The grid icon on the usage card, the Dock, and a launch from Launchpad or Spotlight put Blinky's name in the menu bar.
-- **The Token window closes when you click outside it.** Escape and the close button still close it. A click on its menu does not.
-- **The Token window lists one breakdown at a time.** Token activity comes first, then the usage rhythm, then a menu for By model, By agent, By project, or By session. A new install starts on By model, and the choice is remembered. The rhythm's figures spread across the row. The token total and the estimate under it are centered. "No usage data read" stays, in smaller secondary type.
-- **Zhipu and z.ai show 5-hour and weekly reset cards.** The usage card lists each kind the way Codex lists limit reset credits, including how many are left.
-- **A reset card is used only after you confirm.** On the Codex, Zhipu, or z.ai usage card, Use asks first and spends one card only when you confirm.
+- **Install silently installs and relaunches.** With Settings → About → When an update is found set to Install silently, a scheduled check downloads the update, installs it, and opens Blinky again, without waiting for Blinky to quit. Check now still opens the update window. [#76](https://github.com/harrisliangsu/blinky-mac/pull/76)
+- **Opening the main window makes Blinky the frontmost app.** The grid icon on the usage card, the Dock, and a launch from Launchpad or Spotlight put Blinky's name in the menu bar. [#76](https://github.com/harrisliangsu/blinky-mac/pull/76)
+- **The Token window closes when you click outside it.** Escape and the close button still close it. A click on its menu does not. [#76](https://github.com/harrisliangsu/blinky-mac/pull/76)
+- **The Token window lists one breakdown at a time.** Token activity comes first, then the usage rhythm, then a menu for By model, By agent, By project, or By session. A new install starts on By model, and the choice is remembered. The rhythm's figures spread across the row. The token total and the estimate under it are centered. "No usage data read" stays, in smaller secondary type. [#76](https://github.com/harrisliangsu/blinky-mac/pull/76)
+- **Zhipu and z.ai show 5-hour and weekly reset cards.** The usage card lists each kind the way Codex lists limit reset credits, including how many are left. [#76](https://github.com/harrisliangsu/blinky-mac/pull/76)
+- **A reset card is used only after you confirm.** On the Codex, Zhipu, or z.ai usage card, Use asks first and spends one card only when you confirm. [#76](https://github.com/harrisliangsu/blinky-mac/pull/76)
 
 ## 1.5.14
 
