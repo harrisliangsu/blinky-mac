@@ -6,6 +6,24 @@
         <description>Updates for Pulse.</description>
         <language>en</language>
         <item>
+            <title>1.12.4</title>
+            <pubDate>Sat, 24 Oct 2026 12:09:23 -0000</pubDate>
+            <sparkle:version>1.12.4</sparkle:version>
+            <sparkle:shortVersionString>1.12.4</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <link>https://github.com/qunqin24/Pulse/releases/tag/v1.12.4</link>
+            <description><![CDATA[<style>
+  h2 { font-size: 1.05em; margin: 0 0 .5em; }
+  ul { margin: 0; padding-left: 1.2em; }
+  li { margin: .3em 0; }
+  p { margin: .8em 0 0; }
+</style><h2>Pulse 1.12.4</h2><p><strong>New</strong></p><ul><li><strong>Experimental: liquid docking.</strong> Turned on in Settings → Experimental, the rail stretches and parts like a drop when pulled off a screen edge, and is drawn in when brought near one; off by default.</li><li><strong>Test notification.</strong> Press Send in Settings → Notifications to receive a test notification and check that notifications reach you.</li></ul><p><strong>Changed and fixed</strong></p><ul><li><strong>Cursor usage is read again when Cursor encrypts its saved login.</strong> Pulse asks the keychain for Cursor&#x27;s key, and after a refusal asks again only at the next launch or on a manual refresh. Thanks to <a href="https://github.com/qunqin24/Pulse/pull/93">@Hill-1024</a> for the contribution.</li><li><strong>Cursor Enterprise allowances are shown.</strong> An Enterprise account that reports a single allowance shows it as the monthly limit, with amounts in dollars. Thanks to <a href="https://github.com/qunqin24/Pulse/pull/97">@lexleizou</a> for the contribution.</li><li><strong>Kimi Code&#x27;s usage records include the new Kimi Code.</strong> Token spend and the Kimi Code pane also read the new Kimi Code&#x27;s session store, estimating money at published prices where the model is known.</li><li><strong>Codex sessions are no longer counted twice.</strong> A session found in both <code>sessions</code> and <code>archived_sessions</code> is counted once. Thanks to <a href="https://github.com/qunqin24/Pulse/issues/95">@Drswith</a> for finding it.</li><li><strong>The rail at the notch lines up with the notch.</strong> It is centred on the display and its corners into the screen edge match the notch&#x27;s; at the small size with few providers, its top corners are no longer cut off square.</li><li><strong>The detailed card no longer shows the &quot;estimated at API prices&quot; line.</strong> The explanation stays in Settings → Token spend.</li></ul><p><a href="https://github.com/qunqin24/Pulse/releases/tag/v1.12.4">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/qunqin24/Pulse/releases/download/v1.12.4/Pulse-1.12.4.zip"
+                       length="16493038"
+                       type="application/octet-stream"
+                       sparkle:edSignature="sBsWnx8RkPYswKSKy7OqsUqa4FusoOwhiv3g83PfYbL4TVGXyFENTZSWfbfZLAz57WCadN/4SxqCAmM+NuqqBA==" />
+        </item>
+        <item>
             <title>1.12.3</title>
             <pubDate>Wed, 21 Oct 2026 06:34:17 -0000</pubDate>
             <sparkle:version>1.12.3</sparkle:version>
