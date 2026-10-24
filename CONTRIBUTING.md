@@ -37,7 +37,7 @@ Focused contributions are welcome. Discussion in an issue is optional; you can d
 | How it works *now* | Topic docs under `Docs/` | Same patch as the code |
 | Why / what failed / measured once | [Docs/decisions/](Docs/decisions/README.md) | When the *reason* changes, or a new lesson is worth keeping |
 | Human process | This file | When the process changes |
-| User-facing product copy | [README.md](README.md) with its [zh-CN](README.zh-CN.md) / [zh-Hant](README.zh-Hant.md) / [ja](README.ja.md) / [ko](README.ko.md) translations | Keep all five in parity |
+| User-facing product copy | [README.md](README.md) with its [zh-CN](README.zh-CN.md) / [zh-Hant](README.zh-Hant.md) / [ja](README.ja.md) / [ko](README.ko.md) / [ru](README.ru.md) translations | Keep all six in parity |
 
 `Docs/` is the capitalized directory. Do not add a second `docs/` tree.
 

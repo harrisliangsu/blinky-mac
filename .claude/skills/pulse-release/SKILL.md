@@ -62,7 +62,7 @@ A `## x.y.z` section at the top of `CHANGELOG.md`, **above** the previous one. I
 - Grammar is limited to bullets, `**bold**`, `` `code` `` and links (`Scripts/changelog.py`).
 - Validate: `python3 Scripts/changelog.py x.y.z > /dev/null` must exit cleanly.
 
-If a new feature is user-visible, add it to the feature list in **all five** READMEs (`README.md`, `README.zh-CN.md`, `README.zh-Hant.md`, `README.ja.md`, `README.ko.md`), in its own commit before the release commit.
+If a new feature is user-visible, add it to the feature list in **all six** READMEs (`README.md`, `README.zh-CN.md`, `README.zh-Hant.md`, `README.ja.md`, `README.ko.md`, `README.ru.md`), in its own commit before the release commit.
 
 ## 4. Commit, tag, push
 

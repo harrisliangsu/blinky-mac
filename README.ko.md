@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  <sub><b>macOS 14 Sonoma 이상</b> · Apple 실리콘과 Intel 모두 지원 · <a href="README.md"><b>English</b></a> · <a href="README.zh-CN.md"><b>简体中文</b></a> · <a href="README.zh-Hant.md"><b>繁體中文</b></a> · <a href="README.ja.md"><b>日本語</b></a> · <b>한국어</b></sub>
+  <sub><b>macOS 14 Sonoma 이상</b> · Apple 실리콘과 Intel 모두 지원 · <a href="README.md"><b>English</b></a> · <a href="README.zh-CN.md"><b>简体中文</b></a> · <a href="README.zh-Hant.md"><b>繁體中文</b></a> · <a href="README.ja.md"><b>日本語</b></a> · <b>한국어</b> · <a href="README.ru.md"><b>Русский</b></a></sub>
 </p>
 
 <p align="center">
