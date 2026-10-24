@@ -13,8 +13,8 @@ struct ResetCardRedeemTests {
         #expect(asked.prompt == .confirmingCodex)
         #expect(asked.send == nil)
 
-        let zhipu = ResetCardPrompt.step(.idle, .askZhipu(.weekly, cardID: "22"))
-        #expect(zhipu.prompt == .confirmingZhipu(.weekly, cardID: "22"))
+        let zhipu = ResetCardPrompt.step(.idle, .askZhipu(.weeklyCard, cardID: "22"))
+        #expect(zhipu.prompt == .confirmingZhipu(.weeklyCard, cardID: "22"))
         #expect(zhipu.send == nil)
 
         let idle = ResetCardPrompt.step(.idle, .confirm)
@@ -29,8 +29,8 @@ struct ResetCardRedeemTests {
         #expect(confirmed.prompt == .idle)
         #expect(confirmed.send == .codex)
 
-        let week = ResetCardPrompt.step(.confirmingZhipu(.fiveHour, cardID: "11"), .confirm)
-        #expect(week.send == .zhipu(.fiveHour, cardID: "11"))
+        let week = ResetCardPrompt.step(.confirmingZhipu(.fiveHourCard, cardID: "11"), .confirm)
+        #expect(week.send == .zhipu(.fiveHourCard, cardID: "11"))
     }
 
     @Test("A Codex outcome becomes the sentence the card shows")

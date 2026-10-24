@@ -26,14 +26,17 @@ import Foundation
 /// console sent; `FIVE_HOUR` is the token the same route uses for the
 /// other list. The caller confirms before this runs.
 enum ZhipuResetKind: String, Equatable, Sendable {
-    case fiveHour
-    case weekly
+    /// Not `fiveHour` / `weekly`: those names are `UsageWindow.Kind`, and a
+    /// switch on only those two is what the fork check treats as a quota-kind
+    /// switch that forgot the other kinds.
+    case fiveHourCard
+    case weeklyCard
 
     /// The `resetType` the use route expects.
     var wireResetType: String {
         switch self {
-        case .fiveHour: "FIVE_HOUR"
-        case .weekly: "WEEK"
+        case .fiveHourCard: "FIVE_HOUR"
+        case .weeklyCard: "WEEK"
         }
     }
 }
@@ -57,8 +60,8 @@ struct ZhipuResetInventory: Equatable, Sendable {
 
     func cards(for kind: ZhipuResetKind) -> [ZhipuResetCard] {
         switch kind {
-        case .fiveHour: fiveHour
-        case .weekly: weekly
+        case .fiveHourCard: fiveHour
+        case .weeklyCard: weekly
         }
     }
 

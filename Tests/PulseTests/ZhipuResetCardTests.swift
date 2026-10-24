@@ -81,20 +81,20 @@ struct ZhipuResetCardTests {
         #expect(asked == ["open.bigmodel.cn", "bigmodel.cn"])
         #expect(found.serviceHost == "https://bigmodel.cn")
         #expect(found.fiveHour.isEmpty)
-        #expect(found.soonest(.weekly) == nil)
+        #expect(found.soonest(.weeklyCard) == nil)
     }
 
     @Test("Use sends the captured body, and a missing route is not a spent card")
     func useBodyAndVerdict() throws {
         let card = ZhipuResetCard(id: "22", recordID: 22, grantType: "GLOBAL", expiresAt: Self.now)
-        let week = ZhipuResetCards.useBody(kind: .weekly, card: card, requestID: "req-1")
+        let week = ZhipuResetCards.useBody(kind: .weeklyCard, card: card, requestID: "req-1")
         #expect(week["targetType"] as? String == "PERSONAL")
         #expect(week["resetType"] as? String == "WEEK")
         #expect(week["recordId"] as? Int == 22)
         #expect(week["grantType"] as? String == "GLOBAL")
         #expect(week["requestId"] as? String == "req-1")
         let hour = ZhipuResetCard(id: "11", recordID: 11, grantType: "", expiresAt: Self.now)
-        let five = ZhipuResetCards.useBody(kind: .fiveHour, card: hour, requestID: "req-2")
+        let five = ZhipuResetCards.useBody(kind: .fiveHourCard, card: hour, requestID: "req-2")
         #expect(five["resetType"] as? String == "FIVE_HOUR")
         #expect(five["grantType"] == nil)
         let encoded = try JSONSerialization.data(withJSONObject: week)

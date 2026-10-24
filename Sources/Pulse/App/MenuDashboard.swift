@@ -303,11 +303,11 @@ private struct MenuAccountDetail: View {
         if let cards = usage.zhipuResetCards {
             valueRow(
                 String.localized("5-hour reset cards"),
-                Self.zhipuLine(cards.cards(for: .fiveHour))
+                Self.zhipuLine(cards.cards(for: .fiveHourCard))
             )
             valueRow(
                 String.localized("Weekly reset cards"),
-                Self.zhipuLine(cards.cards(for: .weekly))
+                Self.zhipuLine(cards.cards(for: .weeklyCard))
             )
         }
         if let balance = usage.creditBalance {

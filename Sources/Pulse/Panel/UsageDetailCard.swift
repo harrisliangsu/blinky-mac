@@ -522,8 +522,8 @@ struct UsageDetailCard: View {
 
     @ViewBuilder
     private func zhipuResetRows(_ inventory: ZhipuResetInventory) -> some View {
-        zhipuResetRow(.fiveHour, inventory: inventory)
-        zhipuResetRow(.weekly, inventory: inventory)
+        zhipuResetRow(.fiveHourCard, inventory: inventory)
+        zhipuResetRow(.weeklyCard, inventory: inventory)
     }
 
     @ViewBuilder
@@ -601,30 +601,30 @@ struct UsageDetailCard: View {
 
     static func zhipuKindTitle(_ kind: ZhipuResetKind) -> String {
         switch kind {
-        case .fiveHour: String.localized("5-hour reset cards")
-        case .weekly: String.localized("Weekly reset cards")
+        case .fiveHourCard: String.localized("5-hour reset cards")
+        case .weeklyCard: String.localized("Weekly reset cards")
         }
     }
 
     static func zhipuUseTitle(_ kind: ZhipuResetKind) -> String {
         switch kind {
-        case .fiveHour: String.localized("Use a 5-hour reset card")
-        case .weekly: String.localized("Use a weekly reset card")
+        case .fiveHourCard: String.localized("Use a 5-hour reset card")
+        case .weeklyCard: String.localized("Use a weekly reset card")
         }
     }
 
     static func zhipuQuestion(_ kind: ZhipuResetKind) -> String {
         switch kind {
-        case .fiveHour: String.localized("Use one 5-hour reset card?")
-        case .weekly: String.localized("Use one weekly reset card?")
+        case .fiveHourCard: String.localized("Use one 5-hour reset card?")
+        case .weeklyCard: String.localized("Use one weekly reset card?")
         }
     }
 
     static func zhipuDetail(_ kind: ZhipuResetKind) -> String {
         switch kind {
-        case .fiveHour:
+        case .fiveHourCard:
             String.localized("The 5-hour quota returns to full, and its next reset is counted from now.")
-        case .weekly:
+        case .weeklyCard:
             String.localized("The weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now.")
         }
     }
