@@ -737,8 +737,8 @@
 "Predicted reset" = "Predicted reset";
 "No prediction yet" = "No prediction yet";
 "Last reset" = "Last reset";
-"Regular reset" = "Regular reset";
-"Banked reset credit" = "Banked reset credit";
+"Global reset" = "Global reset";
+"Reset card" = "Reset card";
 /* Type label, then the local date and time. */
 "%@ · %@" = "%@ · %@";
 /* Spoken form of the last announcement: relative time, then type and clock. */
@@ -1456,3 +1456,7 @@
 "Open the Token spend window" = "Open the Token spend window";
 "Open the Blinky window" = "Open the Blinky window";
 "Reset card details" = "Reset card details";
+
+/* 1.5.18 */
+"None" = "None";
+"About the estimate" = "About the estimate";

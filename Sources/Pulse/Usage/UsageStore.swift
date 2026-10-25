@@ -174,7 +174,7 @@ final class UsageStore {
     /// Which ask is the latest. Two can be in flight — a ring click right
     /// after a pass — and the one that answers last is not always the one
     /// asked last: an app server timing out after twenty seconds must not
-    /// put "Not available" over the count a later ask already brought back.
+    /// put None over the count a later ask already brought back.
     private var codexResetCreditsAsk = 0
 
     /// Internal so Settings can ask directly when the switch moves, rather

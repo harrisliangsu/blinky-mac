@@ -737,8 +737,8 @@
 "Predicted reset" = "预测重置";
 "No prediction yet" = "暂无预测";
 "Last reset" = "最近重置";
-"Regular reset" = "常规重置";
-"Banked reset credit" = "备用重置额度";
+"Global reset" = "全局重置";
+"Reset card" = "重置卡";
 /* 类型，然后是本地日期和时间。 */
 "%@ · %@" = "%@ · %@";
 /* 最近一次公告的朗读：相对时间，然后是类型和钟点。 */
@@ -1456,3 +1456,7 @@
 "Open the Token spend window" = "打开 Token 消耗窗口";
 "Open the Blinky window" = "打开 Blinky 主窗口";
 "Reset card details" = "重置券详情";
+
+/* 1.5.18 */
+"None" = "无";
+"About the estimate" = "估价说明";

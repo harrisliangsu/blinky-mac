@@ -78,7 +78,7 @@ struct TokenSpendView: View {
     /// A caption under that menu repeats it.
     nonisolated static let showsDimensionCaption = false
 
-    /// Pricing, unread sources, and the models.dev note start as one line.
+    /// Pricing and unread sources start as one line.
     @State private var notesExpanded = !SpendGlanceNotes.startsCollapsed
 
     /// Which column the day table is sorted by. Its own state rather than a
@@ -203,16 +203,17 @@ struct TokenSpendView: View {
     // MARK: - Nothing read from a source
 
     /// Pricing, a partial read, and the sources that produced no records.
-    /// One secondary line until it is opened. The sentences stay; they are
-    /// not a block under the list. A model's own page carries its note.
+    /// One secondary line until it is opened. Opened, the estimate is one
+    /// section and each unread source is its own line. A model's own page
+    /// carries its note, so this block is absent there.
     @ViewBuilder
     private var notesBlock: some View {
         if modelFocus == nil {
-            let lines = SpendGlanceNotes.lines(
+            let sections = SpendGlanceNotes.sections(
                 summary: focus == nil ? summary : focused,
                 unreadNames: focus == nil ? noRecords.map(\.displayName) : []
             )
-            if !lines.isEmpty {
+            if !sections.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
                     Button {
                         notesExpanded.toggle()
@@ -229,14 +230,38 @@ struct TokenSpendView: View {
                     .buttonStyle(.plain)
                     .accessibilityIdentifier("spend-glance-notes")
                     if notesExpanded {
-                        VStack(alignment: .leading, spacing: 2) {
-                            ForEach(lines) { line in
-                                noteLine(line)
+                        VStack(alignment: .leading, spacing: 8) {
+                            if !sections.estimate.isEmpty {
+                                noteSection(title: String.localized("About the estimate"), lines: sections.estimate)
+                            }
+                            if !sections.unread.isEmpty {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(localized: "No usage data read")
+                                        .font(.system(size: SpendQuietCopy.pointSize, weight: .semibold))
+                                        .foregroundStyle(.secondary)
+                                    ForEach(Array(sections.unread.enumerated()), id: \.offset) { _, name in
+                                        quietText(name)
+                                    }
+                                }
                             }
                         }
                     }
                 }
                 .padding(.horizontal, 4)
+            }
+        }
+    }
+
+    /// A secondary heading and the sentences under it. The heading is the
+    /// same size as the sentences, so the opened notes stay quieter than
+    /// the totals above them.
+    private func noteSection(title: String, lines: [SpendGlanceNote]) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(verbatim: title)
+                .font(.system(size: SpendQuietCopy.pointSize, weight: .semibold))
+                .foregroundStyle(.secondary)
+            ForEach(lines) { line in
+                noteLine(line)
             }
         }
     }
@@ -1061,38 +1086,44 @@ struct SpendGlanceNote: Equatable, Identifiable {
     var id: String { text }
 }
 
+/// The opened notes: the estimate, then each source that produced no records.
+/// The unread names stay a list. Joining them onto one line is what made the
+/// footer a wall of text.
+struct SpendGlanceNoteSections: Equatable {
+    var estimate: [SpendGlanceNote]
+    var unread: [String]
+
+    var isEmpty: Bool { estimate.isEmpty && unread.isEmpty }
+}
+
 enum SpendGlanceNotes {
     /// The page opens with the sentences hidden.
     static let startsCollapsed = true
 
-    static func lines(summary: SpendSummary, unreadNames: [String]) -> [SpendGlanceNote] {
-        var lines: [SpendGlanceNote] = []
+    static func sections(summary: SpendSummary, unreadNames: [String]) -> SpendGlanceNoteSections {
+        var estimate: [SpendGlanceNote] = []
         if !summary.isEmpty {
-            lines.append(SpendGlanceNote(
+            estimate.append(SpendGlanceNote(
                 text: String.localized("Usage records, estimated at models.dev API rates—not an actual bill."),
                 help: nil
             ))
             if summary.hasPartialCounts {
-                lines.append(SpendGlanceNote(text: String.localized("Counts may be incomplete."), help: nil))
+                estimate.append(SpendGlanceNote(text: String.localized("Counts may be incomplete."), help: nil))
             }
             if TokenSpendView.hasPartialAmounts(summary) {
-                lines.append(SpendGlanceNote(text: String.localized("Excludes unpriced tokens."), help: nil))
+                estimate.append(SpendGlanceNote(text: String.localized("Excludes unpriced tokens."), help: nil))
             }
             if summary.hasAggregateTiming {
-                lines.append(SpendGlanceNote(text: String.localized("Some records use session report dates."), help: nil))
+                estimate.append(SpendGlanceNote(text: String.localized("Some records use session report dates."), help: nil))
             }
             if !summary.unpricedModels.isEmpty {
-                lines.append(SpendGlanceNote(
+                estimate.append(SpendGlanceNote(
                     text: String.localized("\("\(summary.unpricedModels.count)") models without public pricing: tokens only."),
                     help: summary.unpricedModels.joined(separator: ", ")
                 ))
             }
         }
-        if !unreadNames.isEmpty {
-            lines.append(SpendGlanceNote(text: String.localized("No usage data read"), help: nil))
-            lines.append(SpendGlanceNote(text: unreadNames.joined(separator: " · "), help: nil))
-        }
-        return lines
+        return SpendGlanceNoteSections(estimate: estimate, unread: unreadNames)
     }
 }
 

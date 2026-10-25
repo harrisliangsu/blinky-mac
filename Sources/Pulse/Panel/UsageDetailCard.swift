@@ -261,8 +261,17 @@ struct UsageDetailCard: View {
     @State private var resetPrompt = ResetCardPrompt.idle
     /// Which coupon's detail is open. Expiry and Use stay in that panel.
     /// The panel is placed inside the card, so it is not clipped and the
-    /// next row cannot cover the button.
+    /// next row cannot cover the button. A click outside the panel closes it.
     @State private var openCoupon: ResetCouponSlot?
+    /// The open detail and its mark, in screen coordinates, so a click
+    /// elsewhere can be told from a click on the panel.
+    @State private var couponDetailScreen = CGRect.null
+    @State private var couponMarkScreen = CGRect.null
+    /// The prediction note and its mark, same rule as the coupon panel.
+    @State private var noteDetailScreen = CGRect.null
+    @State private var noteMarkScreen = CGRect.null
+    /// Bumped when a click outside the prediction note puts it away.
+    @State private var noteDismiss = 0
     /// Each coupon row, in the card body's coordinates.
     @State private var couponFrames: [ResetCouponSlot: CGRect] = [:]
     /// The card body's height, the space the detail has to stay inside.
@@ -307,6 +316,45 @@ struct UsageDetailCard: View {
         .background(LiquidBubbleSurface(bubble: bubble, usesGlass: usesGlass))
         .accessibilityElement(children: .contain)
         .accessibilityLabel(String.localized("\(title ?? usage.provider.displayName) usage details"))
+        .background { detailDismissMonitor }
+        .onChange(of: openCoupon) { _, slot in
+            if slot == nil {
+                couponDetailScreen = .null
+                couponMarkScreen = .null
+            }
+        }
+        .onChange(of: predictionNoteVisible) { _, shown in
+            if !shown { noteDetailScreen = .null }
+        }
+    }
+
+    /// Installed only while a coupon panel or the prediction note is open.
+    /// A press outside that panel closes it. The press is not swallowed.
+    @ViewBuilder
+    private var detailDismissMonitor: some View {
+        if openCoupon != nil || predictionNoteVisible {
+            InCardOutsideMonitor { considerOutsideClick($0) }
+        }
+    }
+
+    /// Closes whichever open panel the press missed. A press on the panel
+    /// or on the mark that opened it leaves that panel up.
+    private func considerOutsideClick(_ point: CGPoint) {
+        if openCoupon != nil,
+           InCardDetailDismiss.shouldDismiss(point: point, detail: couponDetailScreen, mark: couponMarkScreen) {
+            dismissCouponDetail()
+        }
+        if predictionNoteVisible,
+           InCardDetailDismiss.shouldDismiss(point: point, detail: noteDetailScreen, mark: noteMarkScreen) {
+            noteDismiss += 1
+        }
+    }
+
+    /// Puts the coupon panel away. A confirm that has not been sent is
+    /// dropped with it, so the next open starts at the date and Use.
+    private func dismissCouponDetail() {
+        if resetPrompt != .idle { applyReset(.cancel) }
+        openCoupon = nil
     }
 
     /// The contents, scrolling **only when the screen cannot hold them**.
@@ -494,14 +542,18 @@ struct UsageDetailCard: View {
         case .available(let count, _):
             availableCountText(count)
         case .unreported:
-            .localized("Not available")
+            // A missing block is not a count of zero. The row still says
+            // None, the same word as a reported zero, so it does not read
+            // as a failure.
+            .localized("None")
         case .codexMissing:
             .localized("codex not found")
         }
     }
 
     static func availableCountText(_ count: Int) -> String {
-        count == 1 ? .localized("1 available") : .localized("\("\(count)") available")
+        if count == 0 { return .localized("None") }
+        return count == 1 ? .localized("1 available") : .localized("\("\(count)") available")
     }
 
     /// The first click records the ask. Confirm is the only action that sends.
@@ -540,6 +592,11 @@ struct UsageDetailCard: View {
                         if isConfirming(line) { applyReset(.cancel) }
                     } else {
                         openCoupon = line.slot
+                    }
+                }
+                .background {
+                    if open {
+                        ScreenRectReporter(outset: 0) { couponMarkScreen = $0 }
                     }
                 }
             }
@@ -582,6 +639,9 @@ struct UsageDetailCard: View {
                     .frame(height: top)
                     .allowsHitTesting(false)
                 resetCouponDetail(line)
+                    .background {
+                        ScreenRectReporter(outset: 0) { couponDetailScreen = $0 }
+                    }
                     .fixedSize(horizontal: false, vertical: true)
                     .background {
                         GeometryReader { proxy in
@@ -958,6 +1018,9 @@ struct UsageDetailCard: View {
         .overlay(alignment: .top) {
             if predictionNoteVisible, let note = prediction.note {
                 CodexResetNoteCallout(note: note)
+                    .background {
+                        ScreenRectReporter(outset: 0) { noteDetailScreen = $0 }
+                    }
                     .padding(.top, predictionHeaderHeight + DetailCardLayout.rowInternalSpacing)
             }
         }
@@ -978,7 +1041,14 @@ struct UsageDetailCard: View {
             HStack(spacing: 2) {
                 CodexResetsLink()
                 if let note = prediction.note {
-                    CodexResetNoteButton(note: note, visible: $predictionNoteVisible)
+                    CodexResetNoteButton(
+                        note: note,
+                        visible: $predictionNoteVisible,
+                        dismissCount: noteDismiss
+                    )
+                    .background {
+                        ScreenRectReporter(outset: 0) { noteMarkScreen = $0 }
+                    }
                 }
             }
             .layoutPriority(2)
@@ -994,6 +1064,7 @@ struct UsageDetailCard: View {
             Spacer(minLength: 8)
 
             if let countdown = prediction.countdown {
+                predictionTypeTag(prediction)
                 Text(verbatim: countdown)
                     .foregroundStyle(.primary.opacity(0.9))
                     .multilineTextAlignment(.trailing)
@@ -1001,13 +1072,30 @@ struct UsageDetailCard: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .layoutPriority(1)
             } else if let trailing = prediction.trailing {
+                predictionTypeTag(prediction)
                 Text(verbatim: trailing)
                     .foregroundStyle(.primary.opacity(0.9))
                     .multilineTextAlignment(.trailing)
                     .lineLimit(2)
                     .minimumScaleFactor(0.85)
                     .layoutPriority(1)
+            } else {
+                predictionTypeTag(prediction)
             }
+        }
+    }
+
+    /// The scheduled type, on the same row as the countdown. Absent when
+    /// the API named no type. Same weight as the type under Last reset.
+    @ViewBuilder
+    private func predictionTypeTag(_ prediction: CodexResetCardLines.Prediction) -> some View {
+        if let typeTag = prediction.typeTag, !typeTag.isEmpty {
+            Text(verbatim: typeTag)
+                .foregroundStyle(.primary.opacity(0.55))
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
+                .layoutPriority(0)
+                .codexResetTooltip(prediction.typeHelp)
         }
     }
 
@@ -1236,6 +1324,9 @@ private extension View {
 private struct CodexResetNoteButton: View {
     let note: String
     @Binding var visible: Bool
+    /// Bumped when a click outside the note puts it away. The mark's own
+    /// click still toggles; this only clears a pin.
+    var dismissCount: Int
     @State private var hovering = false
     @State private var pinned = false
     /// Set by a click that puts the note away, so a pointer that is still
@@ -1279,6 +1370,15 @@ private struct CodexResetNoteButton: View {
                     suppressed = false
                     pinned = true
                 }
+                publish()
+            }
+            .onChange(of: dismissCount) { _, _ in
+                // The press was outside the mark, so a hover flag left over
+                // from a missed exit must not keep the note up or block the
+                // next enter.
+                pinned = false
+                suppressed = false
+                hovering = false
                 publish()
             }
     }
@@ -1350,24 +1450,32 @@ private struct CodexResetsLink: View {
     }
 }
 
-/// The entry button's rectangle in screen coordinates, reported whenever it
-/// moves. The summary window treats a click inside it as the toggle.
+/// A view's rectangle in screen coordinates, reported whenever it moves.
+/// Used to tell a click on an in-card detail from a click outside it.
+/// `hitTest` returns nil, so the reporter cannot swallow the press.
 private struct ScreenRectReporter: NSViewRepresentable {
+    /// Extra points around the view. Zero matches the view. A positive
+    /// value is the slop the Token button used so an edge click still
+    /// counted as the button.
+    var outset: CGFloat = 6
     var onChange: (CGRect) -> Void
 
     func makeNSView(context: Context) -> Reporter {
         let view = Reporter()
         view.onChange = onChange
+        view.outset = outset
         return view
     }
 
     func updateNSView(_ view: Reporter, context: Context) {
         view.onChange = onChange
+        view.outset = outset
         view.publish()
     }
 
     final class Reporter: NSView {
         var onChange: (CGRect) -> Void = { _ in }
+        var outset: CGFloat = 6
 
         override func layout() {
             super.layout()
@@ -1390,7 +1498,65 @@ private struct ScreenRectReporter: NSViewRepresentable {
                 return
             }
             let rect = window.convertToScreen(convert(bounds, to: nil))
-            onChange(rect.insetBy(dx: -6, dy: -6))
+            onChange(rect.insetBy(dx: -outset, dy: -outset))
+        }
+    }
+}
+
+/// Presses while a coupon panel or the prediction note is open.
+///
+/// A press outside that panel closes it. The event is returned, so the
+/// mark, Use, and the rest of the card still receive it. Nothing here
+/// closes a window: the Token window still closes only from its close button.
+private struct InCardOutsideMonitor: NSViewRepresentable {
+    var onPress: (CGPoint) -> Void
+
+    func makeNSView(context: Context) -> Watcher {
+        let view = Watcher()
+        view.onPress = onPress
+        return view
+    }
+
+    func updateNSView(_ view: Watcher, context: Context) {
+        view.onPress = onPress
+    }
+
+    static func dismantleNSView(_ view: Watcher, coordinator: ()) {
+        view.stop()
+    }
+
+    final class Watcher: NSView {
+        var onPress: (CGPoint) -> Void = { _ in }
+        private var local: Any?
+        private var global: Any?
+
+        /// This view only owns the monitors. A hit would sit on the card
+        /// and swallow the press it is supposed to leave alone.
+        override func hitTest(_: NSPoint) -> NSView? { nil }
+
+        override func viewDidMoveToWindow() {
+            super.viewDidMoveToWindow()
+            window == nil ? stop() : start()
+        }
+
+        private func start() {
+            guard local == nil else { return }
+            local = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown]) { [weak self] event in
+                let point = NSEvent.mouseLocation
+                MainActor.assumeIsolated { self?.onPress(point) }
+                return event
+            }
+            global = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown]) { [weak self] _ in
+                let point = NSEvent.mouseLocation
+                MainActor.assumeIsolated { self?.onPress(point) }
+            }
+        }
+
+        func stop() {
+            if let local { NSEvent.removeMonitor(local) }
+            local = nil
+            if let global { NSEvent.removeMonitor(global) }
+            global = nil
         }
     }
 }

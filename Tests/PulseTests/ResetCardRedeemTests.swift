@@ -93,7 +93,7 @@ struct ResetCardRedeemTests {
             canRedeem: true
         )
         #expect(none.title == "Limit reset credits")
-        #expect(none.count == "0 available")
+        #expect(none.count == "None")
         #expect(none.expiry == nil)
         #expect(none.ask == nil)
         #expect(!none.hasDetail)
@@ -128,7 +128,7 @@ struct ResetCardRedeemTests {
         #expect(hour.useTitle == "Use a 5-hour reset card")
         #expect(hour.title == "5-hour reset cards")
         let week = ResetCouponLine.zhipu(.weeklyCard, inventory: inventory, canRedeem: true)
-        #expect(week.count == "0 available")
+        #expect(week.count == "None")
         #expect(week.ask == nil)
         #expect(!week.hasDetail)
     }
@@ -158,5 +158,57 @@ struct ResetCardRedeemTests {
         #expect(ResetCouponDetailPlacement.originY(
             rowMinY: 0, rowMaxY: 0, panelHeight: 40, contentHeight: 200
         ) == 0)
+    }
+
+    @Test("A click outside the detail closes it; a click on it or its mark does not")
+    func clickOutsideTheDetail() {
+        let detail = CGRect(x: 100, y: 100, width: 160, height: 48)
+        let mark = CGRect(x: 40, y: 160, width: 16, height: 16)
+        #expect(!InCardDetailDismiss.shouldDismiss(
+            point: CGPoint(x: 120, y: 120), detail: detail, mark: mark
+        ))
+        #expect(!InCardDetailDismiss.shouldDismiss(
+            point: CGPoint(x: 48, y: 168), detail: detail, mark: mark
+        ))
+        #expect(InCardDetailDismiss.shouldDismiss(
+            point: CGPoint(x: 10, y: 10), detail: detail, mark: mark
+        ))
+        #expect(InCardDetailDismiss.shouldDismiss(
+            point: CGPoint(x: 80, y: 180), detail: detail, mark: mark
+        ))
+        #expect(InCardDetailDismiss.shouldDismiss(
+            point: CGPoint(x: 10, y: 10), detail: detail, mark: .null
+        ))
+        #expect(!InCardDetailDismiss.shouldDismiss(
+            point: CGPoint(x: 120, y: 120), detail: detail, mark: .null
+        ))
+        #expect(!InCardDetailDismiss.shouldDismiss(
+            point: CGPoint(x: 10, y: 10), detail: .null, mark: mark
+        ))
+        #expect(!InCardDetailDismiss.shouldDismiss(
+            point: CGPoint(x: 10, y: 10), detail: .zero, mark: mark
+        ))
+        #expect(!InCardDetailDismiss.shouldDismiss(
+            point: CGPoint(x: 10, y: 10),
+            detail: CGRect(x: 0, y: 0, width: 1, height: 40),
+            mark: mark
+        ))
+    }
+
+    @MainActor
+    @Test("A reported zero and a missing count both say None")
+    func noneIsTheWord() {
+        LocalizationSource.use(.english)
+        defer { LocalizationSource.use(.system) }
+        #expect(UsageDetailCard.availableCountText(0) == "None")
+        #expect(UsageDetailCard.resetCreditsText(.unreported) == "None")
+        #expect(UsageDetailCard.resetCreditsText(.codexMissing) != "None")
+        LocalizationSource.use(.chineseSimplified)
+        let zero = UsageDetailCard.availableCountText(0)
+        let missing = UsageDetailCard.resetCreditsText(.unreported)
+        #expect(zero == "无")
+        #expect(missing == "无")
+        #expect(!zero.contains("不可用"))
+        #expect(!missing.contains("不可用"))
     }
 }

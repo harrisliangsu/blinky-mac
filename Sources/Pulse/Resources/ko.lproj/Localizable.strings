@@ -739,8 +739,8 @@
 "Predicted reset" = "예측 리셋";
 "No prediction yet" = "아직 예측 없음";
 "Last reset" = "최근 리셋";
-"Regular reset" = "일반 리셋";
-"Banked reset credit" = "예비 리셋 크레딧";
+"Global reset" = "전체 초기화";
+"Reset card" = "리셋 카드";
 /* 종류, 그다음 현지 날짜와 시각. */
 "%@ · %@" = "%@ · %@";
 /* 최근 공지를 읽어 주는 문장. 상대 시각, 그다음 종류와 시각. */
@@ -1458,3 +1458,7 @@
 "Open the Token spend window" = "토큰 사용량 창 열기";
 "Open the Blinky window" = "Blinky 메인 창 열기";
 "Reset card details" = "초기화 쿠폰 상세";
+
+/* 1.5.18 */
+"None" = "없음";
+"About the estimate" = "견적 설명";

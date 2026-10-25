@@ -165,7 +165,7 @@ struct CodexResetCreditsTests {
     func unreported() {
         #expect(CodexAccountUsageService.resetCredits(in: [:]) == .unreported)
         #expect(CodexAccountUsageService.resetCredits(in: ["rateLimitResetCredits": [String: Any]()]) == .unreported)
-        #expect(UsageDetailCard.resetCreditsText(.unreported) == String.localized("Not available"))
+        #expect(UsageDetailCard.resetCreditsText(.unreported) == String.localized("None"))
     }
 
     @Test("Unknown, missing, and differently cased statuses still count until they expire")
