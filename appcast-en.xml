@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.17</title>
-            <pubDate>Sun, 25 Oct 2026 09:12:28 -0000</pubDate>
-            <sparkle:version>1.5.17</sparkle:version>
-            <sparkle:shortVersionString>1.5.17</sparkle:shortVersionString>
+            <title>1.5.18</title>
+            <pubDate>Sun, 25 Oct 2026 15:37:23 -0000</pubDate>
+            <sparkle:version>1.5.18</sparkle:version>
+            <sparkle:shortVersionString>1.5.18</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.17</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.18</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.17</h2><ul><li><strong>The Token window closes from the red close button.</strong> A click inside the window, a click outside it, and Escape leave it open.</li><li><strong>The Token window keeps its notes on one line.</strong> The breakdown menu no longer repeats its choice, and pricing and unread sources open from “About these figures”.</li><li><strong>The usage card shows the whole provider name.</strong> The header icons sit together, and pointing at one shows what it does.</li><li><strong>Reset cards take one row, and Use is a button.</strong> Codex, Zhipu, and z.ai show how many are left, and the date and Use open from that row, still after a confirmation.</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.17">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.17/Blinky-1.5.17.zip"
-                       length="22795055"
+</style><h2>Blinky 1.5.18</h2><ul><li><strong>A reset card&#x27;s detail closes when you click away.</strong> A click outside the date and Use panel closes it, and the Token window still closes only from its close button. <a href="https://github.com/harrisliangsu/blinky-mac/pull/79">#79</a></li><li><strong>A row with no reset cards says None.</strong> Codex, Zhipu, and z.ai use that word when the count is zero and when the service did not report a count. <a href="https://github.com/harrisliangsu/blinky-mac/pull/79">#79</a></li><li><strong>The Token window&#x27;s notes are two short sections.</strong> About these figures still starts closed, and opening it shows the estimate as one section and each unread source on its own line. <a href="https://github.com/harrisliangsu/blinky-mac/pull/79">#79</a></li><li><strong>The predicted reset names a global reset or a reset card.</strong> When Codex Resets sends a type with the scheduled time, that word sits beside the countdown, and Last reset uses the same words. A forecast with no type stays unlabeled. <a href="https://github.com/harrisliangsu/blinky-mac/pull/79">#79</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.18">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.18/Blinky-1.5.18.zip"
+                       length="22849781"
                        type="application/octet-stream"
-                       sparkle:edSignature="TmTWWskpN1jbV82TvFTx5v//a4oJG2FKLEJd9zV/aHzvgjEwn3IXOVXDNN46QphWJC5UmjaN3Sc23hFXwCyhBA==" />
+                       sparkle:edSignature="3ssMjO+BzQtVRIahPt5kQsXg5cR/TD0tkNsPBO9YXB/gkRBgeNOGcun6Qxbaee/7vEZYLnmnTwHCnPo6VUn3CA==" />
         </item>
     </channel>
 </rss>

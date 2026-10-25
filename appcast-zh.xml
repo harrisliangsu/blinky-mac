@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.17</title>
-            <pubDate>Sun, 25 Oct 2026 09:12:28 -0000</pubDate>
-            <sparkle:version>1.5.17</sparkle:version>
-            <sparkle:shortVersionString>1.5.17</sparkle:shortVersionString>
+            <title>1.5.18</title>
+            <pubDate>Sun, 25 Oct 2026 15:37:23 -0000</pubDate>
+            <sparkle:version>1.5.18</sparkle:version>
+            <sparkle:shortVersionString>1.5.18</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.17</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.18</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.17</h2><ul><li><strong>Token 窗口只从红色关闭按钮关闭。</strong> 在窗口里点击、在窗口外点击，以及按 Esc，窗口都保持打开。</li><li><strong>Token 窗口底部的说明收成一行。</strong> 划分方式菜单下面不再重复当前选项，计价和未读取到用量从「关于这些数字」展开。</li><li><strong>用量卡片写出完整的服务商名称。</strong> 标题右侧的图标靠在一起，指针停在图标上时会写出这个图标的作用。</li><li><strong>重置券只占一行，「使用」是按钮。</strong> Codex、智谱和 z.ai 只显示还剩几张，日期和「使用」从这一行打开，用掉一张之前仍会先确认。</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.17">在 GitHub 查看更新说明</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.17/Blinky-1.5.17.zip"
-                       length="22795055"
+</style><h2>Blinky 1.5.18</h2><ul><li><strong>重置券的详情在点到外面时收起。</strong> 点在日期和「使用」那一块外面，这块详情会收起，Token 窗口仍只从关闭按钮关闭。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/79">#79</a></li><li><strong>没有重置券时，这一行写「无」。</strong> Codex、智谱和 z.ai 在张数为零，以及服务商没有报告张数时，都用这个词。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/79">#79</a></li><li><strong>Token 窗口的说明分成两小节。</strong> 「关于这些数字」默认仍是收起的，展开后估价是一节，未读取到用量的来源各自成行。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/79">#79</a></li><li><strong>预测重置会标出全局重置或重置卡。</strong> Codex Resets 在预定时间里写了类型时，这个词出现在倒计时旁边，最近重置用同样的词。没有类型的预测不标。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/79">#79</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.18">在 GitHub 查看更新说明</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.18/Blinky-1.5.18.zip"
+                       length="22849781"
                        type="application/octet-stream"
-                       sparkle:edSignature="TmTWWskpN1jbV82TvFTx5v//a4oJG2FKLEJd9zV/aHzvgjEwn3IXOVXDNN46QphWJC5UmjaN3Sc23hFXwCyhBA==" />
+                       sparkle:edSignature="3ssMjO+BzQtVRIahPt5kQsXg5cR/TD0tkNsPBO9YXB/gkRBgeNOGcun6Qxbaee/7vEZYLnmnTwHCnPo6VUn3CA==" />
         </item>
     </channel>
 </rss>
