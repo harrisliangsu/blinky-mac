@@ -698,7 +698,7 @@ struct TokenSpendView: View {
     /// agent, day or month. A row that priced nothing shows an em dash instead,
     /// and a row that priced everything has no `*`, so neither needs the
     /// legend.
-    fileprivate static func hasPartialAmounts(_ summary: SpendSummary) -> Bool {
+    nonisolated fileprivate static func hasPartialAmounts(_ summary: SpendSummary) -> Bool {
         func partial(_ unpriced: Int, _ tokens: Int) -> Bool {
             unpriced > 0 && unpriced < tokens
         }
