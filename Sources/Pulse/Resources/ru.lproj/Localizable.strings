@@ -1444,3 +1444,9 @@
 "That reset card was already used." = "Эта карта сброса уже использована.";
 "Could not use the reset card." = "Не удалось использовать карту сброса.";
 "Could not use the reset card here. The console is open so you can use it there." = "Здесь карту сброса использовать не удалось. Консоль открыта, карту можно использовать там.";
+
+/* 1.5.17 */
+"About these figures" = "Об этих цифрах";
+"Open the Token spend window" = "Открыть окно расхода токенов";
+"Open the Blinky window" = "Открыть главное окно Blinky";
+"Reset card details" = "Подробности карты сброса";

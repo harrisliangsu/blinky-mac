@@ -21,6 +21,29 @@ enum CardHeaderControl: String, CaseIterable, Equatable, Sendable {
     }
 }
 
+/// How the header spends its width.
+///
+/// The icon buttons used to take a 16pt pad each and the row's own gap, so
+/// "Codex 用量" was drawn as "Cod…" with empty space before the icons.
+enum CardHeaderMetrics {
+    /// Extra points on each side of the glyph. The hover scale still fits.
+    static let hitOutset: CGFloat = 4
+    /// Space between the icon buttons. They sit as one cluster.
+    static let clusterSpacing: CGFloat = 2
+}
+
+/// The title stays on one line. Wrapping would make the card taller than the
+/// window budgeted, and the card is sliced at that edge. The type shrinks
+/// before it is clipped. A name that still does not fit gets a tooltip.
+enum HeaderTitleFit {
+    static let minimumScale: CGFloat = 0.78
+
+    static func needsTooltip(idealWidth: CGFloat, availableWidth: CGFloat) -> Bool {
+        guard idealWidth > 1, availableWidth > 1 else { return false }
+        return idealWidth * minimumScale > availableWidth + 0.5
+    }
+}
+
 /// Which header control contains a point, in the window's base coordinates.
 enum CardHeaderHit {
     /// The frames a button laid out. A null, infinite, or not-yet-laid-out

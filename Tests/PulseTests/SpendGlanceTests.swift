@@ -634,23 +634,19 @@ struct SpendGlanceTests {
         #expect(!model.copyFailed)
     }
 
-    @Test("Escape and the close button dismiss the glance window")
+    @Test("Escape and a click do not dismiss the glance window; the close button does")
     func dismissal() {
         #expect(SpendGlanceDismissal.escapeKeyCode == 53)
-        #expect(SpendGlanceDismissal.shouldCloseOnEscape(keyCode: 53, hasModifiers: false))
+        #expect(!SpendGlanceDismissal.shouldCloseOnEscape(keyCode: 53, hasModifiers: false))
         #expect(!SpendGlanceDismissal.shouldCloseOnEscape(keyCode: 53, hasModifiers: true))
         #expect(!SpendGlanceDismissal.shouldCloseOnEscape(keyCode: 36, hasModifiers: false))
-
-        // Which window the event names is not part of the decision. Escape
-        // still closes when the glance is not key and the event names nothing,
-        // or names some other Blinky window. An open menu keeps the key.
-        #expect(SpendGlanceDismissal.shouldCloseOnEscape(keyCode: 53, hasModifiers: false, auxiliary: false))
-        #expect(!SpendGlanceDismissal.shouldCloseOnEscape(keyCode: 53, hasModifiers: false, auxiliary: true))
-        #expect(!SpendGlanceDismissal.shouldCloseOnEscape(keyCode: 53, hasModifiers: true, auxiliary: false))
-        #expect(!SpendGlanceDismissal.shouldCloseOnEscape(keyCode: 36, hasModifiers: false, auxiliary: false))
         #expect(!SpendGlanceAppFocus.closesOnResign(hasBeenActive: false, windowVisible: true))
         #expect(!SpendGlanceAppFocus.closesOnResign(hasBeenActive: true, windowVisible: false))
-        #expect(SpendGlanceAppFocus.closesOnResign(hasBeenActive: true, windowVisible: true))
+        #expect(!SpendGlanceAppFocus.closesOnResign(hasBeenActive: true, windowVisible: true))
+
+        let frame = CGRect(x: 100, y: 100, width: 400, height: 300)
+        #expect(!SpendGlanceOutsideClick.shouldClose(point: CGPoint(x: 200, y: 200), windowFrame: frame))
+        #expect(!SpendGlanceOutsideClick.shouldClose(point: CGPoint(x: 0, y: 0), windowFrame: frame))
 
         let button = CGRect(x: 0, y: 0, width: 14, height: 14)
         #expect(SpendGlanceDismissal.claimsCloseClick(buttonBounds: button, pointInButton: CGPoint(x: 7, y: 7)))
@@ -677,24 +673,26 @@ struct SpendGlanceTests {
         #expect(SpendGlanceHeadline.centersFigures)
         #expect(!SpendQuietCopy.isPrimary)
         #expect(SpendQuietCopy.pointSize < SpendGlanceHeadline.tokenPointSize)
+        #expect(!TokenSpendView.showsDimensionCaption)
+        #expect(SpendGlanceNotes.startsCollapsed)
 
-        let frame = CGRect(x: 100, y: 100, width: 200, height: 200)
-        let entry = CGRect(x: 40, y: 40, width: 20, height: 20)
-        #expect(SpendGlanceOutsideClick.shouldClose(
-            point: CGPoint(x: 10, y: 10), windowFrame: frame, entryRect: entry, auxiliary: false
-        ))
-        #expect(!SpendGlanceOutsideClick.shouldClose(
-            point: CGPoint(x: 150, y: 150), windowFrame: frame, entryRect: entry, auxiliary: false
-        ))
-        #expect(!SpendGlanceOutsideClick.shouldClose(
-            point: CGPoint(x: 45, y: 45), windowFrame: frame, entryRect: entry, auxiliary: false
-        ))
-        #expect(!SpendGlanceOutsideClick.shouldClose(
-            point: CGPoint(x: 10, y: 10), windowFrame: frame, entryRect: entry, auxiliary: true
-        ))
-        #expect(SpendGlanceOutsideClick.shouldClose(
-            point: CGPoint(x: 10, y: 10), windowFrame: frame, entryRect: .null, auxiliary: false
-        ))
+        LocalizationSource.use(.english)
+        defer { LocalizationSource.use(.system) }
+        var summary = SpendSummary()
+        summary.tokens = 10
+        summary.unpricedModels = ["hidden-model"]
+        let notes = SpendGlanceNotes.lines(summary: summary, unreadNames: ["Gemini CLI", "Zed"])
+        #expect(notes.map(\.text) == [
+            "Usage records, estimated at models.dev API rates—not an actual bill.",
+            "1 models without public pricing: tokens only.",
+            "No usage data read",
+            "Gemini CLI · Zed",
+        ])
+        #expect(notes.contains { $0.help == "hidden-model" })
+        #expect(SpendGlanceNotes.lines(summary: SpendSummary(), unreadNames: []).isEmpty)
+        let unreadOnly = SpendGlanceNotes.lines(summary: SpendSummary(), unreadNames: ["Zed"])
+        #expect(unreadOnly.map(\.text) == ["No usage data read", "Zed"])
+        #expect(!notes.map(\.text).contains("By agent"))
     }
 
     private static func picture(

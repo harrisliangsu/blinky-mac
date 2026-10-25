@@ -25,9 +25,6 @@ struct SpendGlanceWindowTests {
         #expect(SpendGlanceWindowLevel.isAuxiliary(level: .normal, className: "NSMenuWindow"))
         #expect(SpendGlanceWindowLevel.isAuxiliary(level: .normal, className: "DatePickerPanel"))
         #expect(!SpendGlanceWindowLevel.isAuxiliary(level: .floating, className: "SpendGlancePanel"))
-        #expect(!SpendGlanceWindowLevel.dismisses(inside: true, auxiliary: false))
-        #expect(!SpendGlanceWindowLevel.dismisses(inside: false, auxiliary: true))
-        #expect(SpendGlanceWindowLevel.dismisses(inside: false, auxiliary: false))
     }
 
     @Test("Span, breakdown, Refresh, Share, the close button, and Escape all reach the window")
@@ -173,11 +170,12 @@ struct SpendGlanceWindowTests {
         } else {
             NSApp.sendEvent(escape)
         }
-        #expect(!controller.isOpen)
+        #expect(controller.isOpen)
+        #expect(again.isVisible)
     }
 
-    @Test("A click on another window closes the Token window")
-    func clickOutsideCloses() throws {
+    @Test("A click on another window leaves the Token window open")
+    func clickOutsideStaysOpen() throws {
         LocalizationSource.use(.english)
         defer { LocalizationSource.use(.system) }
         let (defaults, cleanup) = AppSettingsPersistenceTests.isolatedDefaults()
@@ -223,108 +221,77 @@ struct SpendGlanceWindowTests {
             pressure: 1
         ))
         NSApp.sendEvent(click)
-        #expect(!controller.isOpen)
+        #expect(controller.isOpen)
+        #expect(try glanceWindow().isVisible)
     }
 
-    @Test("Escape closes the window when it is not key, and a menu keeps Escape")
-    func escapeWithoutKey() throws {
+    @Test("Escape does not close the window, and show installs no dismiss listener")
+    func escapeDoesNotClose() throws {
         let fixture = openGlance()
         defer { fixture.finish() }
         let controller = fixture.controller
         let window = try glanceWindow()
         let installed = controller.monitorInstallation
-        #expect(installed.local)
-        #expect(installed.global)
-        #expect(installed.resignActive)
-        #expect(installed.becomeActive)
-
-        window.resignKey()
-        let menu = NSWindow(
-            contentRect: NSRect(x: 20, y: 20, width: 120, height: 80),
-            styleMask: [.titled, .closable],
-            backing: .buffered,
-            defer: false
-        )
-        menu.contentView = NSView(frame: NSRect(x: 0, y: 0, width: 120, height: 80))
-        menu.level = .popUpMenu
-        // `orderFront` does nothing while the app is inactive, so the menu
-        // never became visible and Escape closed the glance.
-        MainWindowActivation.orderFront(menu)
-        defer { menu.orderOut(nil) }
-        #expect(menu.isVisible)
-        #expect(SpendGlanceDismissal.auxiliaryIsOpen(besides: window))
-        let escape = try Self.keyDown(code: SpendGlanceDismissal.escapeKeyCode, windowNumber: menu.windowNumber)
-        #expect(escape.windowNumber == menu.windowNumber)
-        NSApp.sendEvent(escape)
-        #expect(controller.isOpen)
-        menu.orderOut(nil)
+        #expect(!installed.localDismiss)
+        #expect(!installed.globalDismiss)
+        #expect(!installed.resignDismiss)
+        #expect(installed.claimsKeyWhenActive)
 
         window.resignKey()
         NSApp.sendEvent(try Self.keyDown(code: SpendGlanceDismissal.escapeKeyCode, windowNumber: 0))
+        #expect(controller.isOpen)
+        #expect(window.isVisible)
+
+        window.makeKey()
+        window.sendEvent(try Self.keyDown(code: SpendGlanceDismissal.escapeKeyCode, windowNumber: window.windowNumber))
+        #expect(controller.isOpen)
+        #expect(window.isVisible)
+
+        let close = try #require(window.standardWindowButton(.closeButton))
+        close.performClick(nil)
         #expect(!controller.isOpen)
         #expect(!window.isVisible)
     }
 
-    @Test("A click outside the app, and leaving the app, close the window")
-    func outsideTheAppCloses() async throws {
+    @Test("A click inside the window, and leaving the app, leave it open")
+    func insideClickAndResignStayOpen() async throws {
         let fixture = openGlance()
         defer { fixture.finish() }
         let controller = fixture.controller
+        let window = try glanceWindow()
+        window.displayIfNeeded()
+        window.contentView?.layoutSubtreeIfNeeded()
 
-        // The Token button is not a click outside. The same local monitor
-        // that closes on another Blinky window has to leave this one alone.
-        let entry = NSWindow(
-            contentRect: NSRect(x: 40, y: 40, width: 80, height: 40),
-            styleMask: [.titled],
-            backing: .buffered,
-            defer: false
-        )
-        entry.level = .normal
-        entry.orderFront(nil)
-        defer { entry.orderOut(nil) }
-        controller.entryRect = entry.frame
-        NSApp.sendEvent(try Self.mouseDown(in: entry, eventNumber: 21))
+        let content = try #require(window.contentView)
+        let inside = NSPoint(x: content.bounds.midX, y: content.bounds.midY)
+        NSApp.sendEvent(try Self.mouseDown(at: inside, windowNumber: window.windowNumber, eventNumber: 31))
+        window.sendEvent(try Self.mouseDown(at: inside, windowNumber: window.windowNumber, eventNumber: 32))
         #expect(controller.isOpen)
-        controller.entryRect = .null
-        NSApp.sendEvent(try Self.mouseDown(in: entry, eventNumber: 22))
-        #expect(!controller.isOpen)
+        #expect(window.isVisible)
 
-        controller.show()
-        pump()
-        #expect(controller.monitorInstallation.global)
-        // The handler the global monitor calls. A synthesized `NSApp.sendEvent`
-        // never takes that path: it is a local event.
-        controller.noteClickOutsideTheApp()
-        // `RunLoop.run` does not drain `DispatchQueue.main` while this test
-        // holds the main actor. A continuation resumed from that queue does.
-        await Self.settle()
-        #expect(!controller.isOpen)
+        let outside = CGPoint(x: window.frame.midX, y: window.frame.midY)
+        let elsewhere = CGPoint(x: window.frame.maxX + 40, y: window.frame.midY)
+        #expect(!SpendGlanceOutsideClick.shouldClose(point: outside, windowFrame: window.frame))
+        #expect(!SpendGlanceOutsideClick.shouldClose(point: elsewhere, windowFrame: window.frame))
 
-        controller.show()
-        pump()
-        let again = try glanceWindow()
-        again.resignKey()
         NotificationCenter.default.post(name: NSApplication.didBecomeActiveNotification, object: NSApp)
         await Self.settle()
-        #expect(controller.monitorInstallation.closesWhenAppResigns)
+        #expect(controller.isOpen)
         if NSApp.isActive {
-            #expect(again.isKeyWindow)
+            #expect(window.isKeyWindow)
         }
         NotificationCenter.default.post(name: NSApplication.didResignActiveNotification, object: NSApp)
         await Self.settle()
-        #expect(!controller.isOpen)
+        #expect(controller.isOpen)
+        #expect(window.isVisible)
 
-        controller.show()
-        pump()
-        #expect(controller.monitorInstallation.local)
         controller.close()
         await Self.settle()
         let gone = controller.monitorInstallation
-        #expect(!gone.local)
-        #expect(!gone.global)
-        #expect(!gone.resignActive)
-        #expect(!gone.becomeActive)
-        #expect(!gone.closesWhenAppResigns)
+        #expect(!gone.localDismiss)
+        #expect(!gone.globalDismiss)
+        #expect(!gone.resignDismiss)
+        #expect(!gone.claimsKeyWhenActive)
     }
 
     private struct GlanceFixture {
@@ -377,13 +344,13 @@ struct SpendGlanceWindowTests {
         ))
     }
 
-    private static func mouseDown(in window: NSWindow, eventNumber: Int) throws -> NSEvent {
+    private static func mouseDown(at point: NSPoint, windowNumber: Int, eventNumber: Int) throws -> NSEvent {
         try #require(NSEvent.mouseEvent(
             with: .leftMouseDown,
-            location: NSPoint(x: 10, y: 10),
+            location: point,
             modifierFlags: [],
             timestamp: ProcessInfo.processInfo.systemUptime,
-            windowNumber: window.windowNumber,
+            windowNumber: windowNumber,
             context: nil,
             eventNumber: eventNumber,
             clickCount: 1,

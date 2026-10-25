@@ -1452,3 +1452,9 @@
 "That reset card was already used." = "이 초기화 쿠폰은 이미 사용되었습니다.";
 "Could not use the reset card." = "초기화 쿠폰을 사용하지 못했습니다.";
 "Could not use the reset card here. The console is open so you can use it there." = "여기서는 초기화 쿠폰을 사용하지 못했습니다. 콘솔을 열었으니 그곳에서 사용할 수 있습니다.";
+
+/* 1.5.17 */
+"About these figures" = "이 숫자에 대해";
+"Open the Token spend window" = "토큰 사용량 창 열기";
+"Open the Blinky window" = "Blinky 메인 창 열기";
+"Reset card details" = "초기화 쿠폰 상세";
