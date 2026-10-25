@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.16</title>
-            <pubDate>Sat, 24 Oct 2026 23:16:37 -0000</pubDate>
-            <sparkle:version>1.5.16</sparkle:version>
-            <sparkle:shortVersionString>1.5.16</sparkle:shortVersionString>
+            <title>1.5.17</title>
+            <pubDate>Sun, 25 Oct 2026 09:12:28 -0000</pubDate>
+            <sparkle:version>1.5.17</sparkle:version>
+            <sparkle:shortVersionString>1.5.17</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.16</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.17</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.16</h2><ul><li><strong>Clicking outside the Token window, or pressing Escape, closes it.</strong> A click in another app, on the desktop, or elsewhere in Blinky closes it, Escape closes it as soon as the window is open, and a click on the Token button or the window&#x27;s own menu does not. <a href="https://github.com/harrisliangsu/blinky-mac/pull/77">#77</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.16">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.16/Blinky-1.5.16.zip"
-                       length="22718440"
+</style><h2>Blinky 1.5.17</h2><ul><li><strong>The Token window closes from the red close button.</strong> A click inside the window, a click outside it, and Escape leave it open.</li><li><strong>The Token window keeps its notes on one line.</strong> The breakdown menu no longer repeats its choice, and pricing and unread sources open from “About these figures”.</li><li><strong>The usage card shows the whole provider name.</strong> The header icons sit together, and pointing at one shows what it does.</li><li><strong>Reset cards take one row, and Use is a button.</strong> Codex, Zhipu, and z.ai show how many are left, and the date and Use open from that row, still after a confirmation.</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.17">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.17/Blinky-1.5.17.zip"
+                       length="22795055"
                        type="application/octet-stream"
-                       sparkle:edSignature="Q4zgXyeb5jSnM5U7B1RMGL+e5lNh/EmR/a23+p1Cq3WjkJoUAmpFfR/VRd/58Ssc6d+lsA6F6Q7gg8kxCCL/Bg==" />
+                       sparkle:edSignature="TmTWWskpN1jbV82TvFTx5v//a4oJG2FKLEJd9zV/aHzvgjEwn3IXOVXDNN46QphWJC5UmjaN3Sc23hFXwCyhBA==" />
         </item>
     </channel>
 </rss>

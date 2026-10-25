@@ -6,34 +6,34 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.16</title>
-            <pubDate>Sat, 24 Oct 2026 23:16:37 -0000</pubDate>
-            <sparkle:version>1.5.16</sparkle:version>
-            <sparkle:shortVersionString>1.5.16</sparkle:shortVersionString>
+            <title>1.5.17</title>
+            <pubDate>Sun, 25 Oct 2026 09:12:28 -0000</pubDate>
+            <sparkle:version>1.5.17</sparkle:version>
+            <sparkle:shortVersionString>1.5.17</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.16</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.17</link>
             <description xml:lang="zh-Hans"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.16</h2><ul><li><strong>在 Token 窗口外点击，或按 Esc，会关闭窗口。</strong> 点在其他应用、桌面或 Blinky 的其他地方都会关闭，窗口一打开按 Esc 也能关掉它，点 Token 按钮或窗口自己的菜单则不会关。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/77">#77</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.16">在 GitHub 查看更新说明</a></p>]]></description>
+</style><h2>Blinky 1.5.17</h2><ul><li><strong>Token 窗口只从红色关闭按钮关闭。</strong> 在窗口里点击、在窗口外点击，以及按 Esc，窗口都保持打开。</li><li><strong>Token 窗口底部的说明收成一行。</strong> 划分方式菜单下面不再重复当前选项，计价和未读取到用量从「关于这些数字」展开。</li><li><strong>用量卡片写出完整的服务商名称。</strong> 标题右侧的图标靠在一起，指针停在图标上时会写出这个图标的作用。</li><li><strong>重置券只占一行，「使用」是按钮。</strong> Codex、智谱和 z.ai 只显示还剩几张，日期和「使用」从这一行打开，用掉一张之前仍会先确认。</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.17">在 GitHub 查看更新说明</a></p>]]></description>
             <description xml:lang="zh-Hant"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.16</h2><ul><li><strong>在 Token 窗口外点击，或按 Esc，会关闭窗口。</strong> 点在其他应用、桌面或 Blinky 的其他地方都会关闭，窗口一打开按 Esc 也能关掉它，点 Token 按钮或窗口自己的菜单则不会关。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/77">#77</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.16">在 GitHub 查看更新说明</a></p>]]></description>
+</style><h2>Blinky 1.5.17</h2><ul><li><strong>Token 窗口只从红色关闭按钮关闭。</strong> 在窗口里点击、在窗口外点击，以及按 Esc，窗口都保持打开。</li><li><strong>Token 窗口底部的说明收成一行。</strong> 划分方式菜单下面不再重复当前选项，计价和未读取到用量从「关于这些数字」展开。</li><li><strong>用量卡片写出完整的服务商名称。</strong> 标题右侧的图标靠在一起，指针停在图标上时会写出这个图标的作用。</li><li><strong>重置券只占一行，「使用」是按钮。</strong> Codex、智谱和 z.ai 只显示还剩几张，日期和「使用」从这一行打开，用掉一张之前仍会先确认。</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.17">在 GitHub 查看更新说明</a></p>]]></description>
             <description xml:lang="en"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.16</h2><ul><li><strong>Clicking outside the Token window, or pressing Escape, closes it.</strong> A click in another app, on the desktop, or elsewhere in Blinky closes it, Escape closes it as soon as the window is open, and a click on the Token button or the window&#x27;s own menu does not. <a href="https://github.com/harrisliangsu/blinky-mac/pull/77">#77</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.16">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.16/Blinky-1.5.16.zip"
-                       length="22718440"
+</style><h2>Blinky 1.5.17</h2><ul><li><strong>The Token window closes from the red close button.</strong> A click inside the window, a click outside it, and Escape leave it open.</li><li><strong>The Token window keeps its notes on one line.</strong> The breakdown menu no longer repeats its choice, and pricing and unread sources open from “About these figures”.</li><li><strong>The usage card shows the whole provider name.</strong> The header icons sit together, and pointing at one shows what it does.</li><li><strong>Reset cards take one row, and Use is a button.</strong> Codex, Zhipu, and z.ai show how many are left, and the date and Use open from that row, still after a confirmation.</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.17">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.17/Blinky-1.5.17.zip"
+                       length="22795055"
                        type="application/octet-stream"
-                       sparkle:edSignature="Q4zgXyeb5jSnM5U7B1RMGL+e5lNh/EmR/a23+p1Cq3WjkJoUAmpFfR/VRd/58Ssc6d+lsA6F6Q7gg8kxCCL/Bg==" />
+                       sparkle:edSignature="TmTWWskpN1jbV82TvFTx5v//a4oJG2FKLEJd9zV/aHzvgjEwn3IXOVXDNN46QphWJC5UmjaN3Sc23hFXwCyhBA==" />
         </item>
     </channel>
 </rss>
