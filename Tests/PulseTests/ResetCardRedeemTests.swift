@@ -83,6 +83,7 @@ struct ResetCardRedeemTests {
         #expect(CodexAccountUsageService.consumeOutcome(in: ["type": "surprise"]) == .unreported)
     }
 
+    @MainActor
     @Test("The card shows the count; the date and Use stay in the detail")
     func couponRowIsTheCount() {
         LocalizationSource.use(.english)

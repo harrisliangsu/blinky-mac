@@ -28,6 +28,7 @@ struct ResetCouponLine: Equatable, Sendable {
     /// The use control is a button. It is not a line of body text.
     static let useControlIsButton = true
 
+    @MainActor
     static func codex(_ credits: CodexResetCredits, canRedeem: Bool) -> Self {
         let redeem: Bool = {
             guard canRedeem, case .available(let count, _) = credits, count > 0 else { return false }
@@ -46,6 +47,7 @@ struct ResetCouponLine: Equatable, Sendable {
         )
     }
 
+    @MainActor
     static func zhipu(_ kind: ZhipuResetKind, inventory: ZhipuResetInventory, canRedeem: Bool) -> Self {
         let cards = inventory.cards(for: kind)
         let soonest = inventory.soonest(kind)

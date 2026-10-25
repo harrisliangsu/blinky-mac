@@ -1967,7 +1967,7 @@ private struct DaysChart: View {
 /// Each coupon row's rectangle in the card body, so the detail can sit
 /// inside that body instead of past its foot.
 private struct CouponRowFrameKey: PreferenceKey {
-    static var defaultValue: [ResetCouponSlot: CGRect] = [:]
+    static let defaultValue: [ResetCouponSlot: CGRect] = [:]
 
     static func reduce(
         value: inout [ResetCouponSlot: CGRect],
