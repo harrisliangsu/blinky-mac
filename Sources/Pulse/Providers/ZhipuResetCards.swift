@@ -25,7 +25,7 @@ import Foundation
 /// `resetType` is `FIVE_HOUR` or `WEEK`. `WEEK` is the body the mainland
 /// console sent; `FIVE_HOUR` is the token the same route uses for the
 /// other list. The caller confirms before this runs.
-enum ZhipuResetKind: String, Equatable, Sendable {
+enum ZhipuResetKind: String, Hashable, Sendable {
     /// Not `fiveHour` / `weekly`: those names are `UsageWindow.Kind`, and a
     /// switch on only those two is what the fork check treats as a quota-kind
     /// switch that forgot the other kinds.

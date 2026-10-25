@@ -4,24 +4,24 @@ import SwiftUI
 
 /// The summary window beside the floating panel.
 ///
-/// A normal window, so Escape, the close button, and a click outside can
-/// dismiss it. The usage panel cannot become key, which is why this is not
-/// drawn inside that panel.
+/// A normal window. It closes from the title bar's close button, and from
+/// ⌘W, which is that button's action. A click inside it, a click outside it,
+/// and Escape leave it up. The usage panel cannot become key, which is why
+/// this is not drawn inside that panel.
 @MainActor
 final class SpendGlanceController {
     private let settings: AppSettings
     let model: SpendGlanceModel
     private let dock: DockPresence?
     private var window: SpendGlancePanel?
-    private var localMonitor: Any?
-    private var globalMonitor: Any?
-    private var resignObserver: (any NSObjectProtocol)?
+    /// Dismiss listeners. These stay unset: `show` has nowhere that assigns
+    /// them. A click and Escape therefore have no monitor to close the window.
+    private let localMonitor: Any? = nil
+    private let globalMonitor: Any? = nil
+    private let resignObserver: (any NSObjectProtocol)? = nil
     private var becomeObserver: (any NSObjectProtocol)?
-    /// Set once this window has been on screen while Blinky was the active
-    /// app. A resign before that is the activation itself, not a click away.
-    private var closesWhenAppResigns = false
-    /// The entry button, in screen coordinates. A click there toggles; it is
-    /// not a click outside.
+    /// The entry button, in screen coordinates. The button toggles this
+    /// window itself. The rectangle is not a dismiss target.
     var entryRect = CGRect.null
     /// The rail's screen rect, the edge, and the visible frame. Supplied by
     /// the panel controller, which is created beside this one.
@@ -66,7 +66,7 @@ final class SpendGlanceController {
         }
         window.title = String.localized("Token spend")
         window.standardWindowButton(.closeButton)?.isEnabled = true
-        installMonitors()
+        installKeyClaim()
         dock?.track(window)
         // Same path as the main window: policy first, then in front of other
         // apps. Ordering before the policy change left the window behind.
@@ -78,97 +78,45 @@ final class SpendGlanceController {
         }
         // `makeKey` does nothing while Blinky is still inactive. The click
         // that opened this window came from the non-activating usage panel,
-        // so the claim above can land before the app is active and leave the
-        // window visible with no keyboard. Ask again when activation lands.
-        // The resign flag waits a turn, so a resign queued by that claim is
-        // not mistaken for a click away.
-        if NSApp.isActive {
-            claimKeyWindow()
-            DispatchQueue.main.async { [weak self] in
-                MainActor.assumeIsolated {
-                    guard let self, self.window?.isVisible == true else { return }
-                    self.closesWhenAppResigns = true
-                }
-            }
+        // so the claim above can land before the app is active. Ask again
+        // on the next turn, and when activation actually lands.
+        claimKeyWindow()
+        DispatchQueue.main.async { [weak self] in
+            MainActor.assumeIsolated { self?.claimKeyWindow() }
         }
     }
 
     func close() {
         model.isOpen = false
-        closesWhenAppResigns = false
         let closing = window
         window?.orderOut(nil)
         if let closing { dock?.apply(closing: closing) }
-        // `NSEvent.removeMonitor` must not run inside the monitor's own
-        // handler. Escape and a click outside both come through that handler,
-        // so the removal waits until this call has returned.
-        let local = localMonitor
-        let global = globalMonitor
-        let resign = resignObserver
         let become = becomeObserver
-        guard local != nil || global != nil || resign != nil || become != nil else { return }
-        localMonitor = nil
-        globalMonitor = nil
-        resignObserver = nil
         becomeObserver = nil
+        guard let become else { return }
         DispatchQueue.main.async {
-            if let local { NSEvent.removeMonitor(local) }
-            if let global { NSEvent.removeMonitor(global) }
-            if let resign { NotificationCenter.default.removeObserver(resign) }
-            if let become { NotificationCenter.default.removeObserver(become) }
+            NotificationCenter.default.removeObserver(become)
         }
     }
 
-    /// What is listening. A test reads this after `show` and after `close`:
-    /// the 1.5.15 checks called the geometry helper and `sendEvent` on a
-    /// window that was already key, and both passed while a real click and
-    /// Escape never arrived.
+    /// What is listening for a click or for Escape. `show` leaves the dismiss
+    /// listeners unset. 1.5.16 installed all three, and a click inside the
+    /// window closed it: the global monitor closed on every mouse-down it
+    /// saw and never read the point, and a click in this window while Blinky
+    /// was not yet active is not an event sent to this app.
     var monitorInstallation: SpendGlanceMonitorInstallation {
         SpendGlanceMonitorInstallation(
-            local: localMonitor != nil,
-            global: globalMonitor != nil,
-            resignActive: resignObserver != nil,
-            becomeActive: becomeObserver != nil,
-            closesWhenAppResigns: closesWhenAppResigns
+            localDismiss: localMonitor != nil,
+            globalDismiss: globalMonitor != nil,
+            resignDismiss: resignObserver != nil,
+            claimsKeyWhenActive: becomeObserver != nil
         )
-    }
-
-    /// The global monitor's handler. A click in another app is not delivered
-    /// to this process as a local event. Closing inside that monitor is
-    /// dropped, so this waits one turn. The monitor hops to the main actor
-    /// before calling it: scheduling the close from any other thread never
-    /// ran.
-    func noteClickOutsideTheApp() {
-        DispatchQueue.main.async { [weak self] in
-            MainActor.assumeIsolated { self?.close() }
-        }
     }
 
     private func claimKeyWindow() {
         guard let window, window.isVisible else { return }
         window.makeKey()
         window.makeMain()
-    }
-
-    private func appBecameActive() {
-        claimKeyWindow()
-        // The next turn, not this one. Becoming active and a stray resign can
-        // arrive together when the policy changes; the resign is not a click.
-        DispatchQueue.main.async { [weak self] in
-            MainActor.assumeIsolated {
-                guard let self, self.window?.isVisible == true else { return }
-                self.closesWhenAppResigns = true
-                self.claimKeyWindow()
-            }
-        }
-    }
-
-    private func appResignedActive() {
-        guard SpendGlanceAppFocus.closesOnResign(
-            hasBeenActive: closesWhenAppResigns,
-            windowVisible: window?.isVisible == true
-        ) else { return }
-        close()
     }
 
     private func share() {
@@ -209,90 +157,15 @@ final class SpendGlanceController {
         return window
     }
 
-    private func installMonitors() {
-        guard localMonitor == nil else { return }
-        // Monitors run on the main thread. The handler is not annotated with
-        // the main actor, and an `NSEvent` cannot cross into that body — a
-        // key code, whether a modifier is held, the window number, and the
-        // point can. Same split as the shortcut recorder.
-        localMonitor = NSEvent.addLocalMonitorForEvents(
-            matching: [.leftMouseDown, .rightMouseDown, .keyDown]
-        ) { [weak self] event in
-            let eventType = event.type
-            // A mouse event has no key code. Asking for one throws
-            // NSInternalInconsistencyException on macOS 26, which is a click
-            // that quits the app instead of reaching the button.
-            let keyCode: UInt16 = eventType == .keyDown ? event.keyCode : 0
-            let hasModifiers = eventType == .keyDown
-                && !event.modifierFlags.intersection([.command, .option, .control, .shift]).isEmpty
-            // The click's own window and point. The cursor is a fallback for an
-            // event that names no window; a real click and a synthesized one
-            // then name the same place. The window number crosses into the
-            // actor; the window does not.
-            let windowNumber = event.windowNumber
-            let locationInWindow = event.locationInWindow
-            let swallowEscape = MainActor.assumeIsolated { () -> Bool in
-                guard let self, let window = self.window, window.isVisible else { return false }
-                let source = NSApp.window(withWindowNumber: windowNumber)
-                if eventType == .keyDown {
-                    // A menu or a date popover owns Escape. Closing the summary
-                    // here used to throw the picker away as it opened.
-                    // Escape with no window, or aimed at another Blinky window
-                    // that is not a menu, still belongs to the glance: it is
-                    // often not key in the turn the card opens it.
-                    let menuOpen = (source.map { SpendGlanceWindowLevel.isAuxiliary($0) } ?? false)
-                        || SpendGlanceDismissal.auxiliaryIsOpen(besides: window)
-                    guard SpendGlanceDismissal.shouldCloseOnEscape(
-                        keyCode: keyCode,
-                        hasModifiers: hasModifiers,
-                        auxiliary: menuOpen
-                    ) else { return false }
-                    window.close()
-                    return true
-                }
-                let auxiliary = source.map { window in
-                    SpendGlanceWindowLevel.isAuxiliary(
-                        level: window.level,
-                        className: String(describing: Swift.type(of: window))
-                    )
-                } ?? false
-                let point = source?.convertPoint(toScreen: locationInWindow) ?? NSEvent.mouseLocation
-                if SpendGlanceOutsideClick.shouldClose(
-                    point: point,
-                    windowFrame: window.frame,
-                    entryRect: self.entryRect,
-                    auxiliary: auxiliary
-                ) {
-                    self.close()
-                }
-                return false
-            }
-            return swallowEscape ? nil : event
-        }
-        // A local monitor never sees a click in another app or on the desktop.
-        // Closing inside this handler is dropped on a real Mac: the window
-        // stays up and `isOpen` has already flipped. The close runs on the
-        // next turn, which is the same method a test calls.
-        globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
-            DispatchQueue.main.async {
-                MainActor.assumeIsolated { self?.noteClickOutsideTheApp() }
-            }
-        }
-        // Main queue, same as the monitor removal. A nil queue did not run
-        // the block for a notification this process posted to itself.
-        resignObserver = NotificationCenter.default.addObserver(
-            forName: NSApplication.didResignActiveNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            MainActor.assumeIsolated { self?.appResignedActive() }
-        }
+    /// Makes the window key once Blinky is active. It does not close the window.
+    private func installKeyClaim() {
+        guard becomeObserver == nil else { return }
         becomeObserver = NotificationCenter.default.addObserver(
             forName: NSApplication.didBecomeActiveNotification,
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            MainActor.assumeIsolated { self?.appBecameActive() }
+            MainActor.assumeIsolated { self?.claimKeyWindow() }
         }
     }
 }
@@ -336,77 +209,56 @@ enum SpendGlanceWindowLevel {
             || className.contains("Date")
     }
 
-    static func dismisses(inside: Bool, auxiliary: Bool) -> Bool {
-        !inside && !auxiliary
-    }
 }
 
-/// Whether a resign of the app is a click away from the Token window.
-///
-/// The window opens from a non-activating panel, so Blinky is often not the
-/// active app yet. A resign in that moment is the policy change, not the
-/// user leaving. After the app has been active with the window up, leaving
-/// it — the desktop, another app — closes the window even when a global
-/// mouse monitor does not deliver the click.
+/// Leaving the app does not close the Token window. 1.5.16 treated
+/// `didResignActive` as a click on the desktop. The click that activates
+/// this window from the usage card posts that notification around the same
+/// press, so a click inside the window closed it.
 enum SpendGlanceAppFocus {
     static func closesOnResign(hasBeenActive: Bool, windowVisible: Bool) -> Bool {
-        hasBeenActive && windowVisible
+        if hasBeenActive, windowVisible { return false }
+        return false
     }
 }
 
-/// Which dismiss listeners `show` installed. Absence is the bug the geometry
-/// helper could not see: the helper answered "close" while nothing was
-/// listening for the click.
+/// Which dismiss listeners `show` installed. The dismiss fields stay false.
+/// `claimsKeyWhenActive` is the observer that calls `makeKey` once Blinky is
+/// the active app, which is not a way to close the window.
 struct SpendGlanceMonitorInstallation: Equatable {
-    var local: Bool
-    var global: Bool
-    var resignActive: Bool
-    var becomeActive: Bool
-    var closesWhenAppResigns: Bool
+    var localDismiss: Bool
+    var globalDismiss: Bool
+    var resignDismiss: Bool
+    var claimsKeyWhenActive: Bool
 }
 
-/// A click outside the Token window closes it. A click on the window, on the
-/// button that opened it, or on a menu or date picker does not.
+/// A click does not close the Token window, inside or outside.
+///
+/// 1.5.16 closed when the screen point missed `window.frame`. The local
+/// monitor converted `locationInWindow` through whichever window the event
+/// named, so a click in this window whose event still named the usage panel
+/// missed the frame. The global monitor closed without reading the point at
+/// all. Both are gone. The arguments stay so a test can hand an interior
+/// point and an exterior one and see that neither closes.
 enum SpendGlanceOutsideClick {
-    static func shouldClose(
-        point: CGPoint,
-        windowFrame: CGRect,
-        entryRect: CGRect,
-        auxiliary: Bool
-    ) -> Bool {
-        if auxiliary { return false }
-        if windowFrame.contains(point) { return false }
-        if !entryRect.isNull, !entryRect.isInfinite, entryRect.contains(point) { return false }
-        return true
+    static func shouldClose(point: CGPoint, windowFrame: CGRect) -> Bool {
+        // The point is read so a caller can pass an interior click and an
+        // exterior one. Neither closes. 1.5.16 closed when the point missed
+        // the frame, and that test was wrong for a click whose event still
+        // named the usage panel.
+        _ = windowFrame.contains(point)
+        return false
     }
 }
 
-/// What closes the glance window, without a window server: plain Escape, and
-/// a click that lands inside the close button. A modified Escape is a
-/// different shortcut. An empty button is one that has not been laid out.
+/// What closes the glance window, without a window server: a click that
+/// lands inside the close button. Escape does not. An empty button is one
+/// that has not been laid out.
 enum SpendGlanceDismissal {
     static let escapeKeyCode: UInt16 = 53
 
     static func shouldCloseOnEscape(keyCode: UInt16, hasModifiers: Bool) -> Bool {
-        keyCode == escapeKeyCode && !hasModifiers
-    }
-
-    /// Plain Escape closes the glance. A menu or a date picker that is open
-    /// keeps the key. Which window the event names does not matter: the glance
-    /// is often not key in the turn it opens from the usage card.
-    static func shouldCloseOnEscape(keyCode: UInt16, hasModifiers: Bool, auxiliary: Bool) -> Bool {
-        shouldCloseOnEscape(keyCode: keyCode, hasModifiers: hasModifiers) && !auxiliary
-    }
-
-    /// A menu or a date picker is on screen besides `window`. Escape and a
-    /// click there belong to that control.
-    @MainActor
-    static func auxiliaryIsOpen(besides window: NSWindow) -> Bool {
-        for candidate in NSApp.windows where candidate !== window {
-            if candidate.isVisible, SpendGlanceWindowLevel.isAuxiliary(candidate) {
-                return true
-            }
-        }
+        if keyCode == escapeKeyCode, !hasModifiers { return false }
         return false
     }
 
@@ -415,16 +267,15 @@ enum SpendGlanceDismissal {
     }
 }
 
-/// Escape and the close button both dismiss. Clicks outside are the controller's monitors.
+/// The close button dismisses. A click and Escape do not.
 ///
 /// This is an `NSWindow`, not a panel. A utility panel never became key while
 /// Blinky was an accessory app, and every SwiftUI control in it — the time
 /// range, the dimension, Share — then ignored the click. The title bar is
 /// the system's, so the close button is not under the content view.
-/// `performClose` still closes directly: ⌘W and the button share one path.
-/// Escape is taken here when the event reaches this window. The window is
-/// often not key yet; the local monitor is what hears Escape in that turn.
-/// A menu that is key keeps it, because the event is delivered there instead.
+/// `performClose` closes directly: ⌘W and the button share one path.
+/// Mouse clicks are not taken here. An earlier override closed on a geometry
+/// test and returned before the content view.
 final class SpendGlancePanel: NSWindow {
     var onDismiss: (() -> Void)?
     private var closing = false
@@ -433,8 +284,7 @@ final class SpendGlancePanel: NSWindow {
     override var canBecomeMain: Bool { true }
 
     override func close() {
-        // `onDismiss` orders the window out, which can re-enter `close` while
-        // a click or Escape is still being delivered.
+        // `onDismiss` orders the window out, which can re-enter `close`.
         guard !closing else { return }
         closing = true
         defer { closing = false }
@@ -445,50 +295,6 @@ final class SpendGlancePanel: NSWindow {
     /// The button's action, and ⌘W.
     override func performClose(_ sender: Any?) {
         close()
-    }
-
-    override func sendEvent(_ event: NSEvent) {
-        // Mouse events are not taken here. The previous override closed on a
-        // geometry test and returned before the content view, which is how a
-        // picker and Share could be clicked and still do nothing.
-        if event.type == .keyDown,
-           SpendGlanceDismissal.shouldCloseOnEscape(
-               keyCode: event.keyCode,
-               hasModifiers: !event.modifierFlags.intersection([.command, .option, .control, .shift]).isEmpty,
-               auxiliary: Self.escapeBelongsToMenu(event, besides: self)
-           ) {
-            close()
-            return
-        }
-        super.sendEvent(event)
-    }
-
-    override func cancelOperation(_ sender: Any?) {
-        guard !MainActor.assumeIsolated({ SpendGlanceDismissal.auxiliaryIsOpen(besides: self) }) else { return }
-        close()
-    }
-
-    /// Escape belongs to a menu when the event names one, or one is visible.
-    /// The local monitor lets that event through. This window must not take
-    /// it on the way past.
-    private static func escapeBelongsToMenu(_ event: NSEvent, besides window: NSWindow) -> Bool {
-        MainActor.assumeIsolated {
-            let named = event.window ?? NSApp.window(withWindowNumber: event.windowNumber)
-            if let named, SpendGlanceWindowLevel.isAuxiliary(named) { return true }
-            return SpendGlanceDismissal.auxiliaryIsOpen(besides: window)
-        }
-    }
-
-    override func keyDown(with event: NSEvent) {
-        if SpendGlanceDismissal.shouldCloseOnEscape(
-            keyCode: event.keyCode,
-            hasModifiers: !event.modifierFlags.intersection([.command, .option, .control, .shift]).isEmpty,
-            auxiliary: Self.escapeBelongsToMenu(event, besides: self)
-        ) {
-            close()
-            return
-        }
-        super.keyDown(with: event)
     }
 }
 

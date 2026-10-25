@@ -74,6 +74,13 @@ struct TokenSpendView: View {
         !hidesSpanHeadline || hasFocus
     }
 
+    /// The menu button already shows "By agent" (or whichever dimension).
+    /// A caption under that menu repeats it.
+    nonisolated static let showsDimensionCaption = false
+
+    /// Pricing, unread sources, and the models.dev note start as one line.
+    @State private var notesExpanded = !SpendGlanceNotes.startsCollapsed
+
     /// Which column the day table is sorted by. Its own state rather than a
     /// setting: it is a way of reading the table in front of you, not a
     /// preference about the app.
@@ -182,37 +189,65 @@ struct TokenSpendView: View {
                     if !focused.models.isEmpty { models(focused).id("models") }
                     if !focused.projects.isEmpty { projects(focused) }
                     if !focused.sessions.isEmpty { sessions(focused) }
-                    footnote(focused)
                 }
             } else if summary.isEmpty {
                 empty
             } else {
                 glanceBody(summary)
-                footnote(summary)
             }
 
-            // **Only for the combined pane.** A source with no records is a
-            // fact about the whole page; under one agent or one model it would
-            // read as a per-agent absence the same list already shows.
-            if modelFocus == nil, focus == nil, !noRecords.isEmpty {
-                noRecordsGroup
-            }
+            notesBlock
         }
     }
 
     // MARK: - Nothing read from a source
 
-    /// The present-but-silent sources, named once at the foot of the page.
-    ///
-    /// Deliberately short: names only, no control and no explanation of how to
-    /// make one produce records. A source that is absent entirely is not here —
-    /// fifty-one empty rows would be worse than nothing.
-    private var noRecordsGroup: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            quietText(String.localized("No usage data read"))
-            quietText(noRecords.map(\.displayName).joined(separator: " · "))
+    /// Pricing, a partial read, and the sources that produced no records.
+    /// One secondary line until it is opened. The sentences stay; they are
+    /// not a block under the list. A model's own page carries its note.
+    @ViewBuilder
+    private var notesBlock: some View {
+        if modelFocus == nil {
+            let lines = SpendGlanceNotes.lines(
+                summary: focus == nil ? summary : focused,
+                unreadNames: focus == nil ? noRecords.map(\.displayName) : []
+            )
+            if !lines.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    Button {
+                        notesExpanded.toggle()
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text(localized: "About these figures")
+                                .font(.system(size: SpendQuietCopy.pointSize))
+                                .foregroundStyle(.secondary)
+                            Image(systemName: notesExpanded ? "chevron.up" : "chevron.down")
+                                .font(.system(size: 9, weight: .semibold))
+                                .foregroundStyle(.tertiary)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("spend-glance-notes")
+                    if notesExpanded {
+                        VStack(alignment: .leading, spacing: 2) {
+                            ForEach(lines) { line in
+                                noteLine(line)
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 4)
+            }
         }
-        .padding(.horizontal, 4)
+    }
+
+    @ViewBuilder
+    private func noteLine(_ line: SpendGlanceNote) -> some View {
+        if let help = line.help, !help.isEmpty {
+            quietText(line.text).help(help)
+        } else {
+            quietText(line.text)
+        }
     }
 
     /// A sentence that says nothing was measured. Smaller and secondary, so
@@ -663,7 +698,7 @@ struct TokenSpendView: View {
     /// agent, day or month. A row that priced nothing shows an em dash instead,
     /// and a row that priced everything has no `*`, so neither needs the
     /// legend.
-    private static func hasPartialAmounts(_ summary: SpendSummary) -> Bool {
+    nonisolated fileprivate static func hasPartialAmounts(_ summary: SpendSummary) -> Bool {
         func partial(_ unpriced: Int, _ tokens: Int) -> Bool {
             unpriced > 0 && unpriced < tokens
         }
@@ -761,6 +796,7 @@ struct TokenSpendView: View {
     }
 
     /// The menu, and only the list it names. The other three stay off the page.
+    /// The list has no caption: the menu button already shows the choice.
     @ViewBuilder
     private func dimensionBlock(_ summary: SpendSummary) -> some View {
         Picker(String.localized("Break down by"), selection: $dimension) {
@@ -778,23 +814,23 @@ struct TokenSpendView: View {
         switch dimension {
         case .model:
             if summary.models.isEmpty { quietText(String.localized("Nothing in this span")).padding(.horizontal, 4) }
-            else { models(summary).id("models") }
+            else { models(summary, titled: Self.showsDimensionCaption).id("models") }
         case .agent:
             if summary.agents.isEmpty { quietText(String.localized("Nothing in this span")).padding(.horizontal, 4) }
-            else { agentRows(summary) }
+            else { agentRows(summary, titled: Self.showsDimensionCaption) }
         case .project:
             if summary.projects.isEmpty { quietText(String.localized("Nothing in this span")).padding(.horizontal, 4) }
-            else { projects(summary) }
+            else { projects(summary, titled: Self.showsDimensionCaption) }
         case .session:
             if summary.sessions.isEmpty { quietText(String.localized("Nothing in this span")).padding(.horizontal, 4) }
-            else { sessions(summary) }
+            else { sessions(summary, titled: Self.showsDimensionCaption) }
         }
     }
 
     // MARK: - Where it went
 
-    private func agentRows(_ summary: SpendSummary) -> some View {
-        SettingsGroup(String.localized("By agent")) {
+    private func agentRows(_ summary: SpendSummary, titled: Bool = true) -> some View {
+        SettingsGroup(titled ? String.localized("By agent") : nil) {
             ForEach(Array(summary.agents.enumerated()), id: \.element.id) { index, agent in
                 if index > 0 { SettingsRowDivider() }
 
@@ -848,12 +884,12 @@ struct TokenSpendView: View {
     /// behind them is `SettingsView`'s job. The row ranks by tokens, which is
     /// what the combined page can sum without pricing each model; the API
     /// estimate for one model lives behind the row, in its drill-down.
-    private func models(_ summary: SpendSummary) -> some View {
+    private func models(_ summary: SpendSummary, titled: Bool = true) -> some View {
         let shown = showAllModels
             ? summary.models
             : Array(summary.models.prefix(Self.modelLimit))
 
-        return SettingsGroup(String.localized("By model")) {
+        return SettingsGroup(titled ? String.localized("By model") : nil) {
             ForEach(Array(shown.enumerated()), id: \.element.id) { index, model in
                 if index > 0 { SettingsRowDivider() }
 
@@ -915,14 +951,14 @@ struct TokenSpendView: View {
     // MARK: - Where the work happened
 
     /// One row per project identity, with ambiguous directory names expanded.
-    private func projects(_ summary: SpendSummary) -> some View {
+    private func projects(_ summary: SpendSummary, titled: Bool = true) -> some View {
         // **Of all the work, not of the work with a project.** Sessions with
         // no directory (Codex's path carries none) have no row here, and
         // dividing by the projects alone drew each bar larger than its share
         // beside every other section's.
         let total = max(summary.tokens, 1)
 
-        return SettingsGroup(String.localized("By project")) {
+        return SettingsGroup(titled ? String.localized("By project") : nil) {
             VStack(spacing: 0) {
                 ForEach(Array(summary.projects.prefix(Self.modelLimit).enumerated()), id: \.element.id) { index, project in
                     if index > 0 { SettingsRowDivider() }
@@ -948,13 +984,13 @@ struct TokenSpendView: View {
     }
 
     /// One row a transcript, newest first.
-    private func sessions(_ summary: SpendSummary) -> some View {
+    private func sessions(_ summary: SpendSummary, titled: Bool = true) -> some View {
         let rows = summary.sessions
         let pages = max((rows.count + sessionPageSize - 1) / sessionPageSize, 1)
         let current = min(max(sessionPage, 0), pages - 1)
         let shown = Array(rows.dropFirst(current * sessionPageSize).prefix(sessionPageSize))
 
-        return SettingsGroup(String.localized("By session")) {
+        return SettingsGroup(titled ? String.localized("By session") : nil) {
             VStack(spacing: 0) {
                 ForEach(Array(shown.enumerated()), id: \.element.id) { index, row in
                     if index > 0 { SettingsRowDivider() }
@@ -1007,58 +1043,56 @@ struct TokenSpendView: View {
 
     // MARK: - What the figures are not
 
-    private func footnote(_ summary: SpendSummary) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            // The same warning the card carries, and for the same reason: it
-            // would be easy to read this as a bill, and it is not one. The
-            // wording is generic on purpose — some records come from an export
-            // that can cover more than this Mac, so "local logs" would make a
-            // promise about the account that Pulse cannot keep.
-            Text(localized: "Usage records, estimated at models.dev API rates—not an actual bill.")
-
-            // **Some sources can only attest to part of their counts.** Where
-            // one of those fed this span, the totals are the known subset; the
-            // sentence says so rather than leaving a reader to trust a figure
-            // the store itself did not fully state. Not an error, so it is a
-            // plain note and never an empty page.
-            if summary.hasPartialCounts {
-                Text(localized: "Counts may be incomplete.")
-            }
-
-            // The legend for the `*` a partly priced row carries. A row whose
-            // every token was unpriced shows no amount and needs no legend, so
-            // this is shown only where an amount and a `*` are.
-            if Self.hasPartialAmounts(summary) {
-                Text(localized: "Excludes unpriced tokens.")
-            }
-
-            // **A short, conditional note about the dates.** Some stores state
-            // only a session or report date, so the day a record lands on is
-            // right while the hour is not. Said once, where the hour figures
-            // are, rather than left to be inferred from a missing profile.
-            if summary.hasAggregateTiming {
-                Text(localized: "Some records use session report dates.")
-            }
-
-            if !summary.unpricedModels.isEmpty {
-                // **Counted, not listed.** Naming them was fine at two and is
-                // a paragraph at thirty — and the names are the least useful
-                // part of the sentence, which is that some tokens have no
-                // price. The list stays a hover away.
-                Text(String.localized("\("\(summary.unpricedModels.count)") models without public pricing: tokens only."))
-                    .help(summary.unpricedModels.joined(separator: ", "))
-            }
-        }
-        .font(.system(size: 11))
-        .foregroundStyle(.secondary)
-        .fixedSize(horizontal: false, vertical: true)
-        .padding(.horizontal, 4)
-    }
+    // The sentences live in `SpendGlanceNotes`. The page shows them behind
+    // one line, collapsed until the reader opens it.
 
     // MARK: - Formatting
 
     private static func shortDate(_ date: Date) -> String {
         date.formatted(.dateTime.month(.abbreviated).day().locale(LocalizationSource.locale))
+    }
+}
+
+/// The sentences under the Token lists. Collapsed to one line until opened.
+struct SpendGlanceNote: Equatable, Identifiable {
+    var text: String
+    /// Model names for the unpriced-count sentence. Not drawn as its own line.
+    var help: String?
+    var id: String { text }
+}
+
+enum SpendGlanceNotes {
+    /// The page opens with the sentences hidden.
+    static let startsCollapsed = true
+
+    static func lines(summary: SpendSummary, unreadNames: [String]) -> [SpendGlanceNote] {
+        var lines: [SpendGlanceNote] = []
+        if !summary.isEmpty {
+            lines.append(SpendGlanceNote(
+                text: String.localized("Usage records, estimated at models.dev API rates—not an actual bill."),
+                help: nil
+            ))
+            if summary.hasPartialCounts {
+                lines.append(SpendGlanceNote(text: String.localized("Counts may be incomplete."), help: nil))
+            }
+            if TokenSpendView.hasPartialAmounts(summary) {
+                lines.append(SpendGlanceNote(text: String.localized("Excludes unpriced tokens."), help: nil))
+            }
+            if summary.hasAggregateTiming {
+                lines.append(SpendGlanceNote(text: String.localized("Some records use session report dates."), help: nil))
+            }
+            if !summary.unpricedModels.isEmpty {
+                lines.append(SpendGlanceNote(
+                    text: String.localized("\("\(summary.unpricedModels.count)") models without public pricing: tokens only."),
+                    help: summary.unpricedModels.joined(separator: ", ")
+                ))
+            }
+        }
+        if !unreadNames.isEmpty {
+            lines.append(SpendGlanceNote(text: String.localized("No usage data read"), help: nil))
+            lines.append(SpendGlanceNote(text: unreadNames.joined(separator: " · "), help: nil))
+        }
+        return lines
     }
 }
 

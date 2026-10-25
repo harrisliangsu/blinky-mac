@@ -1450,3 +1450,9 @@
 "That reset card was already used." = "That reset card was already used.";
 "Could not use the reset card." = "Could not use the reset card.";
 "Could not use the reset card here. The console is open so you can use it there." = "Could not use the reset card here. The console is open so you can use it there.";
+
+/* 1.5.17 */
+"About these figures" = "About these figures";
+"Open the Token spend window" = "Open the Token spend window";
+"Open the Blinky window" = "Open the Blinky window";
+"Reset card details" = "Reset card details";

@@ -10,6 +10,13 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.17
+
+- **The Token window closes from the red close button.** A click inside the window, a click outside it, and Escape leave it open.
+- **The Token window keeps its notes on one line.** The breakdown menu no longer repeats its choice, and pricing and unread sources open from “About these figures”.
+- **The usage card shows the whole provider name.** The header icons sit together, and pointing at one shows what it does.
+- **Reset cards take one row, and Use is a button.** Codex, Zhipu, and z.ai show how many are left, and the date and Use open from that row, still after a confirmation.
+
 ## 1.5.16
 
 - **Clicking outside the Token window, or pressing Escape, closes it.** A click in another app, on the desktop, or elsewhere in Blinky closes it, Escape closes it as soon as the window is open, and a click on the Token button or the window's own menu does not. [#77](https://github.com/harrisliangsu/blinky-mac/pull/77)

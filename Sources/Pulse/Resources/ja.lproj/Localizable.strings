@@ -1452,3 +1452,9 @@
 "That reset card was already used." = "このリセット券はすでに使われています。";
 "Could not use the reset card." = "リセット券を使えませんでした。";
 "Could not use the reset card here. The console is open so you can use it there." = "ここではリセット券を使えませんでした。コンソールを開いたので、そちらで使えます。";
+
+/* 1.5.17 */
+"About these figures" = "これらの数字について";
+"Open the Token spend window" = "トークン使用量のウィンドウを開く";
+"Open the Blinky window" = "Blinky のメインウィンドウを開く";
+"Reset card details" = "リセット券の詳細";

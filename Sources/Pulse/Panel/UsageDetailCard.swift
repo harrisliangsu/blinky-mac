@@ -79,9 +79,9 @@ enum DetailCardLayout {
     /// limits (Codex adds one group per model with its own limits), so this
     /// budgets for more than are on screen today. Codex also adds the reset
     /// intel block; that height is in the budget before any card opens, so
-    /// opening one does not resize the window. One row more than the limits
-    /// covers Codex's reset-credit lines: the count and the soonest expiry
-    /// are two text lines, shorter than a limit's row.
+    /// opening one does not resize the window. A reset coupon is one line,
+    /// the count. Its date and the use button open in a panel that stays
+    /// inside the card, so they do not add a row and the button is not clipped.
     static var maximumHeight: CGFloat { height(forWindows: 6, footnote: true) + codexIntelHeight }
 
     /// Title row, the local bound (may wrap), the latest announcement (one
@@ -259,6 +259,16 @@ struct UsageDetailCard: View {
     @State private var predictionNoteVisible = false
     /// The first click only asks. Confirm is what sends.
     @State private var resetPrompt = ResetCardPrompt.idle
+    /// Which coupon's detail is open. Expiry and Use stay in that panel.
+    /// The panel is placed inside the card, so it is not clipped and the
+    /// next row cannot cover the button.
+    @State private var openCoupon: ResetCouponSlot?
+    /// Each coupon row, in the card body's coordinates.
+    @State private var couponFrames: [ResetCouponSlot: CGRect] = [:]
+    /// The card body's height, the space the detail has to stay inside.
+    @State private var cardBodyHeight: CGFloat = 0
+    /// The detail's own height, measured once it is open.
+    @State private var couponPanelHeight: CGFloat = 72
     @State private var resetReport: ResetCardRedeemReport?
     @State private var resetBusy = false
     /// Height of the Predicted reset title row, so the note starts under it
@@ -379,14 +389,11 @@ struct UsageDetailCard: View {
             // Pulse worked out. Then when the soonest of them lapses, to the
             // minute, since that decides whether to spend one now (issue #67).
             if let resetCredits {
-                ValueRow(title: String.localized("Limit reset credits"), value: Self.resetCreditsText(resetCredits))
-                if let expiry = Self.resetCreditExpiryText(resetCredits) {
-                    ValueRow(title: String.localized("Next expiry"), value: expiry)
-                }
-                codexRedeem(resetCredits)
+                resetCoupon(ResetCouponLine.codex(resetCredits, canRedeem: redeemCodex != nil))
             }
             if let zhipuResetCards {
-                zhipuResetRows(zhipuResetCards)
+                resetCoupon(ResetCouponLine.zhipu(.fiveHourCard, inventory: zhipuResetCards, canRedeem: redeemZhipu != nil))
+                resetCoupon(ResetCouponLine.zhipu(.weeklyCard, inventory: zhipuResetCards, canRedeem: redeemZhipu != nil))
             }
             if let resetReport, resetPrompt == .idle {
                 Text(verbatim: resetReport.message)
@@ -457,6 +464,16 @@ struct UsageDetailCard: View {
                     .transition(Self.rowTransition)
             }
         }
+        .coordinateSpace(name: "detailCardBody")
+        .onPreferenceChange(CouponRowFrameKey.self) { couponFrames = $0 }
+        .background {
+            GeometryReader { proxy in
+                Color.clear
+                    .onAppear { cardBodyHeight = proxy.size.height }
+                    .onChange(of: proxy.size.height) { _, height in cardBodyHeight = height }
+            }
+        }
+        .overlay(alignment: .topLeading) { couponDetailPanel }
         .padding(DetailCardLayout.padding)
         .frame(width: DetailCardLayout.width, alignment: .leading)
     }
@@ -504,60 +521,113 @@ struct UsageDetailCard: View {
             }
             resetReport = report
             resetBusy = false
+            openCoupon = nil
         }
     }
 
-    @ViewBuilder
-    private func codexRedeem(_ credits: CodexResetCredits) -> some View {
-        if case .available(let count, _) = credits, count > 0, redeemCodex != nil {
-            resetAsk(
-                asking: resetPrompt == .confirmingCodex,
-                title: String.localized("Use a Codex reset card"),
-                question: String.localized("Use one Codex reset card?"),
-                detail: String.localized("Codex resets the limits this card covers."),
-                ask: .askCodex
-            )
+    /// Title and count on the card. The mark opens the date and Use. The row
+    /// itself does not grow. Use is a button. The first click still only asks.
+    private func resetCoupon(_ line: ResetCouponLine) -> some View {
+        let open = openCoupon == line.slot
+        return HStack(alignment: .firstTextBaseline, spacing: 4) {
+            Text(verbatim: line.title)
+                .foregroundStyle(.primary)
+                .lineLimit(1)
+            if line.hasDetail {
+                ResetCouponDetailMark(open: open) {
+                    if open {
+                        openCoupon = nil
+                        if isConfirming(line) { applyReset(.cancel) }
+                    } else {
+                        openCoupon = line.slot
+                    }
+                }
+            }
+            Spacer(minLength: 4)
+            Text(verbatim: line.count)
+                .foregroundStyle(.primary.opacity(0.9))
+                .lineLimit(1)
+                .layoutPriority(1)
         }
-    }
-
-    @ViewBuilder
-    private func zhipuResetRows(_ inventory: ZhipuResetInventory) -> some View {
-        zhipuResetRow(.fiveHourCard, inventory: inventory)
-        zhipuResetRow(.weeklyCard, inventory: inventory)
-    }
-
-    @ViewBuilder
-    private func zhipuResetRow(_ kind: ZhipuResetKind, inventory: ZhipuResetInventory) -> some View {
-        let cards = inventory.cards(for: kind)
-        ValueRow(title: Self.zhipuKindTitle(kind), value: Self.availableCountText(cards.count))
-        if let soonest = inventory.soonest(kind) {
-            ValueRow(title: String.localized("Next expiry"), value: Self.expiryText(soonest.expiresAt))
-            if redeemZhipu != nil {
-                let asking: Bool = {
-                    if case .confirmingZhipu(kind, soonest.id) = resetPrompt { return true }
-                    return false
-                }()
-                resetAsk(
-                    asking: asking,
-                    title: Self.zhipuUseTitle(kind),
-                    question: Self.zhipuQuestion(kind),
-                    detail: Self.zhipuDetail(kind),
-                    ask: .askZhipu(kind, cardID: soonest.id)
+        .font(.system(size: DetailCardLayout.rowFontSize, weight: .regular, design: .rounded))
+        .background {
+            GeometryReader { proxy in
+                Color.clear.preference(
+                    key: CouponRowFrameKey.self,
+                    value: [line.slot: proxy.frame(in: .named("detailCardBody"))]
                 )
             }
         }
+        .accessibilityElement(children: .contain)
+    }
+
+    /// The date and the use button, inside the card. A clear inset holds the
+    /// space above it and does not take the click, so the mark and the header
+    /// stay usable. The panel does not change the card's height.
+    @ViewBuilder
+    private var couponDetailPanel: some View {
+        if let slot = openCoupon,
+           let line = couponLine(slot),
+           let row = couponFrames[slot],
+           row.height > 1,
+           cardBodyHeight > 1 {
+            let top = ResetCouponDetailPlacement.originY(
+                rowMinY: row.minY,
+                rowMaxY: row.maxY,
+                panelHeight: couponPanelHeight,
+                contentHeight: cardBodyHeight
+            )
+            VStack(spacing: 0) {
+                Color.clear
+                    .frame(height: top)
+                    .allowsHitTesting(false)
+                resetCouponDetail(line)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .background {
+                        GeometryReader { proxy in
+                            Color.clear
+                                .onAppear { couponPanelHeight = proxy.size.height }
+                                .onChange(of: proxy.size.height) { _, height in
+                                    if height > 1 { couponPanelHeight = height }
+                                }
+                        }
+                    }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private func couponLine(_ slot: ResetCouponSlot) -> ResetCouponLine? {
+        switch slot {
+        case .codex:
+            resetCredits.map { ResetCouponLine.codex($0, canRedeem: redeemCodex != nil) }
+        case .zhipu(let kind):
+            zhipuResetCards.map { ResetCouponLine.zhipu(kind, inventory: $0, canRedeem: redeemZhipu != nil) }
+        }
+    }
+
+    private func isConfirming(_ line: ResetCouponLine) -> Bool {
+        switch (resetPrompt, line.slot) {
+        case (.confirmingCodex, .codex):
+            true
+        case (.confirmingZhipu(let kind, let cardID), .zhipu(let rowKind)):
+            kind == rowKind && line.cardID == cardID
+        default:
+            false
+        }
     }
 
     @ViewBuilder
-    private func resetAsk(
-        asking: Bool,
-        title: String,
-        question: String,
-        detail: String,
-        ask: ResetCardPrompt.Action
-    ) -> some View {
-        if asking {
-            VStack(alignment: .leading, spacing: 4) {
+    private func resetCouponDetail(_ line: ResetCouponLine) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            if let expiry = line.expiry {
+                Text(verbatim: expiry)
+                    .font(.system(size: DetailCardLayout.footnoteFontSize, weight: .regular, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            if isConfirming(line), let question = line.question, let detail = line.detail {
                 Text(verbatim: question)
                     .font(.system(size: DetailCardLayout.rowFontSize, weight: .medium, design: .rounded))
                     .fixedSize(horizontal: false, vertical: true)
@@ -565,38 +635,24 @@ struct UsageDetailCard: View {
                     .font(.system(size: DetailCardLayout.footnoteFontSize, weight: .regular, design: .rounded))
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
-                HStack(spacing: 16) {
-                    resetPress(String.localized("Cancel")) { applyReset(.cancel) }
-                    resetPress(String.localized("Use this card")) { applyReset(.confirm) }
+                HStack(spacing: 8) {
+                    ResetCouponButton(title: String.localized("Cancel"), prominent: false, enabled: !resetBusy) {
+                        applyReset(.cancel)
+                    }
+                    ResetCouponButton(title: String.localized("Use this card"), prominent: true, enabled: !resetBusy) {
+                        applyReset(.confirm)
+                    }
                 }
-            }
-        } else {
-            resetPress(title) {
-                resetReport = nil
-                applyReset(ask)
+            } else if let title = line.useTitle, let ask = line.ask {
+                ResetCouponButton(title: title, prominent: true, enabled: !resetBusy) {
+                    resetReport = nil
+                    applyReset(ask)
+                }
             }
         }
-    }
-
-    private func resetPress(_ title: String, action: @escaping () -> Void) -> some View {
-        Text(verbatim: title)
-            .font(.system(size: DetailCardLayout.rowFontSize, weight: .medium, design: .rounded))
-            .foregroundStyle(.primary.opacity(resetBusy ? 0.35 : 0.9))
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(Rectangle())
-            .overlay {
-                PointerHand {
-                    guard !resetBusy else { return }
-                    action()
-                }
-            }
-            .accessibilityElement()
-            .accessibilityLabel(title)
-            .accessibilityAddTraits(.isButton)
-            .accessibilityAction(named: Text(verbatim: title)) {
-                guard !resetBusy else { return }
-                action()
-            }
+        .padding(8)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .allowsHitTesting(true)
     }
 
     static func zhipuKindTitle(_ kind: ZhipuResetKind) -> String {
@@ -1080,44 +1136,39 @@ struct UsageDetailCard: View {
         // one keeps no room in the row while it leaves.
         ZStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: DetailCardLayout.headerLineSpacing) {
-                HStack(spacing: 8) {
+                HStack(spacing: 6) {
                     LobeIconView(provider: usage.provider, size: DetailCardLayout.headerIconSize)
                         .foregroundStyle(.primary)
 
-                    Text(localized: "\(title ?? usage.provider.displayName) Usage")
-                        // One line, always. The card's height is worked out from
-                        // `DetailCardLayout` before SwiftUI lays anything out, so a
-                        // header that wrapped would make the card taller than the
-                        // window budgeted for it and get sliced off against the edge.
-                        .lineLimit(1)
-                        .font(.system(size: DetailCardLayout.titleFontSize, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.primary)
-                        .layoutPriority(1)
+                    HeaderTitleText(text: String.localized("\(title ?? usage.provider.displayName) Usage"))
 
                     // The plan as the provider names it. It gives way to the
-                    // title, which is what says whose card this is. Settings
-                    // and Quit stay at the trailing edge either way.
+                    // title, which is what says whose card this is. The icon
+                    // buttons stay at the trailing edge either way.
                     if isDetailed, let plan = usage.plan, !plan.isEmpty {
-                        Spacer(minLength: 0)
+                        Spacer(minLength: 4)
                         Text(verbatim: plan)
                             .lineLimit(1)
+                            .minimumScaleFactor(HeaderTitleFit.minimumScale)
                             .font(.system(size: DetailCardLayout.footnoteFontSize, weight: .medium, design: .rounded))
                             .foregroundStyle(.primary.opacity(0.5))
                     } else {
-                        Spacer(minLength: 0)
+                        Spacer(minLength: 4)
                     }
 
-                    if SpendGlance.showsEntry(reading: showsTokenSpend, canOpen: openTokenSpend != nil),
-                       let openTokenSpend {
-                        HeaderIconButton(control: .tokenSpend, onFrame: onHeaderFrame, action: openTokenSpend)
-                            .background(ScreenRectReporter { onTokenSpendFrame?($0) })
-                            .onDisappear { onTokenSpendFrame?(.null) }
-                    }
+                    HStack(spacing: CardHeaderMetrics.clusterSpacing) {
+                        if SpendGlance.showsEntry(reading: showsTokenSpend, canOpen: openTokenSpend != nil),
+                           let openTokenSpend {
+                            HeaderIconButton(control: .tokenSpend, onFrame: onHeaderFrame, action: openTokenSpend)
+                                .background(ScreenRectReporter { onTokenSpendFrame?($0) })
+                                .onDisappear { onTokenSpendFrame?(.null) }
+                        }
 
-                    if let openSettings {
-                        HeaderIconButton(control: .openApp, onFrame: onHeaderFrame, action: openSettings)
-                        HeaderIconButton(control: .quit, onFrame: onHeaderFrame) {
-                            NSApplication.shared.terminate(nil)
+                        if let openSettings {
+                            HeaderIconButton(control: .openApp, onFrame: onHeaderFrame, action: openSettings)
+                            HeaderIconButton(control: .quit, onFrame: onHeaderFrame) {
+                                NSApplication.shared.terminate(nil)
+                            }
                         }
                     }
                 }
@@ -1355,8 +1406,6 @@ struct HeaderIconButton: View {
     let action: () -> Void
     @State private var hovering = false
 
-    private var label: String { Self.label(for: control) }
-
     static func label(for control: CardHeaderControl) -> String {
         switch control {
         case .tokenSpend: String.localized("Token spend")
@@ -1365,8 +1414,20 @@ struct HeaderIconButton: View {
         }
     }
 
+    /// What the button does. Drawn on hover. `.help` does not appear on this
+    /// panel: the window never becomes key, and `PointerHand` is the view
+    /// under the pointer.
+    static func tip(for control: CardHeaderControl) -> String {
+        switch control {
+        case .tokenSpend: String.localized("Open the Token spend window")
+        case .openApp: String.localized("Open the Blinky window")
+        case .quit: String.localized("Quit Blinky")
+        }
+    }
+
     var body: some View {
         let size = DetailCardLayout.headerIconSize
+        let pad = CardHeaderMetrics.hitOutset
         Image(systemName: control.symbolName)
             .font(.system(size: size * 0.9, weight: .medium))
             .foregroundStyle(.primary.opacity(hovering ? 0.95 : 0.55))
@@ -1374,7 +1435,7 @@ struct HeaderIconButton: View {
             .frame(width: size, height: size)
             .scaleEffect(hovering ? 1.32 : 1)
             .animation(.spring(response: 0.22, dampingFraction: 0.72), value: hovering)
-            .frame(width: size + 16, height: size + 16)
+            .frame(width: size + pad * 2, height: size + pad * 2)
             .contentShape(Rectangle())
             .background(
                 ControlFrameProbe(id: control.rawValue) { _, rect in
@@ -1384,12 +1445,114 @@ struct HeaderIconButton: View {
             .overlay {
                 PointerHand(headerControl: control, onHover: { hovering = $0 }, onClick: action)
             }
+            .overlay(alignment: .top) {
+                if hovering {
+                    Text(verbatim: Self.tip(for: control))
+                        .font(.system(size: DetailCardLayout.footnoteFontSize, weight: .medium, design: .rounded))
+                        .foregroundStyle(.primary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(.thinMaterial, in: Capsule())
+                        .fixedSize()
+                        .offset(y: size + pad * 2)
+                        .allowsHitTesting(false)
+                        .accessibilityHidden(true)
+                }
+            }
             .onDisappear { onFrame?(control, .null) }
-            .help(label)
             .accessibilityElement()
-            .accessibilityLabel(label)
+            .accessibilityLabel(Self.tip(for: control))
             .accessibilityAddTraits(.isButton)
-            .accessibilityAction(named: Text(verbatim: label), action)
+            .accessibilityAction(named: Text(verbatim: Self.tip(for: control)), action)
+    }
+}
+
+/// The provider's name on one line. It shrinks before it clips. A name that
+/// still does not fit shows the full string while the pointer is on it.
+/// The tip does not take a row, so the card stays inside the window.
+private struct HeaderTitleText: View {
+    let text: String
+    @State private var available: CGFloat = 0
+    @State private var ideal: CGFloat = 0
+    @State private var hovering = false
+
+    var body: some View {
+        Text(verbatim: text)
+            .lineLimit(1)
+            .minimumScaleFactor(HeaderTitleFit.minimumScale)
+            .font(.system(size: DetailCardLayout.titleFontSize, weight: .semibold, design: .rounded))
+            .foregroundStyle(.primary)
+            .layoutPriority(1)
+            .background {
+                GeometryReader { proxy in
+                    Color.clear
+                        .onAppear { available = proxy.size.width }
+                        .onChange(of: proxy.size.width) { _, width in available = width }
+                }
+            }
+            .background {
+                Text(verbatim: text)
+                    .font(.system(size: DetailCardLayout.titleFontSize, weight: .semibold, design: .rounded))
+                    .fixedSize()
+                    .hidden()
+                    .background {
+                        GeometryReader { proxy in
+                            Color.clear
+                                .onAppear { ideal = proxy.size.width }
+                                .onChange(of: proxy.size.width) { _, width in ideal = width }
+                        }
+                    }
+            }
+            .overlay {
+                HeaderTitleHover { hovering = $0 }
+            }
+            .overlay(alignment: .bottomLeading) {
+                if hovering, HeaderTitleFit.needsTooltip(idealWidth: ideal, availableWidth: available) {
+                    Text(verbatim: text)
+                        .font(.system(size: DetailCardLayout.footnoteFontSize, weight: .medium, design: .rounded))
+                        .foregroundStyle(.primary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(.thinMaterial, in: Capsule())
+                        .fixedSize()
+                        .offset(y: 16)
+                        .allowsHitTesting(false)
+                }
+            }
+            .accessibilityLabel(text)
+    }
+}
+
+/// Hover on the title. The view does not take the click. `.onHover` is
+/// silent on this panel.
+private struct HeaderTitleHover: NSViewRepresentable {
+    var onHover: (Bool) -> Void
+
+    func makeNSView(context: Context) -> HoverView {
+        let view = HoverView()
+        view.onHover = onHover
+        return view
+    }
+
+    func updateNSView(_ view: HoverView, context: Context) {
+        view.onHover = onHover
+    }
+
+    final class HoverView: NSView {
+        var onHover: (Bool) -> Void = { _ in }
+
+        override func updateTrackingAreas() {
+            super.updateTrackingAreas()
+            guard trackingAreas.isEmpty else { return }
+            addTrackingArea(NSTrackingArea(
+                rect: .zero,
+                options: [.mouseEnteredAndExited, .activeAlways, .inVisibleRect],
+                owner: self
+            ))
+        }
+
+        override func mouseEntered(with event: NSEvent) { onHover(true) }
+        override func mouseExited(with event: NSEvent) { onHover(false) }
     }
 }
 
@@ -1798,6 +1961,82 @@ private struct DaysChart: View {
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(label)
+    }
+}
+
+/// Each coupon row's rectangle in the card body, so the detail can sit
+/// inside that body instead of past its foot.
+private struct CouponRowFrameKey: PreferenceKey {
+    static let defaultValue: [ResetCouponSlot: CGRect] = [:]
+
+    static func reduce(
+        value: inout [ResetCouponSlot: CGRect],
+        nextValue: () -> [ResetCouponSlot: CGRect]
+    ) {
+        value.merge(nextValue(), uniquingKeysWith: { _, new in new })
+    }
+}
+
+/// The mark that opens a coupon's date and its use button. Same role as the
+/// prediction's question mark: the row stays one line. The detail is a panel
+/// inside the card, so opening it does not grow the card.
+private struct ResetCouponDetailMark: View {
+    var open: Bool
+    let action: () -> Void
+    @State private var hovering = false
+
+    var body: some View {
+        let side = DetailCardLayout.rowTextLineHeight
+        Image(systemName: open ? "info.circle.fill" : "info.circle")
+            .font(.system(size: DetailCardLayout.footnoteFontSize, weight: .semibold))
+            .foregroundStyle(.primary.opacity(hovering || open ? 1 : 0.75))
+            .frame(width: side, height: side)
+            .contentShape(Rectangle())
+            .overlay {
+                PointerHand(onHover: { hovering = $0 }, onClick: action)
+            }
+            .accessibilityElement()
+            .accessibilityLabel(String.localized("Reset card details"))
+            .accessibilityAddTraits(.isButton)
+            .accessibilityAction(named: Text(localized: "Reset card details"), action)
+    }
+}
+
+/// A use or cancel control that reads as a button. The panel never becomes
+/// key, so the press is `PointerHand`, the same path as the other card
+/// controls. The words are not a line of body copy.
+private struct ResetCouponButton: View {
+    let title: String
+    var prominent: Bool
+    var enabled: Bool
+    let action: () -> Void
+    @State private var hovering = false
+
+    var body: some View {
+        Text(verbatim: title)
+            .font(.system(size: DetailCardLayout.footnoteFontSize, weight: .semibold, design: .rounded))
+            .foregroundStyle(prominent ? Color.white.opacity(enabled ? 1 : 0.7) : Color.primary.opacity(enabled ? 1 : 0.4))
+            .padding(.horizontal, 10)
+            .padding(.vertical, 4)
+            .background(
+                prominent
+                    ? AnyShapeStyle(Color.accentColor.opacity(enabled ? (hovering ? 1 : 0.92) : 0.35))
+                    : AnyShapeStyle(Color.primary.opacity(enabled ? (hovering ? 0.16 : 0.1) : 0.06)),
+                in: Capsule()
+            )
+            .overlay {
+                PointerHand(onHover: { hovering = $0 }) {
+                    guard enabled else { return }
+                    action()
+                }
+            }
+            .accessibilityElement()
+            .accessibilityLabel(title)
+            .accessibilityAddTraits(.isButton)
+            .accessibilityAction(named: Text(verbatim: title)) {
+                guard enabled else { return }
+                action()
+            }
     }
 }
 

@@ -1450,3 +1450,9 @@
 "That reset card was already used." = "这张重置券已经使用过。";
 "Could not use the reset card." = "未能使用这张重置券。";
 "Could not use the reset card here. The console is open so you can use it there." = "这里未能使用这张重置券。控制台已打开，可以在那里使用。";
+
+/* 1.5.17 */
+"About these figures" = "关于这些数字";
+"Open the Token spend window" = "打开 Token 消耗窗口";
+"Open the Blinky window" = "打开 Blinky 主窗口";
+"Reset card details" = "重置券详情";
