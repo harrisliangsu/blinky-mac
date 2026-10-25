@@ -1458,3 +1458,7 @@
 "Open the Token spend window" = "토큰 사용량 창 열기";
 "Open the Blinky window" = "Blinky 메인 창 열기";
 "Reset card details" = "초기화 쿠폰 상세";
+
+/* 1.5.18 */
+"None" = "없음";
+"About the estimate" = "견적 설명";

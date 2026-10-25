@@ -1450,3 +1450,7 @@
 "Open the Token spend window" = "Открыть окно расхода токенов";
 "Open the Blinky window" = "Открыть главное окно Blinky";
 "Reset card details" = "Подробности карты сброса";
+
+/* 1.5.18 */
+"None" = "Нет";
+"About the estimate" = "Об оценке";

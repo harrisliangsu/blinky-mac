@@ -93,6 +93,25 @@ enum ResetCouponDetailPlacement {
     }
 }
 
+/// Whether a click closes an in-card detail.
+///
+/// The detail is the coupon panel or the prediction note. A click on the
+/// panel, or on the mark that opened it, leaves it up: the mark toggles on
+/// its own, and Use has to receive the click. Anywhere else closes it,
+/// including the rest of the card and a click outside the card. An empty
+/// detail has not been laid out, so it is left up. This does not close a
+/// window. The Token window still closes only from its close button.
+enum InCardDetailDismiss {
+    static func shouldDismiss(point: CGPoint, detail: CGRect, mark: CGRect) -> Bool {
+        guard detail.width > 1, detail.height > 1, !detail.isNull, !detail.isInfinite else { return false }
+        if detail.contains(point) { return false }
+        if mark.width > 1, mark.height > 1, !mark.isNull, !mark.isInfinite, mark.contains(point) {
+            return false
+        }
+        return true
+    }
+}
+
 /// Using a reset card from the usage card.
 ///
 /// The first click only asks. Nothing is sent until the reader confirms,

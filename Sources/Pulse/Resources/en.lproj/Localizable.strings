@@ -1456,3 +1456,7 @@
 "Open the Token spend window" = "Open the Token spend window";
 "Open the Blinky window" = "Open the Blinky window";
 "Reset card details" = "Reset card details";
+
+/* 1.5.18 */
+"None" = "None";
+"About the estimate" = "About the estimate";

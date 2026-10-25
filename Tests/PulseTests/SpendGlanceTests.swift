@@ -681,18 +681,19 @@ struct SpendGlanceTests {
         var summary = SpendSummary()
         summary.tokens = 10
         summary.unpricedModels = ["hidden-model"]
-        let notes = SpendGlanceNotes.lines(summary: summary, unreadNames: ["Gemini CLI", "Zed"])
-        #expect(notes.map(\.text) == [
+        let notes = SpendGlanceNotes.sections(summary: summary, unreadNames: ["Gemini CLI", "Zed"])
+        #expect(notes.estimate.map(\.text) == [
             "Usage records, estimated at models.dev API rates—not an actual bill.",
             "1 models without public pricing: tokens only.",
-            "No usage data read",
-            "Gemini CLI · Zed",
         ])
-        #expect(notes.contains { $0.help == "hidden-model" })
-        #expect(SpendGlanceNotes.lines(summary: SpendSummary(), unreadNames: []).isEmpty)
-        let unreadOnly = SpendGlanceNotes.lines(summary: SpendSummary(), unreadNames: ["Zed"])
-        #expect(unreadOnly.map(\.text) == ["No usage data read", "Zed"])
-        #expect(!notes.map(\.text).contains("By agent"))
+        #expect(notes.unread == ["Gemini CLI", "Zed"])
+        #expect(!notes.estimate.map(\.text).contains { $0.contains("·") })
+        #expect(notes.estimate.contains { $0.help == "hidden-model" })
+        #expect(SpendGlanceNotes.sections(summary: SpendSummary(), unreadNames: []).isEmpty)
+        let unreadOnly = SpendGlanceNotes.sections(summary: SpendSummary(), unreadNames: ["Zed"])
+        #expect(unreadOnly.estimate.isEmpty)
+        #expect(unreadOnly.unread == ["Zed"])
+        #expect(!notes.estimate.map(\.text).contains("By agent"))
     }
 
     private static func picture(

@@ -128,14 +128,14 @@ extension CodexCreditSummary {
 /// The reset credits alone, as the card shows them when the switch is on.
 ///
 /// **What Codex said, or that it said nothing.** `unreported` is a reply with
-/// no reset-credit block in it, or no app server to ask; it is shown as "Not
-/// available" rather than a count Pulse worked out.
+/// no reset-credit block in it, or no app server to ask. The row says None,
+/// the same word as a reported zero, rather than a count Pulse worked out.
 enum CodexResetCredits: Equatable, Sendable {
     case available(count: Int, nextExpiry: Date?)
     case unreported
     /// No `codex` anywhere Pulse looks, so nothing was asked. Said apart from
-    /// `unreported` because the remedy is different, and "Not available" for
-    /// both left two Macs with several credits guessing which (issue #67).
+    /// `unreported` because the remedy is different. One sentence for both
+    /// left two Macs with several credits guessing which (issue #67).
     case codexMissing
 }
 
