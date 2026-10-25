@@ -1265,8 +1265,8 @@
 "Predicted reset" = "Прогнозируемый сброс";
 "No prediction yet" = "Прогноза пока нет";
 "Last reset" = "Последний сброс";
-"Regular reset" = "Обычный сброс";
-"Banked reset credit" = "Запасной кредит на сброс";
+"Global reset" = "Глобальный сброс";
+"Reset card" = "Карта сброса";
 "%@ · %@" = "%@ · %@";
 "%@, %@" = "%@, %@";
 "A reset credit you apply yourself when you need it. It does not restore usage right away. In the Codex app, open your profile from the sidebar, go to Usage, and apply an available reset credit." = "Кредит на сброс, который вы применяете сами, когда он нужен. Расход при этом восстанавливается не сразу. В приложении Codex откройте профиль на боковой панели, перейдите в «Расход» и примените доступный кредит на сброс.";

@@ -15,6 +15,7 @@ bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 - **A reset card's detail closes when you click away.** A click outside the date and Use panel closes it, and the Token window still closes only from its close button. [#79](https://github.com/harrisliangsu/blinky-mac/pull/79)
 - **A row with no reset cards says None.** Codex, Zhipu, and z.ai use that word when the count is zero and when the service did not report a count. [#79](https://github.com/harrisliangsu/blinky-mac/pull/79)
 - **The Token window's notes are two short sections.** About these figures still starts closed, and opening it shows the estimate as one section and each unread source on its own line. [#79](https://github.com/harrisliangsu/blinky-mac/pull/79)
+- **The predicted reset names a global reset or a reset card.** When Codex Resets sends a type with the scheduled time, that word sits beside the countdown, and Last reset uses the same words. A forecast with no type stays unlabeled. [#79](https://github.com/harrisliangsu/blinky-mac/pull/79)
 
 ## 1.5.17
 

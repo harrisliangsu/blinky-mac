@@ -739,8 +739,8 @@
 "Predicted reset" = "予測リセット";
 "No prediction yet" = "予測はまだありません";
 "Last reset" = "前回のリセット";
-"Regular reset" = "通常のリセット";
-"Banked reset credit" = "予備のリセット枠";
+"Global reset" = "全体リセット";
+"Reset card" = "リセットカード";
 /* 種類、そのあとに現地の日時。 */
 "%@ · %@" = "%@ · %@";
 /* 直近の告知の読み上げ。相対時刻、それから種類と時刻。 */

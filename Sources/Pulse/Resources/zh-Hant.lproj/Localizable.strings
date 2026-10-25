@@ -739,8 +739,8 @@
 "Predicted reset" = "預測重置";
 "No prediction yet" = "暫無預測";
 "Last reset" = "最近重置";
-"Regular reset" = "常規重置";
-"Banked reset credit" = "備用重置額度";
+"Global reset" = "全域重置";
+"Reset card" = "重置卡";
 /* 類型，然後是本地日期和時間。 */
 "%@ · %@" = "%@ · %@";
 /* 最近一次公告的朗讀：相對時間，然後是類型和鐘點。 */

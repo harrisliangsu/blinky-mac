@@ -11,6 +11,7 @@ Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文
 - **重置券的详情在点到外面时收起。** 点在日期和「使用」那一块外面，这块详情会收起，Token 窗口仍只从关闭按钮关闭。 [#79](https://github.com/harrisliangsu/blinky-mac/pull/79)
 - **没有重置券时，这一行写「无」。** Codex、智谱和 z.ai 在张数为零，以及服务商没有报告张数时，都用这个词。 [#79](https://github.com/harrisliangsu/blinky-mac/pull/79)
 - **Token 窗口的说明分成两小节。** 「关于这些数字」默认仍是收起的，展开后估价是一节，未读取到用量的来源各自成行。 [#79](https://github.com/harrisliangsu/blinky-mac/pull/79)
+- **预测重置会标出全局重置或重置卡。** Codex Resets 在预定时间里写了类型时，这个词出现在倒计时旁边，最近重置用同样的词。没有类型的预测不标。 [#79](https://github.com/harrisliangsu/blinky-mac/pull/79)
 
 ## 1.5.17
 

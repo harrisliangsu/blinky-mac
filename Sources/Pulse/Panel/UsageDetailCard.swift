@@ -1064,6 +1064,7 @@ struct UsageDetailCard: View {
             Spacer(minLength: 8)
 
             if let countdown = prediction.countdown {
+                predictionTypeTag(prediction)
                 Text(verbatim: countdown)
                     .foregroundStyle(.primary.opacity(0.9))
                     .multilineTextAlignment(.trailing)
@@ -1071,13 +1072,30 @@ struct UsageDetailCard: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .layoutPriority(1)
             } else if let trailing = prediction.trailing {
+                predictionTypeTag(prediction)
                 Text(verbatim: trailing)
                     .foregroundStyle(.primary.opacity(0.9))
                     .multilineTextAlignment(.trailing)
                     .lineLimit(2)
                     .minimumScaleFactor(0.85)
                     .layoutPriority(1)
+            } else {
+                predictionTypeTag(prediction)
             }
+        }
+    }
+
+    /// The scheduled type, on the same row as the countdown. Absent when
+    /// the API named no type. Same weight as the type under Last reset.
+    @ViewBuilder
+    private func predictionTypeTag(_ prediction: CodexResetCardLines.Prediction) -> some View {
+        if let typeTag = prediction.typeTag, !typeTag.isEmpty {
+            Text(verbatim: typeTag)
+                .foregroundStyle(.primary.opacity(0.55))
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
+                .layoutPriority(0)
+                .codexResetTooltip(prediction.typeHelp)
         }
     }
 

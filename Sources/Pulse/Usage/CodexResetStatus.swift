@@ -16,6 +16,10 @@ struct CodexResetStatus: Equatable, Sendable, Codable {
         /// Announcement id. Advance reminders dedupe on this plus `scheduledFor`.
         var id: String
         var scheduledFor: Date?
+        /// `regular`, `banked`, a type the API added later, or nil when the
+        /// field was absent. Nil on a cache written before the field existed,
+        /// which is the same as no type: the card does not invent one.
+        var resetType: String? = nil
     }
 
     /// An AI-classified forecast. Not an official reset time.
@@ -34,6 +38,9 @@ struct CodexResetStatus: Equatable, Sendable, Codable {
         /// The watch's own note (`text`). The help mark prefers this to
         /// `forecastWindow`. Missing and blank are the same.
         var text: String? = nil
+        /// Present only when the document names `reset_type`. The watches
+        /// this card has seen do not. Nil is no tag, not a guessed type.
+        var resetType: String? = nil
     }
 
     /// The most recent public announcement. Not an account's banked cards,
@@ -100,7 +107,9 @@ struct CodexResetStatus: Equatable, Sendable, Codable {
         let when = CodexResetDates.parse(object["scheduled_for"] as? String)
         // A schedule object with neither an id nor an instant says nothing.
         guard !id.isEmpty || when != nil else { return nil }
-        return Scheduled(id: id, scheduledFor: when)
+        let type = (object["reset_type"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let resetType = (type?.isEmpty == false) ? type : nil
+        return Scheduled(id: id, scheduledFor: when, resetType: resetType)
     }
 
     private static func watch(_ value: Any?) -> Watch? {
@@ -122,12 +131,15 @@ struct CodexResetStatus: Equatable, Sendable, Codable {
         let ends = CodexResetDates.parse(object["expires_at"] as? String)
         // A level on its own says nothing the card can show.
         guard !window.isEmpty || text != nil || ends != nil else { return nil }
+        let type = (object["reset_type"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let resetType = (type?.isEmpty == false) ? type : nil
         return Watch(
             level: level,
             chancePercent: chance,
             forecastWindow: window,
             windowEnds: ends,
-            text: text
+            text: text,
+            resetType: resetType
         )
     }
 
@@ -150,7 +162,7 @@ struct CodexResetStatus: Equatable, Sendable, Codable {
     /// while it still names the same schedule and the same announcement.
     var predictionKey: String {
         let scheduledPart = scheduled.map {
-            "\($0.id)|\(Self.minute($0.scheduledFor))"
+            "\($0.id)|\(Self.minute($0.scheduledFor))|\($0.resetType ?? "")"
         } ?? ""
         let watchPart = watch.map {
             "\($0.level)|\(Self.minute($0.windowEnds))"
@@ -212,8 +224,8 @@ enum CodexResetPresentation {
 
     static func typeLabel(resetType: String, bundle: Bundle = LocalizationSource.bundle) -> String {
         switch resetType {
-        case "regular": String(localized: "Regular reset", bundle: bundle)
-        case "banked": String(localized: "Banked reset credit", bundle: bundle)
+        case "regular": String(localized: "Global reset", bundle: bundle)
+        case "banked": String(localized: "Reset card", bundle: bundle)
         default: resetType
         }
     }
@@ -324,6 +336,12 @@ struct CodexResetCardLines: Equatable, Sendable {
         var countdown: String?
         var bound: String?
         var note: String?
+        /// The scheduled type, beside the countdown. Nil when the API named
+        /// no type, including a watch that did not send `reset_type`.
+        var typeTag: String? = nil
+        /// Hover text for that tag. The banked explanation when that is the
+        /// type; nil for a regular reset, which has no standing sentence.
+        var typeHelp: String? = nil
     }
 
     struct Latest: Equatable, Sendable {
@@ -400,14 +418,30 @@ struct CodexResetCardLines: Equatable, Sendable {
                 relative: CodexResetPresentation.relative(announcedAt: date, now: now, locale: locale),
                 bundle: bundle
             )
-            return Prediction(trailing: nil, countdown: countdown, bound: stamp, note: nil)
+            let tag = Self.typeTag(resetType: status?.scheduled?.resetType, bundle: bundle)
+            return Prediction(
+                trailing: nil,
+                countdown: countdown,
+                bound: stamp,
+                note: nil,
+                typeTag: tag?.label,
+                typeHelp: tag?.help
+            )
         case .watch(let watch):
             let note = CodexResetPresentation.context(
                 forecastWindow: watch.forecastWindow, text: watch.text
             )
             let trailing = CodexResetPresentation.confidence(watch, bundle: bundle)
+            let tag = Self.typeTag(resetType: watch.resetType, bundle: bundle)
             guard let ends = watch.windowEnds, ends > now else {
-                return Prediction(trailing: trailing, countdown: nil, bound: nil, note: note)
+                return Prediction(
+                    trailing: trailing,
+                    countdown: nil,
+                    bound: nil,
+                    note: note,
+                    typeTag: tag?.label,
+                    typeHelp: tag?.help
+                )
             }
             let relative = CodexResetPresentation.relative(
                 announcedAt: ends, now: now, locale: locale
@@ -419,11 +453,25 @@ struct CodexResetCardLines: Equatable, Sendable {
                 trailing: trailing,
                 countdown: CodexResetPresentation.mayReset(relative: relative, bundle: bundle),
                 bound: CodexResetPresentation.expectedBefore(stamp, bundle: bundle),
-                note: note
+                note: note,
+                typeTag: tag?.label,
+                typeHelp: tag?.help
             )
         case .empty, nil:
             return noPrediction(bundle: bundle)
         }
+    }
+
+    /// A type the API named, or nil. An empty field is not a type.
+    private static func typeTag(
+        resetType: String?,
+        bundle: Bundle
+    ) -> (label: String, help: String?)? {
+        let raw = resetType?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        guard !raw.isEmpty else { return nil }
+        let label = CodexResetPresentation.typeLabel(resetType: raw, bundle: bundle)
+        guard !label.isEmpty else { return nil }
+        return (label, CodexResetPresentation.help(resetType: raw, announcement: nil, bundle: bundle))
     }
 
     /// What the prediction row says when it has no instant left to count to.
@@ -452,7 +500,7 @@ struct CodexResetCardLines: Equatable, Sendable {
         if latestPart.isEmpty, when == nil, watch == nil { return "" }
         let whenText = when.map { String($0.timeIntervalSinceReferenceDate) } ?? ""
         let endsText = watch?.windowEnds.map { String($0.timeIntervalSinceReferenceDate) } ?? ""
-        let prediction = "\(whenText)|\(watch?.level ?? "")|\(endsText)|\(watch?.text ?? "")|\(watch?.forecastWindow ?? "")"
+        let prediction = "\(whenText)|\(status?.scheduled?.resetType ?? "")|\(watch?.level ?? "")|\(endsText)|\(watch?.text ?? "")|\(watch?.forecastWindow ?? "")|\(watch?.resetType ?? "")"
         if latestPart.isEmpty { return prediction }
         return "\(latestPart)||\(prediction)"
     }

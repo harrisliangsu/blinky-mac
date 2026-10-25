@@ -21,7 +21,7 @@ struct CodexResetForecastTests {
             "scheduled_reset": {
               "id": "post-1",
               "status": "scheduled",
-              "reset_type": "regular",
+              "reset_type": " regular ",
               "announced_at": "2026-09-23T08:00:00Z",
               "scheduled_for": "\(scheduledFor)",
               "text": "Resetting tomorrow.",
@@ -44,6 +44,7 @@ struct CodexResetForecastTests {
 
         let when = try #require(CodexResetDates.parse(scheduledFor))
         #expect(status.card == .scheduled(when))
+        #expect(status.scheduled?.resetType == "regular")
         #expect(status.explicitReset == when)
         #expect(status.explicitReset != CodexResetDates.parse(expiresAt))
     }
@@ -315,7 +316,7 @@ struct CodexResetForecastTests {
         #expect(row(type: "regular", text: "Reset.")?.typeLabel == CodexResetPresentation.typeLabel(
             resetType: "regular", bundle: Self.english
         ))
-        #expect(row(type: "regular", text: "Reset.")?.typeLabel == "Regular reset")
+        #expect(row(type: "regular", text: "Reset.")?.typeLabel == "Global reset")
 
         let other = try #require(row(type: "surprise", text: "Something new."))
         #expect(other.help == "Something new.")
@@ -569,7 +570,8 @@ struct CodexResetForecastTests {
         #expect(lines.prediction.note == note)
         let watch = try #require(status.watch)
         #expect(lines.prediction.trailing == CodexResetPresentation.confidence(watch, bundle: Self.simplifiedChinese))
-        #expect(lines.latest?.typeLabel == "常规重置")
+        #expect(lines.latest?.typeLabel == "全局重置")
+        #expect(lines.prediction.typeTag == nil)
         #expect(stamp.contains("30"))
         #expect(stamp.contains("14") || stamp.contains("15") || stamp.contains("2"))
     }
@@ -703,6 +705,7 @@ struct CodexResetForecastTests {
         #expect(lines.prediction.bound == CodexResetPresentation.predictionStamp(date: when, locale: Locale(identifier: "en_US")))
         #expect(lines.prediction.note == nil)
         #expect(lines.prediction.trailing == nil)
+        #expect(lines.prediction.typeTag == nil)
         #expect(lines.prediction.countdown?.contains("around an event") == false)
 
         let ago = CodexResetCardLines.make(
@@ -714,6 +717,117 @@ struct CodexResetForecastTests {
         #expect(ago.prediction.countdown == nil)
         #expect(ago.prediction.bound == nil)
         #expect(ago.prediction.trailing == "No prediction yet")
+        #expect(ago.prediction.typeTag == nil)
+    }
+
+    @Test("A scheduled type is named on the prediction; a watch without one is not")
+    func predictionNamesTheScheduledType() throws {
+        let now = Date(timeIntervalSince1970: 1_800_000_000)
+        let when = now.addingTimeInterval(21 * 3600)
+        func scheduled(_ type: String?) -> CodexResetStatus {
+            CodexResetStatus(
+                scheduled: .init(id: "post", scheduledFor: when, resetType: type),
+                watch: nil
+            )
+        }
+        let regular = CodexResetCardLines.make(scheduled("regular"), now: now, bundle: Self.english)
+        #expect(regular.prediction.countdown != nil)
+        #expect(regular.prediction.typeTag == "Global reset")
+        #expect(regular.prediction.typeHelp == nil)
+        let regularZh = CodexResetCardLines.make(
+            scheduled(" regular "), now: now, bundle: Self.simplifiedChinese
+        )
+        #expect(regularZh.prediction.typeTag == "全局重置")
+
+        let banked = CodexResetCardLines.make(scheduled("banked"), now: now, bundle: Self.english)
+        #expect(banked.prediction.typeTag == "Reset card")
+        #expect(banked.prediction.typeHelp == CodexResetPresentation.help(
+            resetType: "banked", announcement: nil, bundle: Self.english
+        ))
+        let bankedZh = CodexResetCardLines.make(scheduled("banked"), now: now, bundle: Self.simplifiedChinese)
+        #expect(bankedZh.prediction.typeTag == "重置卡")
+
+        let missing = CodexResetCardLines.make(scheduled(nil), now: now, bundle: Self.english)
+        #expect(missing.prediction.countdown != nil)
+        #expect(missing.prediction.typeTag == nil)
+        let blank = CodexResetCardLines.make(scheduled("  "), now: now, bundle: Self.english)
+        #expect(blank.prediction.typeTag == nil)
+        let surprise = CodexResetCardLines.make(scheduled("surprise"), now: now, bundle: Self.english)
+        #expect(surprise.prediction.typeTag == "surprise")
+        let both = CodexResetStatus(
+            scheduled: .init(id: "post", scheduledFor: when, resetType: "banked"),
+            watch: .init(
+                level: "strong", chancePercent: nil, forecastWindow: "soon", resetType: "regular"
+            )
+        )
+        #expect(CodexResetCardLines.make(both, now: now, bundle: Self.english).prediction.typeTag == "Reset card")
+
+        let passed = CodexResetCardLines.make(
+            scheduled("regular"), now: when.addingTimeInterval(60), bundle: Self.english
+        )
+        #expect(passed.prediction.countdown == nil)
+        #expect(passed.prediction.typeTag == nil)
+        #expect(passed.prediction.trailing == "No prediction yet")
+
+        let watchOnly = try #require(CodexResetStatus.parse(json("""
+        {
+          "data": {
+            "scheduled_reset": null,
+            "active_watch": {
+              "level": "strong",
+              "forecast_window": "later today",
+              "expires_at": "2026-09-30T06:59:59.999Z",
+              "text": "An event."
+            },
+            "latest_reset": null
+          }
+        }
+        """)))
+        #expect(watchOnly.watch?.resetType == nil)
+        let watchLines = CodexResetCardLines.make(
+            watchOnly,
+            now: try #require(CodexResetDates.parse("2026-09-29T10:00:00Z")),
+            bundle: Self.english
+        )
+        #expect(watchLines.prediction.countdown != nil)
+        #expect(watchLines.prediction.typeTag == nil)
+
+        let typedWatch = try #require(CodexResetStatus.parse(json("""
+        {
+          "data": {
+            "scheduled_reset": {
+              "id": "no-instant",
+              "reset_type": "banked",
+              "scheduled_for": null
+            },
+            "active_watch": {
+              "level": "elevated",
+              "forecast_window": "later today",
+              "expires_at": "2026-09-30T06:59:59.999Z",
+              "reset_type": "regular"
+            },
+            "latest_reset": null
+          }
+        }
+        """)))
+        #expect(typedWatch.card != .scheduled(try #require(CodexResetDates.parse(scheduledFor))))
+        guard case .watch = typedWatch.card else {
+            Issue.record("expected a watch")
+            return
+        }
+        #expect(typedWatch.watch?.resetType == "regular")
+        #expect(typedWatch.scheduled?.resetType == "banked")
+        let typedLines = CodexResetCardLines.make(
+            typedWatch,
+            now: try #require(CodexResetDates.parse("2026-09-29T10:00:00Z")),
+            bundle: Self.english
+        )
+        #expect(typedLines.prediction.typeTag == "Global reset")
+
+        let bare = Data(#"{"id":"post","scheduledFor":700000000}"#.utf8)
+        let decoded = try JSONDecoder().decode(CodexResetStatus.Scheduled.self, from: bare)
+        #expect(decoded.id == "post")
+        #expect(decoded.resetType == nil)
     }
 
     @Test("A cached watch from before the window end still decodes")
@@ -725,6 +839,7 @@ struct CodexResetForecastTests {
         #expect(watch.windowEnds == nil)
         #expect(watch.text == nil)
         #expect(watch.chancePercent == nil)
+        #expect(watch.resetType == nil)
 
         let withEnd = watch
         var copied = withEnd
@@ -871,7 +986,7 @@ struct CodexResetForecastTests {
         #expect(passed.prediction.countdown == nil)
         #expect(passed.prediction.bound == nil)
         #expect(passed.prediction.trailing == "暂无预测")
-        #expect(passed.latest?.typeLabel == "常规重置")
+        #expect(passed.latest?.typeLabel == "全局重置")
 
         let announced = try #require(CodexResetDates.parse("2026-10-15T06:28:13.000Z"))
         let fresh = try #require(CodexResetStatus.parse(json("""
