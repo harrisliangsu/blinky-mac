@@ -71,7 +71,17 @@ enum BurnRate {
         /// are the ordinary division. The card adds a line that this early
         /// pace is only a guide. Remaining-time notices leave it alone: they
         /// would state the same figure as a fact.
-        let earlyPace: Bool = false
+        let earlyPace: Bool
+
+        init(
+            exhaustsBeforeReset: Bool,
+            timeToExhaustion: TimeInterval?,
+            earlyPace: Bool = false
+        ) {
+            self.exhaustsBeforeReset = exhaustsBeforeReset
+            self.timeToExhaustion = timeToExhaustion
+            self.earlyPace = earlyPace
+        }
     }
 
     /// What may be said about a window, or nil when nothing may be.
@@ -193,12 +203,18 @@ enum BurnRate {
         /// A quieter line under `text`. Set only while `Reading.earlyPace`
         /// is true and the line is an exhaustion estimate, not the
         /// "expected to last" sentence.
-        let note: String? = nil
+        let note: String?
 
         /// The forecast, and the early-pace note when there is one.
         var spoken: String {
             guard let note, !note.isEmpty else { return text }
             return "\(text) \(note)"
+        }
+
+        init(text: String, tone: Tone, note: String? = nil) {
+            self.text = text
+            self.tone = tone
+            self.note = note
         }
     }
 
@@ -257,7 +273,7 @@ enum BurnRate {
             text: text,
             tone: tone,
             note: reading.earlyPace && tone != .lasts
-                ? .localized("A fast start. The estimate is only a guide.")
+                ? String.localized("A fast start. The estimate is only a guide.")
                 : nil
         )
     }
