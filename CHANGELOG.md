@@ -12,7 +12,7 @@ bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
 ## 1.5.24
 
-- **Install silently says what was installed.** With Settings → About → When an update is found set to Install silently, Blinky notifies you of the installed version and that release's notes after it opens again. Check now still opens the update window.
+- **Install silently says what was installed.** With Settings → About → When an update is found set to Install silently, Blinky notifies you of the installed version and that release's notes after it opens again. Check now still opens the update window. [#87](https://github.com/harrisliangsu/blinky-mac/pull/87)
 
 ## 1.5.23
 
