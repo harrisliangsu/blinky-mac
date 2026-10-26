@@ -359,6 +359,8 @@
 "Uses the login Cursor already saved." = "Использует данные входа, уже сохранённые в Cursor.";
 "Refresh" = "Обновить";
 "Blinky %@ is available" = "Доступна версия Blinky %@";
+"Blinky %@ is installed" = "Установлена версия Blinky %@";
+"This release did not include notes." = "В этом выпуске нет описания изменений.";
 "Check now" = "Проверить";
 "Check for Updates…" = "Проверить обновления…";
 "Checking…" = "Проверка…";
@@ -1402,7 +1404,7 @@
 "Notify if it will not last until the reset" = "Уведомить, если до сброса не хватит";
 "The card's forecast and the exhaustion notifications both use this list." = "Прогноз на карточке и уведомления об исчерпании используют этот список.";
 "Install silently" = "Установить без запроса";
-"A scheduled check downloads the update, installs it, and relaunches Blinky, with no notification and no update window. Check now still opens the window." = "Плановая проверка загружает обновление, устанавливает его и снова открывает Blinky, без уведомления и без окна. «Проверить сейчас» по-прежнему открывает окно.";
+"A scheduled check downloads the update, installs it, and relaunches Blinky, without an update window. After Blinky opens again, a notification names the installed version and what changed. Check now still opens the window." = "Плановая проверка загружает обновление, устанавливает его и снова открывает Blinky, без окна обновления. После повторного запуска уведомление называет установленную версию и что изменилось. «Проверить сейчас» по-прежнему открывает окно.";
 "Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking." = "Каждые два часа. Выбор ниже решает, уведомить, открыть окно обновления или установить без запроса.";
 "By hour" = "По часам";
 "Copied to the clipboard." = "Скопировано в буфер обмена.";

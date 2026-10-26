@@ -373,6 +373,8 @@
 "Uses the login Cursor already saved." = "用 Cursor 已保存的登录读取。";
 "Refresh" = "刷新";
 "Blinky %@ is available" = "Blinky %@ 可更新";
+"Blinky %@ is installed" = "Blinky %@ 已安装";
+"This release did not include notes." = "这一版没有附带更新说明。";
 "Check now" = "检查更新";
 "Check for Updates…" = "检查更新";
 "Checking…" = "正在检查…";
@@ -1408,7 +1410,7 @@
 "Notify if it will not last until the reset" = "撑不到重置时通知";
 "The card's forecast and the exhaustion notifications both use this list." = "卡片上的用尽预估和用尽通知都按这份名单。";
 "Install silently" = "自动安装";
-"A scheduled check downloads the update, installs it, and relaunches Blinky, with no notification and no update window. Check now still opens the window." = "定时检查会下载更新，安装后重新打开 Blinky，不发通知，也不打开更新窗口。现在检查仍会打开窗口。";
+"A scheduled check downloads the update, installs it, and relaunches Blinky, without an update window. After Blinky opens again, a notification names the installed version and what changed. Check now still opens the window." = "定时检查会下载更新，安装后重新打开 Blinky，不打开更新窗口。重新打开后，通知会写出已安装的版本和这一版改了什么。现在检查仍会打开窗口。";
 "Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking." = "每两小时一次。下面的选项决定是通知、打开更新窗口，还是直接安装。";
 "By hour" = "按小时";
 "Copied to the clipboard." = "已复制到剪贴板。";

@@ -367,6 +367,8 @@
 "Uses the login Cursor already saved." = "Cursor が既に保存しているログインを使います。";
 "Refresh" = "更新";
 "Blinky %@ is available" = "Blinky %@ が利用できます";
+"Blinky %@ is installed" = "Blinky %@ をインストールしました";
+"This release did not include notes." = "このリリースには更新内容がありません。";
 "Check now" = "今すぐ確認";
 "Check for Updates…" = "アップデートを確認…";
 "Checking…" = "確認中…";
@@ -1410,7 +1412,7 @@
 "Notify if it will not last until the reset" = "リセットまで保たないときに通知";
 "The card's forecast and the exhaustion notifications both use this list." = "カードの予測と使い切りの通知は、どちらもこの一覧を使います。";
 "Install silently" = "自動でインストール";
-"A scheduled check downloads the update, installs it, and relaunches Blinky, with no notification and no update window. Check now still opens the window." = "定期的な確認は更新をダウンロードし、インストールしたあと Blinky を起動し直します。通知も更新ウィンドウも出しません。今すぐ確認はウィンドウを開きます。";
+"A scheduled check downloads the update, installs it, and relaunches Blinky, without an update window. After Blinky opens again, a notification names the installed version and what changed. Check now still opens the window." = "定期的な確認は更新をダウンロードし、インストールしたあと Blinky を起動し直します。更新ウィンドウは開きません。起動し直したあと、通知でインストールされたバージョンと変更内容を知らせます。今すぐ確認はウィンドウを開きます。";
 "Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking." = "2時間ごと。下の選択で、通知するか、更新ウィンドウを開くか、確認せずにインストールするかを決めます。";
 "By hour" = "時間ごと";
 "Copied to the clipboard." = "クリップボードにコピーしました。";

@@ -762,10 +762,16 @@ final class UsageAlerts {
     func start(
         openSettings: @escaping @MainActor () -> Void,
         openRecap: @escaping @MainActor (Recap.Period) -> Void = { _ in },
-        openUpdate: @escaping @MainActor () -> Void = {}
+        openUpdate: @escaping @MainActor () -> Void = {},
+        openInstalledUpdate: @escaping @MainActor (_ version: String?, _ notes: String?) -> Void = { _, _ in }
     ) {
         guard Self.isSupported else { return }
-        installTapHandler(openSettings: openSettings, openRecap: openRecap, openUpdate: openUpdate)
+        installTapHandler(
+            openSettings: openSettings,
+            openRecap: openRecap,
+            openUpdate: openUpdate,
+            openInstalledUpdate: openInstalledUpdate
+        )
 
         // The grant first: `checkServices` does nothing while it is unknown, so
         // a first tick ahead of it was a wasted one, and an outage already
@@ -1266,10 +1272,16 @@ final class UsageAlerts {
     func installTapHandler(
         openSettings: @escaping @MainActor () -> Void,
         openRecap: @escaping @MainActor (Recap.Period) -> Void = { _ in },
-        openUpdate: @escaping @MainActor () -> Void = {}
+        openUpdate: @escaping @MainActor () -> Void = {},
+        openInstalledUpdate: @escaping @MainActor (_ version: String?, _ notes: String?) -> Void = { _, _ in }
     ) {
         guard Self.isSupported, tapHandler == nil else { return }
-        let handler = NotificationTapHandler(open: openSettings, openRecap: openRecap, openUpdate: openUpdate)
+        let handler = NotificationTapHandler(
+            open: openSettings,
+            openRecap: openRecap,
+            openUpdate: openUpdate,
+            openInstalledUpdate: openInstalledUpdate
+        )
         tapHandler = handler
         UNUserNotificationCenter.current().delegate = handler
     }
@@ -1324,35 +1336,46 @@ final class UsageAlerts {
 /// The recap's identifier carries its month (`RecapNoticeRule`), so a click
 /// opens the recap on that month. The update notice (`blinky-update`) opens
 /// the offer Sparkle is holding; dismissing that one does nothing, because
-/// the window was not asked for.
+/// the window was not asked for. The notice after a silent install
+/// (`blinky-update-installed`) opens that release's notes, and dismissing it
+/// does nothing for the same reason.
 final class NotificationTapHandler: NSObject, UNUserNotificationCenterDelegate, @unchecked Sendable {
     enum Destination: Equatable {
         case settings
         case recap(Recap.Period)
         case update
+        case installedUpdate
     }
 
     private let open: @MainActor () -> Void
     private let openRecap: @MainActor (Recap.Period) -> Void
     private let openUpdate: @MainActor () -> Void
+    private let openInstalledUpdate: @MainActor (String?, String?) -> Void
 
     init(
         open: @escaping @MainActor () -> Void,
         openRecap: @escaping @MainActor (Recap.Period) -> Void = { _ in },
-        openUpdate: @escaping @MainActor () -> Void = {}
+        openUpdate: @escaping @MainActor () -> Void = {},
+        openInstalledUpdate: @escaping @MainActor (String?, String?) -> Void = { _, _ in }
     ) {
         self.open = open
         self.openRecap = openRecap
         self.openUpdate = openUpdate
+        self.openInstalledUpdate = openInstalledUpdate
     }
 
     /// Where a click goes. A dismissed update notice is `nil`: the offer stays
-    /// held. Every other notice still opens Settings, including a dismissal,
-    /// which is the behaviour those notices already had.
+    /// held, and a dismissed "just installed" notice stays dismissed. Every
+    /// other notice still opens Settings, including a dismissal, which is the
+    /// behaviour those notices already had.
     static func destination(for identifier: String, actionIdentifier: String = UNNotificationDefaultActionIdentifier) -> Destination? {
         if identifier == UpdateAnnouncement.notificationIdentifier {
             guard actionIdentifier == UNNotificationDefaultActionIdentifier else { return nil }
             return .update
+        }
+        if identifier == InstalledUpdateNotice.notificationIdentifier {
+            guard actionIdentifier == UNNotificationDefaultActionIdentifier else { return nil }
+            return .installedUpdate
         }
         if let period = RecapNoticeRule.period(fromIdentifier: identifier) {
             return .recap(period)
@@ -1381,16 +1404,21 @@ final class NotificationTapHandler: NSObject, UNUserNotificationCenterDelegate, 
         let open = open
         let openRecap = openRecap
         let openUpdate = openUpdate
+        let openInstalledUpdate = openInstalledUpdate
         let destination = Self.destination(
             for: response.notification.request.identifier,
             actionIdentifier: response.actionIdentifier
         )
+        let userInfo = response.notification.request.content.userInfo
+        let installedVersion = userInfo[InstalledUpdateNotice.versionUserInfoKey] as? String
+        let installedNotes = userInfo[InstalledUpdateNotice.notesUserInfoKey] as? String
         let finish = UncheckedBox(completionHandler)
         Task { @MainActor in
             switch destination {
             case .settings: open()
             case .recap(let period): openRecap(period)
             case .update: openUpdate()
+            case .installedUpdate: openInstalledUpdate(installedVersion, installedNotes)
             case nil: break
             }
             finish.value()

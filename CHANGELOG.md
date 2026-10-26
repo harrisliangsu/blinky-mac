@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.24
+
+- **Install silently says what was installed.** With Settings → About → When an update is found set to Install silently, Blinky notifies you of the installed version and that release's notes after it opens again. Check now still opens the update window.
+
 ## 1.5.23
 
 - **A fast start after a reset still shows the exhaustion estimate.** With Show the estimate on under Settings → Usage, a weekly limit that has just reset and is already at least 5% used still shows how long it may last, with a quieter line that a fast start is only a guide, while lighter use still says the window is expected to last. [#84](https://github.com/harrisliangsu/blinky-mac/pull/84)

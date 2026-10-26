@@ -143,7 +143,7 @@ struct AboutPane: View {
         case .showWindow:
             String.localized("A scheduled check opens the update window.")
         case .installSilently:
-            String.localized("A scheduled check downloads the update, installs it, and relaunches Blinky, with no notification and no update window. Check now still opens the window.")
+            String.localized("A scheduled check downloads the update, installs it, and relaunches Blinky, without an update window. After Blinky opens again, a notification names the installed version and what changed. Check now still opens the window.")
         }
     }
 

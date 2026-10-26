@@ -104,6 +104,12 @@ Requested 2026-10-04, after the status rows on the Codex, Claude Code and DeepSe
 - **Default sound**, as [above](#what-can-be-said). One notice at a time; a later find replaces it. The session withdraws it when the reader has the offer in front of them, or when the offer is dismissed.
 - The choice and the fallback are `UpdateAnnouncement`. `UpdateAnnouncementTests` pins them. [ui/settings.md](ui/settings.md), [releasing.md](releasing.md#sparkle).
 
+**Install silently** does not post that notice and does not open the window. The scheduled check downloads, installs, and relaunches. The announcement is the launch that comes back.
+
+- **After a silent install, the new version says what it is.** Before the process quits, Blinky stores that update's version and its `<description>` — the notes Sparkle already shows for this release, not older ones stacked under it. The stylesheet in that description is spacing for Sparkle's web view and is left out of the text. The next launch, when its version is that one, posts `blinky-update-installed`. The title is the version ("Blinky 1.5.24 is installed") and the body is those notes. Clicking it opens the same notes in a window. Dismissing it does not. A launch that is not that version throws the record away, so an install that did not land does not announce later.
+- **A grant that cannot post still shows the notes.** Denied, not yet decided, or no notification centre: the notes window opens on that launch. Install silently still does not ask for permission before the install. The window is brought forward the way Sparkle's offer is, including while the Dock icon switch is off.
+- **Check now is unchanged.** It still opens Sparkle's window. That path does not go through the silent-install callback, so it does not post this notice.
+
 ## Rules that are not obvious
 
 **A first sighting starts at nothing announced**, so a limit already past the line is said once, immediately — including when the setting is switched on or the threshold lowered (`UsageStore.reconsiderAlerts()`). Otherwise someone who switches it on at 93% gets silence and then a wall; the cost is at most one notification per limit.

@@ -55,6 +55,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             guard let self else { return false }
             return await self.alerts.requestUpdateNoticeAuthorization()
         }
+        update.onShowInstalledNotes = { [weak self] notice in
+            self?.showInstalledNotes(notice)
+        }
     }
 
     private var panelController: FloatingPanelController?
@@ -62,6 +65,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var statusItem: NSStatusItem?
     private var settingsWindow: SettingsWindowController?
     private var recapWindow: RecapWindowController?
+    private var installedNotesWindow: InstalledUpdateWindowController?
     /// One owner of the Dock icon for every window Pulse opens.
     private lazy var dock = DockPresence(settings: settings)
     /// "Your September recap is ready", when it is switched on.
@@ -158,6 +162,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             self?.updateDiscoveryChanged()
         }
         installNotificationHandler()
+        // After the click handler, so the notice can open its notes. A launch
+        // with nothing stored returns immediately.
+        Task { await update.announceInstalledUpdateIfNeeded() }
         // Daily at most, and only from a bundle — see `AppUpdate`.
         update.checkIfDue()
         rateKeeper.start()
@@ -298,7 +305,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         alerts.start(
             openSettings: { [weak self] in self?.showSettings() },
             openRecap: { [weak self] period in self?.showRecap(period: period) },
-            openUpdate: { [weak self] in self?.update.check() }
+            openUpdate: { [weak self] in self?.update.check() },
+            openInstalledUpdate: { [weak self] version, notes in
+                self?.update.presentInstalledNotes(version: version, notes: notes)
+            }
         )
         recapNotice.start()
         let glance = SpendGlanceController(settings: settings, dock: dock)
@@ -678,7 +688,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         alerts.installTapHandler(
             openSettings: { [weak self] in self?.showSettings() },
             openRecap: { [weak self] period in self?.showRecap(period: period) },
-            openUpdate: { [weak self] in self?.update.check() }
+            openUpdate: { [weak self] in self?.update.check() },
+            openInstalledUpdate: { [weak self] version, notes in
+                self?.update.presentInstalledNotes(version: version, notes: notes)
+            }
         )
     }
 
@@ -695,6 +708,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         case .installSilently:
             update.suppressScheduledOffer()
         }
+    }
+
+    /// The notes for a silent install: the notification's click, or the launch
+    /// itself when a notification cannot be posted.
+    private func showInstalledNotes(_ notice: InstalledUpdateNotice) {
+        let window = installedNotesWindow ?? InstalledUpdateWindowController(dock: dock)
+        installedNotesWindow = window
+        window.show(notice)
     }
 
     /// The recap window, on a period if one is named: the Token spend pane's
