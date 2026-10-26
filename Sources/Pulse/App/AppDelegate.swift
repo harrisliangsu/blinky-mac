@@ -58,6 +58,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         update.onShowInstalledNotes = { [weak self] notice in
             self?.showInstalledNotes(notice)
         }
+        settings.onUpdateCheckCadenceChange = { [weak self] in
+            self?.update.applyCheckCadence()
+        }
     }
 
     private var panelController: FloatingPanelController?
@@ -165,7 +168,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // After the click handler, so the notice can open its notes. A launch
         // with nothing stored returns immediately.
         Task { await update.announceInstalledUpdateIfNeeded() }
-        // Daily at most, and only from a bundle — see `AppUpdate`.
+        // Sparkle's schedule is already armed. See `AppUpdate.applyCheckCadence`.
         update.checkIfDue()
         rateKeeper.start()
 

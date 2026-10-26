@@ -1416,7 +1416,13 @@
 "The card's forecast and the exhaustion notifications both use this list." = "カードの予測と使い切りの通知は、どちらもこの一覧を使います。";
 "Install silently" = "自動でインストール";
 "A scheduled check downloads the update, installs it, and relaunches Blinky, without an update window. After Blinky opens again, a notification names the installed version and what changed. Check now still opens the window." = "定期的な確認は更新をダウンロードし、インストールしたあと Blinky を起動し直します。更新ウィンドウは開きません。起動し直したあと、通知でインストールされたバージョンと変更内容を知らせます。今すぐ確認はウィンドウを開きます。";
-"Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking." = "2時間ごと。下の選択で、通知するか、更新ウィンドウを開くか、確認せずにインストールするかを決めます。";
+"Scheduled checks use the interval below. The choice under it decides whether Blinky notifies you, opens the update window, or installs without asking." = "定期確認は下の間隔で行います。その下の選択で、通知するか、更新ウィンドウを開くか、確認せずにインストールするかを決めます。";
+"Check for updates every" = "更新を確認する間隔";
+"How often a scheduled check runs. Check now still opens the update window." = "定期確認の間隔です。「今すぐ確認」はこれまでどおり更新ウィンドウを開きます。";
+"Minutes" = "分";
+"Hours" = "時間";
+"Days" = "日";
+"Weeks" = "週";
 "By hour" = "時間ごと";
 "Copied to the clipboard." = "クリップボードにコピーしました。";
 

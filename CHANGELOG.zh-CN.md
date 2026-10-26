@@ -6,6 +6,10 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.26
+
+- **自动检查更新的间隔可以自己设定。** 在「设置 → 关于」的「自动检查」下面，用数字和单位选择分钟、小时、天或周，默认是 12 小时（此前固定为每两小时），改完后下一次定时检查按新的间隔安排，不必重新打开 Blinky。「检查更新」仍会打开更新窗口，「先通知」「直接打开窗口」和「自动安装」保持不变。[#89](https://github.com/harrisliangsu/blinky-mac/pull/89)
+
 ## 1.5.25
 
 - **Token 窗口写出输出速度。** 用量卡片旁的 Token 窗口在合计下面显示所选统计区间内已计时回复的平均速度；按模型划分时，每个模型写出 token/秒，日志里有首字时间时一并写出。[#88](https://github.com/harrisliangsu/blinky-mac/pull/88)

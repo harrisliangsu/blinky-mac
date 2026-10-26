@@ -22,10 +22,16 @@ import UserNotifications
 /// missing feed forever, and telling a developer their working copy is out of
 /// date is noise.
 ///
-/// Sparkle owns the schedule and the windows it puts up. What is kept here is
-/// only what the rest of the app asks about: whether a check can happen at
-/// all, whether one is running, and whether a newer version was found — which
-/// is what the menu bar shows. A scheduled find follows `UpdateDiscovery`:
+/// Sparkle owns the windows and, at an hour or longer, the schedule. The
+/// interval is `UpdateCheckCadence`, written to `updateCheckInterval`, which
+/// resets Sparkle's cycle without a restart. Sparkle will not arm a timer
+/// under an hour, so a shorter choice is a timer here that calls
+/// `checkForUpdatesInBackground` — the same scheduled check, so Install
+/// silently and Notify first are unchanged. Check for Updates… and Check now
+/// stay `checkForUpdates`. What is kept here is only what the rest of the app
+/// asks about: whether a check can happen at all, whether one is running, and
+/// whether a newer version was found — which is what the menu bar shows. A
+/// scheduled find follows `UpdateDiscovery`:
 /// notify first posts a notification and leaves the window hidden until that
 /// notification is clicked; show the window is Sparkle's offer immediately;
 /// install silently downloads, then installs and relaunches, with
@@ -65,8 +71,8 @@ final class AppUpdate {
 
     var canCheck: Bool { controller != nil }
 
-    /// Sparkle's own daily schedule. Stored by Sparkle, not by `AppSettings`,
-    /// so it can't drift from what the updater is actually doing.
+    /// Whether scheduled checks run. The interval is `AppSettings.updateCheckCadence`.
+    /// Sparkle stores this switch, so it can't drift from what the updater is doing.
     var checksAutomatically: Bool {
         get { controller?.updater.automaticallyChecksForUpdates ?? false }
         set {
@@ -74,8 +80,13 @@ final class AppUpdate {
             // Sparkle allows automatic downloads only while checks are on.
             // Turning checks back on has to put Install silently back.
             applyAutomaticDownloads()
+            applyCheckCadence()
         }
     }
+
+    /// Blinky's timer for an interval Sparkle will not arm. Invalidated when
+    /// the interval moves to an hour or more, or when automatic checks go off.
+    private var cadenceTimer: Timer?
 
     private let settings: AppSettings
     private var controller: SPUStandardUpdaterController?
@@ -115,7 +126,57 @@ final class AppUpdate {
             userDriverDelegate: relay
         )
         applyAutomaticDownloads()
+        applyCheckCadence()
         Task { await refreshNotificationPermission() }
+    }
+
+    /// Put the reader's interval into effect, without waiting for a restart.
+    ///
+    /// Sparkle resets its cycle when `updateCheckInterval` is assigned, even
+    /// to the value it already has, so the assignment is skipped when the
+    /// length is unchanged. Under an hour that cycle would still wait an
+    /// hour, and `cadenceTimer` runs the real interval instead. The check it
+    /// starts is the background one, which is the scheduled path: Install
+    /// silently still downloads, and Notify first still notifies. Check now
+    /// does not come through here.
+    func applyCheckCadence(justFired: Bool = false) {
+        let plan = UpdateCheckSchedule.application(
+            interval: settings.updateCheckCadence.timeInterval,
+            checksAutomatically: checksAutomatically,
+            currentSparkleInterval: controller?.updater.updateCheckInterval,
+            lastCheck: controller?.updater.lastUpdateCheckDate,
+            now: Date(),
+            justFired: justFired
+        )
+        if let next = plan.sparkleInterval {
+            controller?.updater.updateCheckInterval = next
+        }
+        armOwnTimer(after: plan.ownTimerDelay)
+    }
+
+    private func armOwnTimer(after delay: TimeInterval?) {
+        cadenceTimer?.invalidate()
+        cadenceTimer = nil
+        guard controller != nil, let delay, delay > 0 else { return }
+        let timer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
+            // The run loop calls this off the actor. The updater is main-thread only.
+            MainActor.assumeIsolated { self?.ownTimerFired() }
+        }
+        // `.common` so a menu or a drag, which take the run loop out of the
+        // default mode, does not hold the check past its time.
+        RunLoop.main.add(timer, forMode: .common)
+        cadenceTimer = timer
+    }
+
+    /// The short-interval timer. A session already running — Sparkle's own
+    /// hour-clamped check, or a download — is left to finish; the next wait
+    /// is a full interval either way, so a due check cannot re-fire every second.
+    private func ownTimerFired() {
+        cadenceTimer = nil
+        if checksAutomatically, let updater = controller?.updater, !updater.sessionInProgress {
+            updater.checkForUpdatesInBackground()
+        }
+        applyCheckCadence(justFired: true)
     }
 
     /// Blinky's About picker is the only automatic-install control.
@@ -323,7 +384,8 @@ final class AppUpdate {
         updater.checkForUpdateInformation()
     }
 
-    /// Nothing to do: Sparkle runs its own schedule from the moment it starts.
+    /// Nothing to do. Sparkle arms its timer when it starts, and
+    /// `applyCheckCadence` has already put the reader's interval on it.
     /// Kept so the app's launch path doesn't have to know which updater is
     /// behind this.
     func checkIfDue() {}

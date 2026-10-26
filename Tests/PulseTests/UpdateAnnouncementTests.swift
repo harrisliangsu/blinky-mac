@@ -429,7 +429,13 @@ struct UpdateAnnouncementTests {
             "A scheduled check downloads the update, installs it, and relaunches Blinky, without an update window. After Blinky opens again, a notification names the installed version and what changed. Check now still opens the window.",
             "Blinky %@ is installed",
             "This release did not include notes.",
-            "Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking.",
+            "Scheduled checks use the interval below. The choice under it decides whether Blinky notifies you, opens the update window, or installs without asking.",
+            "Check for updates every",
+            "How often a scheduled check runs. Check now still opens the update window.",
+            "Minutes",
+            "Hours",
+            "Days",
+            "Weeks",
             "Open this notification to review and install it.",
         ]
         for language in ["en", "zh-Hans", "zh-Hant", "ja", "ko", "ru"] {
@@ -448,6 +454,13 @@ struct UpdateAnnouncementTests {
         #expect(chinese["Notify first"] == "先通知")
         #expect(chinese["Show the window"] == "直接打开窗口")
         #expect(chinese["Install silently"] == "自动安装")
+        #expect(chinese["Check for updates every"] == "检查更新间隔")
+        #expect(chinese["Minutes"] == "分钟")
+        #expect(chinese["Hours"] == "小时")
+        #expect(chinese["Days"] == "天")
+        #expect(chinese["Weeks"] == "周")
+        #expect(chinese["Scheduled checks use the interval below. The choice under it decides whether Blinky notifies you, opens the update window, or installs without asking."] == "定时检查按下面的间隔进行。再下面的选项决定是通知、打开更新窗口，还是直接安装。")
+        #expect(chinese["How often a scheduled check runs. Check now still opens the update window."] == "定时检查隔多久进行一次。「检查更新」仍会打开更新窗口。")
         #expect(chinese["Blinky %@ is installed"] == "Blinky %@ 已安装")
         #expect(chinese["This release did not include notes."] == "这一版没有附带更新说明。")
         #expect(chinese["A scheduled check downloads the update, installs it, and relaunches Blinky, without an update window. After Blinky opens again, a notification names the installed version and what changed. Check now still opens the window."] == "定时检查会下载更新，安装后重新打开 Blinky，不打开更新窗口。重新打开后，通知会写出已安装的版本和这一版改了什么。现在检查仍会打开窗口。")

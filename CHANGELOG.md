@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.26
+
+- **The automatic update check can run on an interval you choose.** Under Settings → About, next to Check automatically, the interval is a number and a unit of minutes, hours, days, or weeks, defaulting to 12 hours where it was a fixed two hours, and changing it reschedules the next check without restarting Blinky. Check now still opens the update window, and Notify first, Show the window, and Install silently stay as they are. [#89](https://github.com/harrisliangsu/blinky-mac/pull/89)
+
 ## 1.5.25
 
 - **The Token window shows output speed.** The Token window beside the usage card shows the average speed of timed replies in the selected span under the totals, and each model row shows tokens per second, plus first-token latency when the log records it. [#88](https://github.com/harrisliangsu/blinky-mac/pull/88)

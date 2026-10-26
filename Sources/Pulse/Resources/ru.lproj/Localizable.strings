@@ -1408,7 +1408,13 @@
 "The card's forecast and the exhaustion notifications both use this list." = "Прогноз на карточке и уведомления об исчерпании используют этот список.";
 "Install silently" = "Установить без запроса";
 "A scheduled check downloads the update, installs it, and relaunches Blinky, without an update window. After Blinky opens again, a notification names the installed version and what changed. Check now still opens the window." = "Плановая проверка загружает обновление, устанавливает его и снова открывает Blinky, без окна обновления. После повторного запуска уведомление называет установленную версию и что изменилось. «Проверить сейчас» по-прежнему открывает окно.";
-"Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking." = "Каждые два часа. Выбор ниже решает, уведомить, открыть окно обновления или установить без запроса.";
+"Scheduled checks use the interval below. The choice under it decides whether Blinky notifies you, opens the update window, or installs without asking." = "Плановая проверка идёт с интервалом ниже. Выбор под ним решает, уведомить, открыть окно обновления или установить без запроса.";
+"Check for updates every" = "Интервал проверки обновлений";
+"How often a scheduled check runs. Check now still opens the update window." = "Как часто выполняется плановая проверка. «Проверить» по-прежнему открывает окно обновления.";
+"Minutes" = "мин.";
+"Hours" = "ч.";
+"Days" = "дн.";
+"Weeks" = "нед.";
 "By hour" = "По часам";
 "Copied to the clipboard." = "Скопировано в буфер обмена.";
 

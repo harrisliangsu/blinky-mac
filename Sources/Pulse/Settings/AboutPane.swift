@@ -34,7 +34,7 @@ struct AboutPane: View {
 
                     SettingsRow(
                         String.localized("Check automatically"),
-                        subtitle: String.localized("Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking.")
+                        subtitle: String.localized("Scheduled checks use the interval below. The choice under it decides whether Blinky notifies you, opens the update window, or installs without asking.")
                     ) {
                         Toggle("", isOn: Binding(
                             get: { update.checksAutomatically },
@@ -42,6 +42,42 @@ struct AboutPane: View {
                         ))
                         .labelsHidden()
                         .toggleStyle(.switch)
+                    }
+
+                    SettingsRowDivider()
+
+                    SettingsRow(
+                        String.localized("Check for updates every"),
+                        subtitle: String.localized("How often a scheduled check runs. Check now still opens the update window.")
+                    ) {
+                        HStack(spacing: 8) {
+                            Stepper(
+                                value: Binding(
+                                    get: { settings.updateCheckCadence.amount },
+                                    set: { settings.updateCheckCadence.amount = $0 }
+                                ),
+                                in: UpdateCheckCadence.minimumAmount...UpdateCheckCadence.maximumAmount
+                            ) {
+                                Text(verbatim: "\(settings.updateCheckCadence.amount)")
+                                    .font(.system(size: 13).monospacedDigit())
+                                    .frame(minWidth: 36, alignment: .trailing)
+                            }
+                            .fixedSize()
+                            .accessibilityValue("\(settings.updateCheckCadence.amount)")
+
+                            Picker("", selection: Binding(
+                                get: { settings.updateCheckCadence.unit },
+                                set: { settings.updateCheckCadence.unit = $0 }
+                            )) {
+                                ForEach(UpdateCheckUnit.allCases) { unit in
+                                    Text(unit.title).tag(unit)
+                                }
+                            }
+                            .labelsHidden()
+                            .pickerStyle(.menu)
+                            .fixedSize()
+                        }
+                        .accessibilityLabel(String.localized("Check for updates every"))
                     }
 
                     SettingsRowDivider()

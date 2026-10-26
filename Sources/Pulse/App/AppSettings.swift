@@ -57,6 +57,9 @@ final class AppSettings {
     /// Called when the reader changes how a scheduled update is announced.
     /// Not `onChange`: that refetches every provider.
     var onUpdateDiscoveryChange: (() -> Void)?
+    /// Called when the reader changes how often a scheduled update check runs.
+    /// Not `onChange`: that refetches every provider. `AppUpdate` reschedules.
+    var onUpdateCheckCadenceChange: (() -> Void)?
 
     // MARK: - Application (AppSettings+Application)
 
@@ -170,6 +173,26 @@ final class AppSettings {
     /// either way. Not `onChange`, which refetches every provider.
     var updateDiscovery: UpdateDiscovery = .notifyFirst {
         didSet { updateDiscoveryChanged(from: oldValue) }
+    }
+
+    /// Putting a rejected amount back runs `didSet` again. Without this, that
+    /// second run would store the rejection as a change from the bad amount.
+    @ObservationIgnored private var revertingUpdateCheckCadence = false
+
+    /// How often a scheduled update check runs. Twelve hours by default.
+    /// An amount outside 1...9999 is refused and the previous choice stays.
+    /// Not `onChange`, which refetches every provider.
+    var updateCheckCadence: UpdateCheckCadence = .default {
+        didSet {
+            if revertingUpdateCheckCadence { return }
+            guard UpdateCheckCadence.isStorable(updateCheckCadence) else {
+                revertingUpdateCheckCadence = true
+                updateCheckCadence = oldValue
+                revertingUpdateCheckCadence = false
+                return
+            }
+            updateCheckCadenceChanged(from: oldValue)
+        }
     }
 
     /// The currency estimates are shown in. Dollars by default, which is what
