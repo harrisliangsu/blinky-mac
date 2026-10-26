@@ -512,6 +512,11 @@
 "Forward" = "進む";
 "No matches" = "一致する項目はありません";
 
+/* Providers page filter and order */
+"Alphabetical" = "名前順";
+"Panel order" = "パネルの並び順";
+"Clear search" = "検索をクリア";
+
 /* Resetting the rail order */
 "Reset order" = "並び順をリセット";
 "Back to the order Blinky ships with." = "Blinky の初期の並びに戻します。";

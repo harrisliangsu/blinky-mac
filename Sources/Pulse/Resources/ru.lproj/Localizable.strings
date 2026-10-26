@@ -503,6 +503,11 @@
 "Forward" = "Вперёд";
 "No matches" = "Нет совпадений";
 
+/* Providers page filter and order */
+"Alphabetical" = "По алфавиту";
+"Panel order" = "Порядок панели";
+"Clear search" = "Очистить поиск";
+
 /* Resetting the rail order */
 "Reset order" = "Сбросить порядок";
 "Back to the order Blinky ships with." = "Вернуть порядок по умолчанию.";

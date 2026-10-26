@@ -70,6 +70,8 @@ struct SettingsNavigationTests {
         #expect(SettingsPane.notifications.searchTerms.contains("Test notification"))
         #expect(SettingsPane.experimental.title == "Experimental")
         #expect(SettingsPane.experimental.searchTerms.contains("Liquid docking"))
+        #expect(SettingsPane.providers.searchTerms.contains("Alphabetical"))
+        #expect(SettingsPane.providers.searchTerms.contains("Panel order"))
 
         LocalizationSource.use(.chineseSimplified)
         #expect(SettingsPane.usageCard.title == "用量")

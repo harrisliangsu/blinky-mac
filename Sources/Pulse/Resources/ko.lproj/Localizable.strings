@@ -512,6 +512,11 @@
 "Forward" = "앞으로";
 "No matches" = "일치하는 항목 없음";
 
+/* Providers page filter and order */
+"Alphabetical" = "이름순";
+"Panel order" = "패널 순서";
+"Clear search" = "검색 지우기";
+
 /* Resetting the rail order */
 "Reset order" = "순서 초기화";
 "Back to the order Blinky ships with." = "Blinky의 기본 순서로 되돌립니다.";

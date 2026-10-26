@@ -702,6 +702,15 @@ final class AppSettings {
         didSet { providerOrderChanged(from: oldValue) }
     }
 
+    /// How the Providers page orders rows inside each group.
+    ///
+    /// Alphabetical by the name on the row, unless this is panel order, which
+    /// follows the rail. Changing it does not rearrange the rail and does not
+    /// fetch anything.
+    var providersListOrder: ProviderListOrder {
+        didSet { providersListOrderChanged(from: oldValue) }
+    }
+
     /// The extensions the last scan of the extensions folder found usable, and
     /// the folders it turned away. Nothing here is fetched until its account
     /// is switched on, which is `enabledAccounts`' job as for any provider.
@@ -1169,6 +1178,7 @@ final class AppSettings {
         enabledAccounts: Set<String> = Set(Provider.builtIn.map(\.rawValue)),
         extraAccounts: [ExtraAccount] = [],
         providerOrder: [String] = [],
+        providersListOrder: ProviderListOrder = Default.providersListOrder,
         language: AppLanguage = .system,
         pinnedWindows: [String: String] = [:],
         sources: [String: String] = [:],
@@ -1235,6 +1245,7 @@ final class AppSettings {
         self.enabledAccounts = enabledAccounts
         self.extraAccounts = extraAccounts
         self.providerOrder = providerOrder
+        self.providersListOrder = providersListOrder
         self.language = language
         self.pinnedWindows = pinnedWindows
         self.sources = sources
@@ -1351,6 +1362,7 @@ final class AppSettings {
             enabledAccounts: selection.enabledAccounts,
             extraAccounts: extras,
             providerOrder: defaults.stringArray(forKey: Key.providerOrder) ?? [],
+            providersListOrder: defaults.settingsChoice(Key.providersListOrder) ?? Default.providersListOrder,
             language: defaults.settingsChoice(Key.language) ?? .system,
             pinnedWindows: defaults.dictionary(forKey: Key.pinnedWindows) as? [String: String] ?? [:],
             sources: defaults.dictionary(forKey: Key.sources) as? [String: String] ?? [:],

@@ -5,24 +5,99 @@ import SwiftUI
 ///
 /// Extensions stay in the sidebar's Other section: they are programs somebody
 /// added, not services Blinky ships. An account here opens the same pane the
-/// sidebar row used to open.
+/// sidebar row used to open. The field at the top filters this page only;
+/// the sidebar keeps its own search.
 struct ProvidersHubPane: View {
     let settings: AppSettings
     let navigation: SettingsNavigation
+    /// Held by the shell, so opening an account and coming back keeps what
+    /// was typed, and a language change does not clear it.
+    @Binding var query: String
 
     var body: some View {
-        let accounts = settings.orderedAccounts.filter { $0.provider != .pulseExtension }
+        let accounts = ProviderListArrangement.accounts(
+            panelOrder: settings.orderedAccounts,
+            order: settings.providersListOrder,
+            query: query,
+            label: settings.label(for:)
+        )
         let groups = ProviderAccountGroups.make(accounts: accounts, isEnabled: settings.isEnabled)
         VStack(alignment: .leading, spacing: 22) {
-            ForEach(groups) { group in
-                SettingsGroup(group.title) {
-                    ForEach(Array(group.accounts.enumerated()), id: \.element.id) { index, account in
-                        if index > 0 { SettingsRowDivider() }
-                        accountRow(account)
+            controls
+            if groups.isEmpty {
+                Text(localized: "No matches")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 12)
+            } else {
+                ForEach(groups) { group in
+                    SettingsGroup(group.title) {
+                        ForEach(Array(group.accounts.enumerated()), id: \.element.id) { index, account in
+                            if index > 0 { SettingsRowDivider() }
+                            accountRow(account)
+                        }
                     }
                 }
             }
         }
+    }
+
+    /// The field and the order menu, on one line above the groups.
+    private var controls: some View {
+        HStack(spacing: 10) {
+            HStack(spacing: 6) {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
+                TextField(
+                    "",
+                    text: $query,
+                    prompt: Text(localized: "Search")
+                )
+                .textFieldStyle(.plain)
+                .font(.system(size: 13))
+                .autocorrectionDisabled()
+                .accessibilityLabel(String.localized("Search"))
+                if !query.isEmpty {
+                    Button {
+                        query = ""
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(String.localized("Clear search"))
+                }
+            }
+            .padding(.horizontal, 10)
+            .frame(minHeight: 32)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(.background)
+            .clipShape(.rect(cornerRadius: 8, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .strokeBorder(.separator.opacity(0.5), lineWidth: 1)
+                    .allowsHitTesting(false)
+            }
+
+            Picker(String.localized("Order"), selection: order) {
+                ForEach(ProviderListOrder.allCases) { mode in
+                    Text(verbatim: mode.title).tag(mode)
+                }
+            }
+            .pickerStyle(.menu)
+            .fixedSize()
+        }
+    }
+
+    private var order: Binding<ProviderListOrder> {
+        Binding(
+            get: { settings.providersListOrder },
+            set: { settings.providersListOrder = $0 }
+        )
     }
 
     private func accountRow(_ account: AccountKey) -> some View {
@@ -50,7 +125,15 @@ struct ProvidersHubPane: View {
 }
 
 #Preview("Providers") {
-    ProvidersHubPane(settings: AppSettings(), navigation: SettingsNavigation())
-        .padding()
-        .frame(width: 560)
+    ProvidersHubPreview()
+}
+
+private struct ProvidersHubPreview: View {
+    @State private var query = ""
+
+    var body: some View {
+        ProvidersHubPane(settings: AppSettings(), navigation: SettingsNavigation(), query: $query)
+            .padding()
+            .frame(width: 560)
+    }
 }
