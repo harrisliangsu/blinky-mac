@@ -95,6 +95,9 @@ struct AppSettingsPersistenceTests {
         #expect(defaults.string(forKey: "settings.menuBarStyle") == "ring")
         settings.updateDiscovery = .showWindow
         #expect(defaults.string(forKey: "settings.updateDiscovery") == "showWindow")
+        settings.updateCheckCadence = UpdateCheckCadence(amount: 30, unit: .minute)
+        #expect(defaults.object(forKey: "settings.updateCheckAmount") as? Int == 30)
+        #expect(defaults.string(forKey: "settings.updateCheckUnit") == "minute")
         settings.displayCurrency = .cny
         #expect(defaults.string(forKey: "settings.displayCurrency") == "cny")
         settings.setManualExchangeRate(7.1, for: .cny)
@@ -239,6 +242,7 @@ struct AppSettingsPersistenceTests {
         first.menuBarAccount = "codex"
         first.menuBarStyle = .ring
         first.updateDiscovery = .showWindow
+        first.updateCheckCadence = UpdateCheckCadence(amount: 3, unit: .day)
         first.displayCurrency = .jpy
         first.setManualExchangeRate(150, for: .jpy)
         first.hidesInFullScreen = false
@@ -333,6 +337,7 @@ struct AppSettingsPersistenceTests {
         #expect(back.menuBarAccount == "codex")
         #expect(back.menuBarStyle == .ring)
         #expect(back.updateDiscovery == .showWindow)
+        #expect(back.updateCheckCadence == UpdateCheckCadence(amount: 3, unit: .day))
         #expect(back.displayCurrency == .jpy)
         #expect(back.manualExchangeRates == ["JPY": 150])
         #expect(back.hidesInFullScreen == false)
@@ -463,6 +468,7 @@ struct AppSettingsPersistenceTests {
         #expect(back.alertsOnOutage == false)
         #expect(back.alertsOnRecap == false)
         #expect(back.updateDiscovery == .notifyFirst)
+        #expect(back.updateCheckCadence == .default)
         #expect(back.primerHours == .default)
         #expect(back.wantsAlerts)
         #expect(back.providersListOrder == .name)

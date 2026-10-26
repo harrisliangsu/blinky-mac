@@ -3,8 +3,9 @@ import Foundation
 
 // The app's own shell: the menu bar item, the Dock icon the settings window
 // brings, the two global shortcuts, the interface language, how a scheduled
-// update is announced, and the currency estimates are shown in. None of it is
-// a reading, so none of it asks the usage loop to do anything — except the
+// update is announced, how often that check runs, and the currency estimates
+// are shown in. None of it is a reading, so none of it asks the usage loop to
+// do anything — except the
 // language, whose strings are on screen in the panel as well. The currency
 // redraws the panel through `moneyIdentity` and fetches nothing but the day's
 // rates.
@@ -23,6 +24,8 @@ extension AppSettings.Key {
     static let togglePanelShortcut = "settings.togglePanelShortcut"
     static let language = "settings.language"
     static let updateDiscovery = "settings.updateDiscovery"
+    static let updateCheckAmount = "settings.updateCheckAmount"
+    static let updateCheckUnit = "settings.updateCheckUnit"
     static let displayCurrency = "settings.displayCurrency"
     static let manualExchangeRates = "settings.manualExchangeRates"
 }
@@ -110,6 +113,13 @@ extension AppSettings {
         onUpdateDiscoveryChange?()
     }
 
+    func updateCheckCadenceChanged(from old: UpdateCheckCadence) {
+        guard updateCheckCadence != old else { return }
+        defaults.set(updateCheckCadence.amount, forKey: Key.updateCheckAmount)
+        defaults.set(updateCheckCadence.unit.rawValue, forKey: Key.updateCheckUnit)
+        onUpdateCheckCadenceChange?()
+    }
+
     func displayCurrencyChanged(from old: DisplayCurrency) {
         guard displayCurrency != old else { return }
         defaults.set(displayCurrency.rawValue, forKey: Key.displayCurrency)
@@ -176,6 +186,10 @@ extension AppSettings {
         menuBarAccount = defaults.string(forKey: Key.menuBarAccount)
         menuBarStyle = defaults.settingsChoice(Key.menuBarStyle) ?? .figure
         updateDiscovery = defaults.settingsChoice(Key.updateDiscovery) ?? .notifyFirst
+        updateCheckCadence = UpdateCheckCadence.restored(
+            amount: defaults.object(forKey: Key.updateCheckAmount),
+            unit: defaults.string(forKey: Key.updateCheckUnit)
+        )
         displayCurrency = defaults.settingsChoice(Key.displayCurrency) ?? .default
         manualExchangeRates = (defaults.dictionary(forKey: Key.manualExchangeRates) as? [String: Double] ?? [:])
             .filter { $0.value.isFinite && $0.value > 0 }

@@ -1413,7 +1413,13 @@
 "The card's forecast and the exhaustion notifications both use this list." = "카드의 소진 예측과 소진 알림이 모두 이 목록을 사용합니다.";
 "Install silently" = "자동으로 설치";
 "A scheduled check downloads the update, installs it, and relaunches Blinky, without an update window. After Blinky opens again, a notification names the installed version and what changed. Check now still opens the window." = "예약된 확인은 업데이트를 받아 설치한 뒤 Blinky를 다시 실행합니다. 업데이트 창은 열지 않습니다. 다시 실행된 뒤 알림으로 설치된 버전과 변경 내용을 알려 줍니다. 지금 확인은 창을 엽니다.";
-"Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking." = "두 시간마다. 아래 선택에 따라 알리거나, 업데이트 창을 열거나, 묻지 않고 설치합니다.";
+"Scheduled checks use the interval below. The choice under it decides whether Blinky notifies you, opens the update window, or installs without asking." = "예약된 확인은 아래 간격으로 실행됩니다. 그 아래 선택에 따라 알리거나, 업데이트 창을 열거나, 묻지 않고 설치합니다.";
+"Check for updates every" = "업데이트 확인 간격";
+"How often a scheduled check runs. Check now still opens the update window." = "예약된 확인의 간격입니다. 「지금 확인」은 그대로 업데이트 창을 엽니다.";
+"Minutes" = "분";
+"Hours" = "시간";
+"Days" = "일";
+"Weeks" = "주";
 "By hour" = "시간별";
 "Copied to the clipboard." = "클립보드에 복사했습니다.";
 

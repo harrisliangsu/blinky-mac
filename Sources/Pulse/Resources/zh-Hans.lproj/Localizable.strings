@@ -1411,7 +1411,13 @@
 "The card's forecast and the exhaustion notifications both use this list." = "卡片上的用尽预估和用尽通知都按这份名单。";
 "Install silently" = "自动安装";
 "A scheduled check downloads the update, installs it, and relaunches Blinky, without an update window. After Blinky opens again, a notification names the installed version and what changed. Check now still opens the window." = "定时检查会下载更新，安装后重新打开 Blinky，不打开更新窗口。重新打开后，通知会写出已安装的版本和这一版改了什么。现在检查仍会打开窗口。";
-"Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking." = "每两小时一次。下面的选项决定是通知、打开更新窗口，还是直接安装。";
+"Scheduled checks use the interval below. The choice under it decides whether Blinky notifies you, opens the update window, or installs without asking." = "定时检查按下面的间隔进行。再下面的选项决定是通知、打开更新窗口，还是直接安装。";
+"Check for updates every" = "检查更新间隔";
+"How often a scheduled check runs. Check now still opens the update window." = "定时检查隔多久进行一次。「检查更新」仍会打开更新窗口。";
+"Minutes" = "分钟";
+"Hours" = "小时";
+"Days" = "天";
+"Weeks" = "周";
 "By hour" = "按小时";
 "Copied to the clipboard." = "已复制到剪贴板。";
 

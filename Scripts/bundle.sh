@@ -202,17 +202,17 @@ cat > "$APP/Contents/Info.plist" <<PLIST
          never becomes key, so that window can open behind everything and go
          unanswered. The toggle is in Settings instead, where it can be found. -->
     <key>SUEnableAutomaticChecks</key><true/>
-    <!-- Two hours, against Sparkle's default of one day. A day is sized for
-         apps that ship every few months; this one ships fixes for things it
-         is doing wrong right now, and a user burning a core on a bug that was
-         fixed yesterday should not have to wait out the rest of the day to
-         hear about it. Sparkle clamps anything under an hour, and the check
-         is measured from the last one rather than from launch, so this is at
-         most twelve requests a day and usually fewer.
+    <!-- Twelve hours, the default a fresh install and an upgrade both start
+         from. Through 1.5.24 this was two hours. The reader chooses another
+         interval under Settings → About (minutes, hours, days, or weeks);
+         Blinky stores that choice and writes it to Sparkle's
+         updateCheckInterval, which reschedules without a restart. Sparkle
+         will not arm a timer under an hour, so a shorter choice is run by
+         Blinky's own timer on the same background check.
          SUAutomaticallyUpdate stays false below, so a fresh install does not
          download until the reader picks Install silently in Settings → About.
          That choice sets automaticallyDownloadsUpdates at runtime. -->
-    <key>SUScheduledCheckInterval</key><integer>7200</integer>
+    <key>SUScheduledCheckInterval</key><integer>43200</integer>
     <!-- The plist default stays false, so a new install offers an update and
          does not install it. Install silently (UpdateDiscovery) turns
          Sparkle's automaticallyDownloadsUpdates on, and the install finishes
