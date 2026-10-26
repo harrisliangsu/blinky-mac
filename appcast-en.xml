@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.19</title>
-            <pubDate>Mon, 26 Oct 2026 02:04:25 -0000</pubDate>
-            <sparkle:version>1.5.19</sparkle:version>
-            <sparkle:shortVersionString>1.5.19</sparkle:shortVersionString>
+            <title>1.5.20</title>
+            <pubDate>Mon, 26 Oct 2026 04:49:43 -0000</pubDate>
+            <sparkle:version>1.5.20</sparkle:version>
+            <sparkle:shortVersionString>1.5.20</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.19</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.20</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.19</h2><ul><li><strong>Liquid docking is an experimental switch.</strong> Turn it on under Settings → Experimental and the rail stretches and parts like a drop when pulled off a screen edge, and is drawn in when brought near one. It is off by default.</li><li><strong>Notifications can send a test.</strong> Press Send under Settings → Notifications to receive one notification and check that notifications reach you.</li><li><strong>The rail at the notch lines up with the notch.</strong> It is centred on the display, and the corners into the screen edge match the notch. At the small size with few providers, those top corners stay inside the window.</li><li><strong>Kimi Code&#x27;s records include the new Kimi Code.</strong> Token spend and the Kimi Code pane also read that session store, beside the Kimi CLI&#x27;s, and estimate money at published prices where the model is known.</li><li><strong>Cursor usage is read when Cursor seals its saved login.</strong> Blinky asks the keychain for Cursor&#x27;s key, and after a refusal asks again only at the next launch or on a manual refresh. <a href="https://github.com/qunqin24/Pulse/pull/93">#93</a></li><li><strong>A Cursor Enterprise allowance is shown.</strong> An Enterprise account that reports one allowance shows it as the monthly limit, with the amounts in dollars. <a href="https://github.com/qunqin24/Pulse/pull/97">#97</a></li><li><strong>A Codex session is counted once.</strong> A session found in both <code>sessions</code> and <code>archived_sessions</code> is counted once. <a href="https://github.com/qunqin24/Pulse/issues/95">#95</a></li><li><strong>The detailed card drops the API-price line.</strong> The explanation stays under Settings → Token spend.</li><li><strong>A helper stops when its time is up.</strong> Provider commands run at user-initiated priority, so a busy Mac still stops them on the deadline.</li><li><strong>Synced from upstream qunqin24/Pulse</strong> (16 commits, through their 1.12.4, <code>fc10fb7</code>, since 1.5.18). This repository is the update source, and this fork&#x27;s version is <strong>1.5.19</strong>. Their Sparkle offer for 1.12.4 was not copied. <code>appcast.xml</code> is unchanged until this version is tagged. Upstream also added a Russian README; this fork&#x27;s page keeps the Blinky name, badges, and download links.</li><li><strong>Fork-only pieces kept:</strong> Codex reset forecast, the latest-reset row (including on a card that is already open), hover copy on the reset type, and advance reminders; ring colour schemes (Red alert / Gradient / Quiet, and Quiet keeps green); ResetCelebration ribbons, including the optional five-hour / hourly one; Kimi device-code sign-in and multi-account; Qoder (including a personal token and discovery of Qoder IDE and <code>~/.qoder</code>); Zen&#x27;s cookie store; bilingual release notes; and this repo&#x27;s Sparkle feed and signing key.</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.19">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.19/Blinky-1.5.19.zip"
-                       length="22975643"
+</style><h2>Blinky 1.5.20</h2><ul><li><strong>The primary Grok account keeps showing usage after the CLI login expires.</strong> With Read usage from left on Automatic under Settings → Grok, Blinky uses the CLI token first and, when that token is missing, expired, or refused (401 or 403), the device-code login saved by Sign in once on the Grok account row, and does not write <code>~/.grok/auth.json</code>. <a href="https://github.com/harrisliangsu/blinky-mac/pull/81">#81</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.20">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.20/Blinky-1.5.20.zip"
+                       length="22998472"
                        type="application/octet-stream"
-                       sparkle:edSignature="BaAQHGXpOz33fGy8UEoDtx9viLpBPlIBxXSSausuj8aezNeKfFYpWpYwyLHJR7EmtZfVaAU80Ea+kpAETKBYBQ==" />
+                       sparkle:edSignature="6W6ReQ+ox1sIPQ2+5oQ9MOF1D03DwGcl/z7URpP1L1Ts9+brf+nSFJbMjS6cyuJ0X8a29mrZqZWZMXSSIZGhCw==" />
         </item>
     </channel>
 </rss>
