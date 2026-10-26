@@ -219,7 +219,7 @@ struct InstalledUpdateNotice: Equatable, Sendable {
             text = text.dropLast().trimmingCharacters(in: .whitespacesAndNewlines)
         }
         let closing = text.hasPrefix("/")
-        if closing { text = text.dropFirst() }
+        if closing { text = String(text.dropFirst()) }
         let name = text.prefix { character in
             character != " " && character != "\t" && character != "\n" && character != "\r" && character != "/"
         }
