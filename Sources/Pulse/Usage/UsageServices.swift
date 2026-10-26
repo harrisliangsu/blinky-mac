@@ -116,7 +116,7 @@ final class LiveUsageServices: UsageServiceFactory {
             return { await service.fetch() }
         case .grok:
             let grok = self.grok
-            return { await grok.fetch() }
+            return { await grok.fetch(source: source) }
         case .grokBot:
             let grokBot = self.grokBot
             return { await grokBot.fetch() }

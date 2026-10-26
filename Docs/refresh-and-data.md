@@ -88,7 +88,7 @@ Which unavailability cases a given provider emits: [providers/README.md](provide
 
 `UsageStore.commit` also records a `ConnectionDiagnostic` per account, apart from the display reading: latest raw result, completed-check time, route checks, and the newest successful reading's own `observedAt` (re-reading a status-line capture never advances it to the Retry click). Restored cache and seeded placeholders are not completed checks; the UI says none has completed since launch.
 
-`ProviderUsage.origin` records the producing route and is persisted in the cache (old entries: unknown); route attempts are not. `isCached` is set only by cache restoration, so a stale status-line capture shown directly is not called a cache replacement. Single-route providers are labelled at reconciliation and commit; the three multi-route services record their branches ([providers/README.md](providers/README.md#diagnostic-route-checks-and-repair)).
+`ProviderUsage.origin` records the producing route and is persisted in the cache (old entries: unknown); route attempts are not. `isCached` is set only by cache restoration, so a stale status-line capture shown directly is not called a cache replacement. Single-route providers are labelled at reconciliation and commit; the multi-route services, including Grok, record their branches ([providers/README.md](providers/README.md#diagnostic-route-checks-and-repair)).
 
 The copied report is a fixed allowlist — app version, provider, primary/added kind, route preference, typed outcomes, timestamps — and omits account ids and labels, plan names, amounts, paths, credentials, headers and bodies. Tests pass results through the real cache before checking diagnostics. UI: [ui/settings.md](ui/settings.md).
 

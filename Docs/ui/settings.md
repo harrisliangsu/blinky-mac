@@ -178,7 +178,7 @@ The second group is **Credits**: anything shipped here that somebody else made â
 
 ## Provider panes
 
-**A provider with more than one route offers the choice, automatic by default; one with one route has that route named**, and the name belongs to the provider (`Provider.soleRoute`, an exhaustive `Provider` switch; omit the row when nil). A ternary (Cursor vs else Antigravity) once made the next single-route provider inherit Antigravity's sentence.
+**A provider with more than one route offers the choice, automatic by default; one with one route has that route named**, and the name belongs to the provider (`Provider.soleRoute`, an exhaustive `Provider` switch; omit the row when nil). A ternary (Cursor vs else Antigravity) once made the next single-route provider inherit Antigravity's sentence. Grok's row is Automatic, CLI login, or Blinky login. Automatic uses the CLI's saved login while it is still good, then the login from the Grok account row in Accounts.
 
 **Each pane has its own refresh**, with the last reading's time; a rail click is not the only way.
 

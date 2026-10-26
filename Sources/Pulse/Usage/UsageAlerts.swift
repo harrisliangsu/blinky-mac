@@ -588,7 +588,8 @@ struct AlertMemory: Codable, Sendable, Equatable {
     static func standing(of reason: ProviderUsage.Unavailability) -> Standing {
         switch reason {
         case .claudeLoginExpired, .claudeDesktopKeyRefused, .claudeDesktopSessionExpired,
-             .cursorLoginExpired, .cursorKeyRefused, .grokLoginExpired, .kimiLoginExpired, .signedOut, .apiKeyRefused,
+             .cursorLoginExpired, .cursorKeyRefused, .grokLoginExpired, .grokAccountLoginExpired,
+             .kimiLoginExpired, .signedOut, .apiKeyRefused,
              .ollamaSessionExpired, .ollamaPageChanged, .qoderSessionExpired, .xiaomiSessionExpired,
              .stepFunSessionExpired,
              .unreachable, .unreadableReply, .rateLimited, .serverError,
@@ -627,7 +628,8 @@ struct AlertMemory: Codable, Sendable, Equatable {
              .signInRequired, .claudeSignInRequired, .claudeDesktopNotSignedIn,
              .codexNotInstalled, .kiroNotInstalled, .kiroVersionUnsupported,
              .kiroSignInRequired, .antigravityNotRunning, .antigravityNotAnswering,
-             .cursorSignInRequired, .grokSignInRequired, .kimiSignInRequired, .notSignedIn,
+             .cursorSignInRequired, .grokSignInRequired, .grokAccountSignInRequired,
+             .kimiSignInRequired, .notSignedIn,
              .ollamaSessionMissing, .qoderSessionMissing, .xiaomiSessionMissing, .stepFunSessionMissing,
              .apiKeyMissing, .volcengineCLIMissing, .antigravityCLIMissing, .antigravityCLIOutdated,
              .volcengineSignInRequired,

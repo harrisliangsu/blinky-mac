@@ -18,6 +18,10 @@ enum UsageRoute: String, Codable, Sendable {
     case appCache
     /// A program in the extensions folder, which answered on stdout.
     case extensionProgram = "extension"
+    /// A login Blinky obtained itself and refreshes itself. Grok's primary
+    /// account uses it when the CLI's token is missing or refused. The
+    /// request is still the CLI proxy; the credential is not the CLI's file.
+    case heldLogin
 
     var title: String {
         switch self {
@@ -32,6 +36,7 @@ enum UsageRoute: String, Codable, Sendable {
         case .antigravityCLI: "agy"
         case .appCache: .localized("The app's saved plan")
         case .extensionProgram: .localized("Extension program")
+        case .heldLogin: .localized("Blinky login")
         }
     }
 
@@ -49,13 +54,14 @@ enum UsageRoute: String, Codable, Sendable {
         }
         switch written {
         // Antigravity has the language server and the `agy` CLI. Kimi has a
-        // device-code login and a pasted key. Neither has a single route.
-        case .claudeCode, .codex, .volcengine, .kimiCode, .devin, .antigravity: return nil
+        // device-code login and a pasted key. Grok's primary has the CLI file
+        // and Blinky's own login. None of those has a single route.
+        case .claudeCode, .codex, .volcengine, .kimiCode, .devin, .antigravity, .grok: return nil
         // Browser session rather than a key (Ollama, Xiaomi, Qoder, StepFun).
         case .ollamaCloud, .xiaomiMiMo, .qoder, .stepFun: return .webSession
         case .kiro: return .kiroACP
         case .cursor, .openCodeGo, .zai, .glmCoding, .minimax,
-             .copilot, .grok, .grokBot, .commandCode, .deepSeek,
+             .copilot, .grokBot, .commandCode, .deepSeek,
              .sub2api, .newAPI, .v2ex:
             return .endpoint
         case .pulseExtension: return .extensionProgram

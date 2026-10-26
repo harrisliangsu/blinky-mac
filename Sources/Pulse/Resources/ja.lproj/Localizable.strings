@@ -719,7 +719,6 @@
 "Reads ~/.codex/auth.json and may run codex app-server with its saved login. Blinky does not request Keychain access." = "~/.codex/auth.json を読み取り、保存済みのログインで codex app-server を起動する場合があります。Blinky はキーチェーンへのアクセスを求めません。";
 "Reads the running editor's local language server and connection token, or runs the agy CLI with its saved login. Blinky does not request Keychain access." = "起動中のエディタのローカル言語サーバから使用量と接続トークンを読み取るか、保存済みのログインで agy CLI を起動します。Blinky はキーチェーンへのアクセスを求めません。";
 "Reads the login saved in Cursor's local database. No Keychain prompt." = "Cursor のローカルデータベースに保存されたログインを読み取ります。キーチェーンの確認はありません。";
-"Reads the login saved in ~/.grok/auth.json. No Keychain prompt." = "~/.grok/auth.json に保存されたログインを読み取ります。キーチェーンの確認はありません。";
 "Uses a key entered in Settings, or reads OpenCode's auth.json. No Keychain prompt." = "設定で入力したキーを使うか、OpenCode の auth.json を読み取ります。キーチェーンの確認はありません。";
 "Uses a key entered in Settings, or reads the saved GLM key files. No Keychain prompt." = "設定で入力したキーを使うか、保存済みの GLM キーファイルを読み取ります。キーチェーンの確認はありません。";
 "Uses a key entered in Settings, or reads ~/.commandcode/auth.json. No Keychain prompt." = "設定で入力したキーを使うか、~/.commandcode/auth.json を読み取ります。キーチェーンの確認はありません。";
@@ -1471,3 +1470,16 @@
 "Sent. If nothing appeared, check Focus and System Settings › Notifications." = "送信しました。表示されない場合は、集中モードと「システム設定 › 通知」を確認してください。";
 "This is a test notification. Blinky's notifications look like this." = "これはテスト通知です。Blinky の通知はこのように表示されます。";
 "Blinky has not been allowed to post notifications yet. Press Send again to be asked." = "Blinky はまだ通知の送信を許可されていません。もう一度「送信」を押すと、再度確認されます。";
+
+/* Grok primary login */
+"CLI login" = "CLI ログイン";
+"Blinky login" = "Blinky のログイン";
+"Uses the CLI login while it is still good, then the login Blinky holds." = "CLI のログインが有効なあいだはそれを使い、切れたら Blinky が保持するログインを使います。";
+"Uses the login you sign in to once in Settings. Blinky keeps it and renews it." = "設定で一度サインインしたログインを使います。Blinky が保持し、更新します。";
+"Sign in to Grok once in Settings to see usage." = "使用量を読むには、設定で Grok に一度サインインしてください。";
+"Blinky's Grok login expired. Sign in again in Settings." = "Blinky が保持する Grok のログインが期限切れです。設定でもう一度サインインしてください。";
+"Grok account" = "Grok アカウント";
+"Opens xAI's sign-in page. Blinky keeps this login and renews it, and does not change the CLI's." = "xAI のサインインページを開きます。Blinky はこのログインを保持して更新し、CLI のログインは変えません。";
+"Signed in. The CLI login is used instead." = "サインイン済み。代わりに CLI のログインが使われます。";
+"Reads ~/.grok/auth.json while that login is still good, and can keep its own login from Settings when the CLI's is missing or refused. Blinky does not write the CLI's file. No Keychain prompt." = "~/.grok/auth.json のログインが有効なあいだはそれを読み、欠損または拒否されたときは設定でサインインしたログインを保持できます。Blinky は CLI のファイルを書き換えず、キーチェーンの確認もありません。";
+"Signed in. Blinky uses this when the CLI login is missing or refused." = "サインイン済み。CLI のログインが無い、または拒否されたときに Blinky はこれを使います。";

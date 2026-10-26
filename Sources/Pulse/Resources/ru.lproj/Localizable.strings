@@ -681,7 +681,6 @@
 "Reads ~/.codex/auth.json and may run codex app-server with its saved login. Blinky does not request Keychain access." = "Читает ~/.codex/auth.json и может запускать codex app-server с сохранённым входом. Blinky не запрашивает доступ к связке ключей.";
 "Reads the running editor's local language server and connection token, or runs the agy CLI with its saved login. Blinky does not request Keychain access." = "Подключается к локальному языковому серверу запущенного редактора с помощью его токена или запускает CLI agy с сохранённым в нём входом. Blinky не запрашивает доступ к связке ключей.";
 "Reads the login saved in Cursor's local database. No Keychain prompt." = "Читает данные входа из локальной базы данных Cursor. Доступ к связке ключей не запрашивается.";
-"Reads the login saved in ~/.grok/auth.json. No Keychain prompt." = "Читает данные входа из ~/.grok/auth.json. Доступ к связке ключей не запрашивается.";
 "Uses a key entered in Settings, or reads OpenCode's auth.json. No Keychain prompt." = "Использует ключ, введённый в настройках, или читает auth.json OpenCode. Доступ к связке ключей не запрашивается.";
 "Uses a key entered in Settings, or reads the saved GLM key files. No Keychain prompt." = "Использует ключ, введённый в настройках, или читает сохранённые файлы ключей GLM. Доступ к связке ключей не запрашивается.";
 "Uses a key entered in Settings, or reads ~/.commandcode/auth.json. No Keychain prompt." = "Использует ключ, введённый в настройках, или читает ~/.commandcode/auth.json. Доступ к связке ключей не запрашивается.";
@@ -1463,3 +1462,16 @@
 "Sent. If nothing appeared, check Focus and System Settings › Notifications." = "Отправлено. Если ничего не появилось, проверьте режим фокусирования и Системные настройки › Уведомления.";
 "This is a test notification. Blinky's notifications look like this." = "Это тестовое уведомление. Так выглядят уведомления Blinky.";
 "Blinky has not been allowed to post notifications yet. Press Send again to be asked." = "Blinky пока не получил разрешения на уведомления. Нажмите «Отправить» ещё раз, чтобы запрос появился снова.";
+
+/* Grok primary login */
+"CLI login" = "Вход CLI";
+"Blinky login" = "Вход Blinky";
+"Uses the CLI login while it is still good, then the login Blinky holds." = "Пока вход CLI действителен, используется он, затем — вход, который хранит Blinky.";
+"Uses the login you sign in to once in Settings. Blinky keeps it and renews it." = "Использует вход, выполненный один раз в настройках. Blinky хранит его и продлевает.";
+"Sign in to Grok once in Settings to see usage." = "Войдите в Grok один раз в настройках, чтобы видеть расход.";
+"Blinky's Grok login expired. Sign in again in Settings." = "Вход Grok, который хранит Blinky, истёк. Войдите снова в настройках.";
+"Grok account" = "Аккаунт Grok";
+"Opens xAI's sign-in page. Blinky keeps this login and renews it, and does not change the CLI's." = "Открывает страницу входа xAI. Blinky хранит этот вход и продлевает его и не меняет вход CLI.";
+"Signed in. The CLI login is used instead." = "Вход выполнен. Вместо него используется вход CLI.";
+"Reads ~/.grok/auth.json while that login is still good, and can keep its own login from Settings when the CLI's is missing or refused. Blinky does not write the CLI's file. No Keychain prompt." = "Пока вход действителен, читает ~/.grok/auth.json; если его нет или он отклонён, может хранить собственный вход из настроек. Blinky не записывает файл CLI и не запрашивает связку ключей.";
+"Signed in. Blinky uses this when the CLI login is missing or refused." = "Вход выполнен. Blinky использует его, когда вход CLI отсутствует или отклонён.";

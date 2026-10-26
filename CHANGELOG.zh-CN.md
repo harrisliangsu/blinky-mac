@@ -6,6 +6,10 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.20
+
+- **Grok 的主账号在命令行登录失效后仍显示用量。** 在「设置 → Grok」把「用量来源」留在「自动」时，Blinky 先用命令行登录；这份登录缺失、过期或被拒绝（401 或 403）时，改用在「Grok 账号」一行点一次「登录…」保存的设备码登录，并且不写入 `~/.grok/auth.json`。[#81](https://github.com/harrisliangsu/blinky-mac/pull/81)
+
 ## 1.5.19
 
 - **水滴式吸附放在实验性功能里。** 在「设置 → 实验性功能」中开启后，从屏幕边缘拉开胶囊时，它会像水滴一样被拉长再断开，拖近边缘时会被吸过去。默认关闭。

@@ -3,12 +3,23 @@ import Foundation
 
 /// Reads the Grok account's usage.
 ///
-/// The same borrowing the two CLI routes do: Grok Build's CLI stores an OIDC
-/// login in `~/.grok/auth.json`, and this asks the CLI's own proxy with it —
-/// `GET cli-chat-proxy.grok.com/v1/billing?format=credits`. For the **primary**
-/// account nothing is held here; a second account signed in to through
-/// `OAuthLogin` reaches the same two endpoints with the token Pulse holds for
-/// it, and never looks at the CLI's file.
+/// The weekly pool comes from the CLI's own proxy —
+/// `GET cli-chat-proxy.grok.com/v1/billing?format=credits` — not from an xAI
+/// API key. For the **primary** account the default route is automatic:
+///
+/// 1. The access token Grok Build's CLI stored in `~/.grok/auth.json`, when
+///    one is still usable. That file is only read. Its refresh token is never
+///    copied, and nothing here writes the file, so a renewal cannot sign the
+///    CLI out.
+/// 2. When that token is missing, every entry has expired, or the proxy
+///    refuses it (401/403): the device-code login Blinky holds for the primary
+///    account in `accounts.dat`. Blinky refreshes that login itself.
+/// 3. When Blinky has no such login yet, the card says to sign in once in
+///    Settings. Pinning the route to the CLI keeps the older messages
+///    (`.grokSignInRequired`, `.grokLoginExpired`) instead of falling through.
+///
+/// An added account reaches the same two endpoints with the token Pulse holds
+/// for it, and never looks at the CLI's file.
 ///
 /// **What comes back is the account's pool, not the CLI's.** Since June 2026 a
 /// paid Grok plan spends one weekly pool across every Grok product — the web
@@ -27,11 +38,10 @@ import Foundation
 /// while `GrokTasks` carries one. Taking a missing figure as "no reading"
 /// would blank the ring for the first hours of every week.
 ///
-/// Two caveats, both shared with the other borrowed routes. Neither endpoint
-/// is public API — they are what the CLI itself calls, and can change without
-/// notice. And the stored token lasts about six hours: the CLI renews it while
-/// you use Grok, and nothing renews it for Pulse, so an aged-out login is
-/// reported rather than worked around.
+/// Neither endpoint is public API — they are what the CLI itself calls, and
+/// can change without notice. The CLI's stored token lasts about six hours
+/// and the CLI renews it while you use Grok. Blinky's own login is what keeps
+/// the ring up after that, without borrowing the CLI's refresh token.
 struct GrokUsageService: Sendable {
     var authFile: URL = URL(fileURLWithPath: NSHomeDirectory())
         .appending(path: ".grok/auth.json")
@@ -41,14 +51,34 @@ struct GrokUsageService: Sendable {
     /// The plan's name comes from here, not from the billing reply.
     var settingsEndpoint = URL(string: "https://cli-chat-proxy.grok.com/v1/settings")!
 
-    func fetch() async -> ProviderUsage {
-        switch storedLogin() {
-        case .none:
-            return .unavailable(.grok, reason: .grokSignInRequired)
-        case .expired:
-            return .unavailable(.grok, reason: .grokLoginExpired)
-        case .usable(let token):
-            return await fetch(token: token)
+    /// Stands in for `NetworkSession` in tests. Production leaves it nil.
+    var transport: (@Sendable (URLRequest) async throws -> (Data, URLResponse))? = nil
+
+    /// Blinky's primary Grok login. Production reads `accounts.dat`. Tests
+    /// pass a stand-in so a check never opens a real login.
+    var primaryCredentials: @Sendable () -> AccountCredentials? = {
+        AccountCredentialStore.credentials(for: AccountKey(.grok))
+    }
+
+    /// Renews Blinky's primary login. Production calls `OAuthLogin.refresh`
+    /// and stores the result. It does not receive, and must not write, the
+    /// CLI's file.
+    var renewPrimary: @Sendable (AccountCredentials) async -> AccountCredentials? = { credentials in
+        guard let renewed = try? await OAuthLogin.refresh(credentials, for: .grok) else { return nil }
+        AccountCredentialStore.renewed(renewed, for: AccountKey(.grok))
+        return renewed
+    }
+
+    /// The primary account. `.automatic` tries the CLI, then Blinky's login.
+    /// `.endpoint` is the CLI only. `.tooling` is Blinky's login only.
+    func fetch(source: UsageSource = .automatic) async -> ProviderUsage {
+        switch source {
+        case .endpoint:
+            await fetchFromCLI(fallingBack: false)
+        case .tooling, .desktopApp:
+            await fetchHeld(after: [])
+        case .automatic:
+            await fetchFromCLI(fallingBack: true)
         }
     }
 
@@ -56,17 +86,76 @@ struct GrokUsageService: Sendable {
     /// it. There is no route to choose: what is in `~/.grok/auth.json` belongs
     /// to whichever account the CLI is signed in to, which is not this one.
     func fetch(account: AccountKey, token: String) async -> ProviderUsage {
-        await fetch(token: token, for: account)
+        await fetch(token: token, for: account, refused: .signedOut)
     }
 
-    private func fetch(token: String, for account: AccountKey = AccountKey(.grok)) async -> ProviderUsage {
-        guard let (data, response) = try? await NetworkSession.shared.recordedData(for: request(billingEndpoint, token: token)) else {
+    // MARK: - Which login
+
+    /// The CLI file first. A missing, expired, or refused token is the only
+    /// reason to try Blinky's login; a network failure or a reply that will
+    /// not parse is reported as itself.
+    private func fetchFromCLI(fallingBack: Bool) async -> ProviderUsage {
+        switch storedLogin() {
+        case .usable(let token):
+            let usage = await fetch(token: token, for: AccountKey(.grok), refused: .grokLoginExpired)
+            let recorded = usage.recording(.endpoint)
+            if fallingBack, case .unavailable(.grokLoginExpired) = usage.state {
+                return await fetchHeld(after: recorded.attempts)
+            }
+            return recorded
+        case .expired:
+            let recorded = ProviderUsage.unavailable(.grok, reason: .grokLoginExpired).recording(.endpoint)
+            guard fallingBack else { return recorded }
+            return await fetchHeld(after: recorded.attempts)
+        case .none:
+            let recorded = ProviderUsage.unavailable(.grok, reason: .grokSignInRequired).recording(.endpoint)
+            guard fallingBack else { return recorded }
+            return await fetchHeld(after: recorded.attempts)
+        }
+    }
+
+    /// Blinky's own primary login. Never opens `authFile`.
+    private func fetchHeld(after earlier: [ConnectionDiagnostic.Attempt]) async -> ProviderUsage {
+        let account = AccountKey(.grok)
+        guard var credentials = primaryCredentials() else {
+            return ProviderUsage.unavailable(account, reason: .grokAccountSignInRequired)
+                .recording(.heldLogin, after: earlier)
+        }
+
+        if !credentials.isFresh {
+            guard let renewed = await renewPrimary(credentials) else {
+                return ProviderUsage.unavailable(account, reason: .grokAccountLoginExpired)
+                    .recording(.heldLogin, after: earlier)
+            }
+            credentials = renewed
+        }
+
+        let usage = await fetch(token: credentials.accessToken, for: account, refused: .grokAccountLoginExpired)
+        if case .unavailable(.grokAccountLoginExpired) = usage.state {
+            // Still marked fresh, but the proxy refused it. One renewal, as
+            // Kimi does: the difference between "sign in again" and a token
+            // that had a few seconds left. The CLI's file is not involved.
+            guard let renewed = await renewPrimary(credentials) else {
+                return usage.recording(.heldLogin, after: earlier)
+            }
+            let retried = await fetch(token: renewed.accessToken, for: account, refused: .grokAccountLoginExpired)
+            return retried.recording(.heldLogin, after: earlier)
+        }
+        return usage.recording(.heldLogin, after: earlier)
+    }
+
+    private func fetch(
+        token: String,
+        for account: AccountKey,
+        refused: ProviderUsage.Unavailability
+    ) async -> ProviderUsage {
+        guard let (data, response) = try? await send(request(billingEndpoint, token: token)) else {
             return .unavailable(account, reason: .unreachable)
         }
 
         switch (response as? HTTPURLResponse)?.statusCode {
         case 200: break
-        case 401, 403: return .unavailable(account, reason: account.isPrimary ? .grokLoginExpired : .signedOut)
+        case 401, 403: return .unavailable(account, reason: refused)
         case 429: return .unavailable(account, reason: .rateLimited)
         default: return .unavailable(account, reason: .serverError)
         }
@@ -92,6 +181,11 @@ struct GrokUsageService: Sendable {
             // than a balance — the reason Antigravity reports none either.
             creditBalance: nil
         )
+    }
+
+    private func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
+        if let transport { return try await transport(request) }
+        return try await NetworkSession.shared.recordedData(for: request)
     }
 
     private func request(_ url: URL, token: String) -> URLRequest {
@@ -120,7 +214,7 @@ struct GrokUsageService: Sendable {
         request.timeoutInterval = 4
 
         guard
-            let (data, response) = try? await NetworkSession.shared.recordedData(for: request),
+            let (data, response) = try? await send(request),
             (response as? HTTPURLResponse)?.statusCode == 200,
             let settings = try? JSONDecoder().decode(Settings.self, from: data)
         else { return nil }
