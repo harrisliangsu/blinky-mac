@@ -710,7 +710,7 @@ struct SpendGlanceTests {
         #expect(picture.speed == "86 tokens/s")
         #expect(picture.speedNote == "Output speed is the average of timed replies in this span, from sending a request to the end of its reply. Claude Code, Codex, Grok, and Kimi can be timed.")
         #expect(picture.drawnText.contains("86 tokens/s"))
-        #expect(picture.drawnText.contains("Claude Code, Codex, Grok, and Kimi can be timed."))
+        #expect(picture.drawnText.contains { $0.contains("Claude Code, Codex, Grok, and Kimi can be timed.") })
 
         summary.outputTokensPerSecond = 0.2
         #expect(Self.picture(summary: summary).speed == "0.2 tokens/s")
