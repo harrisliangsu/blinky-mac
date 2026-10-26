@@ -431,6 +431,7 @@ struct SpendGlanceTests {
         #expect(SpendGlanceHeadline.tokenPointSize == 28)
         #expect(SpendGlanceHeadline.moneyPointSize == 15)
         #expect(SpendGlanceHeadline.tokenPointSize > SpendGlanceHeadline.moneyPointSize)
+        #expect(SpendGlanceHeadline.speedPointSize < SpendGlanceHeadline.moneyPointSize)
         #expect(SpendGlanceHeadline.posterTokenPointSize == 40)
         #expect(SpendGlanceHeadline.posterMoneyPointSize == 22)
         #expect(SpendGlanceHeadline.posterTokenPointSize > SpendGlanceHeadline.posterMoneyPointSize)
@@ -694,6 +695,34 @@ struct SpendGlanceTests {
         #expect(unreadOnly.estimate.isEmpty)
         #expect(unreadOnly.unread == ["Zed"])
         #expect(!notes.estimate.map(\.text).contains("By agent"))
+    }
+
+    @Test("The headline shows a span's speed only when replies were timed")
+    func outputSpeedOnTheHeadline() {
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
+
+        var summary = SpendSummary()
+        summary.tokens = 10
+        summary.cost = 1
+        summary.outputTokensPerSecond = 86
+        let picture = Self.picture(summary: summary)
+        #expect(picture.speed == "86 tokens/s")
+        #expect(picture.speedNote == "Output speed is the average of timed replies in this span, from sending a request to the end of its reply. Claude Code, Codex, Grok, and Kimi can be timed.")
+        #expect(picture.drawnText.contains("86 tokens/s"))
+        #expect(picture.drawnText.contains { $0.contains("Claude Code, Codex, Grok, and Kimi can be timed.") })
+
+        summary.outputTokensPerSecond = 0.2
+        #expect(Self.picture(summary: summary).speed == "0.2 tokens/s")
+        #expect(OutputSpeedText.number(0.04, locale: Self.englishLocale) == "0.04")
+        #expect(OutputSpeedText.number(0.04, locale: Self.englishLocale) != "0")
+        #expect(OutputSpeedText.firstToken(2.5, locale: Self.englishLocale, bundle: Self.english) == "First token 2.5 s")
+
+        summary.outputTokensPerSecond = nil
+        let quiet = Self.picture(summary: summary)
+        #expect(quiet.speed == nil)
+        #expect(quiet.speedNote == nil)
+        #expect(!quiet.drawnText.contains("tokens/s"))
     }
 
     private static func picture(

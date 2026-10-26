@@ -31,14 +31,62 @@ enum SpendGlanceDimension: String, CaseIterable, Identifiable, Sendable {
     }
 }
 
-/// How large the glance writes the two headline figures. Tokens stay the
-/// large one whether or not a cost was priced. Both are centered.
+/// How large the glance writes the headline figures. Tokens stay the large
+/// one whether or not a cost was priced. Speed, when a reply was timed, sits
+/// under the cost and stays smaller than it. All three are centered.
 enum SpendGlanceHeadline {
     static let tokenPointSize: CGFloat = 28
     static let moneyPointSize: CGFloat = 15
+    static let speedPointSize: CGFloat = 13
     static let posterTokenPointSize: CGFloat = 40
     static let posterMoneyPointSize: CGFloat = 22
     static let centersFigures = true
+}
+
+/// How the glance writes a speed. A positive rate that would round to zero
+/// keeps a decimal, so a slow reply is not shown as a measured zero.
+enum OutputSpeedText {
+    static func number(_ tokensPerSecond: Double, locale: Locale = LocalizationSource.locale) -> String {
+        let digits: Int
+        if tokensPerSecond >= 0.5 {
+            digits = 0
+        } else if tokensPerSecond >= 0.05 {
+            digits = 1
+        } else {
+            digits = 2
+        }
+        return tokensPerSecond.formatted(
+            .number.precision(.fractionLength(digits)).grouping(.never).locale(locale)
+        )
+    }
+
+    static func line(
+        _ tokensPerSecond: Double,
+        locale: Locale = LocalizationSource.locale,
+        bundle: Bundle = LocalizationSource.bundle
+    ) -> String {
+        let figure = number(tokensPerSecond, locale: locale)
+        return String(localized: "\(figure) tokens/s", bundle: bundle)
+    }
+
+    static func firstToken(
+        _ seconds: TimeInterval,
+        locale: Locale = LocalizationSource.locale,
+        bundle: Bundle = LocalizationSource.bundle
+    ) -> String {
+        let digits = seconds >= 0.05 ? 1 : 2
+        let figure = seconds.formatted(
+            .number.precision(.fractionLength(digits)).grouping(.never).locale(locale)
+        )
+        return String(localized: "First token \(figure) s", bundle: bundle)
+    }
+
+    static func footnote(bundle: Bundle = LocalizationSource.bundle) -> String {
+        String(
+            localized: "Output speed is the average of timed replies in this span, from sending a request to the end of its reply. Claude Code, Codex, Grok, and Kimi can be timed.",
+            bundle: bundle
+        )
+    }
 }
 
 /// The glance body, top to bottom, under the span picker.
@@ -548,6 +596,9 @@ struct SpendGlancePicture: Equatable, Sendable {
     var tokens = ""
     var cost: String?
     var costNote: String?
+    /// Nil when the span timed no reply. Never a zero standing in for that.
+    var speed: String?
+    var speedNote: String?
     var agentsTitle = ""
     var agents: [Agent] = []
     var activityTitle = ""
@@ -559,6 +610,8 @@ struct SpendGlancePicture: Equatable, Sendable {
         var lines = [brand, span, tokens]
         if let cost { lines.append(cost) }
         if let costNote { lines.append(costNote) }
+        if let speed { lines.append(speed) }
+        if let speedNote { lines.append(speedNote) }
         if !agents.isEmpty { lines.append(agentsTitle) }
         for agent in agents {
             lines.append(agent.name)
@@ -603,6 +656,10 @@ struct SpendGlancePicture: Equatable, Sendable {
         case .amount(let amount, let partial):
             picture.cost = SpendFormat.money(amount, locale: locale)
             if partial { picture.costNote = String(localized: "Partial estimate", bundle: bundle) }
+        }
+        if let rate = summary.outputTokensPerSecond {
+            picture.speed = OutputSpeedText.line(rate, locale: locale, bundle: bundle)
+            picture.speedNote = OutputSpeedText.footnote(bundle: bundle)
         }
         let rows = SpendGlance.rows(summary, dimension: dimension)
         if !rows.isEmpty {
