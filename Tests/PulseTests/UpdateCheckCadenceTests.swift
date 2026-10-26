@@ -154,7 +154,10 @@ struct UpdateCheckCadenceTests {
             now: now,
             justFired: false
         )
-        #expect(sixHours.sparkleInterval == 6 * 3_600)
+        // `#expect` rejects Optional<TimeInterval> compared with an Int
+        // expression, even when both numbers are 21600. The right side has
+        // to be a time interval.
+        #expect(sixHours.sparkleInterval == TimeInterval(6 * 3_600))
         #expect(sixHours.ownTimerDelay == nil)
 
         let halfHour = UpdateCheckSchedule.application(
@@ -166,7 +169,7 @@ struct UpdateCheckCadenceTests {
             justFired: false
         )
         #expect(halfHour.sparkleInterval == 1_800)
-        #expect(halfHour.ownTimerDelay == 20 * 60)
+        #expect(halfHour.ownTimerDelay == TimeInterval(20 * 60))
 
         let due = UpdateCheckSchedule.application(
             interval: 1_800,
@@ -221,7 +224,7 @@ struct UpdateCheckCadenceTests {
             justFired: false
         )
         #expect(noUpdater.sparkleInterval == nil)
-        #expect(noUpdater.ownTimerDelay == 20 * 60)
+        #expect(noUpdater.ownTimerDelay == TimeInterval(20 * 60))
 
         let sameLength = UpdateCheckSchedule.application(
             interval: UpdateCheckCadence(amount: 1, unit: .day).timeInterval,
