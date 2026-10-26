@@ -503,6 +503,11 @@
 "Forward" = "Вперёд";
 "No matches" = "Нет совпадений";
 
+/* Providers page filter and order */
+"Alphabetical" = "По алфавиту";
+"Panel order" = "Порядок панели";
+"Clear search" = "Очистить поиск";
+
 /* Resetting the rail order */
 "Reset order" = "Сбросить порядок";
 "Back to the order Blinky ships with." = "Вернуть порядок по умолчанию.";
@@ -971,6 +976,9 @@
 "Too few replies in the last 24 hours to time." = "За последние 24 часа слишком мало ответов, чтобы измерить скорость.";
 "First token is Codex's own measure of how long a turn waited for it." = "«Первый токен» — сколько каждый запрос ждал первого токена, по замерам самого Codex.";
 "Claude Code doesn't record when the first token arrived, so its wait isn't shown." = "Claude Code не записывает, когда пришёл первый токен, поэтому время ожидания не показано.";
+"Grok doesn't record when the first token arrived, so its wait isn't shown." = "Grok не записывает, когда пришёл первый токен, поэтому время ожидания не показано.";
+"Kimi doesn't record when the first token arrived, so its wait isn't shown." = "Kimi не записывает, когда пришёл первый токен, поэтому время ожидания не показано.";
+"First token is Kimi Code's own measure of how long a step waited for it." = "«Первый токен» — сколько каждый шаг ждал первого токена, по замерам самого Kimi Code.";
 "%@ s" = "%@ с";
 "Prompt cache (%@)" = "Кэш промптов (%@)";
 "%@ left" = "осталось %@";

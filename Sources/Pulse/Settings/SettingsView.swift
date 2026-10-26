@@ -31,6 +31,9 @@ struct SettingsView: View {
     /// Narrows the sidebar. A search lists matching accounts; with the field
     /// empty they stay on the Providers page.
     @State private var search = ""
+    /// Narrows the Providers page. Separate from `search`: that field belongs
+    /// to the sidebar, and this one only filters the page.
+    @State private var providerQuery = ""
     @State private var spend: SpendPaneModel
     @State private var history: AccountHistoryModel
     @State private var flows: AccountFlows
@@ -152,7 +155,9 @@ struct SettingsView: View {
                         case .spend:
                             TokenSpendPane(settings: settings, model: spend, openRecap: openRecap)
                         case .providers:
-                            ProvidersHubPane(settings: settings, navigation: navigation)
+                            ProvidersHubPane(
+                                settings: settings, navigation: navigation, query: $providerQuery
+                            )
                         case .about: AboutPane(update: update, settings: settings, alerts: alerts)
                         case .integrations: DeveloperIntegrationsView(settings: settings)
                         case .extensions:

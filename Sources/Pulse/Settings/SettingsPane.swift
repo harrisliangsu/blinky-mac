@@ -161,7 +161,8 @@ enum SettingsPane: Hashable {
         case .experimental:
             [.localized("Liquid docking")]
         case .providers:
-            [.localized("Enabled"), .localized("Subscriptions"), .localized("API and pay-as-you-go")]
+            [.localized("Enabled"), .localized("Subscriptions"), .localized("API and pay-as-you-go"),
+             .localized("Alphabetical"), .localized("Panel order")]
         case .account, .spend, .about, .integrations:
             []
         }

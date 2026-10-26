@@ -155,6 +155,7 @@ struct AppSettingsLayoutTests {
         settings.addExhaustionStage()
         settings.resetOrder()
         settings.providerOrder = ["codex"]
+        settings.providersListOrder = .panel
 
         #expect(counter.calls.change == 0)
         #expect(counter.calls.layout == 0)

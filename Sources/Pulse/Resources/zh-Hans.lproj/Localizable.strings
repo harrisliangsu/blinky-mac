@@ -539,6 +539,11 @@
 "Forward" = "前进";
 "No matches" = "没有匹配的项目";
 
+/* 供应商页的筛选和排序 */
+"Alphabetical" = "字母序";
+"Panel order" = "面板顺序";
+"Clear search" = "清除搜索";
+
 /* 重置排序 */
 "Reset order" = "重置顺序";
 "Back to the order Blinky ships with." = "恢复成 Blinky 默认的排列。";
@@ -1041,6 +1046,9 @@
 "Too few replies in the last 24 hours to time." = "最近 24 小时的回复太少，暂不显示速度。";
 "First token is Codex's own measure of how long a turn waited for it." = "首字延迟由 Codex 自己测量，是每轮等到第一个 token 的时间。";
 "Claude Code doesn't record when the first token arrived, so its wait isn't shown." = "Claude Code 不记录第一个 token 何时到达，所以这里不显示首字延迟。";
+"Grok doesn't record when the first token arrived, so its wait isn't shown." = "Grok 不记录第一个 token 何时到达，所以这里不显示首字延迟。";
+"Kimi doesn't record when the first token arrived, so its wait isn't shown." = "Kimi 不记录第一个 token 何时到达，所以这里不显示首字延迟。";
+"First token is Kimi Code's own measure of how long a step waited for it." = "首字延迟由 Kimi Code 自己测量，是每一步等到第一个 token 的时间。";
 "%@ s" = "%@ 秒";
 "Prompt cache (%@)" = "提示缓存（%@）";
 "%@ left" = "还剩 %@";

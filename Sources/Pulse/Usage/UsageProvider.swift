@@ -347,6 +347,21 @@ enum Provider: String, CaseIterable, Identifiable, Codable, Sendable {
         }
     }
 
+    /// Whether this provider's own logs can time an assistant reply — output
+    /// tokens over the time from the request (or a tool result) to that
+    /// reply's last line. Quota and billing replies are not a speed, so Z.ai
+    /// and the GLM Coding Plan are not here.
+    var timesLocalReplies: Bool {
+        guard let written = handWritten else { return false }
+        return switch written {
+        case .claudeCode, .codex, .grok, .kimiCode: true
+        case .kiro, .antigravity, .cursor, .openCodeGo, .ollamaCloud,
+             .zai, .glmCoding, .minimax, .copilot, .grokBot,
+             .volcengine, .commandCode, .deepSeek, .devin, .xiaomiMiMo, .sub2api,
+             .newAPI, .v2ex, .qoder, .stepFun, .pulseExtension: false
+        }
+    }
+
     /// Whether Pulse can determine that this provider's local agent is in the
     /// middle of a turn. This is deliberately separate from
     /// `keepsLocalTranscripts`: Kiro and ZCode leave enough lifecycle records

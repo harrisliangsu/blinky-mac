@@ -105,6 +105,8 @@ struct AppSettingsPersistenceTests {
         #expect(defaults.string(forKey: "settings.menuBarAccount") == "claudeCode")
         settings.menuBarAccount = nil
         #expect(defaults.object(forKey: "settings.menuBarAccount") == nil)
+        settings.providersListOrder = .panel
+        #expect(defaults.string(forKey: "settings.providersListOrder") == "panel")
 
         settings.deepSeekBasis = .budget
         #expect(defaults.string(forKey: "settings.deepSeekBasis") == "budget")
@@ -252,6 +254,7 @@ struct AppSettingsPersistenceTests {
         first.lowBalanceAlerts = ["deepSeek": 5]
         first.enabledAccounts = ["codex", "claudeCode"]
         first.providerOrder = ["codex", "claudeCode"]
+        first.providersListOrder = .panel
         first.pinnedWindows = ["codex": "weekly"]
         first.sources = ["codex": "endpoint"]
         first.sessionBrowsers = ["devin": "chrome"]
@@ -346,6 +349,7 @@ struct AppSettingsPersistenceTests {
         #expect(back.enabledAccounts == first.enabledAccounts.union([extra.id]))
         #expect(back.extraAccounts.map(\.key) == [extra])
         #expect(back.providerOrder == first.providerOrder)
+        #expect(back.providersListOrder == .panel)
         #expect(back.pinnedWindows == ["codex": "weekly"])
         #expect(back.sources == ["codex": "endpoint"])
         #expect(back.sessionBrowsers == ["devin": "chrome"])
@@ -461,6 +465,18 @@ struct AppSettingsPersistenceTests {
         #expect(back.updateDiscovery == .notifyFirst)
         #expect(back.primerHours == .default)
         #expect(back.wantsAlerts)
+        #expect(back.providersListOrder == .name)
+    }
+
+    @Test("An unknown Providers page order is alphabetical")
+    func unknownProvidersListOrderIsAlphabetical() {
+        let (defaults, cleanup) = Self.isolatedDefaults()
+        defer { cleanup() }
+        defaults.set("popular", forKey: "settings.providersListOrder")
+
+        let back = AppSettings.restoredSettings(from: defaults, detected: [], scan: ExtensionCatalog.Scan())
+
+        #expect(back.providersListOrder == .name)
     }
 
     @Test("A stored forecast choice and an empty stage list are kept")

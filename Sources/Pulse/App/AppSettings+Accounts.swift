@@ -4,15 +4,23 @@ import Foundation
 // Which accounts exist, which are on the rail, and in what order. Everything
 // here is about the *set* of rings, so a change to it resizes the rail
 // (`resizeRail`) before it is announced and then goes through `onChange`: a
-// provider newly switched on has to be fetched. The exception is the order,
-// which is layout and fetches nothing.
+// provider newly switched on has to be fetched. The rail's order is the
+// exception: it is layout and fetches nothing. The Providers page's order is
+// not about the rail, so it resizes nothing and fetches nothing.
 
 extension AppSettings.Key {
     static let extraAccounts = "settings.extraAccounts"
     static let extensionNames = "settings.extensionNames"
     static let providerOrder = "settings.providerOrder"
+    /// Alphabetical or panel order on the Providers page. The rail's order is
+    /// `providerOrder`.
+    static let providersListOrder = "settings.providersListOrder"
     // Which accounts are enabled is `ProviderSelection.enabledKey`: the first
     // run and upgrade offers read and write it too.
+}
+
+extension AppSettings.Default {
+    static let providersListOrder: ProviderListOrder = .name
 }
 
 extension AppSettings {
@@ -36,6 +44,12 @@ extension AppSettings {
         // every provider when it fires. Rearranging the rail is a layout
         // change — the panel is `@Observable` and redraws on its own, and
         // nobody's rate limit should pay for a reorder.
+    }
+
+    func providersListOrderChanged(from old: ProviderListOrder) {
+        guard providersListOrder != old else { return }
+        defaults.set(providersListOrder.rawValue, forKey: Key.providersListOrder)
+        // The Providers page only. The rail, and every fetch, stay as they were.
     }
 
     func extensionsChanged(from old: [PulseExtension]) {
@@ -137,12 +151,18 @@ extension AppSettings {
     ///
     /// `localizedStandardCompare` is Finder's comparison: case- and
     /// accent-insensitive, and it puts any digits in a name in numeric order.
-    /// The same one the settings search matches with.
+    /// The same one the settings search matches with. The Providers page's
+    /// alphabetical order uses it too, so the two lists agree until somebody
+    /// arranges the rail.
     private func byName(_ a: AccountKey, _ b: AccountKey) -> Bool {
-        let left = label(for: a)
-        let right = label(for: b)
-        // Ids as the tie-break, so two rows that read the same never swap
-        // places between launches.
+        Self.namePrecedes(a, b, label: label(for:))
+    }
+
+    /// Finder's order for the name on a row. The account id breaks a tie, so
+    /// two rows that read the same never swap places between launches.
+    static func namePrecedes(_ a: AccountKey, _ b: AccountKey, label: (AccountKey) -> String) -> Bool {
+        let left = label(a)
+        let right = label(b)
         if left.localizedStandardCompare(right) == .orderedSame { return a.id < b.id }
         return left.localizedStandardCompare(right) == .orderedAscending
     }

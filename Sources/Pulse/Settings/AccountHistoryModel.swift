@@ -159,6 +159,12 @@ final class AccountHistoryModel {
             guard !Task.isCancelled else { return }
             ledgers[provider] = read
             historyReads[provider] = .answered(read)
+            // Grok and Kimi time replies from these logs. Re-read when one
+            // finishes, not on the quota timer and not while a line is still
+            // being written.
+            if provider.timesLocalReplies {
+                await watchReplyTimings(provider: provider, readID: readID, source: .agents(agents))
+            }
             return
         }
 
@@ -175,6 +181,44 @@ final class AccountHistoryModel {
             codexAccount = await store.codexAccountUsage()
             if let codexAccount {
                 store.noteCodexCredits(codexAccount)
+            }
+        }
+
+        // Claude Code and Codex. The same watch as Grok and Kimi: a finished
+        // reply, not a streaming line, and not the next adaptive refresh.
+        if provider.timesLocalReplies {
+            await watchReplyTimings(provider: provider, readID: readID, source: .transcripts)
+        }
+    }
+
+    /// Stay with the open pane and replace its ledger when a recent session
+    /// log ends a reply. Leaving the pane cancels this task. The first look
+    /// only records what is already on disk.
+    private func watchReplyTimings(provider: Provider, readID: UUID, source: CardHistorySource) async {
+        let requestKey = key
+        var previous = await ReplyTimingWatch.snapshot(for: provider)
+        while !Task.isCancelled {
+            do { try await Task.sleep(for: ReplyTimingWatch.poll) } catch { return }
+            guard historyReadID == readID, key == requestKey else { return }
+            let next = await ReplyTimingWatch.snapshot(for: provider)
+            let closed = await ReplyTimingWatch.includesClosedReply(
+                provider: provider, previous: previous, next: next
+            )
+            previous = next
+            guard closed, historyReadID == readID, key == requestKey else { continue }
+            switch source {
+            case .transcripts:
+                let scanned = await UsageLedgerReader.shared.ledger(for: provider, refresh: true)
+                guard historyReadID == readID, key == requestKey else { return }
+                ledgers[provider] = scanned
+                historyReads[provider] = .answered(scanned)
+            case .agents(let agents):
+                let read = await UsageLedger.reading(agents)
+                guard historyReadID == readID, key == requestKey else { return }
+                ledgers[provider] = read
+                historyReads[provider] = .answered(read)
+            case .accountStatistics, .accountLogs:
+                return
             }
         }
     }

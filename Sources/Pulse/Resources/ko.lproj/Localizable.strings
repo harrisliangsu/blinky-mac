@@ -512,6 +512,11 @@
 "Forward" = "앞으로";
 "No matches" = "일치하는 항목 없음";
 
+/* Providers page filter and order */
+"Alphabetical" = "이름순";
+"Panel order" = "패널 순서";
+"Clear search" = "검색 지우기";
+
 /* Resetting the rail order */
 "Reset order" = "순서 초기화";
 "Back to the order Blinky ships with." = "Blinky의 기본 순서로 되돌립니다.";
@@ -1043,6 +1048,9 @@
 "Too few replies in the last 24 hours to time." = "최근 24시간 동안의 답변이 적어 아직 속도를 표시하지 않습니다.";
 "First token is Codex's own measure of how long a turn waited for it." = "첫 토큰은 Codex가 직접 잰, 각 턴에서 첫 토큰이 오기까지 걸린 시간입니다.";
 "Claude Code doesn't record when the first token arrived, so its wait isn't shown." = "Claude Code는 첫 토큰이 도착한 시각을 기록하지 않아 지연 시간을 표시하지 않습니다.";
+"Grok doesn't record when the first token arrived, so its wait isn't shown." = "Grok는 첫 토큰이 도착한 시각을 기록하지 않아 지연 시간을 표시하지 않습니다.";
+"Kimi doesn't record when the first token arrived, so its wait isn't shown." = "Kimi는 첫 토큰이 도착한 시각을 기록하지 않아 지연 시간을 표시하지 않습니다.";
+"First token is Kimi Code's own measure of how long a step waited for it." = "첫 토큰은 Kimi Code가 직접 잰, 각 단계에서 첫 토큰이 오기까지 걸린 시간입니다.";
 "%@ s" = "%@초";
 "Prompt cache (%@)" = "프롬프트 캐시(%@)";
 "%@ left" = "%@ 남음";
