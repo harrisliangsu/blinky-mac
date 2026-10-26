@@ -253,11 +253,6 @@ struct AccountUsageCard: View {
         return rows
     }
 
-    /// The readers that time replies (`ReplyTiming`).
-    private static func timesReplies(_ provider: Provider) -> Bool {
-        provider == .claudeCode || provider == .codex
-    }
-
     /// **One table, not a section per measure.** Share, cache hit rate and
     /// speed are all facts about a model; stacked as three lists they named
     /// every model three times, each list under its own paragraph. A column
@@ -336,7 +331,7 @@ struct AccountUsageCard: View {
     /// the card, in place of a paragraph under each list.
     private var tableNote: String? {
         guard !modelRows.isEmpty else { return nil }
-        guard Self.timesReplies(provider) else {
+        guard provider.timesLocalReplies else {
             return String.localized("Share and cache hit cover the last 31 days.")
         }
         var sentences = [String.localized("Share and cache hit cover the last 31 days; tokens per second only the last 24 hours, from sending a request to the end of its reply.")]
@@ -344,6 +339,14 @@ struct AccountUsageCard: View {
             sentences.append(String.localized("Too few replies in the last 24 hours to time."))
         } else if provider == .codex {
             sentences.append(String.localized("First token is Codex's own measure of how long a turn waited for it."))
+        } else if provider == .kimiCode {
+            if speeds.contains(where: { $0.firstToken != nil }) {
+                sentences.append(String.localized("First token is Kimi Code's own measure of how long a step waited for it."))
+            } else {
+                sentences.append(String.localized("Kimi doesn't record when the first token arrived, so its wait isn't shown."))
+            }
+        } else if provider == .grok {
+            sentences.append(String.localized("Grok doesn't record when the first token arrived, so its wait isn't shown."))
         } else {
             sentences.append(String.localized("Claude Code doesn't record when the first token arrived, so its wait isn't shown."))
         }

@@ -1048,6 +1048,9 @@
 "Too few replies in the last 24 hours to time." = "最近 24 小時的回覆太少，暫不顯示速度。";
 "First token is Codex's own measure of how long a turn waited for it." = "首字延遲由 Codex 自行測量，是每輪等到第一個 token 的時間。";
 "Claude Code doesn't record when the first token arrived, so its wait isn't shown." = "Claude Code 不記錄第一個 token 何時到達，所以這裡不顯示首字延遲。";
+"Grok doesn't record when the first token arrived, so its wait isn't shown." = "Grok 不記錄第一個 token 何時到達，所以這裡不顯示首字延遲。";
+"Kimi doesn't record when the first token arrived, so its wait isn't shown." = "Kimi 不記錄第一個 token 何時到達，所以這裡不顯示首字延遲。";
+"First token is Kimi Code's own measure of how long a step waited for it." = "首字延遲由 Kimi Code 自行測量，是每一步等到第一個 token 的時間。";
 "%@ s" = "%@ 秒";
 "Prompt cache (%@)" = "提示快取（%@）";
 "%@ left" = "還剩 %@";

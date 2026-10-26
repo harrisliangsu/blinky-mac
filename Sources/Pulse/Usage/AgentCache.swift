@@ -275,6 +275,25 @@ enum AgentCache {
         /// and a slot that silently decoded with none would let a drill-down
         /// mistake "no detail" for "no work".
         let models: [String: TokenTally]
+        /// **Required, not defaulted.** Reply timings live on the slot, and a
+        /// cache that decoded with none would show a model as having no speed
+        /// when the speed was simply never saved. Missing it fails the decode
+        /// so the store is read again. The cache version stays 13: token
+        /// totals did not change, and a bump would drop archive marks for
+        /// days this reader still sees.
+        let timings: [String: ReplyTiming]
+
+        init(
+            start: Date, tokens: Int, cost: Double, unpricedTokens: Int,
+            models: [String: TokenTally], timings: [String: ReplyTiming] = [:]
+        ) {
+            self.start = start
+            self.tokens = tokens
+            self.cost = cost
+            self.unpricedTokens = unpricedTokens
+            self.models = models
+            self.timings = timings
+        }
     }
 
     struct StoredSession: Codable, Equatable {
@@ -340,7 +359,10 @@ enum AgentCache {
             unpricedModels: saved.ledger.unpricedModels,
             modelNames: saved.ledger.modelNames,
             slots: saved.ledger.slots.map {
-                .init(start: $0.start, tokens: $0.tokens, cost: $0.cost, unpricedTokens: $0.unpricedTokens, models: $0.models)
+                .init(
+                    start: $0.start, tokens: $0.tokens, cost: $0.cost,
+                    unpricedTokens: $0.unpricedTokens, models: $0.models, timings: $0.timings
+                )
             }
         )
         ledger.sessions = saved.ledger.sessions.map(\.session)
@@ -375,7 +397,10 @@ enum AgentCache {
             unpricedModels: ledger.unpricedModels,
             modelNames: ledger.modelNames,
             slots: ledger.slots.map {
-                StoredSlot(start: $0.start, tokens: $0.tokens, cost: $0.cost, unpricedTokens: $0.unpricedTokens, models: $0.models)
+                StoredSlot(
+                    start: $0.start, tokens: $0.tokens, cost: $0.cost,
+                    unpricedTokens: $0.unpricedTokens, models: $0.models, timings: $0.timings
+                )
             }
         )
 
@@ -417,7 +442,10 @@ extension AgentCache.StoredSession {
             start: session.start, end: session.end, tokens: session.tokens, cost: session.cost,
             unpricedTokens: session.unpricedTokens,
             slots: session.slots.map {
-                .init(start: $0.start, tokens: $0.tokens, cost: $0.cost, unpricedTokens: $0.unpricedTokens, models: $0.models)
+                .init(
+                    start: $0.start, tokens: $0.tokens, cost: $0.cost,
+                    unpricedTokens: $0.unpricedTokens, models: $0.models, timings: $0.timings
+                )
             },
             days: session.days.map {
                 .init(date: $0.date, tokens: $0.tokens, cost: $0.cost, unpricedTokens: $0.unpricedTokens)
@@ -432,7 +460,10 @@ extension AgentCache.StoredSession {
             id: id, name: name, title: title, project: project?.unlessScratch,
             start: start, end: end, tokens: tokens, cost: cost, unpricedTokens: unpricedTokens,
             slots: slots.map {
-                .init(start: $0.start, tokens: $0.tokens, cost: $0.cost, unpricedTokens: $0.unpricedTokens, models: $0.models)
+                .init(
+                    start: $0.start, tokens: $0.tokens, cost: $0.cost,
+                    unpricedTokens: $0.unpricedTokens, models: $0.models, timings: $0.timings
+                )
             },
             days: days.map {
                 .init(date: $0.date, tokens: $0.tokens, cost: $0.cost, unpricedTokens: $0.unpricedTokens)
