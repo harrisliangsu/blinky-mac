@@ -351,7 +351,8 @@ struct TokenActivityRenderTests {
     func renderTheViews() throws {
         let destination = URL(fileURLWithPath: try #require(ProcessInfo.processInfo.environment["PULSE_ACTIVITY_PREVIEW"]))
         try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true)
-        defer { LocalizationSource.use(.system) }
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
 
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "UTC")!

@@ -69,11 +69,15 @@ enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
 /// sub-bundle instead, so the change takes effect immediately rather than on
 /// the next launch.
 enum LocalizationSource {
-    private static let lock = NSLock()
-    // Written only from the main thread when the setting changes, read from
-    // anywhere a string is looked up; the lock covers the crossing.
+    // Recursive: a hold keeps the lock for the whole check, and the lookup
+    // and `use(_:)` re-enter it from that same thread.
+    private static let lock = NSRecursiveLock()
+    // Written when the setting changes, and for the duration of a test hold.
+    // Read from anywhere a string is looked up. The lock covers both.
     nonisolated(unsafe) private static var override: Bundle?
     nonisolated(unsafe) private static var chosen: AppLanguage = .system
+    /// The language each open hold replaced, newest last.
+    nonisolated(unsafe) private static var suspended: [(AppLanguage, Bundle?)] = []
 
     static var bundle: Bundle {
         lock.withLock { override } ?? .module
@@ -90,17 +94,29 @@ enum LocalizationSource {
     }
 
     static func use(_ language: AppLanguage) {
-        lock.withLock {
-            chosen = language
-            override = language.bundleName.flatMap(loadTable)
-        }
+        lock.withLock { assign(language) }
     }
 
-    /// One language's strings, independent of `use(_:)`.
+    /// Keeps `language` in force until `end()`.
     ///
-    /// A test that asserts a sentence has to name the language. Reading
-    /// `bundle` instead follows whatever another test set, and two lookups of
-    /// the same key can disagree.
+    /// `use(_:)` only covers its own assignment. Suites run in parallel, so
+    /// another test can switch the language before an assertion reads it.
+    /// The hold keeps the lock until `end()`, and every other lookup waits.
+    /// `end()` puts back the language that was current when the hold opened,
+    /// and it runs on that same thread — `defer` does, including across an
+    /// `await` on the main actor, which stays on the main thread.
+    static func hold(_ language: AppLanguage) -> Hold {
+        lock.lock()
+        suspended.append((chosen, override))
+        assign(language)
+        return Hold()
+    }
+
+    /// One language's strings, independent of the process language.
+    ///
+    /// A test that can pass this bundle in does not take `hold(_:)`. A test
+    /// that reads `String.localized` does: two lookups of the same key can
+    /// otherwise disagree.
     static func bundle(for language: AppLanguage) -> Bundle {
         guard let name = language.bundleName else { return .module }
         return loadTable(named: name) ?? .module
@@ -128,6 +144,45 @@ enum LocalizationSource {
         return Bundle.module.resourceURL
             .map { $0.appendingPathComponent("\(match).lproj") }
             .flatMap { Bundle(url: $0) }
+    }
+
+    /// Caller already holds `lock`.
+    private static func assign(_ language: AppLanguage) {
+        chosen = language
+        override = language.bundleName.flatMap(loadTable)
+    }
+
+    /// Caller is the thread that opened the matching hold, and still holds `lock`.
+    fileprivate static func releaseHold() {
+        let previous = suspended.removeLast()
+        chosen = previous.0
+        override = previous.1
+        lock.unlock()
+    }
+
+    /// One `hold(_:)` still open.
+    final class Hold: @unchecked Sendable {
+        private let thread = Thread.current
+        private var ended = false
+
+        fileprivate init() {}
+
+        /// Puts back the language this hold replaced, and lets other callers proceed.
+        func end() {
+            guard !ended else { return }
+            precondition(
+                Thread.current == thread,
+                "End the language hold on the thread that opened it."
+            )
+            ended = true
+            LocalizationSource.releaseHold()
+        }
+
+        deinit {
+            if !ended {
+                end()
+            }
+        }
     }
 }
 

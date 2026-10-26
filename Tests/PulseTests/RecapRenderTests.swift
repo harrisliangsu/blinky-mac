@@ -25,7 +25,8 @@ struct RecapRenderTests {
     @Test(.enabled(if: ProcessInfo.processInfo.environment["PULSE_RECAP_PREVIEW"] != nil))
     func renderEveryCardInEveryLanguage() throws {
         let destination = URL(fileURLWithPath: try #require(ProcessInfo.processInfo.environment["PULSE_RECAP_PREVIEW"]))
-        defer { LocalizationSource.use(.system) }
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
 
         for (folder, language) in Self.languages {
             LocalizationSource.use(language)

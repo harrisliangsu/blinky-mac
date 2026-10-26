@@ -20,6 +20,7 @@ Historical matrix and disagreement numbers: [decisions/panel-frame.md](decisions
 Six languages: English, Simplified Chinese, Traditional Chinese, Japanese, Korean and Russian. Strings in `Sources/Pulse/Resources/{en,zh-Hans,zh-Hant,ja,ko,ru}.lproj`. `Package.swift` sets `defaultLocalization: "en"`.
 
 - Language follows the system unless Settings pins one. Takes effect **without relaunch**: `LocalizationSource` swaps the `.lproj` sub-bundle. Lookups are a function call, so SwiftUI has nothing to observe — views that show copy carry `.id(settings.language)`.
+- A test that checks a sentence pins that language with `LocalizationSource.hold(_:)` until `end()`. `use(_:)` alone loses the race to another test. [testing.md](testing.md)
 - `UsageWindow.Kind` and `ProviderUsage.Unavailability` are **cases, not stored strings**, so a reading taken in one language is not frozen when the user switches.
 - Always `String.localized(_:)` or `Text(localized:)` (`Localization.swift`). Implicit SwiftUI localization (`Text("…")`, `Button("…")`) resolves against `Bundle.main`, which for a SwiftPM executable is the bare binary — silent English forever.
 - Keys are the English text. Interpolated keys use **non-positional** `%@` (`"%@ used, %@"`). `%1$@` in the strings file misses and falls back to English.

@@ -51,8 +51,8 @@ struct SettingsNavigationTests {
 
     @Test("Usage and Notifications are the pane names, and the old names still find them")
     func usageCardReplacesRings() {
-        LocalizationSource.use(.english)
-        defer { LocalizationSource.use(.system) }
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
 
         #expect(SettingsPane.panel == [.appearance, .usageCard, .placement])
         #expect(SettingsPane.usageCard.title == "Usage")
