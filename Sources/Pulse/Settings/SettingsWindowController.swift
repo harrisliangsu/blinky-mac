@@ -73,9 +73,10 @@ final class SettingsWindowController {
         // recap's "Open Token spend" reaches an open window, which stays put.
         // The Dock policy is applied before activation. A change out of
         // `.accessory` activates on the next turn (`MainWindowActivation`),
-        // so the menu bar names Blinky rather than the app that was frontmost.
-        // Centre before the Dock policy orders the window forward. Ordering
-        // front before that policy change left the window behind other apps.
+        // and the claim names the app that was frontmost, so the menu bar
+        // names Blinky. Centre before the Dock policy orders the window
+        // forward. Ordering front before that policy change left the window
+        // behind other apps.
         let wasVisible = window.isVisible
         if !wasVisible { window.center() }
         dock.apply(showingWindow: window)

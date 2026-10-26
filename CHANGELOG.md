@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.27
+
+- **The menu bar shows Blinky when its window is shown.** Opening Settings, or making that window key, puts Blinky's name in the menu bar. [#85](https://github.com/harrisliangsu/blinky-mac/pull/85)
+
 ## 1.5.26
 
 - **The automatic update check can run on an interval you choose.** Under Settings → About, next to Check automatically, the interval is a number and a unit of minutes, hours, days, or weeks, defaulting to 12 hours where it was a fixed two hours, and changing it reschedules the next check without restarting Blinky. Check now still opens the update window, and Notify first, Show the window, and Install silently stay as they are. [#89](https://github.com/harrisliangsu/blinky-mac/pull/89)

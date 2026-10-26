@@ -604,7 +604,7 @@ final class AppUpdate {
     /// The frame name is Sparkle's (`SUUpdateAlert.windowDidLoad`, 2.9.6). The
     /// controller class is the same window when the frame name is missing.
     fileprivate func focusUpdateOffer() {
-        NSApp.activate(ignoringOtherApps: true)
+        MainWindowActivation.claimFrontmostApplication()
         hideSparkleAutomaticCheckboxes()
         for window in NSApp.windows where Self.isSparkleUpdateOffer(
             frameAutosaveName: window.frameAutosaveName,

@@ -73,7 +73,7 @@ final class SpendGlanceController {
         if let dock {
             dock.apply(showingWindow: window)
         } else {
-            NSApp.activate(ignoringOtherApps: true)
+            MainWindowActivation.claimFrontmostApplication()
             MainWindowActivation.orderFront(window)
         }
         // `makeKey` does nothing while Blinky is still inactive. The click

@@ -6,10 +6,12 @@ import Testing
 /// When opening a tracked window should claim the menu bar.
 ///
 /// The decision is `MainWindowActivation`. The call sites all go through
-/// `DockPresence.apply(showingWindow:)`: Settings (the usage card's grid symbol, the
-/// panel menu's Settings…, the menu bar item, ⌘,, a reopen, `pulse://settings`,
-/// and a clicked notification), the recap, and the service chooser. An update
-/// offer uses `apply()` with no window; a policy change still waits a turn.
+/// `DockPresence.apply(showingWindow:)`, and again when that window becomes
+/// key while another app is still frontmost: Settings (the usage card's grid
+/// symbol, the panel menu's Settings…, the menu bar item, ⌘,, a reopen,
+/// `pulse://settings`, and a clicked notification), the recap, and the
+/// service chooser. An update offer uses `apply()` with no window; a policy
+/// change still waits a turn.
 @Suite("Main window activation")
 struct MainWindowActivationTests {
     @Test("Becoming a regular app waits a turn, and an accessory app does not claim the menu")
@@ -43,20 +45,38 @@ struct MainWindowActivationTests {
         ) != .skip)
     }
 
-    @Test("Opening claims the frontmost app, and claims again on the next turn")
+    @Test("The follow-up claim waits past the turn a menu uses to restore the previous app")
     func claimsFrontmost() {
         #expect(MainWindowActivation.claims(for: .skip).isEmpty)
         #expect(MainWindowActivation.claims(for: .now) == [
-            .claimFrontmost(deferred: false),
-            .claimFrontmost(deferred: true),
+            .claimFrontmost(turn: 0),
+            .claimFrontmost(turn: 2),
         ])
         let deferred = [
             MainWindowActivation.Claim.orderFront,
-            .claimFrontmost(deferred: true),
-            .claimFrontmost(deferred: true),
+            .claimFrontmost(turn: 1),
+            .claimFrontmost(turn: 2),
         ]
         #expect(MainWindowActivation.claims(for: .nextTurn) == deferred)
         #expect(MainWindowActivation.claims(for: .orderOnly) == deferred)
+        for timing: MainWindowActivation.Timing in [.now, .nextTurn, .orderOnly] {
+            let turns = MainWindowActivation.claims(for: timing).compactMap { claim -> Int? in
+                if case .claimFrontmost(let turn) = claim { return turn }
+                return nil
+            }
+            #expect(turns.count == 2)
+            if turns.count == 2 {
+                #expect(turns[0] < turns[1])
+                #expect(turns[1] >= 2)
+            }
+        }
+    }
+
+    @Test("Another frontmost app is named in the activation request")
+    func activationNamesTheFrontmostApp() {
+        #expect(MainWindowActivation.activationSource(frontmostPID: nil, currentPID: 10) == .thisApp)
+        #expect(MainWindowActivation.activationSource(frontmostPID: 10, currentPID: 10) == .thisApp)
+        #expect(MainWindowActivation.activationSource(frontmostPID: 20, currentPID: 10) == .frontmostApp)
     }
 
     @Test("A window being shown counts as open before it is visible")
