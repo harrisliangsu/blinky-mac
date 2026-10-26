@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.18</title>
-            <pubDate>Sun, 25 Oct 2026 15:37:23 -0000</pubDate>
-            <sparkle:version>1.5.18</sparkle:version>
-            <sparkle:shortVersionString>1.5.18</sparkle:shortVersionString>
+            <title>1.5.19</title>
+            <pubDate>Mon, 26 Oct 2026 02:04:25 -0000</pubDate>
+            <sparkle:version>1.5.19</sparkle:version>
+            <sparkle:shortVersionString>1.5.19</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.18</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.19</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.18</h2><ul><li><strong>重置券的详情在点到外面时收起。</strong> 点在日期和「使用」那一块外面，这块详情会收起，Token 窗口仍只从关闭按钮关闭。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/79">#79</a></li><li><strong>没有重置券时，这一行写「无」。</strong> Codex、智谱和 z.ai 在张数为零，以及服务商没有报告张数时，都用这个词。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/79">#79</a></li><li><strong>Token 窗口的说明分成两小节。</strong> 「关于这些数字」默认仍是收起的，展开后估价是一节，未读取到用量的来源各自成行。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/79">#79</a></li><li><strong>预测重置会标出全局重置或重置卡。</strong> Codex Resets 在预定时间里写了类型时，这个词出现在倒计时旁边，最近重置用同样的词。没有类型的预测不标。 <a href="https://github.com/harrisliangsu/blinky-mac/pull/79">#79</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.18">在 GitHub 查看更新说明</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.18/Blinky-1.5.18.zip"
-                       length="22849781"
+</style><h2>Blinky 1.5.19</h2><ul><li><strong>水滴式吸附放在实验性功能里。</strong> 在「设置 → 实验性功能」中开启后，从屏幕边缘拉开胶囊时，它会像水滴一样被拉长再断开，拖近边缘时会被吸过去。默认关闭。</li><li><strong>通知页可以发送一条测试通知。</strong> 在「设置 → 通知」中点「发送」，会立刻收到一条通知，用来确认通知能送达。</li><li><strong>刘海处的胶囊与刘海对齐。</strong> 胶囊按屏幕居中，过渡到屏幕边缘的圆角与刘海一致。尺寸为「小」且服务商较少时，顶部圆角留在窗口里。</li><li><strong>Kimi Code 的用量记录包含新版 Kimi Code。</strong> 「Token 消耗」和 Kimi Code 设置页同时读取这份会话记录，放在 Kimi CLI 的记录旁边；能识别模型时按公开价格估算。</li><li><strong>Cursor 加密保存登录后仍能读取用量。</strong> Blinky 向钥匙串请求 Cursor 的密钥；被拒绝后，只在下次启动或手动刷新时再次询问。<a href="https://github.com/qunqin24/Pulse/pull/93">#93</a></li><li><strong>Cursor 企业账号显示总额度。</strong> 只报告一个总额度的企业账号，卡片按月度额度显示，金额以美元写出。<a href="https://github.com/qunqin24/Pulse/pull/97">#97</a></li><li><strong>Codex 的同一会话只计算一次。</strong> 同一会话同时出现在 <code>sessions</code> 和 <code>archived_sessions</code> 中时只计算一次。<a href="https://github.com/qunqin24/Pulse/issues/95">#95</a></li><li><strong>详细卡片不再显示按 API 价格估算的那一行。</strong> 估算说明留在「设置 → Token 消耗」。</li><li><strong>读取命令会在到时后停下来。</strong> 这些命令以用户发起的优先级运行，Mac 较忙时也会在时限到了之后结束。</li><li><strong>同步上游 qunqin24/Pulse</strong>（16 个提交，直到其 1.12.4，<code>fc10fb7</code>，自 1.5.18 起）。本仓库是更新来源，版本为 <strong>1.5.19</strong>。没有抄入上游 1.12.4 的 Sparkle 推送。<code>appcast.xml</code> 保持不动，等这个版本打 tag 后再由发布流程写入。上游同时加入了俄文 README；本仓库这一页仍使用 Blinky 的名称、徽章和下载链接。</li><li><strong>保留本仓库特有能力：</strong> Codex 重置预测、最近一次重置（已经打开的卡片也会出现）、悬停类型说明，以及提前提醒；环颜色方案（红色告警 / 渐变 / 低调，低调在阈值以下保持绿色）；限额恢复彩带，含可选的五小时 / 小时额度；Kimi 设备码登录与多账号；Qoder（含个人令牌，以及 Qoder IDE 与 <code>~/.qoder</code> 的发现）；Zen 的 Cookie 存储；双语 Release 说明；以及本仓库的 Sparkle 源与签名公钥。</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.19">在 GitHub 查看更新说明</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.19/Blinky-1.5.19.zip"
+                       length="22975643"
                        type="application/octet-stream"
-                       sparkle:edSignature="3ssMjO+BzQtVRIahPt5kQsXg5cR/TD0tkNsPBO9YXB/gkRBgeNOGcun6Qxbaee/7vEZYLnmnTwHCnPo6VUn3CA==" />
+                       sparkle:edSignature="BaAQHGXpOz33fGy8UEoDtx9viLpBPlIBxXSSausuj8aezNeKfFYpWpYwyLHJR7EmtZfVaAU80Ea+kpAETKBYBQ==" />
         </item>
     </channel>
 </rss>
