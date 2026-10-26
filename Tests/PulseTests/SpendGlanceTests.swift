@@ -9,8 +9,8 @@ import Testing
 /// say, where the window sits, and that a cancelled read cannot publish.
 /// Synthetic ledgers only.
 ///
-/// Sentence assertions name the English table. `String.localized` follows
-/// the process language, which another suite changes while these run.
+/// Sentence assertions name the English table. The checks that go through
+/// `String.localized` hold English until they have read it.
 @Suite("Token spend glance")
 struct SpendGlanceTests {
     private static let english = LocalizationSource.bundle(for: .english)
@@ -476,8 +476,8 @@ struct SpendGlanceTests {
 
     @Test("The glance can list models, projects, and sessions, and agent stays the default")
     func dimensions() {
-        LocalizationSource.use(.english)
-        defer { LocalizationSource.use(.system) }
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
         var summary = SpendSummary()
         summary.models = [
             .init(name: "small", tokens: 2, agents: [.codex]),
@@ -676,8 +676,8 @@ struct SpendGlanceTests {
         #expect(!TokenSpendView.showsDimensionCaption)
         #expect(SpendGlanceNotes.startsCollapsed)
 
-        LocalizationSource.use(.english)
-        defer { LocalizationSource.use(.system) }
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
         var summary = SpendSummary()
         summary.tokens = 10
         summary.unpricedModels = ["hidden-model"]

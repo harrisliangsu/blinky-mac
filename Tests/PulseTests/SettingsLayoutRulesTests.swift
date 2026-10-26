@@ -184,8 +184,8 @@ struct SettingsLayoutRulesTests {
 
     @Test("The card still follows the stored horizon, hint and reset sentence")
     func cardFollowsStoredExhaustionSettings() {
-        LocalizationSource.use(.english)
-        defer { LocalizationSource.use(.system) }
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
 
         let (defaults, cleanup) = AppSettingsPersistenceTests.isolatedDefaults()
         defer { cleanup() }
@@ -252,8 +252,8 @@ struct SettingsLayoutRulesTests {
 
     @Test("Notification and exhaustion titles, in English and simplified Chinese")
     func exhaustionCopy() {
-        LocalizationSource.use(.chineseSimplified)
-        defer { LocalizationSource.use(.system) }
+        let held = LocalizationSource.hold(.chineseSimplified)
+        defer { held.end() }
 
         #expect(NotificationSettingsSections.titles == ["额度提醒", "用量用尽", "服务状态", "月报"])
         #expect(NotificationSettingsSections.runningOutRow == "将用尽时")

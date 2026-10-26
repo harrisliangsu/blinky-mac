@@ -460,7 +460,8 @@ struct RecapWindowRenderTests {
     func renderTheStates() throws {
         let destination = URL(fileURLWithPath: try #require(ProcessInfo.processInfo.environment["PULSE_RECAP_WINDOW_PREVIEW"]))
         try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true)
-        defer { LocalizationSource.use(.system) }
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
 
         let september = Recap.Period.month(year: 2026, month: 9)
         let cases: [(String, AppLanguage, RecapWindowModel)] = [

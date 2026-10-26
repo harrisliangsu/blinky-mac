@@ -404,6 +404,8 @@ A local pass does not prove CI will compile. The `macos-26` runner's Swift is ol
 
 **Nothing outside `PanelGlobalsSuite` may move the globals either, and `AppSettings.restored()` does**: it rewrites every metric, the ring budget and the language from the runner's defaults domain (`swiftpm-testing-helper`, which other tests write to) and never puts them back. A real `AppDelegate()` restores, so when `MenuBarIconSettingTests` built one, `FreeAcrossTests` failed whenever it ran after it — about one full run in several (2026-10-13). A test that needs a delegate builds `AppDelegate(settings:)` on isolated defaults.
 
+**A test that reads a sentence in a particular language takes `LocalizationSource.hold(_:)` for the whole check.** The language is process-wide, and `use(_:)` only covers the assignment. Swift Testing runs suites in parallel, so another test can switch languages before the assertion. `BurnRateTests` failed that way on main on 2026-10-26: the English early-pace note came back as `开头偏快，预估仅供参考。`. The hold keeps the lock until `end()`, which puts the previous language back. A test ends it with `defer`, on the thread that opened it — the main thread, for a `@MainActor` test, including across an `await`. A sentence taken from a named table uses `LocalizationSource.bundle(for:)` and needs no hold (`CodexResetForecastTests`).
+
 **Resolve a SwiftUI `Color` on the main actor.** A colour backed by an `NSColor` provider (the usage colours, `Color.pulse*`) syncs onto the main thread to resolve; two tests doing it at once from the cooperative pool deadlocked the run (2026-10-09). `UsageTintTests` is `@MainActor` for this.
 
 ## Fixtures

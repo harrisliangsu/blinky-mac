@@ -29,8 +29,8 @@ struct SpendGlanceWindowTests {
 
     @Test("Span, breakdown, Refresh, Share, the close button, and Escape all reach the window")
     func controlsReceiveEvents() throws {
-        LocalizationSource.use(.english)
-        defer { LocalizationSource.use(.system) }
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
 
         let (defaults, cleanup) = AppSettingsPersistenceTests.isolatedDefaults()
         defer { cleanup() }
@@ -176,8 +176,8 @@ struct SpendGlanceWindowTests {
 
     @Test("A click on another window leaves the Token window open")
     func clickOutsideStaysOpen() throws {
-        LocalizationSource.use(.english)
-        defer { LocalizationSource.use(.system) }
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
         let (defaults, cleanup) = AppSettingsPersistenceTests.isolatedDefaults()
         defer { cleanup() }
         let settings = AppSettings(defaults: defaults)
@@ -300,7 +300,7 @@ struct SpendGlanceWindowTests {
     }
 
     private func openGlance() -> GlanceFixture {
-        LocalizationSource.use(.english)
+        let held = LocalizationSource.hold(.english)
         let (defaults, cleanup) = AppSettingsPersistenceTests.isolatedDefaults()
         let settings = AppSettings(defaults: defaults)
         settings.readsTokenSpend = true
@@ -321,7 +321,7 @@ struct SpendGlanceWindowTests {
             settings.readsTokenSpend = false
             controller.close()
             cleanup()
-            LocalizationSource.use(.system)
+            held.end()
         })
     }
 

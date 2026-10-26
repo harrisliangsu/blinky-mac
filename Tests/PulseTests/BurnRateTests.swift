@@ -79,8 +79,8 @@ struct BurnRateTests {
 
     @Test("The card states a time only inside the horizon, then the reset sentence, then the hint")
     func cardLineFollowsTheSwitches() {
-        LocalizationSource.use(.english)
-        defer { LocalizationSource.use(.system) }
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
 
         let week = Self.weekly(used: Self.pace(remaining: 37 * 3600))
         let reading = BurnRate.reading(for: week, now: Self.now)!
@@ -149,8 +149,8 @@ struct BurnRateTests {
 
     @Test("A fast start still states the estimate, and says the early pace is only a guide")
     func earlyElevatedPaceStillForecasts() {
-        LocalizationSource.use(.english)
-        defer { LocalizationSource.use(.system) }
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
 
         // One percent of a week left to run: 598_752 seconds of a 604_800-second week.
         let opened = Self.now.addingTimeInterval(598_752)
@@ -248,6 +248,17 @@ struct BurnRateTests {
         #expect(BurnRate.cardLine(
             for: heavy, reading: heavyReading!, horizon: 6 * 3600, softHint: false, beforeReset: false
         )?.text == "每周 · 约 2.5 小时后用尽")
+    }
+
+    @Test("A hold keeps its language, and ending it puts the previous one back")
+    func holdRestoresThePreviousLanguage() {
+        let outer = LocalizationSource.hold(.english)
+        defer { outer.end() }
+        #expect(String.localized("A fast start. The estimate is only a guide.") == "A fast start. The estimate is only a guide.")
+        let inner = LocalizationSource.hold(.chineseSimplified)
+        #expect(String.localized("A fast start. The estimate is only a guide.") == "开头偏快，预估仅供参考。")
+        inner.end()
+        #expect(String.localized("A fast start. The estimate is only a guide.") == "A fast start. The estimate is only a guide.")
     }
 
     @Test("Codex 5-hour and weekly windows forecast when the reply states a length and a reset")

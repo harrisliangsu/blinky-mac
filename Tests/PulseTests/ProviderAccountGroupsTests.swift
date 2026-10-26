@@ -152,8 +152,8 @@ struct ProviderAccountGroupsTests {
 
     @Test("The order menu says 字母序 and 面板顺序 in simplified Chinese")
     func chineseOrderTitles() {
-        LocalizationSource.use(.chineseSimplified)
-        defer { LocalizationSource.use(.system) }
+        let held = LocalizationSource.hold(.chineseSimplified)
+        defer { held.end() }
 
         #expect(ProviderListOrder.name.title == "字母序")
         #expect(ProviderListOrder.panel.title == "面板顺序")

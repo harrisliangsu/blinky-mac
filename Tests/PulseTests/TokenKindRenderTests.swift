@@ -13,7 +13,8 @@ struct TokenKindRenderTests {
     func renderRecordedAndUnclassifiedWork() throws {
         let folder = URL(fileURLWithPath: try #require(ProcessInfo.processInfo.environment["PULSE_TOKEN_KINDS_PREVIEW"]))
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-        defer { LocalizationSource.use(.system) }
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
 
         let languages: [(String, AppLanguage)] = [
             ("en", .english), ("zh-Hans", .chineseSimplified), ("zh-Hant", .chineseTraditional),

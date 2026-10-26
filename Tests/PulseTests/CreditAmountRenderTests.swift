@@ -13,7 +13,8 @@ struct CreditAmountRenderTests {
     func renderQoderParts() throws {
         let folder = URL(fileURLWithPath: try #require(ProcessInfo.processInfo.environment["PULSE_CREDIT_AMOUNTS_PREVIEW"]))
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-        defer { LocalizationSource.use(.system) }
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
 
         // The issue's own account: the parts add up to the total.
         func window(_ id: String, _ kind: UsageWindow.Kind, used: Double, limit: Double) -> UsageWindow {

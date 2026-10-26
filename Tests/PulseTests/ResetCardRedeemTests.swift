@@ -86,8 +86,8 @@ struct ResetCardRedeemTests {
     @MainActor
     @Test("The card shows the count; the date and Use stay in the detail")
     func couponRowIsTheCount() {
-        LocalizationSource.use(.english)
-        defer { LocalizationSource.use(.system) }
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
         let none = ResetCouponLine.codex(
             .available(count: 0, nextExpiry: Date(timeIntervalSince1970: 1_800_000_000)),
             canRedeem: true
@@ -198,8 +198,8 @@ struct ResetCardRedeemTests {
     @MainActor
     @Test("A reported zero and a missing count both say None")
     func noneIsTheWord() {
-        LocalizationSource.use(.english)
-        defer { LocalizationSource.use(.system) }
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
         #expect(UsageDetailCard.availableCountText(0) == "None")
         #expect(UsageDetailCard.resetCreditsText(.unreported) == "None")
         #expect(UsageDetailCard.resetCreditsText(.codexMissing) != "None")
