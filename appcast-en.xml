@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.22</title>
-            <pubDate>Mon, 26 Oct 2026 09:40:26 -0000</pubDate>
-            <sparkle:version>1.5.22</sparkle:version>
-            <sparkle:shortVersionString>1.5.22</sparkle:shortVersionString>
+            <title>1.5.23</title>
+            <pubDate>Mon, 26 Oct 2026 11:27:20 -0000</pubDate>
+            <sparkle:version>1.5.23</sparkle:version>
+            <sparkle:shortVersionString>1.5.23</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.22</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.23</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.22</h2><ul><li><strong>Output speed updates when a reply ends.</strong> Open Claude Code, Codex, Grok, or Kimi under Settings: the Models table shows tokens per second from this Mac&#x27;s session logs, and refreshes when a reply finishes. <a href="https://github.com/harrisliangsu/blinky-mac/pull/83">#83</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.22">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.22/Blinky-1.5.22.zip"
-                       length="23114574"
+</style><h2>Blinky 1.5.23</h2><ul><li><strong>A fast start after a reset still shows the exhaustion estimate.</strong> With Show the estimate on under Settings → Usage, a weekly limit that has just reset and is already at least 5% used still shows how long it may last, with a quieter line that a fast start is only a guide, while lighter use still says the window is expected to last. <a href="https://github.com/harrisliangsu/blinky-mac/pull/84">#84</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.23">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.23/Blinky-1.5.23.zip"
+                       length="23125317"
                        type="application/octet-stream"
-                       sparkle:edSignature="dDoBlYMQmyWWu/oNfDwrZ3ym5OnVdjB4n/tcwSf4ySbhIHljKb0plmCbHM9ia1xUfYrOLz5muvzhrggq3n2EBQ==" />
+                       sparkle:edSignature="SlLOSp4q7sDShRXmgl5djg4YvCB3Uee8bICZ/GY4zZZICenl53aNe5XEsTMBdTPMolW1iKNlUlJLs0SEnwBXAg==" />
         </item>
     </channel>
 </rss>
