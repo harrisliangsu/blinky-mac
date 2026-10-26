@@ -186,7 +186,7 @@ struct UsageCacheTests {
         for reason: ProviderUsage.Unavailability in [
             .apiKeyMissing, .ollamaSessionMissing, .qoderSessionMissing, .stepFunSessionMissing,
             .xiaomiSessionMissing, .signedOut,
-            .claudeDesktopNotSignedIn, .claudeDesktopKeyRefused,
+            .claudeDesktopNotSignedIn, .claudeDesktopKeyRefused, .cursorKeyRefused,
             .kimiSignInRequired, .kimiLoginExpired,
             .sessionMissing, .localLoginMissing, .localAppMissing
         ] {

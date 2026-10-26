@@ -17,12 +17,20 @@ enum PanelScreen {
               left: screen.auxiliaryTopLeftArea, right: screen.auxiliaryTopRightArea)
     }
 
+    /// **Centred on the display, not on the gap.** The housing is in the
+    /// middle of the panel, but the two menu-bar areas are not always the
+    /// same width: on a 14-inch MacBook Pro at 1800pt they are 791 and 788,
+    /// so the gap's centre sits 1.5pt right of the housing's, and the rail
+    /// showed a sliver beside the housing's right edge. Photographed with the
+    /// surface painted red, the left edge was flush and the right one stood
+    /// out. The gap's width is kept; only where it sits comes from the frame.
     static func notch(in frame: CGRect, topInset: CGFloat, left: CGRect?, right: CGRect?) -> CGRect? {
         guard topInset > 0, let left, let right,
               left.width > 0, right.width > 0, right.minX > left.maxX
         else { return nil }
-        return CGRect(x: left.maxX, y: frame.maxY - topInset,
-                      width: right.minX - left.maxX, height: topInset)
+        let width = right.minX - left.maxX
+        return CGRect(x: frame.midX - width / 2, y: frame.maxY - topInset,
+                      width: width, height: topInset)
     }
 
     /// A name for this display that survives a reboot and a reconnection.

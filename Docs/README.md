@@ -47,4 +47,4 @@ Topic docs, at the top of this folder. Subfolders are under [Folders](#folders).
 ## Outside this folder
 
 - Release notes: what each release changed. Chinese is [../CHANGELOG.zh-CN.md](../CHANGELOG.zh-CN.md); English is [../CHANGELOG.md](../CHANGELOG.md). Sparkle prefers the Chinese file; the GitHub page is Chinese first. How a release is cut: [releasing.md](releasing.md).
-- [../README.md](../README.md) with [zh-CN](../README.zh-CN.md) / [zh-Hant](../README.zh-Hant.md) / [ja](../README.ja.md) / [ko](../README.ko.md) — product pages. Keep all five in parity. They are not the architecture source of truth.
+- [../README.md](../README.md) with [zh-CN](../README.zh-CN.md) / [zh-Hant](../README.zh-Hant.md) / [ja](../README.ja.md) / [ko](../README.ko.md) / [ru](../README.ru.md) — product pages. Keep all six in parity. They are not the architecture source of truth.

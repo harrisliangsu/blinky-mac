@@ -150,6 +150,10 @@ It is updated even when a grant was refused or the build is unbundled, so neithe
 
 `UsageAlerts.observe` returns immediately when `AppSettings.wantsUsageAlerts` is false **and** `celebratesReset` is false (`wantsAlerts` adds the outage and recap switches, for permission only), so nothing is tracked and no file is written for a feature nobody has switched on. Ribbons keep the same file: they need the previous fraction to know a reset happened. Without that guard the memory was written on the first pass of every launch — measured — and failures were counted up against accounts for nothing.
 
+## Test notification
+
+**Test notification → Send**, at the foot of the Notifications pane, posts one notification now (`UsageAlerts.sendTest`) so the reader can see that notifications reach them. It is the one notification about nothing Pulse saw — the reader asked for exactly that, and its text says it is a test. It asks for permission whatever is switched on (pressing the button is the request), is remembered nowhere, and uses the default sound. The row then says what came of it: sent (with where to look if no banner appeared: Focus, System Settings › Notifications), turned off for Blinky in System Settings, or not yet allowed (the prompt closed without an answer; pressing again asks again). Greyed out in an unbundled build.
+
 ## Permission, and the unbundled build
 
 `UNUserNotificationCenter.current()` raises without an app bundle and kills the process. `swift run` builds a bare executable, so every entry point is guarded by `UsageAlerts.isSupported` (`Bundle.main.bundleIdentifier != nil`) and the Settings row says why the switches are dead. **Test notifications from `./Scripts/bundle.sh`, never from `swift run`.**

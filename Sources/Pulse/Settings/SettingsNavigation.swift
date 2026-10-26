@@ -104,6 +104,7 @@ enum SettingsPaneBookmark {
         case .general: "general"
         case .notifications: "notifications"
         case .network: "network"
+        case .experimental: "experimental"
         case .spend: "spend"
         case .about: "about"
         case .integrations: "integrations"
@@ -121,6 +122,7 @@ enum SettingsPaneBookmark {
         case "general": return .general
         case "notifications": return .notifications
         case "network": return .network
+        case "experimental": return .experimental
         case "spend": return .spend
         case "about": return .about
         case "integrations": return .integrations

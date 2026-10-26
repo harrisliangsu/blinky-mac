@@ -34,13 +34,23 @@ struct CursorUsageService: Sendable {
         URL(string: "https://cursor.com/api/dashboard/get-current-period-usage")!
 
     func fetch() async -> ProviderUsage {
-        guard let session = CursorAppLogin.session() else {
+        let session: CursorAppLogin.Session
+        switch CursorAppLogin.load() {
+        case .token(let token):
             // A token that is stored but spent is a login gone stale, not an
             // absent one — so say what actually helps.
-            return .unavailable(
-                .cursor,
-                reason: CursorAppLogin.hasStoredToken() ? .cursorLoginExpired : .cursorSignInRequired
-            )
+            guard let built = CursorAppLogin.session(from: token) else {
+                return .unavailable(.cursor, reason: .cursorLoginExpired)
+            }
+            session = built
+        case .keychainRefused:
+            return .unavailable(.cursor, reason: .cursorKeyRefused)
+        // A key that opens nothing even read afresh: what Cursor wrote is not
+        // something this can read, and opening Cursor rewrites it.
+        case .unreadable:
+            return .unavailable(.cursor, reason: .cursorLoginExpired)
+        case .absent:
+            return .unavailable(.cursor, reason: .cursorSignInRequired)
         }
 
         // The session goes out as a `Cookie` header, which `URLSession` will
@@ -168,6 +178,9 @@ struct CursorUsageService: Sendable {
         struct Individual: Decodable {
             let plan: Allowance?
             let onDemand: Allowance?
+            /// Enterprise plans report one shared allowance here rather than
+            /// the two model pools. Its money fields are cents.
+            let overall: Allowance?
         }
 
         /// The same two pots for an account billed as a team.
@@ -276,6 +289,7 @@ struct CursorUsageService: Sendable {
         let resets = reply.billingCycleEnd.flatMap(Self.date(from:))
         // A team account reports the same shape under another name.
         let plan = reply.individualUsage?.plan ?? reply.teamUsage?.pooled
+        let overall = reply.individualUsage?.overall
         var found: [UsageWindow] = []
 
         // The two pools the plan includes, in the order and under the names
@@ -292,7 +306,7 @@ struct CursorUsageService: Sendable {
         // fallback, since on an account that *does* report pools this is a
         // different denominator and would read as a third, contradictory
         // limit — see the note on `money(_:)`.
-        if found.isEmpty, let window = money(plan, id: "plan", kind: .monthly, resets: resets) {
+        if found.isEmpty, let window = money(plan ?? overall, id: "plan", kind: .monthly, resets: resets) {
             found.append(window)
         }
 
@@ -382,7 +396,13 @@ struct CursorUsageService: Sendable {
             windowSeconds: 30 * 86_400,
             resetsAt: resets,
             reportsLength: false,
-            isExhausted: used >= limit
+            isExhausted: used >= limit,
+            amounts: .init(
+                used: used / 100,
+                remaining: allowance.remaining.map { $0 / 100 },
+                limit: limit / 100,
+                currency: "USD"
+            )
         )
     }
 
@@ -393,7 +413,8 @@ struct CursorUsageService: Sendable {
     /// still there, not merely how much it started with.
     static func remaining(_ reply: Reply) -> String? {
         guard
-            let allowance = reply.individualUsage?.plan ?? reply.teamUsage?.pooled,
+            let allowance = reply.individualUsage?.plan ?? reply.teamUsage?.pooled
+                ?? reply.individualUsage?.overall,
             let remaining = allowance.remaining
         else { return nil }
 

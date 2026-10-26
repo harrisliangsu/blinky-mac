@@ -30,7 +30,7 @@
 </p>
 
 <p align="center">
-  <sub><b>macOS 14 Sonoma 以降</b> · Apple シリコンと Intel に対応 · <a href="README.md"><b>English</b></a> · <a href="README.zh-CN.md"><b>简体中文</b></a> · <a href="README.zh-Hant.md"><b>繁體中文</b></a> · <b>日本語</b> · <a href="README.ko.md"><b>한국어</b></a></sub>
+  <sub><b>macOS 14 Sonoma 以降</b> · Apple シリコンと Intel に対応 · <a href="README.md"><b>English</b></a> · <a href="README.zh-CN.md"><b>简体中文</b></a> · <a href="README.zh-Hant.md"><b>繁體中文</b></a> · <b>日本語</b> · <a href="README.ko.md"><b>한국어</b></a> · <a href="README.ru.md"><b>Русский</b></a></sub>
 </p>
 
 <p align="center">

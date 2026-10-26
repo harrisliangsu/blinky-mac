@@ -10,14 +10,16 @@ extension PanelGlobalsSuite {
         private let visible = CGRect(x: 0, y: 72, width: 1800, height: 1058)
         private let notch = CGRect(x: 791, y: 1131, width: 221, height: 38)
 
-        @Test("The housing comes from the system areas, including an offset display")
+        @Test("The housing is as wide as the gap between the system areas, centred on the display")
         func housingCoordinates() {
             for origin in [CGPoint.zero, CGPoint(x: -1800, y: 400)] {
                 let frame = screen.offsetBy(dx: origin.x, dy: origin.y)
                 let left = CGRect(x: frame.minX, y: frame.maxY - 38, width: 791, height: 38)
                 let right = CGRect(x: frame.minX + 1012, y: left.minY, width: 788, height: 38)
+                // The gap is 791–1012, but the housing sits in the middle of
+                // the display: the menu-bar areas are 791 and 788 wide.
                 #expect(PanelScreen.notch(in: frame, topInset: 38, left: left, right: right)
-                        == notch.offsetBy(dx: origin.x, dy: origin.y))
+                        == CGRect(x: frame.midX - 110.5, y: frame.maxY - 38, width: 221, height: 38))
                 #expect(PanelScreen.notch(in: frame, topInset: 0, left: left, right: right) == nil)
                 #expect(PanelScreen.notch(in: frame, topInset: 38, left: nil, right: right) == nil)
                 #expect(PanelScreen.notch(in: frame, topInset: 38, left: left, right: left) == nil)
@@ -67,6 +69,33 @@ extension PanelGlobalsSuite {
             #expect(layout.railOrigin.x == (visible.width - rail.width) * 0.2)
             #expect(layout.railOrigin.y == screen.maxY)
             #expect(layout.frame.maxY == screen.maxY)
+        }
+
+        /// With few rings the housing can be the widest thing in the window,
+        /// and at the small size it is wider than the card too. Budgeted at
+        /// the housing alone, the window cut the fillets off at its own edges.
+        @Test("The window holds the fillets beside the housing however few rings there are")
+        func windowHoldsFillets() {
+            let previousSize = PanelSize.allCases.first { $0.scale == PanelMetrics.scale } ?? .default
+            defer { PanelMetrics.use(previousSize) }
+            for size in PanelSize.allCases {
+                PanelMetrics.use(size)
+                for count in 1...12 {
+                    let panel = FloatingPanelController.Layout.size(for: .top, notchSize: notch.size, capacity: count)
+                    let placement = PanelPlacement(dock: .edge(.top), horizontalRatio: 0.5)
+                    placement.notch = notch
+                    let rail = DockLayout.size(for: count, on: .horizontal)
+                    let layout = placement.layout(in: visible, topEdge: visible.maxY, panel: panel, rail: rail)
+                    let offsets = PanelPlacement.offsets(forRailTopLeft: layout.railOrigin, in: layout.frame, rail: rail)
+                    let localRail = CGRect(x: offsets.leading, y: offsets.top, width: rail.width, height: rail.height)
+                    let drawn = NotchBerthShape(notchSize: notch.size)
+                        .path(in: PanelHitArea.notchSurface(rail: localRail, notchSize: notch.size)
+                            .insetBy(dx: -DockLayout.flareWidth, dy: 0))
+                        .boundingRect
+                    #expect(drawn.minX >= -0.01, "\(size) \(count)")
+                    #expect(drawn.maxX <= panel.width + 0.01, "\(size) \(count)")
+                }
+            }
         }
 
         @Test("The housing costs its own height and nothing else, at every scale", arguments: [false, true])

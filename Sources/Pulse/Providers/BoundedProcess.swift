@@ -20,6 +20,13 @@ import Foundation
 ///    blocking work called from an `async` function; parked on a cooperative
 ///    thread it takes one of a core-width pool with it, and a few of those
 ///    stop Swift concurrency across the whole app.
+///    **At user-initiated priority, not utility.** The wait is what enforces
+///    the deadline, and macOS coalesces and defers a utility thread's
+///    wake-ups when the machine is busy: under load a one-second deadline
+///    was acted on 15–23 seconds late, which failed the kill-timing tests on
+///    every release run of 1.12.4 and one of them in most local full runs.
+///    Raised, two local full runs in a row passed. The thread mostly sleeps;
+///    the priority only makes it wake when it was asked to.
 ///
 /// A pass that never finishes never calls `scheduleNext`, so a hang here is
 /// not one provider being slow — it is the rail freezing until something else
@@ -80,7 +87,7 @@ enum BoundedProcess {
     ///   `stop()` again. That whole wait is longer than the first path's
     ///   remainder, so it is what this returns.
     ///
-    /// Time spent waiting for a utility-QoS thread is not included. `run`
+    /// Time spent waiting for a user-initiated thread is not included. `run`
     /// queues there; `runSynchronously` does not. The subprocess timing
     /// tests call `runSynchronously` on a thread of their own and assert
     /// `deadline + escalationBudget`, plus a few seconds to create the process.
@@ -99,7 +106,7 @@ enum BoundedProcess {
         outputCeiling: Int
     ) async -> Result<Data, Failure> {
         await withCheckedContinuation { continuation in
-            DispatchQueue.global(qos: .utility).async {
+            DispatchQueue.global(qos: .userInitiated).async {
                 continuation.resume(returning: runSynchronously(
                     binary, arguments,
                     environment: environment,
@@ -113,8 +120,9 @@ enum BoundedProcess {
 
     /// `run`, on the caller's thread. The timing tests use this so the
     /// measurement is the deadline plus `escalationBudget`, not how long the
-    /// utility pool took to hand over a thread. Production stays on `run`:
-    /// blocking work does not belong on the cooperative pool.
+    /// queue took to hand over a thread. Production stays on `run`, at
+    /// user-initiated priority: blocking work does not belong on the
+    /// cooperative pool, and a utility thread wakes late when the machine is busy.
     static func runSynchronously(
         _ binary: URL,
         _ arguments: [String],

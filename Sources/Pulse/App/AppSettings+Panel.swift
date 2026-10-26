@@ -23,6 +23,7 @@ extension AppSettings.Key {
     static let hidesFromScreenCapture = "settings.hidesFromScreenCapture"
     static let followsActiveDisplay = "settings.followsActiveDisplay"
     static let snapsToEdges = "settings.snapsToEdges"
+    static let liquidDocking = "settings.liquidDocking"
     static let panelSize = "settings.panelSize"
     static let railSpacing = "settings.railSpacing"
     static let topRailShowsPercentages = "settings.topRailShowsPercentages"
@@ -47,6 +48,7 @@ extension AppSettings.Default {
     static let hidesFromScreenCapture = false
     static let followsActiveDisplay = false
     static let snapsToEdges = true
+    static let liquidDocking = false
     static let topRailShowsPercentages = false
     static let sideRailShowsPercentages = true
     static let labelAboveRing = false
@@ -89,6 +91,12 @@ extension AppSettings {
     func snapsToEdgesChanged(from old: Bool) {
         guard snapsToEdges != old else { return }
         defaults.set(snapsToEdges, forKey: Key.snapsToEdges)
+        onLayoutChange?()
+    }
+
+    func liquidDockingChanged(from old: Bool) {
+        guard liquidDocking != old else { return }
+        defaults.set(liquidDocking, forKey: Key.liquidDocking)
         onLayoutChange?()
     }
 

@@ -484,6 +484,7 @@
 "Uses the session the Claude desktop app is signed in with." = "Claude デスクトップ App がサインインしているセッションを使います。";
 "Sign in to the Claude desktop app to see usage." = "Claude デスクトップ App にサインインすると使用量が表示されます。";
 "Blinky needs your keychain to read the Claude desktop app's session. Refresh to be asked again." = "Claude デスクトップ App のセッションを読むにはキーチェーンの許可が必要です。更新するともう一度尋ねます。";
+"Blinky needs your keychain to read Cursor's saved login. Refresh to be asked again." = "Cursor の保存済みログインを読むにはキーチェーンの許可が必要です。更新するともう一度尋ねます。";
 "The Claude desktop app's session was refused. Open it and sign in again." = "Claude デスクトップ App のセッションが拒否されました。App を開いてサインインし直してください。";
 
 /* Notifications */
@@ -1025,8 +1026,6 @@
 "On this Mac" = "この Mac での利用";
 "7 days" = "7 日間";
 "31 days" = "31 日間";
-"Costs are estimates at API prices." = "金額は API 価格での推定です。";
-"API-price estimates. * Partly unpriced." = "API 価格での推定。* は価格未設定分を除く。";
 "Whole account" = "アカウント全体";
 "Couldn't read the history." = "利用履歴を読み取れませんでした。";
 "From %@, for the whole account." = "%@ から取得した、アカウント全体の数値です。";
@@ -1462,3 +1461,13 @@
 /* 1.5.18 */
 "None" = "なし";
 "About the estimate" = "見積もりの説明";
+"Experimental" = "試験的な機能";
+"Liquid docking" = "しずくのような吸着";
+"Pulled off a screen edge, the rail stretches and parts like a drop; brought near one, it is drawn in. While dragged, it follows the pointer with a little give." = "画面の端から引き離すと、レールがしずくのように伸びてから離れ、端に近づけると吸い寄せられます。ドラッグ中は、ポインタに少し遅れて付いてきます。";
+"These features are still being tuned and may change or be removed." = "これらの機能は調整中のため、今後変更または削除されることがあります。";
+"Test notification" = "テスト通知";
+"Send" = "送信";
+"Sends one now, so you can see that notifications reach you." = "通知を今すぐ1件送って、正しく届くか確認します。";
+"Sent. If nothing appeared, check Focus and System Settings › Notifications." = "送信しました。表示されない場合は、集中モードと「システム設定 › 通知」を確認してください。";
+"This is a test notification. Blinky's notifications look like this." = "これはテスト通知です。Blinky の通知はこのように表示されます。";
+"Blinky has not been allowed to post notifications yet. Press Send again to be asked." = "Blinky はまだ通知の送信を許可されていません。もう一度「送信」を押すと、再度確認されます。";

@@ -1,0 +1,196 @@
+<p align="center">
+  <img src="AppIcon/blinky-icon-1024.png" width="112" alt="Blinky">
+</p>
+
+<h1 align="center">Blinky</h1>
+
+<p align="center">
+  <b>Blinky</b> — это macOS-ветка Harris от <a href="https://github.com/qunqin24/Pulse">Pulse</a>, под тем же именем, что и его приложение для iOS. Этот репозиторий — не upstream Pulse.
+</p>
+
+<p align="center">
+  <b>Сколько осталось в Claude Code, Codex и Cursor — без единой страницы с расходом.</b><br>
+  Бесплатный монитор для macOS с открытым исходным кодом: он держится у края экрана и показывает все лимиты ИИ-инструментов для программирования одним взглядом.
+</p>
+
+<p align="center">
+  <a href="https://github.com/harrisliangsu/blinky-mac/releases/latest"><img src="https://img.shields.io/badge/Download-000000?style=for-the-badge&logo=apple&logoColor=white" alt="Скачать Blinky для macOS"></a>
+</p>
+
+<p align="center">
+  <a href="https://afdian.com/a/sharkchiligaga">Поддержать</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/harrisliangsu/blinky-mac/releases/latest"><img src="https://img.shields.io/github/v/release/harrisliangsu/blinky-mac?color=black" alt="Последний выпуск"></a>
+  <img src="https://img.shields.io/badge/macOS-14.0%2B%20Sonoma-333333?logo=apple" alt="macOS 14+">
+  <a href="https://github.com/harrisliangsu/blinky-mac/actions/workflows/ci.yml"><img src="https://github.com/harrisliangsu/blinky-mac/actions/workflows/ci.yml/badge.svg" alt="Сборка CI"></a>
+  <img src="https://img.shields.io/badge/Swift-6.0-F05138?logo=swift&logoColor=white" alt="Swift 6.0">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue" alt="Лицензия Apache 2.0"></a>
+  <a href="https://github.com/harrisliangsu/blinky-mac/stargazers"><img src="https://img.shields.io/github/stars/harrisliangsu/blinky-mac?color=black" alt="Звёзды на GitHub"></a>
+  <a href="https://github.com/harrisliangsu/blinky-mac/releases"><img src="https://img.shields.io/github/downloads/harrisliangsu/blinky-mac/total?color=black" alt="Загрузки"></a>
+  <a href="https://github.com/harrisliangsu/blinky-mac/issues"><img src="https://img.shields.io/github/issues/harrisliangsu/blinky-mac?color=black" alt="Открытые задачи"></a>
+  <a href="https://github.com/harrisliangsu/blinky-mac/commits/main"><img src="https://img.shields.io/github/last-commit/harrisliangsu/blinky-mac?color=black" alt="Последний коммит"></a>
+</p>
+
+<p align="center">
+  <sub><b>macOS 14 Sonoma или новее</b> · Apple Silicon и Intel · <a href="README.md"><b>English</b></a> · <a href="README.zh-CN.md"><b>简体中文</b></a> · <a href="README.zh-Hant.md"><b>繁體中文</b></a> · <a href="README.ja.md"><b>日本語</b></a> · <a href="README.ko.md"><b>한국어</b></a> · <b>Русский</b></sub>
+</p>
+
+<p align="center">
+  <img src="Docs/images/demo.gif" height="400" alt="Плавающая лента Blinky, прикреплённая к краю экрана">
+  &nbsp;&nbsp;
+  <img src="Docs/images/panel.webp" height="400" alt="При наведении на кольцо открывается карточка со всеми лимитами и временем их сброса">
+</p>
+
+- **Семьдесят шесть сервисов на одной ленте** — Claude Code, Codex, Cursor, GitHub Copilot, Antigravity, Kiro, Grok, DeepSeek, Kimi Code и многие другие, у каждого своё кольцо.
+- **Без аккаунта и сервера Blinky** — используются входы, которые у вас уже есть, и ничего никуда не отправляется.
+- **Только настоящие цифры** — каждый процент расхода взят из того, что сообщил сам сервис. Немногие оценки так и помечены, а если сервис ничего не сообщает, Blinky говорит об этом, а не угадывает.
+- **Родное и ненавязчивое приложение** — Swift и SwiftUI, Liquid Glass в macOS 26. Прикрепите ленту слева, справа, сверху или снизу рядом с Dock, дайте ей сворачиваться в узкую полоску без дела или держите её в строке меню.
+
+<p align="center">
+  <sub>Если Blinky уберёг вас от внезапного лимита, ⭐ поможет другим его найти.</sub>
+</p>
+
+---
+
+## Установка
+
+1. Скачайте последний **`Blinky-x.y.z.dmg`** со страницы [Releases](https://github.com/harrisliangsu/blinky-mac/releases/latest).
+2. Откройте образ диска и перетащите **Blinky** в папку `Программы`. Файл называется `Blinky.app`. Копия, которая всё ещё называется `Pulse.app`, при следующем открытии переименует себя в `Blinky.app`, если в той же папке ещё нет `Blinky.app`; если он уже есть, эта копия остаётся на месте.
+3. При первом запуске выберите сервисы, которые нужно отслеживать. Сначала ни один не отмечен; Blinky читает их учётные данные и проверяет расход только после того, как вы нажмёте **Готово**. Если закрыть окно выбора, отслеживание останется выключенным; включить сервис можно и в настройках. При обновлении ваш выбор сохраняется, а о новых сервисах, найденных на вашем Mac, Blinky спросит один раз.
+4. Blinky живёт в строке меню. Если в ней тесно, щёлкните правой кнопкой по плавающей ленте — или по свёрнутой полоске — и выберите **Настройки…**; можно также назначить глобальное сочетание клавиш в **Настройки › Основные › Сочетания клавиш**.
+
+> [!NOTE]
+> **Первый запуск и Gatekeeper**:<br>
+> Blinky — проект с открытым исходным кодом без сертификата разработчика Apple. При первом запуске macOS может заблокировать приложение:
+> - **Способ 1 (интерфейс)**: запустите Blinky, закройте предупреждение, откройте **Системные настройки → Конфиденциальность и безопасность** и нажмите **Всё равно открыть**.
+> - **Способ 2 (Терминал)**:
+>   ```bash
+>   xattr -cr /Applications/Blinky.app
+>   ```
+>   *Обновления приходят внутри приложения через Sparkle. После обновления macOS может снова запросить доступ к связке ключей браузера.*
+
+---
+
+## Основные возможности
+
+### Кольца с первого взгляда
+- **Цвет следует за расходом** — красное предупреждение, градиент или тихий режим. У каждого аккаунта может быть и свой цвет.
+- **Использовано или осталось** — `использовано 75%` или `осталось 25%`, с дополнительной дугой времени: какая часть окна уже прошла.
+- **Активность в реальном времени** — вращающаяся точка, пока агент работает, и по желанию анимированные роботы, которые реагируют на каждый аккаунт.
+
+<p align="center">
+  <img src="Docs/images/bot-mark.gif" width="300" alt="Анимированные значки Blinky: робот в каждом кольце реагирует на то, что происходит с аккаунтом">
+</p>
+
+### Подробности при наведении на кольцо
+- **Все лимиты и время их сброса** на одной карточке, сплошными или сегментированными полосами.
+- **Подробная карточка** — тариф, время чтения, оценочная стоимость каждого лимита и недавний расход по записям этого Mac.
+- **Прогноз расхода** — предупреждает, если при текущем темпе лимит закончится раньше окна.
+- **Сбросы Codex** — на карточке Codex видны предсказанный сброс и последний сброс.
+- **В строке меню** — самое заполненное кольцо в виде числа, маленького кольца или раздельных лимитов, с дополнительной панелью.
+
+<p align="center">
+  <img src="Docs/images/detailed-card.webp" width="620" alt="Одна и та же карточка Codex, краткая и подробная">
+</p>
+
+### Не мешает работать
+- **Любой край** — слева, справа, сверху, рядом с Dock или в любом месте; без дела лента сворачивается в узкую полоску.
+- **Уведомления, которые вы выбираете** — лимит пересёк порог, израсходован, сброшен, проверки не проходят, баланс заканчивается, у сервиса сбой. Возврат недельного или месячного лимита может показать ленту.
+- **Шесть языков** — английский, упрощённый и традиционный китайский, японский, корейский и русский.
+- **Дополнительно** — глобальные сочетания клавиш, переход на активный дисплей, скрытие на снимках экрана и запуск окна расхода после сброса.
+
+### Расход, статус и остальное
+- **Расход токенов** — сколько израсходовали 54 локальных клиента, по ценам публичных API, по дням, моделям и агентам, за любой выбранный период.
+- **Оценки в вашей валюте** — доллары, юани, гонконгские или новые тайваньские доллары, иены, воны или рубли.
+- **Итоги использования** — карточки за день, неделю, месяц или год, которыми можно поделиться; они строятся по тем же записям.
+- **Статус сервисов** — собственные страницы статуса 44 сервисов и уведомление, когда одна из них сообщает о сбое.
+- **Диагностика подключения** — откуда взялась каждая цифра и что ответили серверы.
+- **Для опытных пользователей** — несколько аккаунтов у одного сервиса, вход в Kimi Code по коду устройства, личный токен для Qoder, расширения для собственных источников и `--json` для скриптов.
+
+<p align="center">
+  <img src="Docs/images/spend.webp" height="290" alt="Расход токенов: итог, токены по видам и распределение по дням">
+  &nbsp;&nbsp;
+  <img src="Docs/images/spend-history.webp" height="290" alt="Расход токенов по дням, по месяцам и по агентам">
+</p>
+
+**Все возможности подробно** (на английском): [Docs/features.md](Docs/features.md).
+
+---
+
+## Поддерживаемые сервисы и способы чтения
+
+76 сервисов, и каждый читается так, как работает сам продукт: через его собственный адрес расхода, вход редактора, локальный языковой сервер или вставленный вами ключ, — а каждый процент взят из того, что сообщил сервис. [Полный список и способ чтения каждого](Docs/supported-services.md) (на английском).
+
+---
+
+## Конфиденциальность и безопасность
+
+- **Без аккаунта и сервера Blinky** — ваш Mac обращается к сервисам, которыми вы пользуетесь, под вашими собственными входами.
+- **Пять видов подключений, все перечислены** — сами сервисы, их публичные страницы статуса, [models.dev](https://models.dev) для цен моделей, [ExchangeRate-API](https://www.exchangerate-api.com) только если вы выбрали валюту, отличную от доллара, и GitHub/Sparkle для обновлений.
+- **Ваши ключи остаются на вашем Mac** в зашифрованном виде, а записи о расходе, которые читает Blinky, никогда его не покидают.
+
+[Подробнее](Docs/features.md#privacy-and-security) (на английском).
+
+---
+
+## Сборка из исходного кода
+
+Blinky написан на Swift и SwiftUI. Для сборки текущих исходников нужен полный **Xcode** (не Command Line Tools) с **macOS 26 SDK**; приложение работает на **macOS 14+**.
+
+```bash
+# Клонировать репозиторий
+git clone https://github.com/harrisliangsu/blinky-mac.git
+cd blinky-mac
+
+# Собрать пакет приложения
+./Scripts/bundle.sh
+
+# Запустить
+open build.noindex/Blinky.app
+```
+
+`swift run Pulse` позволяет быстро собрать и запустить приложение без пакета, но уведомления и обновления внутри приложения работают только в собранном пакете. Настройка инструментов — в [Docs/build-from-source.md](Docs/build-from-source.md); выпуск новой версии — в [Docs/releasing.md](Docs/releasing.md) (на английском).
+
+---
+
+## Участие в разработке
+
+Как устроена документация репозитория, что нельзя сломать и какую страницу обновлять: [CONTRIBUTING.md](CONTRIBUTING.md). Карта тематических документов: [Docs/README.md](Docs/README.md) (на английском).
+
+---
+
+## Источник дизайна
+
+Интерфейс взят из [Pulse](https://github.com/qunqin24/Pulse). Pulse вдохновлён концепцией интерфейса, которую [**Vinz** (@hivinz_)](https://x.com/hivinz_/status/2092996055248126353) опубликовал в X в августе 2026 года. Pulse — самостоятельная реализация со своими взаимодействиями, функциями, анимациями и визуальными деталями. Blinky для Mac — ветка этого проекта. Vinz не связан с Pulse или Blinky и не отвечает за них.
+
+---
+
+## Поддержать автора upstream
+
+<p align="center">
+  <sub>Blinky для Mac — это ветка Pulse. Ссылка ниже — чашка кофе для автора upstream.</sub>
+</p>
+
+<p align="center">
+  <a href="https://afdian.com/a/qunqin"><img src="https://img.shields.io/badge/Afdian-Buy_me_a_coffee-946CE6?style=for-the-badge" alt="Поддержать автора Pulse на Afdian"></a>
+</p>
+
+---
+
+## Лицензия
+
+Распространяется по лицензии [Apache 2.0](LICENSE). Сторонние ресурсы в составе приложения сохраняют свои лицензии; см. [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+---
+
+## История звёзд
+
+<a href="https://star-history.com/#harrisliangsu/blinky-mac&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=harrisliangsu/blinky-mac&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=harrisliangsu/blinky-mac&type=Date" />
+    <img alt="График истории звёзд" src="https://api.star-history.com/svg?repos=harrisliangsu/blinky-mac&type=Date" />
+  </picture>
+</a>

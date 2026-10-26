@@ -47,7 +47,7 @@ The English file uses the same bullets, in the same order.
 - Grammar is limited to bullets, `**bold**`, `` `code` `` and links (`Scripts/changelog.py`).
 - Validate: `python3 Scripts/changelog.py x.y.z > /dev/null` and `python3 Scripts/changelog.py x.y.z --zh > /dev/null` must both exit cleanly.
 
-If a new feature is user-visible, add it to the feature list in **all five** READMEs (`README.md`, `README.zh-CN.md`, `README.zh-Hant.md`, `README.ja.md`, `README.ko.md`), in its own commit before the release commit.
+If a new feature is user-visible, add it to the feature list in **all six** READMEs (`README.md`, `README.zh-CN.md`, `README.zh-Hant.md`, `README.ja.md`, `README.ko.md`, `README.ru.md`), in its own commit before the release commit.
 
 ## 4. Commit, tag, push
 

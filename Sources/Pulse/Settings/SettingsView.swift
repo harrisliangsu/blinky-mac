@@ -137,6 +137,7 @@ struct SettingsView: View {
                         case .general: GeneralPane(settings: settings, shortcuts: shortcuts)
                         case .notifications: NotificationsPane(store: store, settings: settings, alerts: alerts)
                         case .network: NetworkPane(store: store, settings: settings)
+                        case .experimental: ExperimentalPane(settings: settings)
                         case .account(let account):
                             if account.provider != .pulseExtension {
                                 ProviderDetailHeading(

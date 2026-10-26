@@ -588,7 +588,7 @@ struct AlertMemory: Codable, Sendable, Equatable {
     static func standing(of reason: ProviderUsage.Unavailability) -> Standing {
         switch reason {
         case .claudeLoginExpired, .claudeDesktopKeyRefused, .claudeDesktopSessionExpired,
-             .cursorLoginExpired, .grokLoginExpired, .kimiLoginExpired, .signedOut, .apiKeyRefused,
+             .cursorLoginExpired, .cursorKeyRefused, .grokLoginExpired, .kimiLoginExpired, .signedOut, .apiKeyRefused,
              .ollamaSessionExpired, .ollamaPageChanged, .qoderSessionExpired, .xiaomiSessionExpired,
              .stepFunSessionExpired,
              .unreachable, .unreadableReply, .rateLimited, .serverError,
@@ -799,6 +799,50 @@ final class UsageAlerts {
         guard Self.isSupported else { return false }
         return await requestAuthorizationIfNeeded {
             await self.performAuthorizationRequest()
+        }
+    }
+
+    /// What sending a test notification came to.
+    enum TestOutcome: Equatable {
+        case sent
+        /// macOS will not show Pulse's notifications: refused at the prompt,
+        /// or turned off in System Settings since.
+        case denied
+        /// The permission prompt was closed without an answer; pressing
+        /// again asks again.
+        case undecided
+        /// No app bundle (`isSupported`).
+        case unsupported
+    }
+
+    /// Posts one notification now, on request, so the reader can see that
+    /// notifications reach them and how they look.
+    ///
+    /// **Asks for permission whatever is switched on**, unlike
+    /// `requestAuthorizationIfNeeded`: pressing the button is the request.
+    /// Not a usage alert and remembered nowhere — the one notification that
+    /// is about nothing Pulse saw, because the reader asked for exactly that,
+    /// and it says so.
+    func sendTest() async -> TestOutcome {
+        guard Self.isSupported else { return .unsupported }
+        let center = UNUserNotificationCenter.current()
+        if await center.notificationSettings().authorizationStatus == .notDetermined {
+            _ = try? await center.requestAuthorization(options: [.alert, .sound])
+        }
+        await readAuthorization()
+        if authorization == .notDetermined { return .undecided }
+        guard authorization == .authorized || authorization == .provisional else { return .denied }
+
+        let content = UNMutableNotificationContent()
+        content.title = "Blinky"
+        content.body = .localized("This is a test notification. Blinky's notifications look like this.")
+        content.sound = .default
+        let request = UNNotificationRequest(identifier: "pulse.test", content: content, trigger: nil)
+        do {
+            try await center.add(request)
+            return .sent
+        } catch {
+            return .denied
         }
     }
 

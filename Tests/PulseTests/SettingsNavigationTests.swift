@@ -67,6 +67,9 @@ struct SettingsNavigationTests {
         #expect(SettingsPane.notifications.searchTerms.contains("Running out"))
         #expect(SettingsPane.notifications.searchTerms.contains("When it is running out"))
         #expect(SettingsPane.notifications.searchTerms.contains("Notify when a limit is running out"))
+        #expect(SettingsPane.notifications.searchTerms.contains("Test notification"))
+        #expect(SettingsPane.experimental.title == "Experimental")
+        #expect(SettingsPane.experimental.searchTerms.contains("Liquid docking"))
 
         LocalizationSource.use(.chineseSimplified)
         #expect(SettingsPane.usageCard.title == "用量")
@@ -81,7 +84,7 @@ struct SettingsNavigationTests {
         let ext = AccountKey(.pulseExtension, slot: "demo")
         let listed = SettingsPane.fixedPanes
 
-        #expect(SettingsPane.application == [.general, .notifications, .network, .providers])
+        #expect(SettingsPane.application == [.general, .notifications, .network, .experimental, .providers])
         #expect(SettingsPane.fixedPanes.filter { $0 == .providers }.count == 1)
         #expect(SettingsPane.sidebarRow(for: .account(codex), listed: listed) == .providers)
         #expect(SettingsPane.sidebarRow(for: .account(ext), listed: listed) == .extensions)
@@ -116,6 +119,10 @@ struct SettingsNavigationTests {
         SettingsPaneBookmark.write(.notifications, to: defaults)
         #expect(defaults.string(forKey: SettingsPaneBookmark.key) == "notifications")
         #expect(SettingsPaneBookmark.read(from: defaults, accounts: []) == .notifications)
+
+        SettingsPaneBookmark.write(.experimental, to: defaults)
+        #expect(defaults.string(forKey: SettingsPaneBookmark.key) == "experimental")
+        #expect(SettingsPaneBookmark.read(from: defaults, accounts: []) == .experimental)
 
         SettingsPaneBookmark.write(.account(codex), to: defaults)
         #expect(SettingsPaneBookmark.read(from: defaults, accounts: [codex]) == .account(codex))

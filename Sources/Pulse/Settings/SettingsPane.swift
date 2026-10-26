@@ -25,6 +25,8 @@ enum SettingsPane: Hashable {
     case general
     case notifications
     case network
+    /// Features still being tuned, off until switched on.
+    case experimental
     case account(AccountKey)
     /// Every agent's spending added up — a pane whose subject is not a
     /// provider, which is why it sits outside the accounts rather than inside
@@ -43,7 +45,7 @@ enum SettingsPane: Hashable {
     /// The sidebar's fixed rows, section by section. `bottom` is the Other
     /// section: extensions, then integrations, then About.
     static let panel: [SettingsPane] = [.appearance, .usageCard, .placement]
-    static let application: [SettingsPane] = [.general, .notifications, .network, .providers]
+    static let application: [SettingsPane] = [.general, .notifications, .network, .experimental, .providers]
     static let bottom: [SettingsPane] = [.extensions, .integrations, .about]
 
     /// Every fixed row, for the sidebar's "No matches" line.
@@ -77,6 +79,7 @@ enum SettingsPane: Hashable {
         case .general: .localized("General")
         case .notifications: .localized("Notifications")
         case .network: .localized("Network and refresh")
+        case .experimental: .localized("Experimental")
         // Not "Usage history", which is what a provider's own card is called.
         // Two panes with one name is two places to look for one thing.
         case .spend: .localized("Token spend")
@@ -100,6 +103,7 @@ enum SettingsPane: Hashable {
         case .general: "slider.horizontal.3"
         case .notifications: "bell"
         case .network: "network"
+        case .experimental: "flask"
         case .spend: "chart.bar"
         case .account: "square.stack.3d.up"
         case .about: "info.circle"
@@ -148,11 +152,14 @@ enum SettingsPane: Hashable {
              .localized("Regular resets"), .localized("Celebrate a reset"),
              .localized("Also celebrate hourly quota resets"),
              .localized("Exhaustion and reminders"), .localized("Exhaustion notifications"),
-             .localized("Notify when a limit is running out")]
+             .localized("Notify when a limit is running out"),
+             .localized("Test notification"), .localized("Send")]
         case .network:
             [.localized("Check every"), .localized("Proxy")]
         case .extensions:
             [.localized("Extensions"), .localized("Look again")]
+        case .experimental:
+            [.localized("Liquid docking")]
         case .providers:
             [.localized("Enabled"), .localized("Subscriptions"), .localized("API and pay-as-you-go")]
         case .account, .spend, .about, .integrations:

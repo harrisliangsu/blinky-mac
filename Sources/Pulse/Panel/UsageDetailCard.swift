@@ -143,9 +143,11 @@ enum DetailCardLayout {
     static var metricTrendLimit: Int { 2 }
 
     /// The whole activity section: rule, heading, figures, chart, top model,
-    /// cache hit rate, the prompt cache's lapse, the line saying what the
-    /// money is. Each part is drawn at the height
-    /// named here, so the budget and the drawing cannot drift.
+    /// cache hit rate, the prompt cache's lapse, the line saying whose figures
+    /// they are. Each part is drawn at the height named here, so the budget
+    /// and the drawing cannot drift; that last line is only drawn for an
+    /// account's own or charged figures, and this Mac's records leave its
+    /// height unused (the card is measured, the window budgets the most).
     static var activityHeight: CGFloat {
         1
             + activitySpacing + figureLabelHeight
@@ -422,7 +424,8 @@ struct UsageDetailCard: View {
                     // service did not state a length.
                     forecast: forecastLine(for: window),
                     value: valueText(window),
-                    amount: showsAmounts ? Self.amountText(window, remaining: showsRemaining) : nil
+                    amount: showsAmounts || window.amounts?.currency != nil
+                        ? Self.amountText(window, remaining: showsRemaining) : nil
                 )
                 .transition(Self.rowTransition)
             }
@@ -938,6 +941,9 @@ struct UsageDetailCard: View {
         guard let amounts = window.amounts, amounts.limit > 0,
               let figure = remaining ? amounts.remaining : amounts.used
         else { return nil }
+        if let currency = amounts.currency {
+            return "\(Money.reported(max(figure, 0), code: currency)) / \(Money.reported(amounts.limit, code: currency))"
+        }
         return "\(creditAmount(max(figure, 0))) / \(creditAmount(amounts.limit))"
     }
 
@@ -1881,20 +1887,19 @@ private struct ActivitySection: View {
                 topModel(ledger)
                 cacheHitRate(ledger)
                 if let promptCache { PromptCacheRow(reading: promptCache) }
-                Text(isCharged
-                    ? String.localized("Costs as \(provider.displayName) charged them, for the whole account.")
-                    : isAccountWide
-                        ? String.localized("From \(provider.displayName), for the whole account.")
-                        // Only beside a `*`: with no money line there is
-                        // none to explain.
-                        : Self.hasMoneyLine(month, isAccountWide: isAccountWide, isCharged: isCharged) && month.unpriced > 0
-                            ? String.localized("API-price estimates. * Partly unpriced.")
-                            : String.localized("Costs are estimates at API prices."))
-                    .font(.system(size: DetailCardLayout.footnoteFontSize, weight: .regular, design: .rounded))
-                    .foregroundStyle(.primary.opacity(0.4))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
-                    .frame(height: DetailCardLayout.footnoteHeight)
+                // Only where the figures are not this Mac's own: this Mac's
+                // records carry no line saying the money is an estimate (the
+                // Token spend pane says so).
+                if isCharged || isAccountWide {
+                    Text(isCharged
+                        ? String.localized("Costs as \(provider.displayName) charged them, for the whole account.")
+                        : String.localized("From \(provider.displayName), for the whole account."))
+                        .font(.system(size: DetailCardLayout.footnoteFontSize, weight: .regular, design: .rounded))
+                        .foregroundStyle(.primary.opacity(0.4))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
+                        .frame(height: DetailCardLayout.footnoteHeight)
+                }
             }
         }
     }

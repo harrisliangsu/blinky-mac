@@ -18,6 +18,10 @@ Opened **read-only and in place**. Cursor is usually running, so the database is
 
 The row is normally TEXT but has been seen as a BLOB. When it is, it is UTF-16 with no BOM; read as UTF-8 that yields the token with a null after every character, which parses as nothing and explains itself to nobody.
 
+**Newer Cursor builds seal the cell.** When `cursor.storage.authTokenEncryptionAtRest` is on, the value is `cursor-safe-storage:v1:` plus standard base64 of a Chromium `v10`/`v11` ciphertext — Electron's safeStorage, the same scheme `BrowserCookies.decrypt` already knows. The key is `Cursor Safe Storage` in the login keychain (account `Cursor Key`), opened through `BrowserCookies.safeStorageKey`. A plaintext JWT from an older editor is still accepted. A sealed row whose key was denied or dismissed is `.cursorKeyRefused`, not `.cursorLoginExpired`: opening Cursor will not help, and Refresh asks the keychain again.
+
+**The keychain is asked as seldom as possible** (`CursorKeychain`): every read raises macOS's confidential-information dialog unless the reader chose Always Allow, and Cursor and Grok Bot both borrow this login, so asking on each automatic pass put the dialog up every few minutes, twice. A key handed over is kept in memory until Pulse quits (never written). After a refusal an automatic pass does not ask again until the next launch; a manual refresh of Cursor or Grok Bot asks at once (`UsageStore.refresh(_:)` → `allowAsking`). The two providers' reads wait on one another, so one pass asks once. A kept key that no longer opens the row (Cursor made a new one) is forgotten and the keychain read once more; macOS asks about the new item once, whatever was allowed for the old. A key that opens nothing even read afresh is `.unreadable`, shown as an expired login, since opening Cursor rewrites the row.
+
 Redirects are refused. The session goes out as a `Cookie` header, which `URLSession` will carry across a redirect to another host (unlike `Authorization`, which it strips).
 
 Nothing here renews the editor token. Cursor does that the next time it is used. A minute’s expiry headroom is applied before a request is sent.
@@ -36,6 +40,8 @@ The rail's automatic ring follows **Cursor Models**, not whichever pool is fulle
 **Those fields are percentages, not fractions** — 0.0267 means 0.0267%, not 2.67%. Settled by arithmetic rather than taken on trust. **Historical evidence:** on an account 12¢ in, the three percentages implied pools of $450 and $22.50, summing to $472.50 matching `totalPercentUsed` to the cent.
 
 **`plan.used` / `plan.limit` is a different denominator and must not sit beside them** — plan cash value ($20 on Pro) against pools worth hundreds, so a third bar reads as a contradiction. It is used for the extra-spend limit, as the fallback when an account reports no pools at all, and as `creditBalance` (`plan.remaining` is a real balance, not an allowance — which is why this provider reports one and Antigravity does not). A team account’s `pooled` / `onDemand` stand in for the individual pair.
+
+**Enterprise accounts may report neither pair.** Their shared allowance arrives as `individualUsage.overall`, with `used`, `limit` and `remaining` in **cents**. When no model pools are reported, it becomes the same monthly money fallback and the balance; its amounts are converted to dollars for the card, which writes the currency symbol and two decimal places. Evidence: an Enterprise account on 2026-10-23 reported `used: 80`, `limit: 80000`, `remaining: 79920` (fixture `cursor-enterprise-overall.json`), which is `$0.80 / $800.00` used and `$799.20` left.
 
 Billing-cycle length is 28 to 31 days, stored as a flat 30 with `reportsLength: false`.
 

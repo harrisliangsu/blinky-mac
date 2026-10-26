@@ -476,6 +476,7 @@
 "Uses the session the Claude desktop app is signed in with." = "Использует сеанс, в котором выполнен вход в приложении Claude для Mac.";
 "Sign in to the Claude desktop app to see usage." = "Войдите в приложение Claude для Mac, чтобы видеть расход.";
 "Blinky needs your keychain to read the Claude desktop app's session. Refresh to be asked again." = "Blinky нужен доступ к связке ключей, чтобы прочитать сеанс приложения Claude для Mac. Нажмите «Обновить», чтобы запрос появился снова.";
+"Blinky needs your keychain to read Cursor's saved login. Refresh to be asked again." = "Blinky нужен доступ к связке ключей, чтобы прочитать сохранённый вход Cursor. Нажмите «Обновить», чтобы запрос появился снова.";
 "The Claude desktop app's session was refused. Open it and sign in again." = "Сеанс приложения Claude для Mac отклонён. Откройте приложение и войдите снова.";
 
 /* Notifications */
@@ -953,8 +954,6 @@
 "On this Mac" = "На этом Mac";
 "7 days" = "7 дней";
 "31 days" = "31 день";
-"Costs are estimates at API prices." = "Суммы — оценка по ценам API.";
-"API-price estimates. * Partly unpriced." = "Оценка по ценам API. * Часть без цены.";
 "Whole account" = "Весь аккаунт";
 "Couldn't read the history." = "Не удалось прочитать историю.";
 "From %@, for the whole account." = "Данные %@ по всему аккаунту.";
@@ -1454,3 +1453,13 @@
 /* 1.5.18 */
 "None" = "Нет";
 "About the estimate" = "Об оценке";
+"Experimental" = "Экспериментальные функции";
+"Liquid docking" = "Прикрепление каплей";
+"Pulled off a screen edge, the rail stretches and parts like a drop; brought near one, it is drawn in. While dragged, it follows the pointer with a little give." = "Если оттянуть ленту от края экрана, она вытягивается и отрывается, как капля; рядом с краем она притягивается к нему. При перетаскивании лента следует за указателем с небольшой задержкой.";
+"These features are still being tuned and may change or be removed." = "Эти функции ещё дорабатываются и могут измениться или быть удалены.";
+"Test notification" = "Тестовое уведомление";
+"Send" = "Отправить";
+"Sends one now, so you can see that notifications reach you." = "Отправляет уведомление сейчас, чтобы проверить, что уведомления доходят.";
+"Sent. If nothing appeared, check Focus and System Settings › Notifications." = "Отправлено. Если ничего не появилось, проверьте режим фокусирования и Системные настройки › Уведомления.";
+"This is a test notification. Blinky's notifications look like this." = "Это тестовое уведомление. Так выглядят уведомления Blinky.";
+"Blinky has not been allowed to post notifications yet. Press Send again to be asked." = "Blinky пока не получил разрешения на уведомления. Нажмите «Отправить» ещё раз, чтобы запрос появился снова.";
