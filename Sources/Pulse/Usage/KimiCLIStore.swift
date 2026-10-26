@@ -45,6 +45,17 @@ import Foundation
 /// **A request found in both stores is counted once**, from Kimi Code's copy,
 /// which names the model. Kimi Code's migrator can carry sessions over from
 /// the legacy store; the key is the request's second and its four counts.
+///
+/// **Output speed is a separate reading from those counts.** A step is timed
+/// from the request (`turn.prompt`, or a `tool.result`) to the last model
+/// line (`content.part` or `tool.call`) before the next tool result. The
+/// legacy log uses `TurnBegin` / `ToolResult` and `ContentPart` / `ToolCall`.
+/// The span is committed when the turn-scoped `usage.record` — or the legacy
+/// `token_usage` line — arrives, not at that line's own timestamp, and not
+/// from `step.end`, whose time includes the tool. `llmStreamDurationMs` alone
+/// is not a duration: it leaves out the wait for the first token. A
+/// session-scoped `usage.record` is a running total, not a reply. Kimi Code's
+/// `llmFirstTokenLatencyMs`, when the step writes it, is the first-token wait.
 enum KimiCLIStore {
     static let unnamedModel = "kimi (unnamed)"
 
@@ -58,13 +69,18 @@ enum KimiCLIStore {
 
         for file in AgentLogIO.files(in: roots, names: ["wire.jsonl"]) {
             guard !Task.isCancelled else { return .empty }
+            var clock = StepClock()
+            var amend: Int?
+            var inFile: [Request] = []
             for line in AgentLogIO.jsonLines(at: file) {
-                if let request = Self.request(in: line, file: file) { requests.append(request) }
+                Self.observe(line, file: file, clock: &clock, amend: &amend, requests: &inFile)
             }
+            requests.append(contentsOf: inFile)
         }
 
         let migrated = Set(requests.lazy.filter { !$0.legacy }.map(\.identity))
         var buckets: [String: [String: TokenTally]] = [:]
+        var timings: [String: [String: ReplyTiming]] = [:]
         var runs: [URL: Run] = [:]
 
         for request in requests where !request.legacy || !migrated.contains(request.identity) {
@@ -74,6 +90,10 @@ enum KimiCLIStore {
             let unpriced = price == nil ? request.tally.total : 0
             buckets[key, default: [:]][request.model] =
                 (buckets[key]?[request.model] ?? TokenTally()) + request.tally
+            if let timing = request.timing {
+                timings[key, default: [:]][request.model] =
+                    (timings[key]?[request.model] ?? ReplyTiming()) + timing
+            }
 
             var run = runs[request.session] ?? Run(legacy: request.legacy)
             run.tokens += request.tally.total
@@ -119,7 +139,7 @@ enum KimiCLIStore {
             )
         }
 
-        var ledger = UsageLedgerReader.price(buckets, with: prices)
+        var ledger = UsageLedgerReader.price(buckets, with: prices, timings: timings)
         ledger.sessions = sessions.sorted { $0.end > $1.end }
         return ledger
     }
@@ -138,6 +158,11 @@ enum KimiCLIStore {
         var identity: String {
             "\(Int(at.timeIntervalSince1970.rounded(.down)))|\(tally.input)|\(tally.cacheWrite)|\(tally.cacheRead)|\(tally.output)"
         }
+
+        /// The step this request closed, when the log could pair its start
+        /// and its last model line. Absent when it could not — the tokens
+        /// are still counted.
+        var timing: ReplyTiming? = nil
     }
 
     private struct Run {
@@ -218,6 +243,188 @@ enum KimiCLIStore {
             let entries = root["workspaces"] as? [String: [String: Any]]
         else { return [:] }
         return entries.compactMapValues { $0["root"] as? String }
+    }
+
+    /// One line of a wire log: move the clock, and keep a request when the
+    /// line is one. Token totals stay on `request(in:file:)`.
+    private static func observe(
+        _ line: [String: Any], file: URL, clock: inout StepClock, amend: inout Int?, requests: inout [Request]
+    ) {
+        if line["type"] as? String == "turn.prompt" || line["type"] as? String == "turn.steer" {
+            let kind = (line["origin"] as? [String: Any])?["kind"] as? String
+            if kind != "injection", let at = date(line["time"]) {
+                clock.beginTurn(at: at)
+                amend = nil
+            }
+            return
+        }
+
+        if line["type"] as? String == "context.append_loop_event",
+           let event = line["event"] as? [String: Any] {
+            let eventType = event["type"] as? String
+            if let at = date(line["time"]) {
+                switch eventType {
+                case "step.begin": clock.sentIfIdle(at: at)
+                case "content.part", "tool.call": clock.wrote(at: at)
+                case "tool.result": clock.sent(at: at)
+                default: break
+                }
+            }
+            if eventType == "step.end" {
+                let first = double(event["llmFirstTokenLatencyMs"])
+                let stream = double(event["llmStreamDurationMs"])
+                if let index = amend, requests.indices.contains(index) {
+                    requests[index].timing = withLatency(
+                        requests[index].timing, output: requests[index].tally.output, firstMs: first, streamMs: stream
+                    )
+                } else {
+                    clock.noteLatency(firstMs: first, streamMs: stream)
+                }
+            }
+            return
+        }
+
+        if line["type"] as? String == "usage.record" {
+            guard var request = request(in: line, file: file) else { return }
+            // A session record is the running total, not one reply.
+            if (line["usageScope"] as? String) == "session" {
+                requests.append(request)
+                return
+            }
+            request.timing = clock.commit(output: request.tally.output)
+            requests.append(request)
+            amend = requests.count - 1
+            return
+        }
+
+        if let message = line["message"] as? [String: Any] {
+            let type = message["type"] as? String
+            if let at = date(line["timestamp"]) {
+                switch type {
+                case "TurnBegin":
+                    clock.beginTurn(at: at)
+                    amend = nil
+                case "StepBegin":
+                    clock.sentIfIdle(at: at)
+                case "ContentPart", "ToolCall", "ToolCallPart":
+                    clock.wrote(at: at)
+                case "ToolResult":
+                    clock.sent(at: at)
+                default:
+                    break
+                }
+            }
+            guard var request = request(in: line, file: file) else { return }
+            request.timing = clock.commit(output: request.tally.output)
+            requests.append(request)
+            amend = requests.count - 1
+        }
+    }
+
+    /// A first-token wait, and a speed from Kimi Code's own two durations
+    /// only when the log has no model line to time from. `llmStreamDurationMs`
+    /// by itself is not a duration.
+    private static func withLatency(
+        _ existing: ReplyTiming?, output: Int, firstMs: Double?, streamMs: Double?
+    ) -> ReplyTiming? {
+        var timing = existing ?? ReplyTiming()
+        var changed = false
+        if timing.replies == 0, let firstMs, let streamMs, firstMs > 0, streamMs > 0 {
+            let seconds = (firstMs + streamMs) / 1000
+            if output >= ReplyTiming.minimumOutput, seconds > 0, seconds <= ReplyTiming.longest {
+                timing = timing + ReplyTiming(outputTokens: output, seconds: seconds, replies: 1)
+                changed = true
+            }
+        }
+        if timing.firstTokenTurns == 0, let firstMs, let wait = ReplyTiming.firstToken(after: firstMs / 1000) {
+            timing = timing + wait
+            changed = true
+        }
+        return changed ? timing : existing
+    }
+
+    /// One step's model span. A tool result closes the step that asked for
+    /// the tool and starts the next request; it does not extend the span
+    /// through the tool.
+    private struct StepClock {
+        private var sent: Date?
+        private var wrote: Date?
+        private var closed: (sent: Date, finished: Date)?
+        private var pendingFirst: Double?
+        private var pendingStream: Double?
+
+        mutating func beginTurn(at date: Date) {
+            pendingFirst = nil
+            pendingStream = nil
+            closed = nil
+            sent = date
+            wrote = nil
+        }
+
+        mutating func sent(at date: Date) {
+            if let sent, let wrote, wrote > sent { closed = (sent, wrote) }
+            sent = date
+            wrote = nil
+        }
+
+        /// A `step.begin` must not move a start `turn.prompt` already set.
+        mutating func sentIfIdle(at date: Date) {
+            guard sent == nil else { return }
+            sent = date
+            wrote = nil
+        }
+
+        mutating func wrote(at date: Date) {
+            guard let sent, date > sent else { return }
+            wrote = date
+        }
+
+        mutating func noteLatency(firstMs: Double?, streamMs: Double?) {
+            if let firstMs, firstMs > 0 { pendingFirst = firstMs }
+            if let streamMs, streamMs > 0 { pendingStream = streamMs }
+        }
+
+        /// The step's speed, paired with the span already closed — never with
+        /// the usage line's own time. Clears that span so the next record
+        /// cannot time it again.
+        mutating func commit(output: Int) -> ReplyTiming? {
+            let first = pendingFirst
+            let stream = pendingStream
+            pendingFirst = nil
+            pendingStream = nil
+
+            var span = closed
+            closed = nil
+            if span == nil, let sent, let wrote, wrote > sent {
+                span = (sent, wrote)
+                self.sent = nil
+                self.wrote = nil
+            }
+
+            var timing = ReplyTiming()
+            var any = false
+            if let span, let speed = ReplyTiming(output: output, from: span.sent, to: span.finished) {
+                timing = timing + speed
+                any = true
+            } else if let first, let stream, first > 0, stream > 0 {
+                let seconds = (first + stream) / 1000
+                if output >= ReplyTiming.minimumOutput, seconds > 0, seconds <= ReplyTiming.longest {
+                    timing = timing + ReplyTiming(outputTokens: output, seconds: seconds, replies: 1)
+                    any = true
+                }
+            }
+            if let first, let wait = ReplyTiming.firstToken(after: first / 1000) {
+                timing = timing + wait
+                any = true
+            }
+            return any ? timing : nil
+        }
+    }
+
+    private static func double(_ value: Any?) -> Double? {
+        let number = (value as? Double) ?? (value as? Int).map(Double.init) ?? (value as? NSNumber)?.doubleValue
+        guard let number, number.isFinite else { return nil }
+        return number
     }
 
     private static func int(_ value: Any?) -> Int {

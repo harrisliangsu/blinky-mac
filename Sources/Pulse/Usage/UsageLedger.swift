@@ -183,11 +183,12 @@ extension TokenTally {
 /// (`minimumOutput`), and none that took longer than `longest` — a retry or a
 /// stall, not a speed.
 ///
-/// **The wait for the first token** is a separate figure, and only Codex's:
-/// it writes `time_to_first_token_ms` for the first request of each turn.
-/// Claude Code's transcript has no such field — its first line is written
-/// when a whole content block is done — so its latency is left unsaid rather
-/// than guessed.
+/// **The wait for the first token** is a separate figure. Codex writes
+/// `time_to_first_token_ms` for the first request of each turn. Kimi Code
+/// writes `llmFirstTokenLatencyMs` on a step that has finished. Claude Code's
+/// transcript has no such field — its first line is written when a whole
+/// content block is done — and neither does Grok's session log, so that wait
+/// is left unsaid rather than guessed.
 struct ReplyTiming: Codable, Sendable, Equatable {
     var outputTokens = 0
     var seconds = 0.0
@@ -328,7 +329,8 @@ struct UsageLedger: Sendable, Equatable {
         var models: [String: TokenTally] = [:]
         /// The quarter-hour's timed replies by **raw model id** — only the
         /// readers that can tell when a request went out and when its reply
-        /// finished (Claude Code's and Codex's transcripts). Kept per slot,
+        /// finished (Claude Code, Codex, and — where the log pairs the two —
+        /// Grok Build and Kimi). Kept per slot,
         /// not per day, because a speed is only worth reading while it is
         /// recent (`outputSpeedsByModel(since:)`).
         var timings: [String: ReplyTiming] = [:]
@@ -841,9 +843,10 @@ actor UsageLedgerReader {
         _ buckets: [String: [String: TokenTally]],
         with prices: [String: ModelPrice],
         calendar: Calendar = .current,
-        vendor: String? = nil
+        vendor: String? = nil,
+        timings: [String: [String: ReplyTiming]] = [:]
     ) -> UsageLedger {
-        priced(buckets, with: prices, calendar: calendar, vendor: vendor)
+        priced(buckets, with: prices, calendar: calendar, vendor: vendor, timings: timings)
     }
 
     /// Turns buckets into days, slots and money.
@@ -1669,7 +1672,12 @@ actor UsageLedgerReader {
             // Placed at its first line, counted at its last.
             let placed = replies[id]?.slot ?? slot
             replies[id] = ScannedReply(slot: placed, model: model, tally: tally)
-            clock.reply(id, model: model, slot: placed, output: tally.output, at: at)
+            // An explicit null is a message still being written. A missing
+            // field is a finished line (and every transcript from before the
+            // field existed); guessing a speed from the tokens so far would
+            // publish a figure the reply has not finished.
+            let streaming = message["stop_reason"] is NSNull
+            clock.reply(id, model: model, slot: placed, output: tally.output, at: at, streaming: streaming)
         }
         clock.finish()
 
@@ -1690,16 +1698,19 @@ actor UsageLedgerReader {
         /// By message id, so the timing travels with its reply (`ScannedReply`).
         private(set) var timings: [String: ReplyTiming] = [:]
         private var pending: Date?
-        private var open: (id: String, model: String, slot: String, sent: Date?, finished: Date, output: Int)?
+        private var open: (id: String, model: String, slot: String, sent: Date?, finished: Date, output: Int, streaming: Bool)?
         private var lastFinished: Date?
         private var done: Set<String> = []
 
         mutating func sent(at date: Date) { pending = date }
 
-        mutating func reply(_ id: String, model: String, slot: String, output: Int, at date: Date) {
+        mutating func reply(
+            _ id: String, model: String, slot: String, output: Int, at date: Date, streaming: Bool
+        ) {
             if open?.id == id {
                 open?.finished = date
                 open?.output = output
+                open?.streaming = streaming
                 return
             }
             finish()
@@ -1708,7 +1719,7 @@ actor UsageLedgerReader {
             guard !done.contains(id) else { return }
             let sent = pending.map { start in lastFinished.map { max($0, start) } ?? start }
             pending = nil
-            open = (id, model, slot, sent, date, output)
+            open = (id, model, slot, sent, date, output, streaming)
         }
 
         mutating func finish() {
@@ -1716,7 +1727,9 @@ actor UsageLedgerReader {
             open = nil
             done.insert(reply.id)
             lastFinished = reply.finished
-            guard let sent = reply.sent,
+            // Still streaming: the output on the line is a count so far, not
+            // the reply. The next read, once a stop reason is written, times it.
+            guard !reply.streaming, let sent = reply.sent,
                   let timing = ReplyTiming(output: reply.output, from: sent, to: reply.finished) else { return }
             timings[reply.id] = timing
         }

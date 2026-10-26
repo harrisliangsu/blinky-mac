@@ -239,6 +239,33 @@ struct AgentCacheTests {
         #expect(back.slots.first?.tokens == 15)
         #expect(back.slots.first?.cost == 1.5)
         #expect(back.slots.first?.start == Date(timeIntervalSince1970: 100))
+        #expect(back.slots.first?.timings.isEmpty == true)
+    }
+
+    @Test("Reply timings survive a real save and load, and a slot without them does not decode")
+    func replyTimingsSurviveSaveAndLoad() throws {
+        let root = Self.temporary("cache-timings")
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let url = root.appending(path: "agent.json")
+        let key = UsageLedgerReader.slotKey(for: Date(timeIntervalSince1970: 1_789_372_800))
+        let timing = ReplyTiming(outputTokens: 200, seconds: 4, replies: 1, firstTokenSeconds: 1.5, firstTokenTurns: 1)
+        let ledger = UsageLedgerReader.price(
+            [key: ["m": TokenTally(output: 200)]], with: [:], timings: [key: ["m": timing]]
+        )
+        AgentCache.save(ledger, stamp: .init(source: "s", prices: "p"), for: .grok, at: url)
+        let loaded = try #require(AgentCache.load(.grok, at: url))
+        #expect(loaded.ledger.slots.first?.timings["m"] == timing)
+
+        let saved = try #require(JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any])
+        var changed = saved
+        var stored = try #require(changed["ledger"] as? [String: Any])
+        var slots = try #require(stored["slots"] as? [[String: Any]])
+        slots[0].removeValue(forKey: "timings")
+        stored["slots"] = slots
+        changed["ledger"] = stored
+        try JSONSerialization.data(withJSONObject: changed).write(to: url)
+        #expect(AgentCache.load(.grok, at: url) == nil)
     }
 
     @Test("Caches from earlier reader rules and sessions without day metadata are rejected")

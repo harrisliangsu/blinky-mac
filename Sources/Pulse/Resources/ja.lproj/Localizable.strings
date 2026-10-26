@@ -1048,6 +1048,9 @@
 "Too few replies in the last 24 hours to time." = "過去 24 時間の返信が少ないため、速度はまだ表示しません。";
 "First token is Codex's own measure of how long a turn waited for it." = "最初のトークンは Codex 自身が計測した、各ターンで最初のトークンが届くまでの時間です。";
 "Claude Code doesn't record when the first token arrived, so its wait isn't shown." = "Claude Code は最初のトークンが届いた時刻を記録しないため、待ち時間は表示しません。";
+"Grok doesn't record when the first token arrived, so its wait isn't shown." = "Grok は最初のトークンが届いた時刻を記録しないため、待ち時間は表示しません。";
+"Kimi doesn't record when the first token arrived, so its wait isn't shown." = "Kimi は最初のトークンが届いた時刻を記録しないため、待ち時間は表示しません。";
+"First token is Kimi Code's own measure of how long a step waited for it." = "最初のトークンは Kimi Code 自身が計測した、各ステップで最初のトークンが届くまでの時間です。";
 "%@ s" = "%@ 秒";
 "Prompt cache (%@)" = "プロンプトキャッシュ（%@）";
 "%@ left" = "残り %@";
