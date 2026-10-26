@@ -29,7 +29,9 @@ import UserNotifications
 /// notify first posts a notification and leaves the window hidden until that
 /// notification is clicked; show the window is Sparkle's offer immediately;
 /// install silently downloads, then installs and relaunches, with
-/// no notification and no window. The decision is `UpdateAnnouncement`, which
+/// no notification and no window before that install. The launch that is the
+/// new version names the version and that release's notes
+/// (`InstalledUpdateNotice`). The decision is `UpdateAnnouncement`, which
 /// does not touch Sparkle. The one extra step when the offer window does show
 /// is activation: this process is an `.accessory` app, and Sparkle's own
 /// driver shows a found update behind every other app unless something has
@@ -138,6 +140,94 @@ final class AppUpdate {
     /// The other choices leave that package until the reader installs it.
     var installsDownloadedUpdateImmediately: Bool {
         UpdateAnnouncement.installsImmediately(for: settings.updateDiscovery)
+    }
+
+    /// The silent install is about to quit this process. The next launch of
+    /// that version reads what was stored. A windowed install does not come
+    /// through here: Sparkle only asks this question from the automatic driver.
+    func rememberSilentInstall(version: String, description: String?, format: String?) {
+        guard let notice = InstalledUpdateNotice.make(version: version, description: description, format: format) else { return }
+        notice.save(to: settings.defaults)
+    }
+
+    /// Opens the notes. Set by the app, which owns the window and the Dock.
+    var onShowInstalledNotes: ((InstalledUpdateNotice) -> Void)?
+    /// Kept for a click in this process, so the notes are the full text even
+    /// if the notification's payload was shortened. The launch record itself
+    /// is cleared once the choice is made, so the next launch does not announce again.
+    private var postedInstalledNotice: InstalledUpdateNotice?
+
+    /// The launch that is a version installed silently. Nothing, when no
+    /// silent install was stored. The permission is read first: the value from
+    /// init may still be "not asked", and that would open the window for a
+    /// reader who can be notified.
+    func announceInstalledUpdateIfNeeded() async {
+        guard InstalledUpdateNotice.load(from: settings.defaults) != nil else { return }
+        await refreshNotificationPermission()
+        let pending = InstalledUpdateNotice.load(from: settings.defaults)
+        switch InstalledUpdateNotice.launchAction(
+            pending: pending,
+            runningVersion: current,
+            permission: notificationPermission,
+            canNotify: UsageAlerts.isSupported
+        ) {
+        case .absent:
+            return
+        case .discard:
+            InstalledUpdateNotice.clear(from: settings.defaults)
+        case .notify(let notice):
+            InstalledUpdateNotice.clear(from: settings.defaults)
+            postedInstalledNotice = notice
+            postInstalledNotification(notice)
+        case .showNotes(let notice):
+            InstalledUpdateNotice.clear(from: settings.defaults)
+            postedInstalledNotice = notice
+            onShowInstalledNotes?(notice)
+        }
+    }
+
+    /// A click on the installed-version notice. The copy kept in this process
+    /// wins when it is the same version, because that copy was not trimmed to
+    /// fit a notification payload.
+    func presentInstalledNotes(version: String?, notes: String?) {
+        let clicked = version.flatMap {
+            InstalledUpdateNotice.make(version: $0, description: notes, format: "plain-text")
+        }
+        let notice: InstalledUpdateNotice?
+        if let memory = postedInstalledNotice, clicked == nil || clicked?.version == memory.version {
+            notice = memory
+        } else {
+            notice = clicked
+        }
+        guard let notice else { return }
+        onShowInstalledNotes?(notice)
+    }
+
+    private func postInstalledNotification(_ notice: InstalledUpdateNotice) {
+        guard UsageAlerts.isSupported else {
+            onShowInstalledNotes?(notice)
+            return
+        }
+        let content = UNMutableNotificationContent()
+        content.title = String.localized("Blinky \(notice.version) is installed")
+        content.body = InstalledUpdateNotice.announcementBody(notes: notice.notes)
+        content.sound = .default
+        content.userInfo = [
+            InstalledUpdateNotice.versionUserInfoKey: notice.version,
+            InstalledUpdateNotice.notesUserInfoKey: notice.notes,
+        ]
+        let request = UNNotificationRequest(
+            identifier: InstalledUpdateNotice.notificationIdentifier,
+            content: content,
+            trigger: nil
+        )
+        Task { @MainActor in
+            do {
+                try await UNUserNotificationCenter.current().add(request)
+            } catch {
+                self.onShowInstalledNotes?(notice)
+            }
+        }
     }
 
     /// This fork's update files on GitHub. Upstream's `update.qunqin.org`
@@ -619,11 +709,20 @@ private final class UpdaterRelay: NSObject, SPUUpdaterDelegate, SPUStandardUserD
     /// before the install starts quitting the process.
     nonisolated func updater(
         _: SPUUpdater,
-        willInstallUpdateOnQuit _: SUAppcastItem,
+        willInstallUpdateOnQuit item: SUAppcastItem,
         immediateInstallationBlock immediateInstallHandler: @escaping () -> Void
     ) -> Bool {
+        // Copied before the hop. The item is Sparkle's object, and the next
+        // launch needs the version and the description as plain values.
+        let version = item.displayVersionString
+        let notes = item.itemDescription
+        let format = item.itemDescriptionFormat
         let installNow = MainActor.assumeIsolated {
-            owner?.installsDownloadedUpdateImmediately ?? false
+            let now = owner?.installsDownloadedUpdateImmediately ?? false
+            if now {
+                owner?.rememberSilentInstall(version: version, description: notes, format: format)
+            }
+            return now
         }
         // The block Sparkle hands over is not `Sendable`. The next main turn
         // is the same isolation this process already runs on; the copy is

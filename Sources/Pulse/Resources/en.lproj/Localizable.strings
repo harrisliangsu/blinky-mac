@@ -373,6 +373,8 @@
 "Uses the login Cursor already saved." = "Uses the login Cursor already saved.";
 "Refresh" = "Refresh";
 "Blinky %@ is available" = "Blinky %@ is available";
+"Blinky %@ is installed" = "Blinky %@ is installed";
+"This release did not include notes." = "This release did not include notes.";
 "Check now" = "Check now";
 "Check for Updates…" = "Check for Updates…";
 "Checking…" = "Checking…";
@@ -1408,7 +1410,7 @@
 "Notify if it will not last until the reset" = "Notify if it will not last until the reset";
 "The card's forecast and the exhaustion notifications both use this list." = "The card's forecast and the exhaustion notifications both use this list.";
 "Install silently" = "Install silently";
-"A scheduled check downloads the update, installs it, and relaunches Blinky, with no notification and no update window. Check now still opens the window." = "A scheduled check downloads the update, installs it, and relaunches Blinky, with no notification and no update window. Check now still opens the window.";
+"A scheduled check downloads the update, installs it, and relaunches Blinky, without an update window. After Blinky opens again, a notification names the installed version and what changed. Check now still opens the window." = "A scheduled check downloads the update, installs it, and relaunches Blinky, without an update window. After Blinky opens again, a notification names the installed version and what changed. Check now still opens the window.";
 "Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking." = "Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking.";
 "By hour" = "By hour";
 "Copied to the clipboard." = "Copied to the clipboard.";

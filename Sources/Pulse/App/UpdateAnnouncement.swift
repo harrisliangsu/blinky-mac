@@ -8,8 +8,9 @@ import UserNotifications
 /// Show the window is the previous behaviour: the offer comes forward as soon
 /// as the check finds a version. Install silently downloads on that scheduled
 /// check, then installs and relaunches Blinky, with no notification and no
-/// window. Check for Updates… and About's Check now are none of those — the
-/// reader asked, so the window opens either way.
+/// window before that install. What the new version says is
+/// `InstalledUpdateNotice`. Check for Updates… and About's Check now are none
+/// of those — the reader asked, so the window opens either way.
 ///
 /// **This type decides. It does not post, activate, or talk to Sparkle.**
 /// `AppUpdate` performs the action. The cases are the whole of the policy, so
@@ -20,7 +21,8 @@ enum UpdateDiscovery: String, CaseIterable, Identifiable, Sendable {
     /// Sparkle's update window, as soon as a scheduled check finds a version.
     case showWindow
     /// A scheduled check downloads the update, installs it, and relaunches
-    /// Blinky. No notification, and no update window.
+    /// Blinky. No notification and no update window before that install.
+    /// The launch that is the new version is `InstalledUpdateNotice`.
     case installSilently
 
     var id: String { rawValue }

@@ -367,6 +367,8 @@
 "Uses the login Cursor already saved." = "Cursor가 이미 저장해 둔 로그인을 씁니다.";
 "Refresh" = "새로 고치기";
 "Blinky %@ is available" = "Blinky %@을(를) 사용할 수 있습니다";
+"Blinky %@ is installed" = "Blinky %@ 버전이 설치되었습니다";
+"This release did not include notes." = "이 릴리스에는 변경 내용이 없습니다.";
 "Check now" = "지금 확인";
 "Check for Updates…" = "업데이트 확인…";
 "Checking…" = "확인 중…";
@@ -1410,7 +1412,7 @@
 "Notify if it will not last until the reset" = "초기화까지 버티지 못할 때 알림";
 "The card's forecast and the exhaustion notifications both use this list." = "카드의 소진 예측과 소진 알림이 모두 이 목록을 사용합니다.";
 "Install silently" = "자동으로 설치";
-"A scheduled check downloads the update, installs it, and relaunches Blinky, with no notification and no update window. Check now still opens the window." = "예약된 확인은 업데이트를 받아 설치한 뒤 Blinky를 다시 실행합니다. 알림도 업데이트 창도 열지 않습니다. 지금 확인은 창을 엽니다.";
+"A scheduled check downloads the update, installs it, and relaunches Blinky, without an update window. After Blinky opens again, a notification names the installed version and what changed. Check now still opens the window." = "예약된 확인은 업데이트를 받아 설치한 뒤 Blinky를 다시 실행합니다. 업데이트 창은 열지 않습니다. 다시 실행된 뒤 알림으로 설치된 버전과 변경 내용을 알려 줍니다. 지금 확인은 창을 엽니다.";
 "Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking." = "두 시간마다. 아래 선택에 따라 알리거나, 업데이트 창을 열거나, 묻지 않고 설치합니다.";
 "By hour" = "시간별";
 "Copied to the clipboard." = "클립보드에 복사했습니다.";

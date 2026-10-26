@@ -101,6 +101,12 @@ struct UpdateAnnouncementTests {
     @Test("Clicking the update notice presents the held offer")
     func clickingTheNoticePresentsTheHeldOffer() {
         #expect(NotificationTapHandler.destination(for: UpdateAnnouncement.notificationIdentifier) == .update)
+        #expect(InstalledUpdateNotice.notificationIdentifier != UpdateAnnouncement.notificationIdentifier)
+        #expect(NotificationTapHandler.destination(for: InstalledUpdateNotice.notificationIdentifier) == .installedUpdate)
+        #expect(NotificationTapHandler.destination(
+            for: InstalledUpdateNotice.notificationIdentifier,
+            actionIdentifier: UNNotificationDismissActionIdentifier
+        ) == nil)
         #expect(NotificationTapHandler.destination(
             for: UpdateAnnouncement.notificationIdentifier,
             actionIdentifier: UNNotificationDismissActionIdentifier
@@ -318,6 +324,83 @@ struct UpdateAnnouncementTests {
         #expect(settings.updateDiscovery == .installSilently)
     }
 
+    @Test("A silent install announces on the launch that is the new version")
+    func silentInstallAnnouncesOnTheLaunchThatIsTheNewVersion() throws {
+        let (defaults, cleanup) = isolatedDefaults()
+        defer { cleanup() }
+        let html = """
+        <style>
+          h2 { font-size: 1.05em; margin: 0 0 .5em; }
+        </style><h2>Blinky 1.5.24</h2><ul><li><strong>Install silently says what was installed.</strong> Sentence with &amp; and <code>1 &lt; 2</code>. <a href="https://github.com/harrisliangsu/blinky-mac/pull/1">#1</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.24">Release notes on GitHub</a></p>
+        """
+        let notice = try #require(InstalledUpdateNotice.make(version: " 1.5.24 ", description: html, format: nil))
+        let notes = """
+        Blinky 1.5.24
+        • Install silently says what was installed. Sentence with & and 1 < 2. #1
+        Release notes on GitHub
+        """
+        #expect(notice == InstalledUpdateNotice(version: "1.5.24", notes: notes))
+        #expect(!notice.notes.contains("font-size"))
+        #expect(InstalledUpdateNotice.make(version: "  ", description: html, format: nil) == nil)
+        #expect(InstalledUpdateNotice.releaseNotes(description: "<li>kept</li>", format: "plain-text") == "<li>kept</li>")
+        #expect(InstalledUpdateNotice.releaseNotes(description: nil, format: nil).isEmpty)
+        #expect(InstalledUpdateNotice.announcementBody(notes: notes) == notes)
+        #expect(!InstalledUpdateNotice.announcementBody(notes: " \n").isEmpty)
+
+        notice.save(to: defaults)
+        #expect(InstalledUpdateNotice.load(from: defaults) == notice)
+        #expect(InstalledUpdateNotice.from(userInfo: notice.userInfo) == notice)
+        #expect(InstalledUpdateNotice.from(userInfo: [:]) == nil)
+
+        #expect(InstalledUpdateNotice.launchAction(
+            pending: nil,
+            runningVersion: "1.5.24",
+            permission: .authorized,
+            canNotify: true
+        ) == .absent)
+        #expect(InstalledUpdateNotice.launchAction(
+            pending: notice,
+            runningVersion: "1.5.23",
+            permission: .authorized,
+            canNotify: true
+        ) == .discard)
+        #expect(InstalledUpdateNotice.launchAction(
+            pending: notice,
+            runningVersion: nil,
+            permission: .authorized,
+            canNotify: true
+        ) == .discard)
+        #expect(InstalledUpdateNotice.launchAction(
+            pending: notice,
+            runningVersion: "1.5.24",
+            permission: .authorized,
+            canNotify: true
+        ) == .notify(notice))
+        for permission in [UpdateAnnouncement.Permission.denied, .notDetermined] {
+            #expect(InstalledUpdateNotice.launchAction(
+                pending: notice,
+                runningVersion: "1.5.24",
+                permission: permission,
+                canNotify: true
+            ) == .showNotes(notice))
+        }
+        #expect(InstalledUpdateNotice.launchAction(
+            pending: notice,
+            runningVersion: "1.5.24",
+            permission: .authorized,
+            canNotify: false
+        ) == .showNotes(notice))
+        // The scheduled find itself is unchanged: still no notice and no window before the install.
+        #expect(UpdateAnnouncement.action(
+            origin: .scheduled,
+            discovery: .installSilently,
+            permission: .authorized
+        ) == .installSilently)
+
+        InstalledUpdateNotice.clear(from: defaults)
+        #expect(InstalledUpdateNotice.load(from: defaults) == nil)
+    }
+
     @Test("The bundle leaves Sparkle's automatic-install checkbox unset")
     func bundleOmitsSparklesAutomaticCheckbox() throws {
         let root = URL(fileURLWithPath: #filePath)
@@ -343,7 +426,9 @@ struct UpdateAnnouncementTests {
             "A scheduled check posts a notification, and the update window opens when that notification is clicked. Check now still opens the window.",
             "A scheduled check opens the update window.",
             "Install silently",
-            "A scheduled check downloads the update, installs it, and relaunches Blinky, with no notification and no update window. Check now still opens the window.",
+            "A scheduled check downloads the update, installs it, and relaunches Blinky, without an update window. After Blinky opens again, a notification names the installed version and what changed. Check now still opens the window.",
+            "Blinky %@ is installed",
+            "This release did not include notes.",
             "Every two hours. The choice below decides whether Blinky notifies you, opens the update window, or installs without asking.",
             "Open this notification to review and install it.",
         ]
@@ -363,6 +448,9 @@ struct UpdateAnnouncementTests {
         #expect(chinese["Notify first"] == "先通知")
         #expect(chinese["Show the window"] == "直接打开窗口")
         #expect(chinese["Install silently"] == "自动安装")
+        #expect(chinese["Blinky %@ is installed"] == "Blinky %@ 已安装")
+        #expect(chinese["This release did not include notes."] == "这一版没有附带更新说明。")
+        #expect(chinese["A scheduled check downloads the update, installs it, and relaunches Blinky, without an update window. After Blinky opens again, a notification names the installed version and what changed. Check now still opens the window."] == "定时检查会下载更新，安装后重新打开 Blinky，不打开更新窗口。重新打开后，通知会写出已安装的版本和这一版改了什么。现在检查仍会打开窗口。")
     }
 
     private static func pairs(in file: URL) throws -> [String: String] {

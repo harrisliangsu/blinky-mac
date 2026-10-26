@@ -31,6 +31,10 @@ final class DockPresence {
     private let windows = NSHashTable<NSWindow>.weakObjects()
     /// Sparkle's update session is showing a window. Cleared when that session ends.
     private var updateOfferVisible = false
+    /// The notes after a silent install. Same reason as the offer: with the
+    /// while-open Dock switch off, a tracked window stays `.accessory` and
+    /// opens behind whatever was in front.
+    private var installedNotesVisible = false
 
     init(settings: AppSettings) {
         self.settings = settings
@@ -70,6 +74,14 @@ final class DockPresence {
     func setUpdateOfferVisible(_ visible: Bool) {
         updateOfferVisible = visible
         apply()
+    }
+
+    /// The notes window after a silent install. The caller applies afterwards,
+    /// with the window it is showing or closing, so the policy and the order
+    /// are one step. `.regular` while it is up, including when the while-open
+    /// Dock switch is off — an accessory window opens behind everything else.
+    func setInstalledNotesVisible(_ visible: Bool) {
+        installedNotesVisible = visible
     }
 
     func track(_ window: NSWindow) {
@@ -116,7 +128,7 @@ final class DockPresence {
             alwaysShowsDockIcon: settings.alwaysShowsDockIcon,
             trackedWindowOpen: open,
             showsDockIconInSettings: settings.showsDockIconInSettings,
-            updateOfferVisible: updateOfferVisible
+            updateOfferVisible: updateOfferVisible || installedNotesVisible
         )
         let changed = NSApp.activationPolicy() != policy
         if changed { NSApp.setActivationPolicy(policy) }
