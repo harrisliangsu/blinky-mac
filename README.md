@@ -104,7 +104,7 @@ A scheduled check notifies you first. Click the notification to open the update 
 - **Optional extras** — global shortcuts, following the active display, hiding from screenshots, and starting a usage window after a reset.
 
 ### Spend, status and the rest
-- **Token spend** — what 54 local clients have used, priced at public API rates, by day, model and agent, over any span you choose. With Token spend on, the button on the usage card's header opens those lists beside the panel. Settings keeps the reading switch and Usage recaps. Share copies what that window is showing.
+- **Token spend** — what 54 local clients have used, priced at public API rates, by day, model and agent, over any span you choose. When Claude Code, Codex, Grok, or Kimi can time a reply, that window also shows the span's average output speed, and tokens per second on each model. With Token spend on, the button on the usage card's header opens those lists beside the panel. Settings keeps the reading switch and Usage recaps. Share copies what that window is showing.
 - **Estimates in your currency** — dollars, yuan, Hong Kong or New Taiwan dollars, yen, won or roubles.
 - **Usage recaps** — shareable cards for a day, a week, a month or a year, built from the same records.
 - **Service status** — 44 providers' own status pages, and a notification when one reports an outage.

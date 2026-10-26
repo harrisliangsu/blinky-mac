@@ -48,6 +48,12 @@ struct SpendSummary: Equatable, Sendable {
         var id: String { name }
 
         var share: Double = 0
+
+        /// Timed replies in the same span, weighted by the output they wrote.
+        /// Nil when this model had none — not a speed of zero.
+        var tokensPerSecond: Double? = nil
+        /// Mean wait for the first token, only where a log recorded it.
+        var firstToken: TimeInterval? = nil
     }
 
     /// One day, with every agent's work in it — the chart's bars, and the
@@ -146,6 +152,14 @@ struct SpendSummary: Equatable, Sendable {
     /// total is a floor rather than a whole: the UI says "partial" instead of
     /// quietly under-reporting. It adds no tokens and changes no price.
     var hasPartialCounts = false
+
+    /// Output tokens per second across every timed reply in the span.
+    ///
+    /// Nil when nothing in the span was timed. That is not a speed of zero.
+    /// All timed output over all timed seconds, so a long reply weighs more
+    /// than a short one. The account card's rolling day and five-reply floor
+    /// are a different reading (`UsageLedger.outputSpeedsByModel(since:)`).
+    var outputTokensPerSecond: Double? = nil
 
     var isEmpty: Bool { tokens == 0 && cost == 0 }
 
@@ -395,6 +409,8 @@ struct SpendSummary: Equatable, Sendable {
         var hasAggregate = false
         var hasPartial = false
         var worked: Set<Date> = []
+        var modelTimings: [String: ReplyTiming] = [:]
+        var spanTiming = ReplyTiming()
 
         for (agent, ledger) in ledgers {
             guard !Task.isCancelled else { return SpendSummary() }
@@ -406,6 +422,22 @@ struct SpendSummary: Equatable, Sendable {
             for day in ledger.days where day.tokens > 0 { worked.insert(calendar.startOfDay(for: day.date)) }
 
             let window = cutoff == nil && upper == nil ? ledger.days : ledger.days.filter { inside($0.date) }
+
+            // Hours stay behind an empty day window, as they always have: a
+            // ledger with no day in the span does not shape the hour profile.
+            // Timings do not. A quarter-hour inside the span is a timed reply
+            // whether or not that day also carried a token total.
+            for slot in ledger.slots where inside(slot.start) {
+                guard !Task.isCancelled else { return SpendSummary() }
+                if !window.isEmpty, slot.tokens > 0 {
+                    hourTokens[calendar.component(.hour, from: slot.start), default: 0] += slot.tokens
+                }
+                for (raw, timing) in slot.timings {
+                    let name = ledger.modelNames[raw] ?? raw
+                    modelTimings[name] = (modelTimings[name] ?? ReplyTiming()) + timing
+                    spanTiming = spanTiming + timing
+                }
+            }
             guard !window.isEmpty else { continue }
 
             var agentTokens = 0
@@ -448,15 +480,6 @@ struct SpendSummary: Equatable, Sendable {
                     modelTokens[name, default: 0] += tokens
                     modelAgents[name, default: []].insert(agent)
                 }
-            }
-
-            // The time of day, which only the quarter-hour buckets carry.
-            // Bucketed by the hour their start falls in: a bucket never
-            // straddles one.
-            for slot in ledger.slots where inside(slot.start) {
-                guard !Task.isCancelled else { return SpendSummary() }
-                guard slot.tokens > 0 else { continue }
-                hourTokens[calendar.component(.hour, from: slot.start), default: 0] += slot.tokens
             }
 
             // **A session is counted by the part of it that falls in the
@@ -515,15 +538,19 @@ struct SpendSummary: Equatable, Sendable {
         // alphabetical one makes that a search.
         summary.agents.sort { $0.tokens > $1.tokens }
 
+        summary.outputTokensPerSecond = spanTiming.outputTokensPerSecond
         let overall = modelTokens.values.reduce(0, +)
         summary.models = modelTokens
             .map { name, tokens in
-                Model(
+                let timing = modelTimings[name] ?? ReplyTiming()
+                return Model(
                     name: name,
                     tokens: tokens,
                     // Sorted so a row's agents do not shuffle between reads.
                     agents: (modelAgents[name] ?? []).sorted { $0.displayName < $1.displayName },
-                    share: overall > 0 ? Double(tokens) / Double(overall) : 0
+                    share: overall > 0 ? Double(tokens) / Double(overall) : 0,
+                    tokensPerSecond: timing.outputTokensPerSecond,
+                    firstToken: timing.meanFirstToken
                 )
             }
             .sorted { $0.tokens > $1.tokens }

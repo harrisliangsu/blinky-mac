@@ -1054,6 +1054,9 @@
 "Kimi doesn't record when the first token arrived, so its wait isn't shown." = "Kimi는 첫 토큰이 도착한 시각을 기록하지 않아 지연 시간을 표시하지 않습니다.";
 "First token is Kimi Code's own measure of how long a step waited for it." = "첫 토큰은 Kimi Code가 직접 잰, 각 단계에서 첫 토큰이 오기까지 걸린 시간입니다.";
 "%@ s" = "%@초";
+"%@ tokens/s" = "%@ 토큰/초";
+"First token %@ s" = "첫 토큰 %@초";
+"Output speed is the average of timed replies in this span, from sending a request to the end of its reply. Claude Code, Codex, Grok, and Kimi can be timed." = "출력 속도는 이 집계 기간에서 시간을 잰 답변의 평균이며, 요청을 보낸 때부터 답변이 끝날 때까지로 잽니다. 잴 수 있는 것은 Claude Code, Codex, Grok, Kimi입니다.";
 "Prompt cache (%@)" = "프롬프트 캐시(%@)";
 "%@ left" = "%@ 남음";
 "Expired" = "만료됨";

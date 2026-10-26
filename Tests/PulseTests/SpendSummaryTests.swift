@@ -598,4 +598,102 @@ struct SpendSummaryTests {
         #expect(summary.projects.first?.cost == summary.cost)
         #expect(summary.projects.first?.tokens == 300)
     }
+
+    @Test("Output speed follows the span, and a timed reply does not change the token total")
+    func outputSpeedFollowsTheSpan() {
+        let tomorrow = Self.calendar.date(byAdding: .day, value: 1, to: Self.today)!
+        let yesterday = Self.calendar.date(byAdding: .day, value: -1, to: Self.today)!
+        let noon = Self.calendar.date(bySettingHour: 12, minute: 0, second: 0, of: Self.today)!
+        let one = Self.calendar.date(bySettingHour: 13, minute: 0, second: 0, of: Self.today)!
+
+        let claude = UsageLedger(
+            days: [LedgerDay(
+                date: Self.today, tokens: 40, cost: 1, unpricedTokens: 0,
+                models: ["raw-fast": 25, "raw-slow": 10, "raw-wait": 5]
+            )],
+            earliest: Self.today,
+            unpricedModels: [],
+            modelNames: ["raw-fast": "Fast", "raw-slow": "Slow", "raw-wait": "Wait"],
+            slots: [
+                // Outside the span: a fast day that must not move today's average.
+                .init(start: yesterday, tokens: 9, cost: 0, timings: [
+                    "raw-fast": ReplyTiming(outputTokens: 9_000, seconds: 9, replies: 9),
+                ]),
+                .init(start: noon, tokens: 40, cost: 1, timings: [
+                    // One reply is enough. The account card still wants five.
+                    "raw-fast": ReplyTiming(outputTokens: 1_000, seconds: 10, replies: 1),
+                    "raw-slow": ReplyTiming(outputTokens: 500, seconds: 10, replies: 2),
+                    "raw-wait": ReplyTiming(firstTokenSeconds: 4, firstTokenTurns: 2),
+                ]),
+                // No token total on the slot. The reply was still timed.
+                .init(start: one, tokens: 0, cost: 0, timings: [
+                    "raw-late": ReplyTiming(outputTokens: 100, seconds: 1, replies: 1),
+                ]),
+                .init(start: tomorrow, tokens: 8, cost: 0, timings: [
+                    "raw-fast": ReplyTiming(outputTokens: 8_000, seconds: 8, replies: 8),
+                ]),
+            ]
+        )
+        let codex = UsageLedger(
+            days: [LedgerDay(
+                date: Self.today, tokens: 10, cost: 1, unpricedTokens: 0,
+                models: ["raw-fast": 10]
+            )],
+            earliest: Self.today,
+            unpricedModels: [],
+            modelNames: ["raw-fast": "Fast"],
+            slots: [
+                .init(start: noon, tokens: 10, cost: 1, timings: [
+                    "raw-fast": ReplyTiming(
+                        outputTokens: 1_000, seconds: 10, replies: 1,
+                        firstTokenSeconds: 3, firstTokenTurns: 1
+                    ),
+                ]),
+            ]
+        )
+
+        let summary = SpendSummary.of(
+            [.claudeCode: claude, .codex: codex],
+            starting: Self.today, before: tomorrow, now: Self.today, calendar: Self.calendar
+        )
+
+        // Days only. Timings, and the slots outside the span, add no tokens.
+        #expect(summary.tokens == 50)
+        // 1_000 + 500 + 100 + 1_000 output over 10 + 10 + 1 + 10 seconds.
+        #expect(summary.outputTokensPerSecond == Double(2_600) / 31)
+
+        let fast = summary.models.first { $0.name == "Fast" }
+        #expect(fast?.tokens == 35)
+        #expect(fast?.tokensPerSecond == 100)
+        #expect(fast?.firstToken == 3)
+
+        let slow = summary.models.first { $0.name == "Slow" }
+        #expect(slow?.tokensPerSecond == 50)
+        #expect(slow?.firstToken == nil)
+
+        let wait = summary.models.first { $0.name == "Wait" }
+        #expect(wait?.tokensPerSecond == nil)
+        #expect(wait?.firstToken == 2)
+        #expect(summary.models.contains { $0.name == "raw-late" } == false)
+
+        let quiet = SpendSummary.of(
+            [.claudeCode: UsageLedger(
+                days: [LedgerDay(date: Self.today, tokens: 5, cost: 0, unpricedTokens: 0, models: ["m": 5])],
+                earliest: Self.today, unpricedModels: [], modelNames: [:], slots: []
+            )],
+            starting: Self.today, before: tomorrow, now: Self.today, calendar: Self.calendar
+        )
+        #expect(quiet.tokens == 5)
+        #expect(quiet.outputTokensPerSecond == nil)
+        #expect(quiet.models.allSatisfy { $0.tokensPerSecond == nil && $0.firstToken == nil })
+
+        var statistics = claude
+        statistics.origin = .providerStatistics
+        let ignored = SpendSummary.of(
+            [.claudeCode: statistics],
+            starting: Self.today, before: tomorrow, now: Self.today, calendar: Self.calendar
+        )
+        #expect(ignored.tokens == 0)
+        #expect(ignored.outputTokensPerSecond == nil)
+    }
 }
