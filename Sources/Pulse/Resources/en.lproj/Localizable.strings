@@ -1367,6 +1367,7 @@
 "%@ · may run out in %@" = "%@ · may run out in %@";
 "%@ · may run out before the reset" = "%@ · may run out before the reset";
 "At the current pace, about %@ before the next reset." = "At the current pace, about %@ before the next reset.";
+"A fast start. The estimate is only a guide." = "A fast start. The estimate is only a guide.";
 "May run out in %@." = "May run out in %@.";
 "Forecast: 5-hour" = "5-hour";
 "Forecast: weekly" = "Weekly";

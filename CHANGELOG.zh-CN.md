@@ -6,6 +6,10 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.23
+
+- **重置后用量偏快时，用尽预估仍会显示。** 在「设置 → 用量」打开「显示预估」后，每周限额刚重置且已用至少 5% 时，卡片仍写出用尽预估，并在下面注明「开头偏快，预估仅供参考」；用量较少时仍写「预计可维持到本轮重置」。[#84](https://github.com/harrisliangsu/blinky-mac/pull/84)
+
 ## 1.5.22
 
 - **回复写完后更新输出速度。** 在设置中打开 Claude Code、Codex、Grok 或 Kimi 的账号，模型表会显示 token/秒，数字来自这台 Mac 的会话记录，并在一条回复写完后刷新。[#83](https://github.com/harrisliangsu/blinky-mac/pull/83)

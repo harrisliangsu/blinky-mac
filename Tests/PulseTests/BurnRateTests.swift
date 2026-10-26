@@ -52,25 +52,23 @@ struct BurnRateTests {
         #expect(abs((close?.timeToExhaustion ?? 0) - 4 * 3600) < 60)
     }
 
-    @Test("A window that lasts, or that has barely opened, says nothing about a time")
+    @Test("A window that lasts, or that has barely opened with little spent, says nothing about a time")
     func readingRefusesWhatItCannotDivide() {
         let lasts = BurnRate.reading(for: Self.weekly(used: 0.2), now: Self.now)
         #expect(lasts?.exhaustsBeforeReset == false)
         #expect(lasts?.timeToExhaustion == nil)
+        #expect(lasts?.earlyPace == false)
 
-        let fresh = Self.window(used: 0.9, resetsAt: Self.now.addingTimeInterval(604_800 * 0.99))
-        #expect(BurnRate.reading(for: fresh, now: Self.now) == nil)
-
-        let barely = Self.window(used: 0.01, resetsAt: Self.now.addingTimeInterval(604_800 * 0.99))
+        let barely = Self.window(used: 0.01, resetsAt: Self.now.addingTimeInterval(598_752))
         let quiet = BurnRate.reading(for: barely, now: Self.now)
         #expect(quiet?.exhaustsBeforeReset == false)
         #expect(quiet?.timeToExhaustion == nil)
-        #expect(BurnRate.cardLine(
+        #expect(quiet?.earlyPace == false)
+        let quietLine = BurnRate.cardLine(
             for: barely, reading: quiet!, horizon: 6 * 3600, softHint: true, beforeReset: true
-        )?.tone == .lasts)
-
-        let burst = Self.window(used: BurnRate.earlyQuietUsed, resetsAt: Self.now.addingTimeInterval(604_800 * 0.99))
-        #expect(BurnRate.reading(for: burst, now: Self.now) == nil)
+        )
+        #expect(quietLine?.tone == .lasts)
+        #expect(quietLine?.note == nil)
 
         let unstated = Self.window(used: 0.8, resetsAt: Self.now.addingTimeInterval(302_400), reportsLength: false)
         #expect(BurnRate.reading(for: unstated, now: Self.now) == nil)
@@ -117,6 +115,8 @@ struct BurnRateTests {
         )
         #expect(soon?.tone == .countdown)
         #expect(soon?.text == "Weekly · may run out in about 4 hours")
+        #expect(soon?.note == nil)
+        #expect(countdown?.note == nil)
 
         let steady = Self.weekly(used: 0.2)
         let steadyReading = BurnRate.reading(for: steady, now: Self.now)!
@@ -144,6 +144,110 @@ struct BurnRateTests {
             for: week, reading: reading, horizon: 48 * 3600, softHint: true, beforeReset: true
         )
         #expect(chinese?.text == "每周 · 约 1天13小时后用尽")
+        #expect(chinese?.note == nil)
+    }
+
+    @Test("A fast start still states the estimate, and says the early pace is only a guide")
+    func earlyElevatedPaceStillForecasts() {
+        LocalizationSource.use(.english)
+        defer { LocalizationSource.use(.system) }
+
+        // One percent of a week left to run: 598_752 seconds of a 604_800-second week.
+        let opened = Self.now.addingTimeInterval(598_752)
+
+        let light = Self.window(used: 0.04, resetsAt: opened)
+        let quiet = BurnRate.reading(for: light, now: Self.now)
+        #expect(quiet?.exhaustsBeforeReset == false)
+        #expect(quiet?.timeToExhaustion == nil)
+        #expect(quiet?.earlyPace == false)
+        #expect(BurnRate.cardLine(
+            for: light, reading: quiet!, horizon: 6 * 3600, softHint: true, beforeReset: true
+        )?.note == nil)
+
+        let burst = Self.window(used: BurnRate.earlyQuietUsed, resetsAt: opened)
+        let burstReading = BurnRate.reading(for: burst, now: Self.now)
+        #expect(burstReading?.earlyPace == true)
+        #expect(burstReading?.exhaustsBeforeReset == true)
+        #expect(abs((burstReading?.timeToExhaustion ?? 0) - 31.92 * 3600) < 60)
+        let burstLine = BurnRate.cardLine(
+            for: burst, reading: burstReading!, horizon: 6 * 3600, softHint: true, beforeReset: true
+        )
+        #expect(burstLine?.tone == .beforeReset)
+        #expect(burstLine?.text == "At the current pace, about 1d 8h before the next reset.")
+        #expect(burstLine?.note == "A fast start. The estimate is only a guide.")
+        #expect(burstLine?.spoken.hasSuffix("A fast start. The estimate is only a guide.") == true)
+
+        let hintOnly = BurnRate.cardLine(
+            for: burst, reading: burstReading!, horizon: 6 * 3600, softHint: true, beforeReset: false
+        )
+        #expect(hintOnly?.tone == .hint)
+        #expect(hintOnly?.note == burstLine?.note)
+        #expect(BurnRate.cardLine(
+            for: burst, reading: burstReading!, horizon: 6 * 3600, softHint: false, beforeReset: false
+        ) == nil)
+
+        let heavy = Self.window(used: 0.4, resetsAt: opened)
+        let heavyReading = BurnRate.reading(for: heavy, now: Self.now)
+        #expect(heavyReading?.earlyPace == true)
+        #expect(abs((heavyReading?.timeToExhaustion ?? 0) - 2.52 * 3600) < 60)
+        let countdown = BurnRate.cardLine(
+            for: heavy, reading: heavyReading!, horizon: 6 * 3600, softHint: false, beforeReset: false
+        )
+        #expect(countdown?.tone == .countdown)
+        #expect(countdown?.text == "Weekly · may run out in about 2.5 hours")
+        #expect(countdown?.note == "A fast start. The estimate is only a guide.")
+
+        let almostGone = Self.window(used: 0.9, resetsAt: opened)
+        let almost = BurnRate.reading(for: almostGone, now: Self.now)
+        #expect(almost?.earlyPace == true)
+        #expect((almost?.timeToExhaustion ?? .infinity) < 15 * 60)
+        #expect(BurnRate.cardLine(
+            for: almostGone, reading: almost!, horizon: 6 * 3600, softHint: true, beforeReset: true
+        )?.text == "Weekly · may run out in under 15 minutes")
+
+        let later = Self.window(used: 0.4, resetsAt: Self.now.addingTimeInterval(604_800 * 0.90))
+        let laterReading = BurnRate.reading(for: later, now: Self.now)
+        #expect(laterReading != nil)
+        #expect(laterReading?.earlyPace == false)
+        #expect(BurnRate.cardLine(
+            for: later, reading: laterReading!, horizon: 48 * 3600, softHint: true, beforeReset: true
+        )?.note == nil)
+
+        let unopened = Self.window(used: 0.4, resetsAt: Self.now.addingTimeInterval(604_800))
+        #expect(BurnRate.reading(for: unopened, now: Self.now) == nil)
+
+        let week = Self.named(
+            "week", kind: .weekly, used: 0.4, seconds: 604_800,
+            resetsAt: opened, reportsLength: true
+        )
+        let five = Self.named(
+            "five", kind: .fiveHour, used: 0.4, seconds: 18_000,
+            resetsAt: Self.now.addingTimeInterval(10_000), reportsLength: true
+        )
+        let shown = BurnRate.forecastLine(
+            for: week, among: [five, week], showsForecast: true,
+            horizon: 6 * 3600, softHint: false, beforeReset: false, now: Self.now
+        )
+        #expect(shown?.tone == .countdown)
+        #expect(shown?.note == "A fast start. The estimate is only a guide.")
+        #expect(BurnRate.forecastLine(
+            for: five, among: [five, week], showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        ) == nil)
+        #expect(BurnRate.forecastLine(
+            for: week, among: [five, week], showsForecast: false,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        ) == nil)
+
+        LocalizationSource.use(.chineseSimplified)
+        let chinese = BurnRate.cardLine(
+            for: burst, reading: burstReading!, horizon: 6 * 3600, softHint: true, beforeReset: true
+        )
+        #expect(chinese?.text == "按当前速度，重置前约 1天8小时 会用尽。")
+        #expect(chinese?.note == "开头偏快，预估仅供参考。")
+        #expect(BurnRate.cardLine(
+            for: heavy, reading: heavyReading!, horizon: 6 * 3600, softHint: false, beforeReset: false
+        )?.text == "每周 · 约 2.5 小时后用尽")
     }
 
     @Test("Codex 5-hour and weekly windows forecast when the reply states a length and a reset")

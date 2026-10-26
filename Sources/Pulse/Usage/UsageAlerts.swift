@@ -515,6 +515,11 @@ struct AlertMemory: Codable, Sendable, Equatable {
               reading.exhaustsBeforeReset,
               let seconds = reading.timeToExhaustion
         else { return }
+        // Inside the early floor the card still shows this pace, and says
+        // the figure is only a guide. A notice would state it as a fact.
+        // It speaks once the floor has passed and the same arithmetic no
+        // longer carries that note.
+        guard !reading.earlyPace else { return }
 
         for stage in stages.sorted(by: { $0.remaining > $1.remaining }) {
             let key = stage.memoryKey

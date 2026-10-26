@@ -38,21 +38,25 @@ import Foundation
 /// already answers the question it was supporting. A number nobody can read
 /// without being taught it first is worse than no number.
 enum BurnRate {
-    /// Nothing is *divided* for a window barely open. Early on, the elapsed
-    /// share is so small that dividing by it turns a single burst into a rate
-    /// that would empty the account before lunch — measured at 9,574 minutes
-    /// on a five-hour window when the guard was missing.
+    /// Below this, a window that is still lightly used is not divided. Early
+    /// on, the elapsed share is so small that dividing by it turns one burst
+    /// into a rate that would empty the account before lunch. Three percent
+    /// of a week is about five hours. Little spent does not need that
+    /// division to be called on course (`earlyQuietUsed`).
     ///
-    /// Three percent of a week is about five hours. A weekly limit still at
-    /// 99% left sits inside that floor for the whole morning after it resets,
-    /// and the card then shows the percentage and no estimate. Little spent
-    /// does not need a division to be called on course (`earlyQuietUsed`).
-    /// A window already well spent stays quiet until the floor.
+    /// Use already at that share **is** divided, with the same arithmetic as
+    /// any later reading. A heavy week right after reset is when the estimate
+    /// is wanted; hiding it until the floor left the card blank for the
+    /// people who needed it. The card keeps the ordinary wording and adds a
+    /// quieter line that the early pace is only a guide (`Reading.earlyPace`).
+    /// A window with no stated length stays quiet once use is at that share.
+    /// A reset that has already passed stays quiet too. A clock that has not
+    /// moved still cannot be divided, so that reading stays absent.
     static let minimumElapsed = 0.03
 
-    /// Used share below which a window still inside `minimumElapsed` is said
-    /// to be on course, with no time. At or above it, the floor still refuses
-    /// a rate: that is the burst the floor exists for.
+    /// Used share below which a window still inside `minimumElapsed`, or a
+    /// window with no stated length, is said to be on course, with no time.
+    /// At or above it, a stated length is divided even inside the floor.
     static let earlyQuietUsed = 0.05
 
     struct Reading: Equatable, Sendable {
@@ -62,6 +66,22 @@ enum BurnRate {
         /// Nil when the window lasts, or when nothing may be divided.
         /// The card, not this value, decides how far out a time is worth showing.
         let timeToExhaustion: TimeInterval?
+        /// The window is still inside `minimumElapsed`, use is already at
+        /// `earlyQuietUsed`, and a length was stated, so the figures above
+        /// are the ordinary division. The card adds a line that this early
+        /// pace is only a guide. Remaining-time notices leave it alone: they
+        /// would state the same figure as a fact.
+        let earlyPace: Bool
+
+        init(
+            exhaustsBeforeReset: Bool,
+            timeToExhaustion: TimeInterval?,
+            earlyPace: Bool = false
+        ) {
+            self.exhaustsBeforeReset = exhaustsBeforeReset
+            self.timeToExhaustion = timeToExhaustion
+            self.earlyPace = earlyPace
+        }
     }
 
     /// What may be said about a window, or nil when nothing may be.
@@ -91,10 +111,14 @@ enum BurnRate {
         let untilReset = resetsAt.timeIntervalSince(now)
         guard untilReset > 0 else { return nil }
 
-        if elapsed < minimumElapsed {
-            guard used < earlyQuietUsed else { return nil }
+        // Light use inside the floor is on course, and that sentence does
+        // not divide. Use already at `earlyQuietUsed` falls through: the
+        // same division as any later reading, marked so the card can say
+        // the early pace is only a guide.
+        if elapsed < minimumElapsed, used < earlyQuietUsed {
             return Reading(exhaustsBeforeReset: false, timeToExhaustion: nil)
         }
+        let earlyPace = elapsed < minimumElapsed
 
         // The window's own length, from the two figures that describe it.
         let elapsedSeconds = untilReset / (1 - elapsed) * elapsed
@@ -102,7 +126,11 @@ enum BurnRate {
 
         let perHour = used / elapsedSeconds * 3600
         guard used < 1, perHour > 0 else {
-            return Reading(exhaustsBeforeReset: used >= 1, timeToExhaustion: used >= 1 ? 0 : nil)
+            return Reading(
+                exhaustsBeforeReset: used >= 1,
+                timeToExhaustion: used >= 1 ? 0 : nil,
+                earlyPace: earlyPace
+            )
         }
 
         let untilEmpty = (1 - used) / perHour * 3600
@@ -110,7 +138,8 @@ enum BurnRate {
 
         return Reading(
             exhaustsBeforeReset: first,
-            timeToExhaustion: first ? untilEmpty : nil
+            timeToExhaustion: first ? untilEmpty : nil,
+            earlyPace: earlyPace
         )
     }
 
@@ -171,6 +200,22 @@ enum BurnRate {
 
         var text: String
         var tone: Tone
+        /// A quieter line under `text`. Set only while `Reading.earlyPace`
+        /// is true and the line is an exhaustion estimate, not the
+        /// "expected to last" sentence.
+        let note: String?
+
+        /// The forecast, and the early-pace note when there is one.
+        var spoken: String {
+            guard let note, !note.isEmpty else { return text }
+            return "\(text) \(note)"
+        }
+
+        init(text: String, tone: Tone, note: String? = nil) {
+            self.text = text
+            self.tone = tone
+            self.note = note
+        }
     }
 
     /// The line under a limit.
@@ -180,6 +225,8 @@ enum BurnRate {
     /// quieter hint, otherwise nothing about an exhaustion that is still only
     /// a verdict. A window that lasts still says so: the line is either there
     /// or it is not, and appearing only for bad news makes the card jump.
+    /// A reading divided inside the early floor keeps that wording and adds
+    /// the early-pace note.
     static func cardLine(
         for window: UsageWindow,
         reading: Reading,
@@ -190,29 +237,45 @@ enum BurnRate {
         if let seconds = reading.timeToExhaustion, seconds <= horizon {
             let name = window.forecastName
             let when = approximate(seconds)
-            return CardLine(
-                text: .localized("\(name) · may run out in \(when)"),
-                tone: .countdown
+            return stated(
+                .localized("\(name) · may run out in \(when)"),
+                tone: .countdown,
+                reading: reading
             )
         }
         if reading.exhaustsBeforeReset, beforeReset, let seconds = reading.timeToExhaustion {
             let when = span(seconds)
-            return CardLine(
-                text: .localized("At the current pace, about \(when) before the next reset."),
-                tone: .beforeReset
+            return stated(
+                .localized("At the current pace, about \(when) before the next reset."),
+                tone: .beforeReset,
+                reading: reading
             )
         }
         if reading.exhaustsBeforeReset, softHint {
             let name = window.forecastName
-            return CardLine(
-                text: .localized("\(name) · may run out before the reset"),
-                tone: .hint
+            return stated(
+                .localized("\(name) · may run out before the reset"),
+                tone: .hint,
+                reading: reading
             )
         }
         if !reading.exhaustsBeforeReset {
-            return CardLine(text: .localized("Expected to last the window"), tone: .lasts)
+            return stated(.localized("Expected to last the window"), tone: .lasts, reading: reading)
         }
         return nil
+    }
+
+    /// The ordinary line, plus the early-pace note when this reading was
+    /// divided inside `minimumElapsed`. The "expected to last" sentence is
+    /// the light-use path and does not carry that note.
+    private static func stated(_ text: String, tone: CardLine.Tone, reading: Reading) -> CardLine {
+        CardLine(
+            text: text,
+            tone: tone,
+            note: reading.earlyPace && tone != .lasts
+                ? String.localized("A fast start. The estimate is only a guide.")
+                : nil
+        )
     }
 
     /// The line the card draws under one window.

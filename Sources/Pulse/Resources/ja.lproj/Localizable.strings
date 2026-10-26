@@ -1369,6 +1369,7 @@
 "%@ · may run out in %@" = "%@ · %@で尽きる見込み";
 "%@ · may run out before the reset" = "%@ · リセット前に尽きる可能性があります";
 "At the current pace, about %@ before the next reset." = "現在のペースでは、次のリセットの約 %@ 前に尽きます。";
+"A fast start. The estimate is only a guide." = "序盤は速めです。見通しは参考です。";
 "May run out in %@." = "%@で尽きる見込みです。";
 "Forecast: 5-hour" = "5時間";
 "Forecast: weekly" = "毎週";

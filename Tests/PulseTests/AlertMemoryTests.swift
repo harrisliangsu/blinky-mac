@@ -1174,6 +1174,24 @@ struct AlertMemoryTests {
         ).isEmpty)
     }
 
+    @Test("A fast start inside the early floor does not notify; the same pace later does")
+    func exhaustionStaysQuietDuringAnEarlyBurst() {
+        var early = AlertMemory()
+        let length = 604_800.0
+        let burst = Self.weekly(used: 0.4, resetsAt: Self.now.addingTimeInterval(length * 0.99))
+        #expect(exhaustion(
+            &early, burst, stages: [.defaultStage], beforeReset: true
+        ).isEmpty)
+
+        var later = AlertMemory()
+        let open = Self.now.addingTimeInterval(length * 0.5)
+        #expect(exhaustion(
+            &later,
+            Self.weekly(used: Self.pace(remaining: 4 * 3600), resetsAt: open),
+            stages: [.defaultStage]
+        ).count == 1)
+    }
+
     @Test("Remaining-time notices use the weekly limit, or the longest other limit")
     func exhaustionFollowsTheWeeklyLimit() {
         let stage = [ExhaustionStage.defaultStage]

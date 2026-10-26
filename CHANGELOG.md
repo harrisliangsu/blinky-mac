@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.23
+
+- **A fast start after a reset still shows the exhaustion estimate.** With Show the estimate on under Settings → Usage, a weekly limit that has just reset and is already at least 5% used still shows how long it may last, with a quieter line that a fast start is only a guide, while lighter use still says the window is expected to last. [#84](https://github.com/harrisliangsu/blinky-mac/pull/84)
+
 ## 1.5.22
 
 - **Output speed updates when a reply ends.** Open Claude Code, Codex, Grok, or Kimi under Settings: the Models table shows tokens per second from this Mac's session logs, and refreshes when a reply finishes. [#83](https://github.com/harrisliangsu/blinky-mac/pull/83)
