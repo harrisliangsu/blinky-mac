@@ -512,6 +512,11 @@
 "Forward" = "下一頁";
 "No matches" = "沒有符合的項目";
 
+/* Providers page filter and order */
+"Alphabetical" = "字母序";
+"Panel order" = "面板排序";
+"Clear search" = "清除搜尋";
+
 /* Resetting the rail order */
 "Reset order" = "重設排序";
 "Back to the order Blinky ships with." = "回到 Blinky 預設的排列。";

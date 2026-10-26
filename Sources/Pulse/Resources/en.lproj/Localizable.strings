@@ -539,6 +539,11 @@
 "Forward" = "Forward";
 "No matches" = "No matches";
 
+/* Providers page filter and order */
+"Alphabetical" = "Alphabetical";
+"Panel order" = "Panel order";
+"Clear search" = "Clear search";
+
 /* Resetting the rail order */
 "Reset order" = "Reset order";
 "Back to the order Blinky ships with." = "Back to the order Blinky ships with.";

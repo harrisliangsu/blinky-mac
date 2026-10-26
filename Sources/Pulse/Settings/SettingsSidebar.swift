@@ -75,9 +75,12 @@ struct SettingsSidebar: View {
     /// Claude Code account, and typing the product name is the obvious way to
     /// look for it — `title(_:)` alone would only know the label.
     private var matchingAccounts: [AccountKey] {
-        guard isSearching else { return settings.orderedAccounts }
-        return settings.orderedAccounts.filter {
-            matches(title(.account($0))) || matches($0.provider.displayName)
+        settings.orderedAccounts.filter {
+            ProviderAccountMatch.matches(
+                label: title(.account($0)),
+                displayName: $0.provider.displayName,
+                query: query
+            )
         }
     }
 

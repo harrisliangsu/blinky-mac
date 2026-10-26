@@ -539,6 +539,11 @@
 "Forward" = "前进";
 "No matches" = "没有匹配的项目";
 
+/* 供应商页的筛选和排序 */
+"Alphabetical" = "字母序";
+"Panel order" = "面板顺序";
+"Clear search" = "清除搜索";
+
 /* 重置排序 */
 "Reset order" = "重置顺序";
 "Back to the order Blinky ships with." = "恢复成 Blinky 默认的排列。";
