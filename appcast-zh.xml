@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.25</title>
-            <pubDate>Mon, 26 Oct 2026 13:41:40 -0000</pubDate>
-            <sparkle:version>1.5.25</sparkle:version>
-            <sparkle:shortVersionString>1.5.25</sparkle:shortVersionString>
+            <title>1.5.26</title>
+            <pubDate>Mon, 26 Oct 2026 17:46:16 -0000</pubDate>
+            <sparkle:version>1.5.26</sparkle:version>
+            <sparkle:shortVersionString>1.5.26</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.25</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.26</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.25</h2><ul><li><strong>Token 窗口写出输出速度。</strong> 用量卡片旁的 Token 窗口在合计下面显示所选统计区间内已计时回复的平均速度；按模型划分时，每个模型写出 token/秒，日志里有首字时间时一并写出。<a href="https://github.com/harrisliangsu/blinky-mac/pull/88">#88</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.25">在 GitHub 查看更新说明</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.25/Blinky-1.5.25.zip"
-                       length="23193549"
+</style><h2>Blinky 1.5.26</h2><ul><li><strong>自动检查更新的间隔可以自己设定。</strong> 在「设置 → 关于」的「自动检查」下面，用数字和单位选择分钟、小时、天或周，默认是 12 小时（此前固定为每两小时），改完后下一次定时检查按新的间隔安排，不必重新打开 Blinky。「检查更新」仍会打开更新窗口，「先通知」「直接打开窗口」和「自动安装」保持不变。<a href="https://github.com/harrisliangsu/blinky-mac/pull/89">#89</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.26">在 GitHub 查看更新说明</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.26/Blinky-1.5.26.zip"
+                       length="23222168"
                        type="application/octet-stream"
-                       sparkle:edSignature="m8A4ojQ2XbN5mD3CcpRpiEGoGP03/dMjz+wiXaU1PWBWjzIY4Q0MlM72a3DCC2fCq9XWujuuIXa6ICblc9chCA==" />
+                       sparkle:edSignature="7JqngYx2JWXgi6YmSIfdvu3LFLnFIVCrZ7nmO8/XP73xogWJvKDHGV+DAKGQSSDJEvEL4mX6Rf10F+cpUW9gCQ==" />
         </item>
     </channel>
 </rss>
