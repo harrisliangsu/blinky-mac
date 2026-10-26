@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.23</title>
-            <pubDate>Mon, 26 Oct 2026 11:27:20 -0000</pubDate>
-            <sparkle:version>1.5.23</sparkle:version>
-            <sparkle:shortVersionString>1.5.23</sparkle:shortVersionString>
+            <title>1.5.24</title>
+            <pubDate>Mon, 26 Oct 2026 12:42:47 -0000</pubDate>
+            <sparkle:version>1.5.24</sparkle:version>
+            <sparkle:shortVersionString>1.5.24</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.23</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.24</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.23</h2><ul><li><strong>重置后用量偏快时，用尽预估仍会显示。</strong> 在「设置 → 用量」打开「显示预估」后，每周限额刚重置且已用至少 5% 时，卡片仍写出用尽预估，并在下面注明「开头偏快，预估仅供参考」；用量较少时仍写「预计可维持到本轮重置」。<a href="https://github.com/harrisliangsu/blinky-mac/pull/84">#84</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.23">在 GitHub 查看更新说明</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.23/Blinky-1.5.23.zip"
-                       length="23125317"
+</style><h2>Blinky 1.5.24</h2><ul><li><strong>自动安装完成后会说明这一版。</strong> 在「设置 → 关于 → 发现更新时」选择「自动安装」后，Blinky 重新打开时会通知已安装的版本和这一版的更新内容。现在检查仍会打开更新窗口。<a href="https://github.com/harrisliangsu/blinky-mac/pull/87">#87</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.24">在 GitHub 查看更新说明</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.24/Blinky-1.5.24.zip"
+                       length="23169211"
                        type="application/octet-stream"
-                       sparkle:edSignature="SlLOSp4q7sDShRXmgl5djg4YvCB3Uee8bICZ/GY4zZZICenl53aNe5XEsTMBdTPMolW1iKNlUlJLs0SEnwBXAg==" />
+                       sparkle:edSignature="i0MhoDFMlChOrzv8fZQh6P9ZhQQFtgioPCM+gQ/szLbhsGxx12mRc9b83xjxLMpYgE3pGZMRJlLVUTVW2UQoBA==" />
         </item>
     </channel>
 </rss>
