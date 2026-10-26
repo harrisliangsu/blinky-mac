@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.20</title>
-            <pubDate>Mon, 26 Oct 2026 04:49:43 -0000</pubDate>
-            <sparkle:version>1.5.20</sparkle:version>
-            <sparkle:shortVersionString>1.5.20</sparkle:shortVersionString>
+            <title>1.5.21</title>
+            <pubDate>Mon, 26 Oct 2026 08:43:09 -0000</pubDate>
+            <sparkle:version>1.5.21</sparkle:version>
+            <sparkle:shortVersionString>1.5.21</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.20</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.21</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.20</h2><ul><li><strong>The primary Grok account keeps showing usage after the CLI login expires.</strong> With Read usage from left on Automatic under Settings → Grok, Blinky uses the CLI token first and, when that token is missing, expired, or refused (401 or 403), the device-code login saved by Sign in once on the Grok account row, and does not write <code>~/.grok/auth.json</code>. <a href="https://github.com/harrisliangsu/blinky-mac/pull/81">#81</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.20">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.20/Blinky-1.5.20.zip"
-                       length="22998472"
+</style><h2>Blinky 1.5.21</h2><ul><li><strong>The Providers page can be searched and sorted.</strong> Under Settings → Providers, typing a name filters the list; Alphabetical is the default, Panel order follows the floating panel, and there is no popularity sort. <a href="https://github.com/harrisliangsu/blinky-mac/pull/82">#82</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.21">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.21/Blinky-1.5.21.zip"
+                       length="23050158"
                        type="application/octet-stream"
-                       sparkle:edSignature="6W6ReQ+ox1sIPQ2+5oQ9MOF1D03DwGcl/z7URpP1L1Ts9+brf+nSFJbMjS6cyuJ0X8a29mrZqZWZMXSSIZGhCw==" />
+                       sparkle:edSignature="gJrhan1iWFbgaOkqVRdwsC91uk7dk3dfx2eNWBdkgl2sA7iJgqjhoNxtyD8DiKSbgy1UNXDt7Zlt0MOZljPTCg==" />
         </item>
     </channel>
 </rss>
