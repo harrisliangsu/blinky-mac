@@ -52,7 +52,9 @@ enum ReplyTimingWatch {
     }
 
     /// Recent session logs for the providers whose replies can be timed.
-    /// Async so the walk does not run on the main actor.
+    /// Async so the walk does not run on the main actor. The walk itself is
+    /// synchronous: `FileManager`'s enumerator cannot be used from an
+    /// asynchronous function.
     static func snapshot(
         for provider: Provider,
         now: Date = Date(),
@@ -60,6 +62,16 @@ enum ReplyTimingWatch {
         environment: [String: String] = ProcessInfo.processInfo.environment,
         recent: TimeInterval = recentWindow
     ) async -> [String: FileStamp] {
+        files(for: provider, now: now, home: home, environment: environment, recent: recent)
+    }
+
+    private static func files(
+        for provider: Provider,
+        now: Date,
+        home: URL,
+        environment: [String: String],
+        recent: TimeInterval
+    ) -> [String: FileStamp] {
         guard provider.timesLocalReplies else { return [:] }
         var found: [String: FileStamp] = [:]
         let keys: Set<URLResourceKey> = [.fileSizeKey, .contentModificationDateKey, .isRegularFileKey]
