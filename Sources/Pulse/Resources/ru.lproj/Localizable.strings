@@ -1353,6 +1353,7 @@
 "%@ · may run out in %@" = "%@ · может закончиться %@";
 "%@ · may run out before the reset" = "%@ · может закончиться до сброса";
 "At the current pace, about %@ before the next reset." = "При текущем темпе запас кончится примерно за %@ до следующего сброса.";
+"A fast start. The estimate is only a guide." = "В начале темп выше. Оценка только ориентир.";
 "May run out in %@." = "Может закончиться %@.";
 "Forecast: 5-hour" = "5 ч";
 "Forecast: weekly" = "Неделя";

@@ -1361,6 +1361,7 @@
 "%@ · may run out in %@" = "%@ · %@後用盡";
 "%@ · may run out before the reset" = "%@ · 重設前可能會用盡";
 "At the current pace, about %@ before the next reset." = "按目前速度，重設前約 %@ 會用盡。";
+"A fast start. The estimate is only a guide." = "開頭偏快，預估僅供參考。";
 "May run out in %@." = "%@後會用盡。";
 "Forecast: 5-hour" = "5 小時";
 "Forecast: weekly" = "每週";

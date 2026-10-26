@@ -421,7 +421,9 @@ struct UsageDetailCard: View {
                     // The weekly limit, or the longest other limit. A five-hour
                     // window is not estimated. Little or nothing spent still
                     // says the window is expected to last, including when the
-                    // service did not state a length.
+                    // service did not state a length. Use already high while
+                    // the window has barely opened still shows the estimate,
+                    // with a note that the early pace is only a guide.
                     forecast: forecastLine(for: window),
                     value: valueText(window),
                     amount: showsAmounts || window.amounts?.currency != nil
@@ -2447,7 +2449,7 @@ private struct ProgressMetricRow: View {
                 ? String.localized("\(percentageText) left. \(resetDescription)")
                 : String.localized("\(percentageText) used. \(resetDescription)"))
                 + (amount.map { " \($0)" } ?? "")
-                + (forecast.map { " \($0.text)" } ?? "")
+                + (forecast.map { " \($0.spoken)" } ?? "")
         )
     }
 }
@@ -2461,12 +2463,31 @@ extension ProgressMetricRow {
     var burnLine: some View {
         if let forecast, !isSpent {
             let ink = ForecastLineInk.style(for: forecast.tone)
-            Text(verbatim: forecast.text)
-                .foregroundStyle(ink.lineColor)
-                .font(.system(size: DetailCardLayout.rowFontSize, weight: ink.fontWeight, design: .rounded))
-                .lineLimit(1)
-                .minimumScaleFactor(0.75)
+            if let note = forecast.note {
+                // One extra line, only while the window is barely open and
+                // already well used. The frame reserves a forecast line on
+                // every limit and only one limit draws it, so this stays
+                // inside the window.
+                VStack(alignment: .leading, spacing: DetailCardLayout.headerLineSpacing) {
+                    forecastSentence(forecast.text, ink: ink)
+                    Text(verbatim: note)
+                        .font(.system(size: DetailCardLayout.footnoteFontSize, weight: .regular, design: .rounded))
+                        .foregroundStyle(.primary.opacity(0.4))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
+                }
+            } else {
+                forecastSentence(forecast.text, ink: ink)
+            }
         }
+    }
+
+    private func forecastSentence(_ text: String, ink: ForecastLineInk) -> some View {
+        Text(verbatim: text)
+            .foregroundStyle(ink.lineColor)
+            .font(.system(size: DetailCardLayout.rowFontSize, weight: ink.fontWeight, design: .rounded))
+            .lineLimit(1)
+            .minimumScaleFactor(0.75)
     }
 }
 
