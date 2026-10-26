@@ -913,6 +913,10 @@ struct TokenSpendView: View {
         let shown = showAllModels
             ? summary.models
             : Array(summary.models.prefix(Self.modelLimit))
+        // A column appears only when some visible row can fill it. A model
+        // without that figure gets a dash; a zero would claim a measurement.
+        let showsSpeed = shown.contains { $0.tokensPerSecond != nil }
+        let showsWait = shown.contains { $0.firstToken != nil }
 
         return SettingsGroup(titled ? String.localized("By model") : nil) {
             ForEach(Array(shown.enumerated()), id: \.element.id) { index, model in
@@ -931,6 +935,13 @@ struct TokenSpendView: View {
                         HStack(spacing: 10) {
                             ShareBar(share: model.share)
                                 .frame(width: 64, height: 6)
+
+                            if showsSpeed {
+                                timedFigure(model.tokensPerSecond.map { OutputSpeedText.line($0) })
+                            }
+                            if showsWait {
+                                timedFigure(model.firstToken.map { OutputSpeedText.firstToken($0) })
+                            }
 
                             Text(String.localized("\(TokenCount.short(model.tokens)) tokens"))
                                 .font(.system(size: 12))
@@ -971,6 +982,16 @@ struct TokenSpendView: View {
                 .buttonStyle(.plain)
             }
         }
+    }
+
+    /// A speed or a first-token wait, or a faint dash where this model has none.
+    private func timedFigure(_ text: String?) -> some View {
+        Text(verbatim: text ?? "–")
+            .font(.system(size: 11))
+            .monospacedDigit()
+            .foregroundStyle(text == nil ? .tertiary : .secondary)
+            .lineLimit(1)
+            .fixedSize(horizontal: true, vertical: false)
     }
 
     // MARK: - Where the work happened

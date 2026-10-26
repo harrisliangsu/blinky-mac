@@ -234,6 +234,22 @@ struct ReplyTiming: Codable, Sendable, Equatable {
             firstTokenTurns: lhs.firstTokenTurns + rhs.firstTokenTurns
         )
     }
+
+    /// Output tokens per second across the replies that were timed.
+    ///
+    /// Nil when none were. A missing measurement is not a speed of zero.
+    /// The account card still withholds a model until `fewestTimedReplies`;
+    /// this property does not.
+    var outputTokensPerSecond: Double? {
+        guard replies > 0, seconds > 0, outputTokens > 0 else { return nil }
+        return Double(outputTokens) / seconds
+    }
+
+    /// Mean wait for the first token, where a log recorded one. Nil otherwise.
+    var meanFirstToken: TimeInterval? {
+        guard firstTokenTurns > 0, firstTokenSeconds > 0 else { return nil }
+        return firstTokenSeconds / Double(firstTokenTurns)
+    }
 }
 
 /// One day's work, priced.
@@ -330,9 +346,10 @@ struct UsageLedger: Sendable, Equatable {
         /// The quarter-hour's timed replies by **raw model id** — only the
         /// readers that can tell when a request went out and when its reply
         /// finished (Claude Code, Codex, and — where the log pairs the two —
-        /// Grok Build and Kimi). Kept per slot,
-        /// not per day, because a speed is only worth reading while it is
-        /// recent (`outputSpeedsByModel(since:)`).
+        /// Grok Build and Kimi). Kept per slot so a span can keep the
+        /// quarter-hours inside it. The account card reads the last day
+        /// (`outputSpeedsByModel(since:)`, `speedSpan`); the Token window
+        /// reads the selected spend span.
         var timings: [String: ReplyTiming] = [:]
     }
 
@@ -675,8 +692,9 @@ struct UsageLedger: Sendable, Equatable {
         let outputTokens: Int
     }
 
-    /// Fewer timed replies (or turns) than this and a model's figure is one or
-    /// two requests' luck, so it is left out.
+    /// Fewer timed replies (or turns) than this and a model's figure on the
+    /// account card is one or two requests' luck, so it is left out. The Token
+    /// window shows any timed reply in the selected span.
     static let fewestTimedReplies = 5
 
     /// How far back a speed is read: the last day, rolling. A month's

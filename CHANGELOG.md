@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.25
+
+- **The Token window shows output speed.** The Token window beside the usage card shows the average speed of timed replies in the selected span under the totals, and each model row shows tokens per second, plus first-token latency when the log records it. [#88](https://github.com/harrisliangsu/blinky-mac/pull/88)
+
 ## 1.5.24
 
 - **Install silently says what was installed.** With Settings → About → When an update is found set to Install silently, Blinky notifies you of the installed version and that release's notes after it opens again. Check now still opens the update window. [#87](https://github.com/harrisliangsu/blinky-mac/pull/87)

@@ -1052,6 +1052,9 @@
 "Kimi doesn't record when the first token arrived, so its wait isn't shown." = "Kimi doesn't record when the first token arrived, so its wait isn't shown.";
 "First token is Kimi Code's own measure of how long a step waited for it." = "First token is Kimi Code's own measure of how long a step waited for it.";
 "%@ s" = "%@ s";
+"%@ tokens/s" = "%@ tokens/s";
+"First token %@ s" = "First token %@ s";
+"Output speed is the average of timed replies in this span, from sending a request to the end of its reply. Claude Code, Codex, Grok, and Kimi can be timed." = "Output speed is the average of timed replies in this span, from sending a request to the end of its reply. Claude Code, Codex, Grok, and Kimi can be timed.";
 "Prompt cache (%@)" = "Prompt cache (%@)";
 "%@ left" = "%@ left";
 "Expired" = "Expired";
