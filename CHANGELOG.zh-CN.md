@@ -6,6 +6,10 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.22
+
+- **回复写完后更新输出速度。** 在设置中打开 Claude Code、Codex、Grok 或 Kimi 的账号，模型表会显示 token/秒，数字来自这台 Mac 的会话记录，并在一条回复写完后刷新。[#83](https://github.com/harrisliangsu/blinky-mac/pull/83)
+
 ## 1.5.21
 
 - **供应商页可以搜索和排序。** 在「设置 → 供应商」输入名称即可筛选列表；排序默认是字母序，也可以改成面板顺序，没有热度排序。[#82](https://github.com/harrisliangsu/blinky-mac/pull/82)

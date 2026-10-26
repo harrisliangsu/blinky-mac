@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.22
+
+- **Output speed updates when a reply ends.** Open Claude Code, Codex, Grok, or Kimi under Settings: the Models table shows tokens per second from this Mac's session logs, and refreshes when a reply finishes. [#83](https://github.com/harrisliangsu/blinky-mac/pull/83)
+
 ## 1.5.21
 
 - **The Providers page can be searched and sorted.** Under Settings → Providers, typing a name filters the list; Alphabetical is the default, Panel order follows the floating panel, and there is no popularity sort. [#82](https://github.com/harrisliangsu/blinky-mac/pull/82)
