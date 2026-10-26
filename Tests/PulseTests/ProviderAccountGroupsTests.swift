@@ -45,7 +45,7 @@ struct ProviderAccountGroupsTests {
     @Test("Providers sits in Application, and the bottom three stay in one order")
     func panes() {
         #expect(SettingsPane.bottom == [.extensions, .integrations, .about])
-        #expect(SettingsPane.application == [.general, .notifications, .network, .providers])
+        #expect(SettingsPane.application == [.general, .notifications, .network, .experimental, .providers])
         #expect(SettingsPane.fixedPanes.contains(.providers))
         #expect(!SettingsPane.panel.contains(.providers))
         #expect(SettingsPane.fixedPanes.filter { $0 == .providers }.count == 1)

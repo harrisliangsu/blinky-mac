@@ -225,8 +225,9 @@ actor AgentLedgers {
         let stores = agent.stores(home: home, environment: environment)
 
         switch agent {
-        // The legacy store readers, each with the one store it was built for,
-        // and no reader-level limits to report.
+        // The legacy store readers, each with the one store it was built for
+        // (Kimi's with its successor's beside it), and no reader-level limits
+        // to report.
         case .openCode, .kiloCLI:
             guard let store = stores.first else { return ReadResult(ledger: .empty, notes: []) }
             return ReadResult(
@@ -236,8 +237,8 @@ actor AgentLedgers {
             guard let store = stores.first else { return ReadResult(ledger: .empty, notes: []) }
             return ReadResult(ledger: GrokStore.ledger(at: store, prices: prices), notes: [])
         case .kimiCLI:
-            guard let store = stores.first else { return ReadResult(ledger: .empty, notes: []) }
-            return ReadResult(ledger: KimiCLIStore.ledger(at: store, prices: prices), notes: [])
+            guard !stores.isEmpty else { return ReadResult(ledger: .empty, notes: []) }
+            return ReadResult(ledger: KimiCLIStore.ledger(at: stores, prices: prices), notes: [])
         case .devinCLI:
             guard let store = stores.first else { return ReadResult(ledger: .empty, notes: []) }
             return ReadResult(ledger: DevinCLIStore.ledger(at: store, prices: prices), notes: [])

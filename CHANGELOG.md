@@ -10,6 +10,20 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.19
+
+- **Liquid docking is an experimental switch.** Turn it on under Settings → Experimental and the rail stretches and parts like a drop when pulled off a screen edge, and is drawn in when brought near one. It is off by default.
+- **Notifications can send a test.** Press Send under Settings → Notifications to receive one notification and check that notifications reach you.
+- **The rail at the notch lines up with the notch.** It is centred on the display, and the corners into the screen edge match the notch. At the small size with few providers, those top corners stay inside the window.
+- **Kimi Code's records include the new Kimi Code.** Token spend and the Kimi Code pane also read that session store, beside the Kimi CLI's, and estimate money at published prices where the model is known.
+- **Cursor usage is read when Cursor seals its saved login.** Blinky asks the keychain for Cursor's key, and after a refusal asks again only at the next launch or on a manual refresh. [#93](https://github.com/qunqin24/Pulse/pull/93)
+- **A Cursor Enterprise allowance is shown.** An Enterprise account that reports one allowance shows it as the monthly limit, with the amounts in dollars. [#97](https://github.com/qunqin24/Pulse/pull/97)
+- **A Codex session is counted once.** A session found in both `sessions` and `archived_sessions` is counted once. [#95](https://github.com/qunqin24/Pulse/issues/95)
+- **The detailed card drops the API-price line.** The explanation stays under Settings → Token spend.
+- **A helper stops when its time is up.** Provider commands run at user-initiated priority, so a busy Mac still stops them on the deadline.
+- **Synced from upstream qunqin24/Pulse** (16 commits, through their 1.12.4, `fc10fb7`, since 1.5.18). This repository is the update source, and this fork's version is **1.5.19**. Their Sparkle offer for 1.12.4 was not copied. `appcast.xml` is unchanged until this version is tagged. Upstream also added a Russian README; this fork's page keeps the Blinky name, badges, and download links.
+- **Fork-only pieces kept:** Codex reset forecast, the latest-reset row (including on a card that is already open), hover copy on the reset type, and advance reminders; ring colour schemes (Red alert / Gradient / Quiet, and Quiet keeps green); ResetCelebration ribbons, including the optional five-hour / hourly one; Kimi device-code sign-in and multi-account; Qoder (including a personal token and discovery of Qoder IDE and `~/.qoder`); Zen's cookie store; bilingual release notes; and this repo's Sparkle feed and signing key.
+
 ## 1.5.18
 
 - **A reset card's detail closes when you click away.** A click outside the date and Use panel closes it, and the Token window still closes only from its close button. [#79](https://github.com/harrisliangsu/blinky-mac/pull/79)

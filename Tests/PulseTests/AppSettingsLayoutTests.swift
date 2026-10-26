@@ -55,6 +55,7 @@ struct AppSettingsLayoutTests {
         ("hidesFromScreenCapture", { $0.hidesFromScreenCapture = true }),
         ("followsActiveDisplay", { $0.followsActiveDisplay = true }),
         ("snapsToEdges", { $0.snapsToEdges = false }),
+        ("liquidDocking", { $0.liquidDocking = true }),
         ("showsSecondRing", { $0.showsSecondRing = true })
     ]
 

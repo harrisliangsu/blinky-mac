@@ -506,6 +506,7 @@
 "Uses the session the Claude desktop app is signed in with." = "用 Claude 桌面端已登录的会话读取。";
 "Sign in to the Claude desktop app to see usage." = "登录 Claude 桌面端后即可看到用量。";
 "Blinky needs your keychain to read the Claude desktop app's session. Refresh to be asked again." = "Blinky 需要钥匙串权限才能读取 Claude 桌面端的会话。点刷新可再问一次。";
+"Blinky needs your keychain to read Cursor's saved login. Refresh to be asked again." = "Blinky 需要钥匙串权限才能读取 Cursor 保存的登录。点刷新可再问一次。";
 "The Claude desktop app's session was refused. Open it and sign in again." = "Claude 桌面端的会话被拒绝。请打开它重新登录。";
 
 /* 通知 */
@@ -1023,8 +1024,6 @@
 "On this Mac" = "本机用量";
 "7 days" = "7 天";
 "31 days" = "31 天";
-"Costs are estimates at API prices." = "金额按 API 价格估算。";
-"API-price estimates. * Partly unpriced." = "按 API 价格估算。* 不含未计价 token。";
 "Whole account" = "整个账号";
 "Couldn't read the history." = "未能读取用量记录。";
 "From %@, for the whole account." = "来自 %@，覆盖整个账号。";
@@ -1460,3 +1459,13 @@
 /* 1.5.18 */
 "None" = "无";
 "About the estimate" = "估价说明";
+"Experimental" = "实验性功能";
+"Liquid docking" = "水滴式吸附";
+"Pulled off a screen edge, the rail stretches and parts like a drop; brought near one, it is drawn in. While dragged, it follows the pointer with a little give." = "从屏幕边缘拉开时，胶囊会像水滴一样被拉长，然后断开；拖近边缘时会被吸过去。拖动时，胶囊跟随指针会稍有滞后。";
+"These features are still being tuned and may change or be removed." = "这些功能仍在调整中，以后可能改变或移除。";
+"Test notification" = "测试通知";
+"Send" = "发送";
+"Sends one now, so you can see that notifications reach you." = "立即发送一条通知，确认通知能正常送达。";
+"Sent. If nothing appeared, check Focus and System Settings › Notifications." = "已发送。如果没有看到，请检查专注模式和「系统设置 › 通知」。";
+"This is a test notification. Blinky's notifications look like this." = "这是一条测试通知。Blinky 的通知会以这种样式显示。";
+"Blinky has not been allowed to post notifications yet. Press Send again to be asked." = "Blinky 还没有获得发送通知的许可。再按一次「发送」会重新询问。";

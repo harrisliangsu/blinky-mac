@@ -484,6 +484,7 @@
 "Uses the session the Claude desktop app is signed in with." = "Claude 데스크탑 앱이 로그인한 세션을 씁니다.";
 "Sign in to the Claude desktop app to see usage." = "Claude 데스크탑 앱에 로그인하면 사용량이 표시됩니다.";
 "Blinky needs your keychain to read the Claude desktop app's session. Refresh to be asked again." = "Claude 데스크탑 앱의 세션을 읽으려면 키체인 권한이 필요합니다. 새로 고치면 다시 물어봅니다.";
+"Blinky needs your keychain to read Cursor's saved login. Refresh to be asked again." = "Cursor에 저장된 로그인을 읽으려면 키체인 권한이 필요합니다. 새로 고치면 다시 물어봅니다.";
 "The Claude desktop app's session was refused. Open it and sign in again." = "Claude 데스크탑 앱의 세션이 거부되었습니다. 앱을 열고 다시 로그인하십시오.";
 
 /* Notifications */
@@ -1025,8 +1026,6 @@
 "On this Mac" = "이 Mac의 사용량";
 "7 days" = "7일";
 "31 days" = "31일";
-"Costs are estimates at API prices." = "금액은 API 가격 기준 추정치입니다.";
-"API-price estimates. * Partly unpriced." = "API 가격 기준 추정치. *는 가격 미정 토큰 제외.";
 "Whole account" = "계정 전체";
 "Couldn't read the history." = "사용 기록을 읽지 못했습니다.";
 "From %@, for the whole account." = "%@에서 받은 계정 전체 수치입니다.";
@@ -1462,3 +1461,13 @@
 /* 1.5.18 */
 "None" = "없음";
 "About the estimate" = "견적 설명";
+"Experimental" = "실험적 기능";
+"Liquid docking" = "물방울처럼 붙기";
+"Pulled off a screen edge, the rail stretches and parts like a drop; brought near one, it is drawn in. While dragged, it follows the pointer with a little give." = "화면 가장자리에서 떼어 내면 레일이 물방울처럼 늘어났다가 떨어지고, 가장자리 가까이 가져가면 끌려가 붙습니다. 끄는 동안 레일은 포인터를 조금 늦게 따라옵니다.";
+"These features are still being tuned and may change or be removed." = "이 기능들은 아직 조정 중이며, 앞으로 바뀌거나 없어질 수 있습니다.";
+"Test notification" = "테스트 알림";
+"Send" = "보내기";
+"Sends one now, so you can see that notifications reach you." = "지금 알림을 하나 보내 알림이 제대로 오는지 확인합니다.";
+"Sent. If nothing appeared, check Focus and System Settings › Notifications." = "보냈습니다. 보이지 않으면 집중 모드와 시스템 설정 › 알림을 확인하세요.";
+"This is a test notification. Blinky's notifications look like this." = "테스트 알림입니다. Blinky의 알림은 이렇게 표시됩니다.";
+"Blinky has not been allowed to post notifications yet. Press Send again to be asked." = "Blinky에 아직 알림 권한이 없습니다. '보내기'를 다시 누르면 다시 묻습니다.";

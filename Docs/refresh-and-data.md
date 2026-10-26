@@ -147,6 +147,8 @@ Re-verify after changing the counting (historical: an independent check agreed t
 - Quarter-hour buckets. Per-file cache key: size + mtime. The **filename carries the format** (`ledger-9-<provider>.json`, `UsageLedgerReader.cacheVersion`); bump it whenever an entry's content changes, or old entries parse as nothing. A transcript deleted since the last scan leaves the cache only after its counted share is kept in `archive-ledger-<provider>.json`, unnumbered and never superseded ([token-spend.md](token-spend.md#history-the-tools-have-deleted)).
 - Cost is computed after the cache, from tokens per model.
 
+**This Mac's records on the detailed card carry no footnote saying the money is an API-price estimate** (removed 2026-10-23 at the user's request, to keep the card plain): the Token spend pane says so, with the `*` for unpriced models. Account-wide and charged figures keep their line saying whose they are.
+
 ### The estimate (`BudgetEstimate`)
 
 Shown in its own Settings group with provenance, and as a dimmed "Estimated value …" line (said in words; no "≈" since 2026-10-15) under a limit on the detailed card ([ui/panel-geometry.md](ui/panel-geometry.md#detailed-card)); both format through `BudgetEstimator.approximate`.

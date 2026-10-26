@@ -839,7 +839,7 @@ struct AlertMemoryTests {
     @Test("A credential that went bad is a failure")
     func badCredentialsAreFailures() {
         for reason: ProviderUsage.Unavailability in [
-            .claudeLoginExpired, .cursorLoginExpired, .grokLoginExpired,
+            .claudeLoginExpired, .cursorLoginExpired, .cursorKeyRefused, .grokLoginExpired,
             .kimiLoginExpired, .qoderSessionExpired, .signedOut, .apiKeyRefused, .serverError
         ] {
             var memory = AlertMemory()

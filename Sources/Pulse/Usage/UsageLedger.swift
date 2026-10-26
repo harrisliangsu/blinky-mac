@@ -979,10 +979,20 @@ actor UsageLedgerReader {
         var changed = false
 
         let roots = Self.roots(for: provider, home: home)
+        var listed: [String: (file: URL, stamp: FileCache.Stamp)] = [:]
         for file in Self.logFiles(in: roots) {
-            guard !Task.isCancelled else { return ([:], [:], [:]) }
             guard let stamp = FileCache.Stamp(file) else { continue }
-            let key = file.path
+            listed[file.path] = (file, stamp)
+        }
+        // **One copy of each Codex rollout.** Codex moves a session it
+        // archives, but a copy can be left in both folders (restored from a
+        // backup, or copied by hand); a session's own readings are added up,
+        // not claimed, so both copies counted in full. The longer copy is
+        // read: a rollout is only appended to, so it holds the shorter one's
+        // readings and any it went on to.
+        if provider == .codex { listed = Self.onePerRollout(listed) { $0.stamp.size } }
+        for (key, (file, stamp)) in listed {
+            guard !Task.isCancelled else { return ([:], [:], [:]) }
             if provider == .codex { names.insert(file.lastPathComponent) }
 
             // A log file is rewritten only by being appended to, so size and
@@ -1021,9 +1031,15 @@ actor UsageLedgerReader {
         // file now; one already kept, by a scan that could not write the cache
         // after it; and one outside the folders this reader reads, which is no
         // transcript of this Mac's (a cache another home's scan wrote).
-        let gone = !archives ? [:] : cache.files.filter { path, _ in
+        var gone = !archives ? [:] : cache.files.filter { path, _ in
             !names.contains(Self.fileName(path)) && archive?.files[path] == nil
                 && Self.isInside(path, roots)
+        }
+        // Both copies of a rollout gone at once (cached before only one was
+        // read) are kept as one, and not at all beside a copy already kept.
+        if provider == .codex {
+            let keptNames = Set((archive?.files.keys).map { $0.map(Self.fileName) } ?? [])
+            gone = Self.onePerRollout(gone.filter { !keptNames.contains(Self.fileName($0.key)) }) { $0.stamp.size }
         }
 
         // Each reply once, for the file it appeared in first — the original
@@ -1044,7 +1060,12 @@ actor UsageLedgerReader {
             let left = (lhs.key as NSString).lastPathComponent, right = (rhs.key as NSString).lastPathComponent
             return left != right ? left < right : lhs.key < rhs.key
         }
-        let kept = archive?.files ?? [:]
+        // An archive kept before then can hold both copies; the one that
+        // counted more is the whole session. Both stay in the file.
+        var kept = archive?.files ?? [:]
+        if provider == .codex {
+            kept = Self.onePerRollout(kept) { $0.days.values.reduce(0) { $0 + $1.values.reduce(0) { $0 + $1.total } } }
+        }
         let keptClaims = Set(kept.values.flatMap { ClaimDigest.unpack($0.claims) })
         let keptTotals = Set(kept.values.flatMap { ClaimDigest.unpack($0.totals) })
         var claimed: Set<String> = []
@@ -1138,6 +1159,21 @@ actor UsageLedgerReader {
 
     private static func fileName(_ path: String) -> String {
         (path as NSString).lastPathComponent
+    }
+
+    /// One path per Codex rollout name: the one `size` makes largest, and of
+    /// equals the first path. A rollout's name carries its session id, so
+    /// two files of one name are copies of one session wherever they sit.
+    private static func onePerRollout<Value>(
+        _ entries: [String: Value], size: (Value) -> Int
+    ) -> [String: Value] {
+        var chosen: [String: (path: String, size: Int)] = [:]
+        for (path, value) in entries {
+            let name = fileName(path), own = size(value)
+            if let held = chosen[name], held.size > own || (held.size == own && held.path < path) { continue }
+            chosen[name] = (path, own)
+        }
+        return entries.filter { chosen[fileName($0.key)]?.path == $0.key }
     }
 
     /// One row per conversation, priced the same way the days are.

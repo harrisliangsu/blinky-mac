@@ -506,6 +506,7 @@
 "Uses the session the Claude desktop app is signed in with." = "Uses the session the Claude desktop app is signed in with.";
 "Sign in to the Claude desktop app to see usage." = "Sign in to the Claude desktop app to see usage.";
 "Blinky needs your keychain to read the Claude desktop app's session. Refresh to be asked again." = "Blinky needs your keychain to read the Claude desktop app's session. Refresh to be asked again.";
+"Blinky needs your keychain to read Cursor's saved login. Refresh to be asked again." = "Blinky needs your keychain to read Cursor's saved login. Refresh to be asked again.";
 "The Claude desktop app's session was refused. Open it and sign in again." = "The Claude desktop app's session was refused. Open it and sign in again.";
 
 /* Notifications */
@@ -1023,8 +1024,6 @@
 "On this Mac" = "On this Mac";
 "7 days" = "7 days";
 "31 days" = "31 days";
-"Costs are estimates at API prices." = "Costs are estimates at API prices.";
-"API-price estimates. * Partly unpriced." = "API-price estimates. * Partly unpriced.";
 "Whole account" = "Whole account";
 "Couldn't read the history." = "Couldn't read the history.";
 "From %@, for the whole account." = "From %@, for the whole account.";
@@ -1460,3 +1459,13 @@
 /* 1.5.18 */
 "None" = "None";
 "About the estimate" = "About the estimate";
+"Experimental" = "Experimental";
+"Liquid docking" = "Liquid docking";
+"Pulled off a screen edge, the rail stretches and parts like a drop; brought near one, it is drawn in. While dragged, it follows the pointer with a little give." = "Pulled off a screen edge, the rail stretches and parts like a drop; brought near one, it is drawn in. While dragged, it follows the pointer with a little give.";
+"These features are still being tuned and may change or be removed." = "These features are still being tuned and may change or be removed.";
+"Test notification" = "Test notification";
+"Send" = "Send";
+"Sends one now, so you can see that notifications reach you." = "Sends one now, so you can see that notifications reach you.";
+"Sent. If nothing appeared, check Focus and System Settings › Notifications." = "Sent. If nothing appeared, check Focus and System Settings › Notifications.";
+"This is a test notification. Blinky's notifications look like this." = "This is a test notification. Blinky's notifications look like this.";
+"Blinky has not been allowed to post notifications yet. Press Send again to be asked." = "Blinky has not been allowed to post notifications yet. Press Send again to be asked.";

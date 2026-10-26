@@ -144,7 +144,7 @@ The seven existing clients read these locations:
 | `opencode` | `openCode` | `~/.local/share/opencode/opencode.db` |
 | `kilo` | `kiloCLI` | `~/.local/share/kilo/kilo.db` |
 | `grok` | `grok` | `~/.grok/sessions` |
-| `kimi` | `kimiCLI` | `~/.kimi/sessions` |
+| `kimi` | `kimiCLI` | `~/.kimi/sessions`; Kimi Code's `$KIMI_CODE_HOME/sessions` (default `~/.kimi-code/sessions`) |
 | `devin-cli` | `devinCLI` | `~/.local/share/devin/cli/sessions.db` |
 
 The compatibility reference describes further locations and formats **not implemented in those seven readers**:
@@ -156,7 +156,7 @@ The compatibility reference describes further locations and formats **not implem
 | `openCode` | channel DBs `opencode-<channel>.db`; legacy `storage/message` JSON; cross-DB dedup by embedded message id (the v2 `session_message` schema **is** read — see Cross-source routing) |
 | `kiloCLI` | Kilo's snake_case session id; a timestamp-less message needs an evidenced time, not the database's modification date |
 | `grok` | `logs/unified.jsonl`; sibling `signals.json` reconciliation; `GROK_HOME` |
-| `kimiCLI` | Kimi Code (`KIMI_CODE_HOME` or `~/.kimi-code`); Kimi Work desktop protocol; `config.json` model; `output` already includes reasoning |
+| `kimiCLI` | Kimi Work desktop protocol; a model for the legacy log from `config.json` |
 | `devinCLI` | Windows `%APPDATA%` root; `metadata.num_tokens` attributed to output when `metrics` is absent |
 
 Codex's `input_tokens` includes cached input, so fresh input subtracts that overlap; its `output_tokens` already includes reasoning and is kept once.

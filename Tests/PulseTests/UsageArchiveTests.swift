@@ -151,6 +151,79 @@ struct UsageArchiveTests {
         #expect(afterMove.allTime.tokens == 2_200 + 550)
     }
 
+    @Test("A rollout in both sessions and archived_sessions is counted once, from its longer copy (#95)")
+    func codexRolloutInBothFolders() async throws {
+        let home = try temporary()
+        defer { try? FileManager.default.removeItem(at: home) }
+        let name = "rollout-2026-01-02T09-00-00-019f8f06-dfd5-7cd2-a871-b31a926f92b7.jsonl"
+        let live = home.appending(path: ".codex/sessions/2026/01/02/\(name)")
+        let archived = home.appending(path: ".codex/archived_sessions/\(name)")
+        let opening = [
+            #"{"timestamp":"2026-01-02T09:00:00Z","type":"session_meta","payload":{"id":"019f8f06-dfd5-7cd2-a871-b31a926f92b7"}}"#,
+            codexModel,
+            codexCount("09:00:00", input: 1_000, output: 100, last: (1_000, 100)),
+            codexCount("09:05:00", input: 2_000, output: 200, last: (1_000, 100)),
+        ]
+        try write(opening, to: live)
+        try write(opening, to: archived)
+
+        let reader = UsageLedgerReader(home: home, cacheDirectory: home.appending(path: "cache"))
+        let same = await reader.ledger(for: .codex, refresh: true, prices: prices)
+        #expect(same.allTime.tokens == 2_200)
+        #expect(same.sessions.count == 1)
+
+        // The session went on in one folder after the other was copied: the
+        // longer copy holds all of the shorter one's readings and more.
+        try write(opening + [codexCount("09:20:00", input: 2_500, output: 250, last: (500, 50))], to: live)
+        let grown = await reader.ledger(for: .codex, refresh: true, prices: prices)
+        #expect(grown.allTime.tokens == 2_750)
+        #expect(grown.sessions.count == 1)
+
+        // One copy gone: nothing was lost, so nothing is kept or added.
+        try FileManager.default.removeItem(at: archived)
+        let oneLeft = await reader.ledger(for: .codex, refresh: true, prices: prices)
+        #expect(oneLeft.days == grown.days)
+        #expect(TranscriptArchive.load(for: .codex, directory: home.appending(path: "cache"))?.files.isEmpty ?? true)
+    }
+
+    @Test("Both copies of a rollout cached or kept before #95 are kept and counted as one")
+    func codexRolloutCopiesKeptOnce() async throws {
+        let home = try temporary()
+        defer { try? FileManager.default.removeItem(at: home) }
+        let cache = home.appending(path: "cache")
+        let live = home.appending(path: ".codex/sessions/2026/01/02/rollout-a.jsonl")
+        try write([
+            #"{"timestamp":"2026-01-02T09:00:00Z","type":"session_meta","payload":{"id":"a"}}"#,
+            codexModel,
+            codexCount("09:00:00", input: 1_000, output: 100, last: (1_000, 100)),
+            codexCount("09:05:00", input: 2_000, output: 200, last: (1_000, 100)),
+        ], to: live)
+        let reader = UsageLedgerReader(home: home, cacheDirectory: cache)
+        let before = await reader.ledger(for: .codex, refresh: true, prices: prices)
+        #expect(before.allTime.tokens == 2_200)
+
+        // A cache from before holds the same rollout under both folders.
+        var old = FileCache.load(for: .codex, directory: cache)
+        let (path, entry) = try #require(old.files.first)
+        old.files[path.replacingOccurrences(of: "/sessions/2026/01/02/", with: "/archived_sessions/")] = entry
+        old.save(for: .codex, directory: cache)
+
+        try FileManager.default.removeItem(at: live)
+        let gone = await reader.ledger(for: .codex, refresh: true, prices: prices)
+        #expect(gone.days == before.days)
+        #expect(gone.sessions.count == 1)
+        var archive = try #require(TranscriptArchive.load(for: .codex, directory: cache))
+        #expect(archive.files.count == 1)
+
+        // An archive from before holds both: they are counted once.
+        let (keptPath, kept) = try #require(archive.files.first)
+        archive.files[keptPath.replacingOccurrences(of: "/sessions/2026/01/02/", with: "/archived_sessions/")] = kept
+        #expect(archive.save(for: .codex, directory: cache))
+        let twice = await reader.ledger(for: .codex, refresh: true, prices: prices)
+        #expect(twice.days == before.days)
+        #expect(twice.sessions.count == 1)
+    }
+
     @Test("A transcript cache written for another home is not kept into this one's archive")
     func foreignEntriesAreNotKept() async throws {
         let home = try temporary()

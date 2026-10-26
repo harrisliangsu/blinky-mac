@@ -6,6 +6,10 @@ struct NotificationsPane: View {
     let settings: AppSettings
     let alerts: UsageAlerts
 
+    /// What the last test came to, said in the row until the pane closes.
+    @State private var testOutcome: UsageAlerts.TestOutcome?
+    @State private var isSendingTest = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 22) {
             SettingsGroup(String.localized("Limit reminders")) {
@@ -248,6 +252,22 @@ struct NotificationsPane: View {
                     }
                 }
             }
+
+            SettingsGroup {
+                SettingsRow(
+                    String.localized("Test notification"),
+                    subtitle: testSubtitle
+                ) {
+                    Button(String.localized("Send")) {
+                        isSendingTest = true
+                        Task {
+                            testOutcome = await alerts.sendTest()
+                            isSendingTest = false
+                        }
+                    }
+                    .disabled(!UsageAlerts.isSupported || isSendingTest)
+                }
+            }
         }
         .task {
             // The time-to-empty notice starts on, so the grant has to be asked
@@ -394,6 +414,19 @@ struct NotificationsPane: View {
             }
             store.syncAdvanceReminders()
             store.refreshCodexResetForecast()
+        }
+    }
+
+    /// What the test row says: what the button does, or what came of it when
+    /// that is not a banner on screen.
+    private var testSubtitle: String {
+        guard UsageAlerts.isSupported else { return .localized("Notifications need the bundled app.") }
+        switch testOutcome {
+        case .denied: return .localized("Turned off for Blinky in System Settings › Notifications.")
+        case .undecided: return .localized("Blinky has not been allowed to post notifications yet. Press Send again to be asked.")
+        case .sent: return .localized("Sent. If nothing appeared, check Focus and System Settings › Notifications.")
+        case .unsupported: return .localized("Notifications need the bundled app.")
+        case nil: return .localized("Sends one now, so you can see that notifications reach you.")
         }
     }
 
