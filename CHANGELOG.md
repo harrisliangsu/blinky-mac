@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.21
+
+- **The Providers page can be searched and sorted.** Under Settings → Providers, typing a name filters the list; Alphabetical is the default, Panel order follows the floating panel, and there is no popularity sort. [#82](https://github.com/harrisliangsu/blinky-mac/pull/82)
+
 ## 1.5.20
 
 - **The primary Grok account keeps showing usage after the CLI login expires.** With Read usage from left on Automatic under Settings → Grok, Blinky uses the CLI token first and, when that token is missing, expired, or refused (401 or 403), the device-code login saved by Sign in once on the Grok account row, and does not write `~/.grok/auth.json`. [#81](https://github.com/harrisliangsu/blinky-mac/pull/81)
