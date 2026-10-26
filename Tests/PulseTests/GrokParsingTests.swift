@@ -31,8 +31,9 @@ struct GrokParsingTests {
     @Test("No auth file at all is never signed in")
     func noAuthFileIsNeverSignedIn() async {
         let missing = URL(fileURLWithPath: "/tmp/pulse-grok-test-\(UUID().uuidString)/auth.json")
-        let service = GrokUsageService(authFile: missing)
-        let usage = await service.fetch()
+        // Pinned to the CLI. Automatic would ask for Blinky's own login instead.
+        let service = GrokUsageService(authFile: missing, primaryCredentials: { nil })
+        let usage = await service.fetch(source: .endpoint)
         #expect(usage.state == .unavailable(.grokSignInRequired))
     }
 
@@ -41,8 +42,11 @@ struct GrokParsingTests {
     /// remedies (`.grokLoginExpired` vs `.grokSignInRequired`).
     @Test("An auth file with only expired entries reads as expired, not absent")
     func allExpiredEntriesReadAsExpired() async throws {
-        let service = GrokUsageService(authFile: try Self.fixtureURL("grok-auth-expired"))
-        let usage = await service.fetch()
+        let service = GrokUsageService(
+            authFile: try Self.fixtureURL("grok-auth-expired"),
+            primaryCredentials: { nil }
+        )
+        let usage = await service.fetch(source: .endpoint)
         #expect(usage.state == .unavailable(.grokLoginExpired))
     }
 

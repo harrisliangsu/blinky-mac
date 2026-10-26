@@ -28,6 +28,10 @@ final class ProviderSignInModel {
     /// The provider a browser sign-in is currently open for, and what went
     /// wrong with the last one.
     var signingIn: Provider?
+    /// The account this sign-in writes to. Nil means a new account. The
+    /// primary Grok row and "Add another account" each cancel only their own
+    /// attempt, so one button does not take the other's code off the pane.
+    var signingInTarget: AccountKey?
     var signInError: (provider: Provider, message: String)?
     /// Shown while a device-code sign-in is waiting: the code the provider
     /// gave, and where to type it.
@@ -42,8 +46,9 @@ final class ProviderSignInModel {
     /// sign at all — without a way out the button stays disabled for the whole
     /// quarter of an hour.
     var signInTask: Task<Void, Never>?
-    /// Bumped when Kimi Code's primary login is written or forgotten.
-    /// `AccountCredentialStore` is a file, not something SwiftUI can observe.
+    /// Bumped when a primary login Blinky holds (Kimi Code, Grok) is written
+    /// or forgotten. `AccountCredentialStore` is a file, not something
+    /// SwiftUI can observe.
     var loginRevision = 0
 
     /// Whether a sign-in of either kind is running, which holds the
@@ -63,6 +68,7 @@ final class ProviderSignInModel {
         signInTask?.cancel()
         signInTask = nil
         signingIn = nil
+        signingInTarget = nil
         devicePrompt = nil
     }
 
@@ -131,6 +137,7 @@ final class ProviderSignInModel {
     /// Runs the browser sign-in, then keeps whatever came back.
     func signIn(to provider: Provider, replacing existing: AccountKey? = nil) {
         signingIn = provider
+        signingInTarget = existing
         signInError = nil
 
         signInTask = Task { [self] in
@@ -143,6 +150,7 @@ final class ProviderSignInModel {
                 // waiting for any more.
                 if !Task.isCancelled {
                     signingIn = nil
+                    signingInTarget = nil
                     devicePrompt = nil
                     signInTask = nil
                 }
@@ -177,8 +185,10 @@ final class ProviderSignInModel {
                 // Seeded from whatever the provider said about the account, so
                 // two subscriptions are not both offered as "Codex".
                 try Task.checkCancellation()
-                // Primary Kimi subscription: write onto the primary key, no extra ring.
-                if provider == .kimiCode, let existing, existing == AccountKey(.kimiCode) {
+                // Primary Kimi subscription, and Grok's own fallback login:
+                // write onto the primary key, no extra ring. An added account
+                // still goes through the branch below.
+                if let existing, existing == AccountKey(provider), provider == .kimiCode || provider == .grok {
                     guard AccountCredentialStore.set(credentials, for: existing) else {
                         signInError = (provider, String.localized("Couldn't save the login on this Mac."))
                         return

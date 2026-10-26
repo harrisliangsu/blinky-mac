@@ -20,6 +20,7 @@ enum ConnectionRemedy: Equatable {
     static func forReason(_ reason: ProviderUsage.Unavailability, account: AccountKey) -> Self? {
         if !account.isPrimary,
            [.signedOut, .claudeLoginExpired, .signInRequired, .grokLoginExpired,
+            .grokAccountSignInRequired, .grokAccountLoginExpired,
             .cursorLoginExpired, .cursorSignInRequired,
             .kimiSignInRequired, .kimiLoginExpired].contains(reason) {
             return .signIn
@@ -31,6 +32,7 @@ enum ConnectionRemedy: Equatable {
         case .signInRequired: return .copyCommand("codex login")
         case .kiroSignInRequired: return .copyCommand("kiro-cli login")
         case .grokSignInRequired, .grokLoginExpired: return .copyCommand("grok")
+        case .grokAccountSignInRequired, .grokAccountLoginExpired: return .signIn
         case .volcengineSignInRequired: return .copyCommand("arkcli auth login")
         case .claudeDesktopNotSignedIn, .claudeDesktopSessionExpired: return .openApp("Claude")
         case .cursorSignInRequired, .cursorLoginExpired: return .openApp("Cursor")

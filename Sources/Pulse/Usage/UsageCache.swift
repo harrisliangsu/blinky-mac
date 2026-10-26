@@ -170,6 +170,7 @@ actor UsageCache {
             .xiaomiSessionMissing, .signedOut,
             .claudeDesktopNotSignedIn, .claudeDesktopKeyRefused, .cursorKeyRefused,
             .kimiSignInRequired, .kimiLoginExpired,
+            .grokAccountSignInRequired, .grokAccountLoginExpired,
             .serverAddressMissing, .serverAddressRefused,
             .sessionMissing, .localLoginMissing, .localAppMissing].contains(reason) {
             return fetched

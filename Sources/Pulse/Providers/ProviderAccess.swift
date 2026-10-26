@@ -18,7 +18,7 @@ extension Provider {
         case .cursor, .grokBot:
             .localized("Reads the login saved in Cursor's local database. No Keychain prompt.")
         case .grok:
-            .localized("Reads the login saved in ~/.grok/auth.json. No Keychain prompt.")
+            .localized("Reads ~/.grok/auth.json while that login is still good, and can keep its own login from Settings when the CLI's is missing or refused. Blinky does not write the CLI's file. No Keychain prompt.")
         case .openCodeGo:
             .localized("Uses a key entered in Settings, or reads OpenCode's auth.json. No Keychain prompt.")
         case .glmCoding:

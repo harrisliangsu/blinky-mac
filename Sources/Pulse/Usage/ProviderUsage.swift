@@ -640,8 +640,18 @@ struct ProviderUsage: Identifiable, Equatable, Sendable {
         case grokSignInRequired
         /// There is a login and it has aged out. The CLI renews its own token
         /// while it is used and nothing renews it for Pulse, so the remedy is
-        /// to use Grok, exactly as with Cursor.
+        /// to use Grok, exactly as with Cursor. This is the pinned-CLI answer.
+        /// Automatic falls through to Blinky's own login instead.
         case grokLoginExpired
+        /// The CLI login is missing, expired, or refused, and Blinky has no
+        /// login of its own for the primary account yet. One device-code
+        /// sign-in in Settings. Distinct from `.grokSignInRequired`, which
+        /// says to run `grok`.
+        case grokAccountSignInRequired
+        /// Blinky held a primary Grok login and it will no longer refresh, or
+        /// the proxy refused it. Sign in again in Settings. Blinky does not
+        /// borrow the CLI's refresh token to get past this.
+        case grokAccountLoginExpired
         /// Kimi Code's subscription login has never been driven from Pulse,
         /// and no API key has been pasted either. Its own case rather than
         /// `.apiKeyMissing`, which tells a subscriber to go looking for a
@@ -807,6 +817,8 @@ struct ProviderUsage: Identifiable, Equatable, Sendable {
             case .cursorKeyRefused: .localized("Blinky needs your keychain to read Cursor's saved login. Refresh to be asked again.")
             case .grokSignInRequired: .localized("Sign in to Grok to see usage.")
             case .grokLoginExpired: .localized("Grok's saved login expired. Use Grok to renew it.")
+            case .grokAccountSignInRequired: .localized("Sign in to Grok once in Settings to see usage.")
+            case .grokAccountLoginExpired: .localized("Blinky's Grok login expired. Sign in again in Settings.")
             case .kimiSignInRequired: .localized("Sign in to Kimi Code in Settings, or paste an API key.")
             case .kimiLoginExpired: .localized("Kimi Code's saved login expired. Sign in again in Settings.")
             case .grokBotNotIncluded: .localized("This Cursor plan doesn't include Grok Bot.")

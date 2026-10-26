@@ -88,7 +88,9 @@ enum UsageSource: String, CaseIterable, Identifiable, Sendable {
         switch (self, provider) {
         case (.automatic, _): .localized("Automatic")
         case (.endpoint, .kimiCode): .localized("API key")
+        case (.endpoint, .grok): .localized("CLI login")
         case (.tooling, .kimiCode): .localized("Signed-in account")
+        case (.tooling, .grok): .localized("Blinky login")
         case (.tooling, .antigravity): .localized("CLI")
         case (.endpoint, _): .localized("Usage endpoint")
         case (.tooling, _): .localized("Provider tooling")
@@ -109,6 +111,8 @@ enum UsageSource: String, CaseIterable, Identifiable, Sendable {
         return switch (self, written) {
         case (.automatic, .kimiCode):
             .localized("Use the signed-in account when possible, the API key when not.")
+        case (.automatic, .grok):
+            .localized("Uses the CLI login while it is still good, then the login Blinky holds.")
         case (.automatic, _):
             .localized("Use the endpoint when possible, the other route when not.")
         case (.endpoint, .kimiCode):
@@ -154,10 +158,13 @@ enum UsageSource: String, CaseIterable, Identifiable, Sendable {
             // Never shown: one route, and it borrows the login Cursor stored,
             // since Grok Bot is billed against that account.
             .localized("Reads your account's limits with the login Cursor saved.")
-        case (_, .grok):
-            // Never shown: one route, and it borrows the login Grok's own CLI
-            // stored, exactly as Cursor's does.
-            .localized("Reads your account's limits with the login Grok saved.")
+        case (.endpoint, .grok):
+            .localized("Uses the login Grok's CLI already saved.")
+        case (.tooling, .grok):
+            .localized("Uses the login you sign in to once in Settings. Blinky keeps it and renews it.")
+        case (.desktopApp, .grok):
+            // Never shown: `options(for:)` does not offer it.
+            .localized("Uses the CLI login while it is still good, then the login Blinky holds.")
         case (_, .xiaomiMiMo):
             // Never shown: one route, and it reads the console with the
             // browser session rather than with a key.

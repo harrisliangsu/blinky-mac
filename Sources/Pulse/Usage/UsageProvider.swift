@@ -413,9 +413,9 @@ enum Provider: String, CaseIterable, Identifiable, Codable, Sendable {
     var hasSourceChoice: Bool {
         guard let written = handWritten else { return false }
         return switch written {
-        case .claudeCode, .codex, .volcengine, .kimiCode, .devin, .antigravity: true
+        case .claudeCode, .codex, .volcengine, .kimiCode, .devin, .antigravity, .grok: true
         case .kiro, .cursor, .openCodeGo, .ollamaCloud,
-             .zai, .glmCoding, .minimax, .copilot, .grok, .grokBot,
+             .zai, .glmCoding, .minimax, .copilot, .grokBot,
              .commandCode, .deepSeek, .xiaomiMiMo, .sub2api, .newAPI, .v2ex, .qoder, .stepFun,
              .pulseExtension: false
         }
@@ -438,9 +438,6 @@ enum Provider: String, CaseIterable, Identifiable, Codable, Sendable {
         case .cursor:
             (String.localized("Cursor's own login"),
              String.localized("Uses the login Cursor already saved."))
-        case .grok:
-            (String.localized("Grok's own login"),
-             String.localized("Uses the login Grok's CLI already saved."))
         // The credential really is Cursor's: Grok Bot is billed against that
         // account, so this names where the login comes from rather than the
         // product it reports on.
@@ -452,7 +449,7 @@ enum Provider: String, CaseIterable, Identifiable, Codable, Sendable {
              String.localized("Uses Kiro CLI's signed-in session without reading its credentials."))
         // Either a choice of routes, or a key the user pastes: both are asked
         // about elsewhere, so there is nothing here to state.
-        case .claudeCode, .codex, .antigravity, .openCodeGo, .kimiCode, .ollamaCloud,
+        case .claudeCode, .codex, .antigravity, .grok, .openCodeGo, .kimiCode, .ollamaCloud,
              .zai, .glmCoding, .minimax, .copilot, .volcengine,
              .commandCode, .deepSeek, .devin, .xiaomiMiMo, .sub2api, .newAPI, .v2ex, .qoder, .stepFun:
             nil

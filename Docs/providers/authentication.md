@@ -14,6 +14,7 @@ This is not a catalogue of secrets. Client ids below are public (they ship in ev
 | Copilot GitHub token | `keys.dat` as well (`keepsOwnCredential`) | Sign in again. Device tokens here are not the CLI refresh path. |
 | Extra-account logins (Claude Code, Codex, Grok, Grok Bot, Kimi Code) | `accounts.dat` (`AccountCredentialStore`) | `LiveUsageServices.fetchAdded` (`UsageServices.swift`) via `OAuthLogin.refresh` for the OAuth providers. Grok Bot has **no** refresh endpoint in Cursor’s client. Kimi Code’s **primary** subscription login lives here too. |
 | Kimi Code subscription login (primary) | `accounts.dat` as well, keyed by the primary `kimiCode` account | `KimiCodeUsageService` via `OAuthLogin.refresh`. Access ~15 minutes; refresh ~30 days and **rotates**. A pasted console key still lives in `keys.dat` and wins when both exist. |
+| Grok primary fallback | `accounts.dat`, keyed by the primary `grok` account | `GrokUsageService` via `OAuthLogin.refresh`, and only after `~/.grok/auth.json` is missing, expired, or refused. The renewal is stored back into `accounts.dat`. It is never written into the CLI’s file. |
 
 Both files are AES-GCM boxes in Pulse’s Application Support folder, owner-only, key derived from this Mac rather than stored. `LocalSecrets` is shared so there is one copy of the crypto; a different derived key per purpose means a box from one store cannot be opened by the other.
 
@@ -21,13 +22,13 @@ A file that exists but will not decode is **not** empty. Treating it as empty me
 
 Pulse does **not** keep a Keychain item of its own for these. Chromium / Claude Desktop / Safari reads may *prompt* for someone else’s Safe Storage key; that is borrowing, not Pulse storing a secret there.
 
-**Do not say “only OpenCode Go holds a credential” or “Pulse never holds a credential”.** Primary Claude Code, Codex, Cursor, Grok, Grok Bot, and Antigravity borrow another tool’s login. Pulse *does* hold pasted keys, Ollama sessions, Copilot’s token, Kimi Code’s subscription login, and every extra-account login.
+**Do not say “only OpenCode Go holds a credential” or “Pulse never holds a credential”.** Primary Claude Code, Codex, Cursor, Grok, Grok Bot, and Antigravity borrow another tool’s login while it is still good. Pulse *does* hold pasted keys, Ollama sessions, Copilot’s token, Kimi Code’s subscription login, Grok’s primary fallback login, and every extra-account login.
 
 ## Why sign in at all, rather than copy the CLI
 
 Measured: a Codex access token lives on the order of 240 hours; a Claude Code one about five; a Grok CLI token about six hours; a Kimi Code CLI access token about fifteen minutes, and its refresh token rotates. Copying the credential would leave the account you are *not* currently using dead within an afternoon. The only way to renew a copied token is the refresh token the CLI is also relying on — which, if the provider rotates it, signs the user out of their own CLI.
 
-Pulse’s extra-account login has its own refresh token and does not read or write what the CLI stored. That separation is the reason for signing in.
+Pulse’s extra-account login has its own refresh token and does not read or write what the CLI stored. That separation is the reason for signing in. Grok’s primary fallback is the same separation on the first account: Blinky refreshes a token it obtained, and leaves `~/.grok/auth.json` untouched. Borrowing the CLI’s refresh token would rotate it and can sign the user out of `grok`.
 
 `fetchAdded` renews when the access token is within a minute of expiry. A renewal that fails reports `.signedOut`, not a network error: the remedy is the same and the user can act on it. That case names no provider. A renewal is written only over the login it renews (`AccountCredentialStore.renewed` / `acceptsRenewal`): not when a longer-lived one is already stored, not over another account's login in the same slot, and **never into an empty slot** — removing an account forgets its login, and a renewal still out at that moment used to write the forgotten tokens back.
 

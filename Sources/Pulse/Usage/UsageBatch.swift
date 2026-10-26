@@ -30,6 +30,7 @@ struct UsageBatch: Sendable {
     var minimax: MiniMaxUsageService
     var copilot: CopilotUsageService
     var grok: GrokUsageService
+    var grokSource: UsageSource
     var grokBot: GrokBotUsageService
     var volcengine: VolcengineUsageService
     var volcengineSource: UsageSource
@@ -161,7 +162,7 @@ struct UsageBatch: Sendable {
         case .copilot:
             await copilot.fetch()
         case .grok:
-            await grok.fetch()
+            await grok.fetch(source: grokSource)
         case .grokBot:
             await grokBot.fetch()
         case .volcengine:

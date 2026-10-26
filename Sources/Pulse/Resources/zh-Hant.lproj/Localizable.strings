@@ -719,7 +719,6 @@
 "Reads ~/.codex/auth.json and may run codex app-server with its saved login. Blinky does not request Keychain access." = "讀取 ~/.codex/auth.json，也可能啟動 codex app-server 使用已儲存的登入。Blinky 不會要求鑰匙圈存取權限。";
 "Reads the running editor's local language server and connection token, or runs the agy CLI with its saved login. Blinky does not request Keychain access." = "連線至執行中的編輯器，讀取本機語言伺服器的用量與連線權杖；或啟動 agy CLI，使用它已儲存的登入。Blinky 不會要求鑰匙圈存取權限。";
 "Reads the login saved in Cursor's local database. No Keychain prompt." = "讀取 Cursor 本機資料庫中儲存的登入資訊。不會出現鑰匙圈提示。";
-"Reads the login saved in ~/.grok/auth.json. No Keychain prompt." = "讀取 ~/.grok/auth.json 中儲存的登入資訊。不會出現鑰匙圈提示。";
 "Uses a key entered in Settings, or reads OpenCode's auth.json. No Keychain prompt." = "使用在設定中輸入的金鑰，或讀取 OpenCode 的 auth.json。不會出現鑰匙圈提示。";
 "Uses a key entered in Settings, or reads the saved GLM key files. No Keychain prompt." = "使用在設定中輸入的金鑰，或讀取本機儲存的 GLM 金鑰檔案。不會出現鑰匙圈提示。";
 "Uses a key entered in Settings, or reads ~/.commandcode/auth.json. No Keychain prompt." = "使用在設定中輸入的金鑰，或讀取 ~/.commandcode/auth.json。不會出現鑰匙圈提示。";
@@ -1471,3 +1470,16 @@
 "Sent. If nothing appeared, check Focus and System Settings › Notifications." = "已傳送。如果沒有看到，請檢查專注模式和「系統設定 › 通知」。";
 "This is a test notification. Blinky's notifications look like this." = "這是一則測試通知。Blinky 的通知會以這種樣式顯示。";
 "Blinky has not been allowed to post notifications yet. Press Send again to be asked." = "Blinky 尚未獲得傳送通知的許可。再按一次「傳送」會重新詢問。";
+
+/* Grok primary login */
+"CLI login" = "命令列登入";
+"Blinky login" = "Blinky 登入";
+"Uses the CLI login while it is still good, then the login Blinky holds." = "命令列的登入還有效時先用這份登入，否則用 Blinky 保存的登入。";
+"Uses the login you sign in to once in Settings. Blinky keeps it and renews it." = "使用你在設定裡登入一次後由 Blinky 保存並續期的登入。";
+"Sign in to Grok once in Settings to see usage." = "在設定裡登入一次 Grok 後才讀得到用量。";
+"Blinky's Grok login expired. Sign in again in Settings." = "Blinky 保存的 Grok 登入已過期。請在設定裡重新登入。";
+"Grok account" = "Grok 帳號";
+"Opens xAI's sign-in page. Blinky keeps this login and renews it, and does not change the CLI's." = "會開啟 xAI 的登入頁。Blinky 保存這份登入並續期，不會改動命令列的登入。";
+"Signed in. The CLI login is used instead." = "已登入。讀取用量時用的是命令列的登入。";
+"Reads ~/.grok/auth.json while that login is still good, and can keep its own login from Settings when the CLI's is missing or refused. Blinky does not write the CLI's file. No Keychain prompt." = "命令列的登入還有效時，讀取 ~/.grok/auth.json；缺失或被拒絕時，可以使用你在設定裡登入後由 Blinky 保存的登入。Blinky 不會寫入命令列的檔案，也不會出現鑰匙圈提示。";
+"Signed in. Blinky uses this when the CLI login is missing or refused." = "已登入。命令列的登入缺失或被拒絕時，Blinky 會改用這份登入。";

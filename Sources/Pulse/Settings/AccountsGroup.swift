@@ -22,13 +22,18 @@ struct AccountsGroup: View {
                 if account.isPrimary, account.provider == .kimiCode {
                     kimiPrimaryAccountRow(account)
                 }
+                if account.isPrimary, account.provider == .grok {
+                    grokPrimaryAccountRow(account)
+                }
 
                 // Codex-shaped extras. Kimi hides "Add another" until the primary
                 // subscription is signed in, so the first Sign in… cannot be
-                // mistaken for adding a second ring. Extra accounts always get
+                // mistaken for adding a second ring. Grok does not: the CLI
+                // login already serves the primary ring, and another account
+                // is a separate sign-in. Extra accounts always get
                 // "Sign in again…".
                 if !account.isPrimary || account.provider != .kimiCode || kimiSignedIn {
-                    if account.isPrimary, account.provider == .kimiCode {
+                    if account.isPrimary, account.provider == .kimiCode || account.provider == .grok {
                         SettingsRowDivider()
                     }
                     SettingsRow(
@@ -41,7 +46,9 @@ struct AccountsGroup: View {
                         // error belong to the provider it was started for:
                         // a Codex device code shown on the Claude Code pane
                         // reads as Claude Code asking for it.
-                        if signIn.signingIn == account.provider {
+                        // Grok's primary login has its own row, so this button
+                        // does not cancel that attempt.
+                        if showsCancelForThisRow {
                             Button(String.localized("Cancel")) { signIn.cancelSignIn() }
                         } else {
                             Button(String.localized("Sign in…")) {
@@ -90,7 +97,7 @@ struct AccountsGroup: View {
                     if let signInError = signIn.signInError, signInError.provider == account.provider {
                         // Primary Kimi already surfaces the message in its row
                         // subtitle; skip the duplicate Sign-in row there.
-                        if !(account.isPrimary && account.provider == .kimiCode) {
+                        if !(account.isPrimary && (account.provider == .kimiCode || account.provider == .grok)) {
                             SettingsRowDivider()
                             SettingsRow(String.localized("Sign-in"), subtitle: signInError.message) { EmptyView() }
                         }
@@ -128,6 +135,59 @@ struct AccountsGroup: View {
     private var kimiSignedIn: Bool {
         _ = signIn.loginRevision
         return AccountCredentialStore.credentials(for: AccountKey(.kimiCode)) != nil
+    }
+
+    /// Blinky's primary Grok login, same file, same counter.
+    private var grokSignedIn: Bool {
+        _ = signIn.loginRevision
+        return AccountCredentialStore.credentials(for: AccountKey(.grok)) != nil
+    }
+
+    /// Cancel on the add / sign-in-again row. Grok's primary sign-in cancels
+    /// from its own row, so this one stays a way to add an account.
+    private var showsCancelForThisRow: Bool {
+        guard signIn.signingIn == account.provider else { return false }
+        if account.isPrimary, account.provider == .grok, signIn.signingInTarget == AccountKey(.grok) {
+            return false
+        }
+        return true
+    }
+
+    /// What the signed-in row says. Built here so `localized:` stays a literal.
+    private func grokSignedInSubtitle(_ source: UsageSource) -> String {
+        switch source {
+        case .endpoint:
+            String.localized("Signed in. The CLI login is used instead.")
+        case .tooling, .desktopApp:
+            String.localized("Signed in. Blinky holds a login for this Mac.")
+        case .automatic:
+            String.localized("Signed in. Blinky uses this when the CLI login is missing or refused.")
+        }
+    }
+
+    /// The login Blinky keeps for the primary Grok account when the CLI's
+    /// token is missing or refused. Separate from "Add another account".
+    private func grokPrimaryAccountRow(_ account: AccountKey) -> some View {
+        SettingsRow(
+            String.localized("Grok account"),
+            subtitle: (signIn.signInError?.provider == .grok ? signIn.signInError?.message : nil)
+                ?? (grokSignedIn
+                    ? grokSignedInSubtitle(settings.source(for: account))
+                    : String.localized("Opens xAI's sign-in page. Blinky keeps this login and renews it, and does not change the CLI's."))
+        ) {
+            if signIn.signingInTarget == AccountKey(.grok) {
+                Button(String.localized("Cancel")) { signIn.cancelSignIn() }
+            } else if grokSignedIn {
+                Button(String.localized("Sign out")) {
+                    signIn.forgetPrimaryLogin(account)
+                }
+            } else {
+                Button(String.localized("Sign in…")) {
+                    signIn.signIn(to: .grok, replacing: AccountKey(.grok))
+                }
+                .disabled(signIn.signingIn != nil)
+            }
+        }
     }
 
     /// The primary Kimi Code subscription, signed in the same way Codex extras

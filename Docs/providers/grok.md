@@ -4,7 +4,7 @@ Service: [`GrokUsageService.swift`](../../Sources/Pulse/Providers/GrokUsageServi
 
 This is the **account’s** weekly SuperGrok / xAI pool, not “Grok Build the CLI”. Grok Bot is a different bill: [grok-bot.md](grok-bot.md).
 
-Extra accounts are supported. `keepsLocalTranscripts` is false. Primary route is named (“Grok’s own login”); an added account is not shown that row.
+Extra accounts are supported. `keepsLocalTranscripts` is false. The primary account chooses a route (`UsageSource`, Automatic by default). An added account is not shown that row.
 
 Issue history: [Pulse #9](https://github.com/qunqin24/Pulse/issues/9).
 
@@ -14,14 +14,22 @@ Since June 2026 a paid plan spends **one weekly pool** across every Grok product
 
 ## Primary credential
 
-Borrow the OIDC login Grok Build’s CLI stored in `~/.grok/auth.json`. Nothing is held for the primary account.
+Same two billing endpoints, two logins. Default is `.automatic`.
+
+1. **Grok Build’s CLI.** The OIDC access token in `~/.grok/auth.json`, when one is still usable. The file is only read. Its refresh token is not copied, and Pulse does not write the file, so a renewal cannot sign the CLI out.
+2. **Blinky’s own login**, when that token is missing, every entry has expired, or the proxy answers 401 or 403. One device-code sign-in in Settings (Accounts → Grok account) stores it in `accounts.dat` under the primary `grok` key — the same RFC 8628 flow an added account already uses. Pulse refreshes that login with `OAuthLogin.refresh`. It does not read or write the CLI’s refresh token.
+3. **No Blinky login yet.** The card says to sign in once in Settings (`.grokAccountSignInRequired`). A Blinky login that will no longer refresh, or that the proxy refuses, says to sign in again (`.grokAccountLoginExpired`).
+
+Pinned `.endpoint` is the CLI only. A missing file is still `.grokSignInRequired` and an aged-out or refused token is still `.grokLoginExpired`: the instruction is to run `grok`, and the route does not fall through. `.signInRequired` names Codex — do not reuse it here. Pinned `.tooling` never opens `~/.grok/auth.json`.
+
+A network failure, a rate limit, or a reply that will not parse is reported as itself. Those are not a reason to try the other login.
 
 - `GET https://cli-chat-proxy.grok.com/v1/billing?format=credits` for the figures, with header `x-xai-token-auth: xai-grok-cli`.
 - `GET https://cli-chat-proxy.grok.com/v1/settings` for the plan name (`subscription_tier_display`, e.g. “SuperGrok”).
 
-Neither endpoint is a public documented usage API. They are what the CLI itself calls and can change without notice.
+Neither endpoint is a public documented usage API. They are what the CLI itself calls and can change without notice. They are not the public xAI API, and the ring is not that API’s credit balance.
 
-The stored token lasts about six hours. The CLI renews it while you use Grok; nothing renews it for Pulse on the primary. Aged-out vs never-signed-in are two cases (`.grokLoginExpired` vs `.grokSignInRequired`) because the instruction is different. `.signInRequired` names Codex — do not reuse it here.
+The CLI’s stored access token lasts about six hours. The CLI renews it while you use Grok. Blinky’s login is what keeps the primary ring up after that.
 
 ## The header selects the shape of the reply
 
@@ -49,7 +57,7 @@ Settings call is on a shorter budget than usage — figures are already in hand.
 
 ## Added accounts
 
-Same two endpoints with the token Pulse holds. Never looks at `~/.grok/auth.json`. Device-code OAuth, scopes `openid email offline_access grok-cli:access`. `billing:read` is **not allowed for this client** — not a missing scope Pulse forgot. Details: [authentication.md](authentication.md).
+Same two endpoints with the token Pulse holds. Never looks at `~/.grok/auth.json`, and never uses the primary account’s Blinky login. Device-code OAuth, scopes `openid email offline_access grok-cli:access`. `billing:read` is **not allowed for this client** — not a missing scope Pulse forgot. Details: [authentication.md](authentication.md). The primary fallback is that same sign-in, written onto the primary key instead of a new ring.
 
 ## First run
 

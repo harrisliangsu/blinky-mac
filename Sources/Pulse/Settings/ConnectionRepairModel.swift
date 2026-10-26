@@ -44,7 +44,12 @@ final class ConnectionRepairModel {
         switch remedy {
         case .signIn:
             if account.provider == .copilot { signIn.startGitHubSignIn() }
-            else if !account.isPrimary { signIn.signIn(to: account.provider, replacing: account) }
+            else if account.isPrimary, account.provider == .grok {
+                // The primary fallback is a device-code login Blinky holds,
+                // the same flow an added account uses, written onto the
+                // primary key rather than a new ring.
+                signIn.signIn(to: .grok, replacing: AccountKey(.grok))
+            } else if !account.isPrimary { signIn.signIn(to: account.provider, replacing: account) }
         case .editCredential:
             connectionFocusRequest += 1
         case .editAddress:

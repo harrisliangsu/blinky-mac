@@ -717,7 +717,6 @@
 "Reads ~/.codex/auth.json and may run codex app-server with its saved login. Blinky does not request Keychain access." = "Reads ~/.codex/auth.json and may run codex app-server with its saved login. Blinky does not request Keychain access.";
 "Reads the running editor's local language server and connection token, or runs the agy CLI with its saved login. Blinky does not request Keychain access." = "Reads the running editor's local language server and connection token, or runs the agy CLI with its saved login. Blinky does not request Keychain access.";
 "Reads the login saved in Cursor's local database. No Keychain prompt." = "Reads the login saved in Cursor's local database. No Keychain prompt.";
-"Reads the login saved in ~/.grok/auth.json. No Keychain prompt." = "Reads the login saved in ~/.grok/auth.json. No Keychain prompt.";
 "Uses a key entered in Settings, or reads OpenCode's auth.json. No Keychain prompt." = "Uses a key entered in Settings, or reads OpenCode's auth.json. No Keychain prompt.";
 "Uses a key entered in Settings, or reads the saved GLM key files. No Keychain prompt." = "Uses a key entered in Settings, or reads the saved GLM key files. No Keychain prompt.";
 "Uses a key entered in Settings, or reads ~/.commandcode/auth.json. No Keychain prompt." = "Uses a key entered in Settings, or reads ~/.commandcode/auth.json. No Keychain prompt.";
@@ -1469,3 +1468,16 @@
 "Sent. If nothing appeared, check Focus and System Settings › Notifications." = "Sent. If nothing appeared, check Focus and System Settings › Notifications.";
 "This is a test notification. Blinky's notifications look like this." = "This is a test notification. Blinky's notifications look like this.";
 "Blinky has not been allowed to post notifications yet. Press Send again to be asked." = "Blinky has not been allowed to post notifications yet. Press Send again to be asked.";
+
+/* Grok primary login */
+"CLI login" = "CLI login";
+"Blinky login" = "Blinky login";
+"Uses the CLI login while it is still good, then the login Blinky holds." = "Uses the CLI login while it is still good, then the login Blinky holds.";
+"Uses the login you sign in to once in Settings. Blinky keeps it and renews it." = "Uses the login you sign in to once in Settings. Blinky keeps it and renews it.";
+"Sign in to Grok once in Settings to see usage." = "Sign in to Grok once in Settings to see usage.";
+"Blinky's Grok login expired. Sign in again in Settings." = "Blinky's Grok login expired. Sign in again in Settings.";
+"Grok account" = "Grok account";
+"Opens xAI's sign-in page. Blinky keeps this login and renews it, and does not change the CLI's." = "Opens xAI's sign-in page. Blinky keeps this login and renews it, and does not change the CLI's.";
+"Signed in. The CLI login is used instead." = "Signed in. The CLI login is used instead.";
+"Reads ~/.grok/auth.json while that login is still good, and can keep its own login from Settings when the CLI's is missing or refused. Blinky does not write the CLI's file. No Keychain prompt." = "Reads ~/.grok/auth.json while that login is still good, and can keep its own login from Settings when the CLI's is missing or refused. Blinky does not write the CLI's file. No Keychain prompt.";
+"Signed in. Blinky uses this when the CLI login is missing or refused." = "Signed in. Blinky uses this when the CLI login is missing or refused.";
