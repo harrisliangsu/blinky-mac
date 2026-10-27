@@ -723,7 +723,7 @@ struct SpendGlanceTests {
         #expect(section?.models[0].firstToken == "2.5 s")
         #expect(section?.models[1].firstToken == nil)
         #expect(section?.models[2].firstToken == "1.2 s")
-        #expect(section?.models.allSatisfy { $0.figures.cache == nil && $0.figures.input == nil })
+        #expect(section?.models.allSatisfy { $0.figures.cache == nil && $0.figures.input == nil } == true)
         #expect(SpendSpeedLayout.isDenserThanSettings)
         #expect(SpendSpeedLayout.verticalPadding <= 4)
         #expect(SpendSpeedLayout.minimumHeight <= 24)
