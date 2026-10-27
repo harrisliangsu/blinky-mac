@@ -54,13 +54,18 @@ final class SpendGlanceController {
         let window = window ?? makeWindow()
         self.window = window
         model.isOpen = true
-        if let anchor = anchor(), !window.isVisible {
-            window.level = SpendGlanceWindowLevel.above(anchor.level)
+        // The rail is `.floating` or `.statusBar`. Copying that level, which
+        // 1.5.11 did, kept this window above every other app. Settings and
+        // the recap stay at `.normal`; this window does too. The frame is
+        // still taken from the rail the first time the window appears.
+        let placed = anchor()
+        window.level = SpendGlanceWindowLevel.resolved(beside: placed?.level ?? .normal)
+        if let placed, !window.isVisible {
             let frame = SpendGlancePlacement.frame(
-                rail: anchor.rail,
-                edge: anchor.edge,
-                screen: anchor.screen,
-                cardClearance: anchor.cardClearance
+                rail: placed.rail,
+                edge: placed.edge,
+                screen: placed.screen,
+                cardClearance: placed.cardClearance
             )
             window.setFrame(frame, display: false)
         }
@@ -146,7 +151,10 @@ final class SpendGlanceController {
         window.isMovableByWindowBackground = true
         window.backgroundColor = .windowBackgroundColor
         window.hidesOnDeactivate = false
+        // The same spaces as the rail. These flags do not raise the window:
+        // the level below is what other apps stack against.
         window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary]
+        window.level = SpendGlanceWindowLevel.standard
         window.onDismiss = { [weak self] in self?.close() }
         window.contentView = SpendGlanceHostingView(rootView: SpendGlanceView(
             model: model,
@@ -178,17 +186,21 @@ struct SpendGlanceAnchor {
     var level: NSWindow.Level
 }
 
-/// Where the summary sits relative to the rail and to menus.
+/// Where the summary sits relative to other apps and to menus.
 ///
-/// The rail can be at `.statusBar`. A window at that same level, or a utility
-/// panel, does not keep a menu in front of it, so a picker looks dead. Stay
-/// one level above the rail and strictly under `.popUpMenu`.
+/// The rail is `.floating` on a side and `.statusBar` on the top or bottom.
+/// 1.5.11 put this window one level above that rail, and never below
+/// `.floating`, so a menu could clear the rail. A window at that level stays
+/// in front of every normal window after the user clicks another app.
+/// Settings and the recap use `.normal`. This window does too. A menu is
+/// still `.popUpMenu`, which is above a normal window and above the rail.
 enum SpendGlanceWindowLevel {
-    static func above(_ rail: NSWindow.Level) -> NSWindow.Level {
-        let menu = NSWindow.Level.popUpMenu.rawValue
-        let next = max(rail.rawValue, NSWindow.Level.floating.rawValue) + 1
-        if next >= menu { return NSWindow.Level(rawValue: menu - 1) }
-        return NSWindow.Level(rawValue: next)
+    static let standard = NSWindow.Level.normal
+
+    /// The rail's level does not raise this window. The argument stays so a
+    /// test can pass `.statusBar` and `.floating` and see that neither does.
+    static func resolved(beside _: NSWindow.Level) -> NSWindow.Level {
+        standard
     }
 
     static func isAuxiliary(_ window: NSWindow) -> Bool {

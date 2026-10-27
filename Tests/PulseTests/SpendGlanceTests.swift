@@ -722,6 +722,13 @@ struct SpendGlanceTests {
         #expect(section?.models[0].firstToken == "First token 2.5 s")
         #expect(section?.models[1].firstToken == nil)
         #expect(section?.models[2].firstToken == "First token 1.2 s")
+        #expect(SpendSpeedLayout.isDenserThanSettings)
+        #expect(SpendSpeedLayout.verticalPadding <= 4)
+        #expect(SpendSpeedLayout.minimumHeight <= 24)
+        #expect(SpendSpeedLayout.modelRowHeight <= 32)
+        #expect(SettingsRowDensity.compact.verticalPadding == SpendSpeedLayout.verticalPadding)
+        #expect(SettingsRowDensity.compact.minimumHeight == SpendSpeedLayout.minimumHeight)
+        #expect(SettingsRowDensity.regular.minimumHeight == SettingsRowMetrics.minimumHeight)
 
         // The headline keeps the money and does not carry the speed, its old
         // explanation, or a partial-estimate label.

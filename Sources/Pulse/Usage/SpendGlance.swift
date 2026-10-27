@@ -138,6 +138,39 @@ struct SpendSpeedSection: Equatable, Sendable {
     }
 }
 
+/// How tall one output-speed row is.
+///
+/// The section used a settings row: 11 points of vertical padding and a
+/// 44-point minimum. A name, a rate, and sometimes a first-token line do
+/// not fill that, so six models took most of the window. These figures are
+/// what `SettingsRowDensity.compact` draws.
+enum SpendSpeedLayout {
+    static let verticalPadding: CGFloat = 4
+    static let minimumHeight: CGFloat = 20
+    static let titlePointSize: CGFloat = 12
+    static let subtitlePointSize: CGFloat = 10
+    static let labelSpacing: CGFloat = 1
+    static let horizontalPadding: CGFloat = 12
+    static let valuePointSize: CGFloat = 12
+
+    /// A model row, title plus the first-token subtitle. Taller than the
+    /// overall row, which has no subtitle.
+    static var modelRowHeight: CGFloat {
+        max(
+            minimumHeight,
+            verticalPadding * 2 + titlePointSize + labelSpacing + subtitlePointSize
+        )
+    }
+
+    static var isDenserThanSettings: Bool {
+        verticalPadding < SettingsRowMetrics.verticalPadding
+            && minimumHeight < SettingsRowMetrics.minimumHeight
+            && labelSpacing < SettingsRowMetrics.labelSpacing
+            && titlePointSize <= SettingsRowMetrics.titlePointSize
+            && modelRowHeight < SettingsRowMetrics.minimumHeight
+    }
+}
+
 /// The glance body, top to bottom, under the span picker.
 /// Output speed draws nothing when the span timed no reply.
 enum TokenGlanceSection: String, CaseIterable, Equatable, Hashable, Sendable {

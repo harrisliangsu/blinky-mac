@@ -38,6 +38,65 @@ struct SettingsGroup<Content: View>: View {
     }
 }
 
+/// The settings window's row. The Token window's speed list uses
+/// `SpendSpeedLayout` instead, through `SettingsRowDensity.compact`.
+enum SettingsRowMetrics {
+    static let verticalPadding: CGFloat = 11
+    static let minimumHeight: CGFloat = 44
+    static let titlePointSize: CGFloat = 13
+    static let subtitlePointSize: CGFloat = 11
+    static let labelSpacing: CGFloat = 3
+    static let horizontalPadding: CGFloat = 14
+}
+
+/// `.regular` is every settings row. `.compact` is the output-speed list.
+enum SettingsRowDensity: Equatable {
+    case regular
+    case compact
+
+    var verticalPadding: CGFloat {
+        switch self {
+        case .regular: SettingsRowMetrics.verticalPadding
+        case .compact: SpendSpeedLayout.verticalPadding
+        }
+    }
+
+    var minimumHeight: CGFloat {
+        switch self {
+        case .regular: SettingsRowMetrics.minimumHeight
+        case .compact: SpendSpeedLayout.minimumHeight
+        }
+    }
+
+    var titlePointSize: CGFloat {
+        switch self {
+        case .regular: SettingsRowMetrics.titlePointSize
+        case .compact: SpendSpeedLayout.titlePointSize
+        }
+    }
+
+    var subtitlePointSize: CGFloat {
+        switch self {
+        case .regular: SettingsRowMetrics.subtitlePointSize
+        case .compact: SpendSpeedLayout.subtitlePointSize
+        }
+    }
+
+    var labelSpacing: CGFloat {
+        switch self {
+        case .regular: SettingsRowMetrics.labelSpacing
+        case .compact: SpendSpeedLayout.labelSpacing
+        }
+    }
+
+    var horizontalPadding: CGFloat {
+        switch self {
+        case .regular: SettingsRowMetrics.horizontalPadding
+        case .compact: SpendSpeedLayout.horizontalPadding
+        }
+    }
+}
+
 /// One line inside a `SettingsGroup`: a label on the left, its control on the
 /// right, and an optional explanation underneath the label — or, with
 /// `controlBelow`, the control under the label, for a control too wide to
@@ -58,6 +117,7 @@ struct SettingsRow<Control: View>: View {
     /// the only difference: the control is the same one, editing the same
     /// setting. Callers omit the row entirely while its parent is off.
     let nested: Bool
+    let density: SettingsRowDensity
     @ViewBuilder let control: Control
 
     init(
@@ -66,6 +126,7 @@ struct SettingsRow<Control: View>: View {
         icon: String? = nil,
         controlBelow: Bool = false,
         nested: Bool = false,
+        density: SettingsRowDensity = .regular,
         @ViewBuilder control: () -> Control
     ) {
         self.title = title
@@ -73,6 +134,7 @@ struct SettingsRow<Control: View>: View {
         self.icon = icon
         self.controlBelow = controlBelow
         self.nested = nested
+        self.density = density
         self.control = control()
     }
 
@@ -92,10 +154,10 @@ struct SettingsRow<Control: View>: View {
                 }
             }
         }
-        .padding(.horizontal, 14)
+        .padding(.horizontal, density.horizontalPadding)
         .padding(.leading, nested ? 22 : 0)
-        .padding(.vertical, 11)
-        .frame(minHeight: 44)
+        .padding(.vertical, density.verticalPadding)
+        .frame(minHeight: density.minimumHeight)
     }
 
     private var label: some View {
@@ -104,13 +166,13 @@ struct SettingsRow<Control: View>: View {
                 LobeIconView(resource: icon, size: 15)
             }
 
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: density.labelSpacing) {
                 Text(title)
-                    .font(.system(size: 13))
+                    .font(.system(size: density.titlePointSize))
 
                 if let subtitle {
                     Text(subtitle)
-                        .font(.system(size: 11))
+                        .font(.system(size: density.subtitlePointSize))
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -135,8 +197,10 @@ enum SettingsLayout {
 /// Hairline between rows. Inset to match the rows' own padding, the way
 /// macOS's grouped lists do it.
 struct SettingsRowDivider: View {
+    var leadingInset: CGFloat = SettingsRowMetrics.horizontalPadding
+
     var body: some View {
         Divider()
-            .padding(.leading, 14)
+            .padding(.leading, leadingInset)
     }
 }
