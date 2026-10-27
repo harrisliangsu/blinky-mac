@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.30</title>
-            <pubDate>Tue, 27 Oct 2026 10:00:21 -0000</pubDate>
-            <sparkle:version>1.5.30</sparkle:version>
-            <sparkle:shortVersionString>1.5.30</sparkle:shortVersionString>
+            <title>1.5.31</title>
+            <pubDate>Tue, 27 Oct 2026 11:58:31 -0000</pubDate>
+            <sparkle:version>1.5.31</sparkle:version>
+            <sparkle:shortVersionString>1.5.31</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.30</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.31</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.30</h2><ul><li><strong>「输出速度」改名为「性能」。</strong> 「Token 消耗」窗口里，这一节位于「Token 活动」下面；有这些记录时，每个模型列出缓存命中率、缓存、输入和输出，计时过的回复仍列出 tok/s 和首字延迟。<a href="https://github.com/harrisliangsu/blinky-mac/pull/92">#92</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.30">在 GitHub 查看更新说明</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.30/Blinky-1.5.30.zip"
-                       length="23315003"
+</style><h2>Blinky 1.5.31</h2><ul><li><strong>用得不多的每周限额仍会写出用尽预估。</strong> 在「设置 → 用量」打开「显示预估」后，只报告重置时间、不报告窗口长度的每周限额（包括 Kimi Code）在已用不到四分之一时仍显示「预计可维持到本轮重置」，窗口已经打开一段时间也一样；已用达到四分之一、仍然没有长度时，这一行不显示。<a href="https://github.com/harrisliangsu/blinky-mac/pull/93">#93</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.31">在 GitHub 查看更新说明</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.31/Blinky-1.5.31.zip"
+                       length="23315164"
                        type="application/octet-stream"
-                       sparkle:edSignature="pWYoRb5HC9YVd3yhwuKvDUxyQjqewoFTG+l5lS4V8O7newXA2UL9ZEx9DCxRl3NBO/ygd/Oiz5obqu8gUB5eAQ==" />
+                       sparkle:edSignature="Gw3xJTaKj3c4F2pc4gJ0D3uaD0VUiRXq/rmEx1eVZ80Ads6YZC4JfGn4ngFLdDcQwkuJN8GvPAoX0NxRQdOeDQ==" />
         </item>
     </channel>
 </rss>
