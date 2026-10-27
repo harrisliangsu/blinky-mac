@@ -826,14 +826,15 @@ struct TokenSpendView: View {
 
     /// The span's average output speed, then each model that has a speed or
     /// a first-token wait. Absent when the span timed nothing — not a zero.
-    /// The unit is `tok/s`. There is no note under the figure.
+    /// The unit is `tok/s`. There is no note under the figure. The rows are
+    /// the compact density: a settings row's padding left this list empty.
     @ViewBuilder
     private func speedSection(_ summary: SpendSummary) -> some View {
         if let section = SpendSpeedSection.make(summary: summary) {
             SettingsGroup(section.title) {
                 VStack(spacing: 0) {
                     if let overall = section.overall {
-                        SettingsRow(section.overallTitle) {
+                        SettingsRow(section.overallTitle, density: .compact) {
                             Text(verbatim: overall)
                                 .font(.system(size: SpendGlanceHeadline.speedPointSize, weight: .medium))
                                 .monospacedDigit()
@@ -842,12 +843,12 @@ struct TokenSpendView: View {
                     }
                     ForEach(Array(section.models.enumerated()), id: \.element.id) { index, model in
                         if section.overall != nil || index > 0 {
-                            SettingsRowDivider()
+                            SettingsRowDivider(leadingInset: SettingsRowDensity.compact.horizontalPadding)
                         }
-                        SettingsRow(model.name, subtitle: model.firstToken) {
+                        SettingsRow(model.name, subtitle: model.firstToken, density: .compact) {
                             if let speed = model.speed {
                                 Text(verbatim: speed)
-                                    .font(.system(size: 12))
+                                    .font(.system(size: SpendSpeedLayout.valuePointSize))
                                     .monospacedDigit()
                                     .foregroundStyle(.secondary)
                             }

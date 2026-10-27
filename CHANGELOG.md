@@ -10,6 +10,11 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.29
+
+- **The Token spend window no longer stays in front of other apps.** With Token spend open from the usage card, clicking another window brings that window forward and leaves this one behind it.
+- **Output speed uses a shorter list.** The Token spend window still shows the selected span's average and each timed model's speed in tok/s, with first-token latency under that model when a log recorded it, and each row is shorter than a settings row.
+
 ## 1.5.28
 
 - **The Token window gives output speed its own section.** The Token spend window beside the usage card lists the selected span's average and each timed model's speed in tok/s, with first-token latency beside that model when a log recorded it, and no longer writes Partial estimate or an explanation under the totals. [#90](https://github.com/harrisliangsu/blinky-mac/pull/90)

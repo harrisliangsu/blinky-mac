@@ -13,13 +13,16 @@ import Testing
 @MainActor
 @Suite("Token spend glance window", .serialized)
 struct SpendGlanceWindowTests {
-    @Test("The window sits above the rail and under a menu")
+    @Test("The window uses normal stacking and stays under a menu")
     func level() {
-        let aboveRail = SpendGlanceWindowLevel.above(.statusBar)
-        #expect(aboveRail.rawValue > NSWindow.Level.floating.rawValue)
-        #expect(aboveRail.rawValue < NSWindow.Level.popUpMenu.rawValue)
-        #expect(SpendGlanceWindowLevel.above(.popUpMenu).rawValue < NSWindow.Level.popUpMenu.rawValue)
-        #expect(SpendGlanceWindowLevel.above(.floating).rawValue == NSWindow.Level.floating.rawValue + 1)
+        #expect(SpendGlanceWindowLevel.standard == .normal)
+        #expect(SpendGlanceWindowLevel.standard.rawValue < NSWindow.Level.floating.rawValue)
+        #expect(SpendGlanceWindowLevel.standard.rawValue < NSWindow.Level.popUpMenu.rawValue)
+        // A side rail is floating. A top or bottom rail is the status bar.
+        // Either one used to lift this window above other apps.
+        #expect(SpendGlanceWindowLevel.resolved(beside: .statusBar) == .normal)
+        #expect(SpendGlanceWindowLevel.resolved(beside: .floating) == .normal)
+        #expect(SpendGlanceWindowLevel.resolved(beside: .popUpMenu) == .normal)
 
         #expect(SpendGlanceWindowLevel.isAuxiliary(level: .popUpMenu, className: "NSWindow"))
         #expect(SpendGlanceWindowLevel.isAuxiliary(level: .normal, className: "NSMenuWindow"))
@@ -63,7 +66,9 @@ struct SpendGlanceWindowTests {
         #expect(window.styleMask.contains(.closable))
         #expect(!window.styleMask.contains(.fullSizeContentView))
         #expect(!window.styleMask.contains(.utilityWindow))
-        #expect(window.level == SpendGlanceWindowLevel.above(.statusBar))
+        #expect(window.level == .normal)
+        #expect(window.level == SpendGlanceWindowLevel.resolved(beside: .statusBar))
+        #expect(window.hidesOnDeactivate == false)
         #expect(window.contentView?.acceptsFirstMouse(for: nil) == true)
         #expect(window.title == "Token spend")
 
