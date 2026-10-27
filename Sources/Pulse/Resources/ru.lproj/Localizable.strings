@@ -982,9 +982,10 @@
 "Kimi doesn't record when the first token arrived, so its wait isn't shown." = "Kimi не записывает, когда пришёл первый токен, поэтому время ожидания не показано.";
 "First token is Kimi Code's own measure of how long a step waited for it." = "«Первый токен» — сколько каждый шаг ждал первого токена, по замерам самого Kimi Code.";
 "%@ s" = "%@ с";
-"%@ tokens/s" = "Токенов/с: %@";
+"%@ tok/s" = "%@ tok/s";
 "First token %@ s" = "Первый токен: %@ с";
-"Output speed is the average of timed replies in this span, from sending a request to the end of its reply. Claude Code, Codex, Grok, and Kimi can be timed." = "Скорость вывода — среднее по ответам с замером за этот период, от отправки запроса до конца ответа. Замер есть у Claude Code, Codex, Grok и Kimi.";
+"Output speed" = "Скорость вывода";
+"Overall" = "В среднем";
 "Prompt cache (%@)" = "Кэш промптов (%@)";
 "%@ left" = "осталось %@";
 "Expired" = "истёк";

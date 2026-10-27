@@ -6,6 +6,10 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.28
+
+- **Token 窗口把输出速度单独成一节。** 用量卡片旁的「Token 消耗」窗口以 tok/s 列出所选统计区间的平均输出速度和每个已计时模型的速度，有首字时间时写在该模型旁边，合计下不再显示「部分估算」和说明。[#90](https://github.com/harrisliangsu/blinky-mac/pull/90)
+
 ## 1.5.27
 
 - **窗口显示时，菜单栏显示 Blinky。** 打开设置，或让这个窗口成为当前窗口时，菜单栏显示 Blinky。[#85](https://github.com/harrisliangsu/blinky-mac/pull/85)

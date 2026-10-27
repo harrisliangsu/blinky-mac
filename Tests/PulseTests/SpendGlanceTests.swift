@@ -326,7 +326,7 @@ struct SpendGlanceTests {
         #expect(picture.drawnText.last == "Blinky")
     }
 
-    @Test("The poster says when a cost is unavailable or only partial")
+    @Test("The poster says when a cost is unavailable, and a mix keeps the priced amount")
     func posterNotesTheEstimate() {
         var unavailable = SpendSummary()
         unavailable.tokens = 20
@@ -351,7 +351,7 @@ struct SpendGlanceTests {
         let mixed = Self.picture(summary: partial)
         let money = SpendFormat.money(1.5, locale: Self.englishLocale)
         #expect(mixed.cost == money as String?)
-        #expect(mixed.costNote == "Partial estimate")
+        #expect(mixed.costNote == nil)
         #expect(mixed.agents.first?.cost == "\(money)*" as String?)
         #expect(mixed.brand == "Blinky")
     }
@@ -381,7 +381,7 @@ struct SpendGlanceTests {
             observedAt: Self.today,
             limitations: true
         )
-        #expect(both.costNote == "Partial estimate")
+        #expect(both.costNote == nil)
         #expect(both.footnotes == [
             "Updated just now",
             "Counts may be incomplete.",
@@ -660,7 +660,7 @@ struct SpendGlanceTests {
 
     @Test("The glance lists activity, then the rhythm, then one breakdown")
     func glanceOrder() {
-        #expect(TokenGlanceSection.order == [.tokenActivity, .usageRhythm, .dimension])
+        #expect(TokenGlanceSection.order == [.outputSpeed, .tokenActivity, .usageRhythm, .dimension])
         #expect(UsageRhythm.metricKeys(hoursComplete: true, hasPeakHour: true, hasModel: true) == [
             "Current streak", "Longest streak", "Peak hour", "Most tokens",
         ])
@@ -697,32 +697,52 @@ struct SpendGlanceTests {
         #expect(!notes.estimate.map(\.text).contains("By agent"))
     }
 
-    @Test("The headline shows a span's speed only when replies were timed")
-    func outputSpeedOnTheHeadline() {
+    @Test("The speed section lists the span average and each timed model, in tok/s")
+    func outputSpeedSection() {
         let held = LocalizationSource.hold(.english)
         defer { held.end() }
 
         var summary = SpendSummary()
         summary.tokens = 10
         summary.cost = 1
+        summary.unpricedTokens = 2
         summary.outputTokensPerSecond = 86
-        let picture = Self.picture(summary: summary)
-        #expect(picture.speed == "86 tokens/s")
-        #expect(picture.speedNote == "Output speed is the average of timed replies in this span, from sending a request to the end of its reply. Claude Code, Codex, Grok, and Kimi can be timed.")
-        #expect(picture.drawnText.contains("86 tokens/s"))
-        #expect(picture.drawnText.contains { $0.contains("Claude Code, Codex, Grok, and Kimi can be timed.") })
+        summary.models = [
+            SpendSummary.Model(name: "Fast", tokens: 8, agents: [], share: 0.8, tokensPerSecond: 100, firstToken: 2.5),
+            SpendSummary.Model(name: "Slow", tokens: 2, agents: [], share: 0.2, tokensPerSecond: 0.2, firstToken: nil),
+            SpendSummary.Model(name: "Quiet", tokens: 1, agents: [], tokensPerSecond: nil, firstToken: nil),
+            SpendSummary.Model(name: "Wait", tokens: 1, agents: [], tokensPerSecond: nil, firstToken: 1.2),
+        ]
+        let section = SpendSpeedSection.make(summary: summary, locale: Self.englishLocale, bundle: Self.english)
+        #expect(section?.title == "Output speed")
+        #expect(section?.overallTitle == "Overall")
+        #expect(section?.overall == "86 tok/s")
+        #expect(section?.models.map(\.name) == ["Fast", "Slow", "Wait"])
+        #expect(section?.models.map(\.speed) == ["100 tok/s", "0.2 tok/s", nil])
+        #expect(section?.models[0].firstToken == "First token 2.5 s")
+        #expect(section?.models[1].firstToken == nil)
+        #expect(section?.models[2].firstToken == "First token 1.2 s")
 
-        summary.outputTokensPerSecond = 0.2
-        #expect(Self.picture(summary: summary).speed == "0.2 tokens/s")
+        // The headline keeps the money and does not carry the speed, its old
+        // explanation, or a partial-estimate label.
+        let picture = Self.picture(summary: summary)
+        #expect(picture.cost != nil)
+        #expect(picture.costNote == nil)
+        #expect(!picture.drawnText.contains { $0.contains("tok/s") || $0.contains("tokens/s") })
+        #expect(!picture.drawnText.contains("Partial estimate"))
+        #expect(!picture.drawnText.contains { $0.contains("Claude Code") })
+
         #expect(OutputSpeedText.number(0.04, locale: Self.englishLocale) == "0.04")
         #expect(OutputSpeedText.number(0.04, locale: Self.englishLocale) != "0")
+        #expect(OutputSpeedText.line(0.04, locale: Self.englishLocale, bundle: Self.english) == "0.04 tok/s")
+        #expect(OutputSpeedText.line(86, locale: Self.englishLocale, bundle: Self.english) == "86 tok/s")
         #expect(OutputSpeedText.firstToken(2.5, locale: Self.englishLocale, bundle: Self.english) == "First token 2.5 s")
 
         summary.outputTokensPerSecond = nil
+        summary.models = []
+        #expect(SpendSpeedSection.make(summary: summary, locale: Self.englishLocale, bundle: Self.english) == nil)
         let quiet = Self.picture(summary: summary)
-        #expect(quiet.speed == nil)
-        #expect(quiet.speedNote == nil)
-        #expect(!quiet.drawnText.contains("tokens/s"))
+        #expect(!quiet.drawnText.contains { $0.contains("tok/s") })
     }
 
     private static func picture(

@@ -1054,9 +1054,10 @@
 "Kimi doesn't record when the first token arrived, so its wait isn't shown." = "Kimi 不記錄第一個 token 何時到達，所以這裡不顯示首字延遲。";
 "First token is Kimi Code's own measure of how long a step waited for it." = "首字延遲由 Kimi Code 自行測量，是每一步等到第一個 token 的時間。";
 "%@ s" = "%@ 秒";
-"%@ tokens/s" = "%@ token/秒";
+"%@ tok/s" = "%@ tok/s";
 "First token %@ s" = "首字延遲 %@ 秒";
-"Output speed is the average of timed replies in this span, from sending a request to the end of its reply. Claude Code, Codex, Grok, and Kimi can be timed." = "輸出速度是目前統計區間內已計時回覆的平均值，從送出請求算到回覆寫完。能計時的是 Claude Code、Codex、Grok 和 Kimi。";
+"Output speed" = "輸出速度";
+"Overall" = "平均";
 "Prompt cache (%@)" = "提示快取（%@）";
 "%@ left" = "還剩 %@";
 "Expired" = "已過期";
