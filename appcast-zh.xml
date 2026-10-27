@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.28</title>
-            <pubDate>Tue, 27 Oct 2026 04:03:20 -0000</pubDate>
-            <sparkle:version>1.5.28</sparkle:version>
-            <sparkle:shortVersionString>1.5.28</sparkle:shortVersionString>
+            <title>1.5.29</title>
+            <pubDate>Tue, 27 Oct 2026 05:03:58 -0000</pubDate>
+            <sparkle:version>1.5.29</sparkle:version>
+            <sparkle:shortVersionString>1.5.29</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.28</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.29</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.28</h2><ul><li><strong>Token 窗口把输出速度单独成一节。</strong> 用量卡片旁的「Token 消耗」窗口以 tok/s 列出所选统计区间的平均输出速度和每个已计时模型的速度，有首字时间时写在该模型旁边，合计下不再显示「部分估算」和说明。<a href="https://github.com/harrisliangsu/blinky-mac/pull/90">#90</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.28">在 GitHub 查看更新说明</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.28/Blinky-1.5.28.zip"
-                       length="23242087"
+</style><h2>Blinky 1.5.29</h2><ul><li><strong>「Token 消耗」不再一直停在其他窗口前面。</strong> 从用量卡片打开「Token 消耗」后，点到别的窗口，这一窗口会退到后面。<a href="https://github.com/harrisliangsu/blinky-mac/pull/91">#91</a></li><li><strong>「输出速度」的列表更紧凑。</strong> 「Token 消耗」窗口仍以 tok/s 列出所选统计区间的平均速度和每个已计时模型的速度，日志里有首字时间时写在该模型下面，每一行比设置里的一行更矮。<a href="https://github.com/harrisliangsu/blinky-mac/pull/91">#91</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.29">在 GitHub 查看更新说明</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.29/Blinky-1.5.29.zip"
+                       length="23257315"
                        type="application/octet-stream"
-                       sparkle:edSignature="vUjy9zj9NUtAvP0shGZfrQluFaS58QEF3laak0ZoOD2JMUaLSPaveNWBsHWIleexPRN2uPAvWbtP8nEYZRMfAg==" />
+                       sparkle:edSignature="jmyy88wmSS8JN0b/PQ8/T/CusUIZJ68Oaxtdr3X3WI848uCLKrcoVKhhhXIi4LZ1ChKd+KvPFoYSaMM6uvwCDA==" />
         </item>
     </channel>
 </rss>
