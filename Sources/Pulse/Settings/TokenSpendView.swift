@@ -180,6 +180,7 @@ struct TokenSpendView: View {
                     nothingForAgent(focus)
                 } else {
                     total(focused)
+                    speedSection(focused)
                     activitySection
                     kinds(focused)
                     streaks(focused)
@@ -805,11 +806,14 @@ struct TokenSpendView: View {
             .frame(maxWidth: spread ? .infinity : nil, alignment: .center)
     }
 
-    /// Token activity, then the rhythm, then one breakdown.
+    /// Output speed when a reply in the span was timed, then Token activity,
+    /// the rhythm, and one breakdown.
     @ViewBuilder
     private func glanceBody(_ summary: SpendSummary) -> some View {
         ForEach(TokenGlanceSection.order, id: \.self) { section in
             switch section {
+            case .outputSpeed:
+                speedSection(summary)
             case .tokenActivity:
                 activitySection
             case .usageRhythm:
@@ -817,6 +821,41 @@ struct TokenSpendView: View {
             case .dimension:
                 dimensionBlock(summary)
             }
+        }
+    }
+
+    /// The span's average output speed, then each model that has a speed or
+    /// a first-token wait. Absent when the span timed nothing — not a zero.
+    /// The unit is `tok/s`. There is no note under the figure.
+    @ViewBuilder
+    private func speedSection(_ summary: SpendSummary) -> some View {
+        if let section = SpendSpeedSection.make(summary: summary) {
+            SettingsGroup(section.title) {
+                VStack(spacing: 0) {
+                    if let overall = section.overall {
+                        SettingsRow(section.overallTitle) {
+                            Text(verbatim: overall)
+                                .font(.system(size: SpendGlanceHeadline.speedPointSize, weight: .medium))
+                                .monospacedDigit()
+                                .accessibilityIdentifier("spend-glance-speed")
+                        }
+                    }
+                    ForEach(Array(section.models.enumerated()), id: \.element.id) { index, model in
+                        if section.overall != nil || index > 0 {
+                            SettingsRowDivider()
+                        }
+                        SettingsRow(model.name, subtitle: model.firstToken) {
+                            if let speed = model.speed {
+                                Text(verbatim: speed)
+                                    .font(.system(size: 12))
+                                    .monospacedDigit()
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
+            }
+            .accessibilityIdentifier("spend-glance-speed-section")
         }
     }
 
@@ -913,10 +952,6 @@ struct TokenSpendView: View {
         let shown = showAllModels
             ? summary.models
             : Array(summary.models.prefix(Self.modelLimit))
-        // A column appears only when some visible row can fill it. A model
-        // without that figure gets a dash; a zero would claim a measurement.
-        let showsSpeed = shown.contains { $0.tokensPerSecond != nil }
-        let showsWait = shown.contains { $0.firstToken != nil }
 
         return SettingsGroup(titled ? String.localized("By model") : nil) {
             ForEach(Array(shown.enumerated()), id: \.element.id) { index, model in
@@ -935,13 +970,6 @@ struct TokenSpendView: View {
                         HStack(spacing: 10) {
                             ShareBar(share: model.share)
                                 .frame(width: 64, height: 6)
-
-                            if showsSpeed {
-                                timedFigure(model.tokensPerSecond.map { OutputSpeedText.line($0) })
-                            }
-                            if showsWait {
-                                timedFigure(model.firstToken.map { OutputSpeedText.firstToken($0) })
-                            }
 
                             Text(String.localized("\(TokenCount.short(model.tokens)) tokens"))
                                 .font(.system(size: 12))
@@ -982,16 +1010,6 @@ struct TokenSpendView: View {
                 .buttonStyle(.plain)
             }
         }
-    }
-
-    /// A speed or a first-token wait, or a faint dash where this model has none.
-    private func timedFigure(_ text: String?) -> some View {
-        Text(verbatim: text ?? "–")
-            .font(.system(size: 11))
-            .monospacedDigit()
-            .foregroundStyle(text == nil ? .tertiary : .secondary)
-            .lineLimit(1)
-            .fixedSize(horizontal: true, vertical: false)
     }
 
     // MARK: - Where the work happened

@@ -32,8 +32,9 @@ enum SpendGlanceDimension: String, CaseIterable, Identifiable, Sendable {
 }
 
 /// How large the glance writes the headline figures. Tokens stay the large
-/// one whether or not a cost was priced. Speed, when a reply was timed, sits
-/// under the cost and stays smaller than it. All three are centered.
+/// one whether or not a cost was priced, and the estimate under them stays
+/// smaller. Both are centered. Output speed is not one of these figures: it
+/// has its own section, and `speedPointSize` is that section's overall rate.
 enum SpendGlanceHeadline {
     static let tokenPointSize: CGFloat = 28
     static let moneyPointSize: CGFloat = 15
@@ -45,6 +46,10 @@ enum SpendGlanceHeadline {
 
 /// How the glance writes a speed. A positive rate that would round to zero
 /// keeps a decimal, so a slow reply is not shown as a measured zero.
+///
+/// The unit is `tok/s` in every language. It is an abbreviation, the same
+/// way a latency is `ms`, and it is not translated into "token/秒" or a
+/// spelled-out "tokens per second".
 enum OutputSpeedText {
     static func number(_ tokensPerSecond: Double, locale: Locale = LocalizationSource.locale) -> String {
         let digits: Int
@@ -66,7 +71,7 @@ enum OutputSpeedText {
         bundle: Bundle = LocalizationSource.bundle
     ) -> String {
         let figure = number(tokensPerSecond, locale: locale)
-        return String(localized: "\(figure) tokens/s", bundle: bundle)
+        return String(localized: "\(figure) tok/s", bundle: bundle)
     }
 
     static func firstToken(
@@ -80,22 +85,68 @@ enum OutputSpeedText {
         )
         return String(localized: "First token \(figure) s", bundle: bundle)
     }
+}
 
-    static func footnote(bundle: Bundle = LocalizationSource.bundle) -> String {
-        String(
-            localized: "Output speed is the average of timed replies in this span, from sending a request to the end of its reply. Claude Code, Codex, Grok, and Kimi can be timed.",
-            bundle: bundle
+/// The speed section under the span picker: the span's average, then each
+/// model that was timed. Nothing here is a zero standing in for a missing
+/// measurement, and there is no explanatory paragraph under the figure.
+struct SpendSpeedSection: Equatable, Sendable {
+    struct Model: Equatable, Sendable, Identifiable {
+        var name: String
+        /// Nil when this model recorded a first-token wait and no speed.
+        var speed: String?
+        var firstToken: String?
+        var id: String { name }
+    }
+
+    var title: String
+    /// The row that carries the span's average. "Overall", not a second copy
+    /// of the section title.
+    var overallTitle: String
+    /// Nil when the span timed a wait and no output rate. The section can
+    /// still list those models.
+    var overall: String?
+    /// Heaviest first, the order `SpendSummary.models` already has. A model
+    /// with neither a speed nor a first-token wait is left out.
+    var models: [Model]
+
+    static func make(
+        summary: SpendSummary,
+        locale: Locale = LocalizationSource.locale,
+        bundle: Bundle = LocalizationSource.bundle
+    ) -> Self? {
+        let models = summary.models.compactMap { model -> Model? in
+            let speed = model.tokensPerSecond.map {
+                OutputSpeedText.line($0, locale: locale, bundle: bundle)
+            }
+            let wait = model.firstToken.map {
+                OutputSpeedText.firstToken($0, locale: locale, bundle: bundle)
+            }
+            guard speed != nil || wait != nil else { return nil }
+            return Model(name: model.name, speed: speed, firstToken: wait)
+        }
+        let overall = summary.outputTokensPerSecond.map {
+            OutputSpeedText.line($0, locale: locale, bundle: bundle)
+        }
+        guard overall != nil || !models.isEmpty else { return nil }
+        return Self(
+            title: String(localized: "Output speed", bundle: bundle),
+            overallTitle: String(localized: "Overall", bundle: bundle),
+            overall: overall,
+            models: models
         )
     }
 }
 
 /// The glance body, top to bottom, under the span picker.
+/// Output speed draws nothing when the span timed no reply.
 enum TokenGlanceSection: String, CaseIterable, Equatable, Hashable, Sendable {
+    case outputSpeed
     case tokenActivity
     case usageRhythm
     case dimension
 
-    static let order: [TokenGlanceSection] = [.tokenActivity, .usageRhythm, .dimension]
+    static let order: [TokenGlanceSection] = [.outputSpeed, .tokenActivity, .usageRhythm, .dimension]
 }
 
 /// The Pattern row. The four captions already on that row, spread across it.
@@ -595,10 +646,9 @@ struct SpendGlancePicture: Equatable, Sendable {
     var span = ""
     var tokens = ""
     var cost: String?
+    /// "Estimate unavailable" when nothing could be priced. A mix is not
+    /// labelled here: the combined headline does not say "Partial estimate".
     var costNote: String?
-    /// Nil when the span timed no reply. Never a zero standing in for that.
-    var speed: String?
-    var speedNote: String?
     var agentsTitle = ""
     var agents: [Agent] = []
     var activityTitle = ""
@@ -610,8 +660,6 @@ struct SpendGlancePicture: Equatable, Sendable {
         var lines = [brand, span, tokens]
         if let cost { lines.append(cost) }
         if let costNote { lines.append(costNote) }
-        if let speed { lines.append(speed) }
-        if let speedNote { lines.append(speedNote) }
         if !agents.isEmpty { lines.append(agentsTitle) }
         for agent in agents {
             lines.append(agent.name)
@@ -653,13 +701,10 @@ struct SpendGlancePicture: Equatable, Sendable {
             }
         case .unavailable:
             picture.costNote = String(localized: "Estimate unavailable", bundle: bundle)
-        case .amount(let amount, let partial):
+        case .amount(let amount, _):
+            // The amount is the priced part. The headline does not add
+            // "Partial estimate" under it.
             picture.cost = SpendFormat.money(amount, locale: locale)
-            if partial { picture.costNote = String(localized: "Partial estimate", bundle: bundle) }
-        }
-        if let rate = summary.outputTokensPerSecond {
-            picture.speed = OutputSpeedText.line(rate, locale: locale, bundle: bundle)
-            picture.speedNote = OutputSpeedText.footnote(bundle: bundle)
         }
         let rows = SpendGlance.rows(summary, dimension: dimension)
         if !rows.isEmpty {

@@ -450,10 +450,9 @@ struct SpendGlanceView: View {
         .controlSize(.small)
     }
 
-    /// Tokens large, the estimate under them, and — when a reply in the span
-    /// was timed — the average output speed under that. A span with no timed
-    /// reply leaves the speed out. All of them follow the selected span, and
-    /// all are centered on the row.
+    /// Tokens large, the estimate under them. Both follow the selected span
+    /// and are centered. Output speed is a section of its own, under the
+    /// span picker, and a mix is not labelled "Partial estimate" here.
     private var headline: some View {
         let picture = model.picture
         let centered = SpendGlanceHeadline.centersFigures
@@ -477,24 +476,6 @@ struct SpendGlanceView: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(centered ? .center : .leading)
                     .frame(maxWidth: centered ? .infinity : nil, alignment: centered ? .center : .leading)
-            }
-            if let speed = picture.speed {
-                Text(verbatim: speed)
-                    .font(.system(size: SpendGlanceHeadline.speedPointSize, weight: .regular))
-                    .monospacedDigit()
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(centered ? .center : .leading)
-                    .frame(maxWidth: centered ? .infinity : nil, alignment: centered ? .center : .leading)
-                    .accessibilityIdentifier("spend-glance-speed")
-                if let note = picture.speedNote {
-                    Text(verbatim: note)
-                        .font(.system(size: 11))
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(centered ? .center : .leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .frame(maxWidth: .infinity, alignment: centered ? .center : .leading)
-                        .accessibilityIdentifier("spend-glance-speed-note")
-                }
             }
         }
         .frame(maxWidth: .infinity, alignment: centered ? .center : .leading)
