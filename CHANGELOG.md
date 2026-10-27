@@ -12,8 +12,8 @@ bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
 ## 1.5.29
 
-- **The Token spend window no longer stays in front of other apps.** With Token spend open from the usage card, clicking another window brings that window forward and leaves this one behind it.
-- **Output speed uses a shorter list.** The Token spend window still shows the selected span's average and each timed model's speed in tok/s, with first-token latency under that model when a log recorded it, and each row is shorter than a settings row.
+- **The Token spend window no longer stays in front of other apps.** With Token spend open from the usage card, clicking another window brings that window forward and leaves this one behind it. [#91](https://github.com/harrisliangsu/blinky-mac/pull/91)
+- **Output speed uses a shorter list.** The Token spend window still shows the selected span's average and each timed model's speed in tok/s, with first-token latency under that model when a log recorded it, and each row is shorter than a settings row. [#91](https://github.com/harrisliangsu/blinky-mac/pull/91)
 
 ## 1.5.28
 
