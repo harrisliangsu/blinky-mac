@@ -1054,7 +1054,10 @@
 "%@ s" = "%@ 秒";
 "%@ tok/s" = "%@ tok/s";
 "First token %@ s" = "首字延迟 %@ 秒";
-"Output speed" = "输出速度";
+"Performance" = "性能";
+"Cache" = "缓存";
+"Cache write" = "缓存写入";
+"Recorded cache writes. Already included in Input." = "已记录的缓存写入，已计入输入。";
 "Overall" = "平均";
 "Prompt cache (%@)" = "提示缓存（%@）";
 "%@ left" = "还剩 %@";

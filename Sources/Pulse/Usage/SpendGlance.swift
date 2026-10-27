@@ -33,8 +33,8 @@ enum SpendGlanceDimension: String, CaseIterable, Identifiable, Sendable {
 
 /// How large the glance writes the headline figures. Tokens stay the large
 /// one whether or not a cost was priced, and the estimate under them stays
-/// smaller. Both are centered. Output speed is not one of these figures: it
-/// has its own section, and `speedPointSize` is that section's overall rate.
+/// smaller. Both are centered. Performance is not one of these figures: it
+/// has its own section, and `speedPointSize` is that section's speed.
 enum SpendGlanceHeadline {
     static let tokenPointSize: CGFloat = 28
     static let moneyPointSize: CGFloat = 15
@@ -85,65 +85,275 @@ enum OutputSpeedText {
         )
         return String(localized: "First token \(figure) s", bundle: bundle)
     }
+
+    /// The wait alone. The Performance column is already headed "First token",
+    /// so the cell does not say it again.
+    static func seconds(
+        _ seconds: TimeInterval,
+        locale: Locale = LocalizationSource.locale,
+        bundle: Bundle = LocalizationSource.bundle
+    ) -> String {
+        let digits = seconds >= 0.05 ? 1 : 2
+        let figure = seconds.formatted(
+            .number.precision(.fractionLength(digits)).grouping(.never).locale(locale)
+        )
+        return String(localized: "\(figure) s", bundle: bundle)
+    }
 }
 
-/// The speed section under the span picker: the span's average, then each
-/// model that was timed. Nothing here is a zero standing in for a missing
-/// measurement, and there is no explanatory paragraph under the figure.
+/// The Performance section: one row for the span, then one per model.
+///
+/// Speed and the first-token wait are here when a reply was timed. Cache hit
+/// rate, cache size, input and output are here when the records classified
+/// those tokens. A column nobody has a figure for is left out. A cell with
+/// no figure is an em dash, never a zero standing in for a missing
+/// measurement. There is no explanatory paragraph under the table.
 struct SpendSpeedSection: Equatable, Sendable {
-    struct Model: Equatable, Sendable, Identifiable {
-        var name: String
-        /// Nil when this model recorded a first-token wait and no speed.
-        var speed: String?
-        var firstToken: String?
-        var id: String { name }
+    /// What a row can carry. The view draws `shown`, in this order, so the
+    /// header and the cells cannot drift apart.
+    enum Column: String, CaseIterable, Equatable, Sendable {
+        case cacheHitRate
+        case cache
+        case cacheWrite
+        case input
+        case output
+        case unclassified
+        case speed
+        case firstToken
+
+        /// A budget for the column, wide enough for a short Chinese heading
+        /// and a compact count. The name takes whatever room is left.
+        var width: CGFloat {
+            switch self {
+            case .cacheHitRate: 72
+            case .cache: 52
+            case .cacheWrite: 60
+            case .input: 52
+            case .output: 52
+            case .unclassified: 56
+            case .speed: 72
+            case .firstToken: 56
+            }
+        }
     }
 
+    struct Columns: Equatable, Sendable {
+        var cacheHitRate = false
+        var cache = false
+        var cacheWrite = false
+        var input = false
+        var output = false
+        var unclassified = false
+        var speed = false
+        var firstToken = false
+
+        var shown: [Column] { Column.allCases.filter { self[$0] } }
+
+        subscript(_ column: Column) -> Bool {
+            switch column {
+            case .cacheHitRate: cacheHitRate
+            case .cache: cache
+            case .cacheWrite: cacheWrite
+            case .input: input
+            case .output: output
+            case .unclassified: unclassified
+            case .speed: speed
+            case .firstToken: firstToken
+            }
+        }
+    }
+
+    /// Formatted figures. Nil is "not recorded", which the row draws as an
+    /// em dash when the column is on for someone else. `*Exact` is the count
+    /// behind a shortened token figure, for the help tag.
+    struct Figures: Equatable, Sendable {
+        var cacheHitRate: String? = nil
+        var cache: String? = nil
+        var cacheExact: Int? = nil
+        var cacheWrite: String? = nil
+        var cacheWriteExact: Int? = nil
+        var input: String? = nil
+        var inputExact: Int? = nil
+        var output: String? = nil
+        var outputExact: Int? = nil
+        var unclassified: String? = nil
+        var unclassifiedExact: Int? = nil
+        var speed: String? = nil
+        var firstToken: String? = nil
+
+        var isEmpty: Bool {
+            cacheHitRate == nil && cache == nil && cacheWrite == nil && input == nil
+                && output == nil && unclassified == nil && speed == nil && firstToken == nil
+        }
+
+        func text(_ column: Column) -> String? {
+            switch column {
+            case .cacheHitRate: cacheHitRate
+            case .cache: cache
+            case .cacheWrite: cacheWrite
+            case .input: input
+            case .output: output
+            case .unclassified: unclassified
+            case .speed: speed
+            case .firstToken: firstToken
+            }
+        }
+
+        func exact(_ column: Column) -> Int? {
+            switch column {
+            case .cache: cacheExact
+            case .cacheWrite: cacheWriteExact
+            case .input: inputExact
+            case .output: outputExact
+            case .unclassified: unclassifiedExact
+            case .cacheHitRate, .speed, .firstToken: nil
+            }
+        }
+    }
+
+    struct Model: Equatable, Sendable, Identifiable {
+        var name: String
+        var figures: Figures
+        var id: String { name }
+
+        /// Nil when this model recorded a first-token wait and no speed.
+        var speed: String? { figures.speed }
+        var firstToken: String? { figures.firstToken }
+    }
+
+    /// Drawn where a column is on and this row has no figure.
+    static let missing = "—"
+
     var title: String
-    /// The row that carries the span's average. "Overall", not a second copy
-    /// of the section title.
+    /// The row that carries the span. "Overall", not a second copy of the title.
     var overallTitle: String
-    /// Nil when the span timed a wait and no output rate. The section can
-    /// still list those models.
-    var overall: String?
+    /// Nil when the span has per-model figures and no span-level one.
+    var overall: Figures?
     /// Heaviest first, the order `SpendSummary.models` already has. A model
-    /// with neither a speed nor a first-token wait is left out.
+    /// with no speed, no wait and no classified split is left out.
     var models: [Model]
+    var columns: Columns
 
     static func make(
         summary: SpendSummary,
         locale: Locale = LocalizationSource.locale,
         bundle: Bundle = LocalizationSource.bundle
     ) -> Self? {
-        let models = summary.models.compactMap { model -> Model? in
-            let speed = model.tokensPerSecond.map {
-                OutputSpeedText.line($0, locale: locale, bundle: bundle)
+        func row(
+            tally: TokenTally?,
+            unclassified: Int?,
+            cacheMeasured: Bool,
+            cacheHitRate: Double?,
+            speed: Double?,
+            firstToken: TimeInterval?
+        ) -> Figures {
+            var figures = Figures()
+            if let cacheHitRate {
+                figures.cacheHitRate = RecapFormat.percent(cacheHitRate)
             }
-            let wait = model.firstToken.map {
-                OutputSpeedText.firstToken($0, locale: locale, bundle: bundle)
+            if let tally {
+                if cacheMeasured {
+                    figures.cache = TokenCount.short(tally.cacheRead, units: LocalizationSource.myriadUnits(for: locale))
+                    figures.cacheExact = tally.cacheRead
+                    figures.cacheWrite = TokenCount.short(tally.cacheWrite, units: LocalizationSource.myriadUnits(for: locale))
+                    figures.cacheWriteExact = tally.cacheWrite
+                }
+                figures.input = TokenCount.short(tally.fresh, units: LocalizationSource.myriadUnits(for: locale))
+                figures.inputExact = tally.fresh
+                figures.output = TokenCount.short(tally.output, units: LocalizationSource.myriadUnits(for: locale))
+                figures.outputExact = tally.output
             }
-            guard speed != nil || wait != nil else { return nil }
-            return Model(name: model.name, speed: speed, firstToken: wait)
+            if let unclassified {
+                figures.unclassified = TokenCount.short(unclassified, units: LocalizationSource.myriadUnits(for: locale))
+                figures.unclassifiedExact = unclassified
+            }
+            if let speed {
+                figures.speed = OutputSpeedText.line(speed, locale: locale, bundle: bundle)
+            }
+            if let firstToken {
+                figures.firstToken = OutputSpeedText.seconds(firstToken, locale: locale, bundle: bundle)
+            }
+            return figures
         }
-        let overall = summary.outputTokensPerSecond.map {
-            OutputSpeedText.line($0, locale: locale, bundle: bundle)
+
+        var overall = row(
+            tally: summary.hasTokenBreakdown ? summary.tally : nil,
+            unclassified: summary.hasTokenBreakdown ? summary.unclassifiedTokens : nil,
+            cacheMeasured: summary.cacheMeasured,
+            cacheHitRate: summary.cacheHitRate,
+            speed: summary.outputTokensPerSecond,
+            firstToken: summary.firstToken
+        )
+        var models = summary.models.map { model in
+            Model(
+                name: model.name,
+                figures: row(
+                    tally: model.tally,
+                    unclassified: model.unclassifiedTokens,
+                    cacheMeasured: model.cacheMeasured,
+                    cacheHitRate: model.cacheHitRate,
+                    speed: model.tokensPerSecond,
+                    firstToken: model.firstToken
+                )
+            )
         }
-        guard overall != nil || !models.isEmpty else { return nil }
+
+        // A write of zero is usually a service with no write step. The column
+        // appears only when some row recorded one; the others then show a
+        // real zero. The same for unclassified, which most spans do not have.
+        let writes = [overall.cacheWriteExact].compactMap { $0 }.contains { $0 > 0 }
+            || models.contains { ($0.figures.cacheWriteExact ?? 0) > 0 }
+        let unknowns = [overall.unclassifiedExact].compactMap { $0 }.contains { $0 > 0 }
+            || models.contains { ($0.figures.unclassifiedExact ?? 0) > 0 }
+        if !writes {
+            overall.cacheWrite = nil
+            overall.cacheWriteExact = nil
+            for index in models.indices {
+                models[index].figures.cacheWrite = nil
+                models[index].figures.cacheWriteExact = nil
+            }
+        }
+        if !unknowns {
+            overall.unclassified = nil
+            overall.unclassifiedExact = nil
+            for index in models.indices {
+                models[index].figures.unclassified = nil
+                models[index].figures.unclassifiedExact = nil
+            }
+        }
+        models = models.filter { !$0.figures.isEmpty }
+        if overall.isEmpty { overall = Figures() }
+        let shownOverall: Figures? = overall.isEmpty ? nil : overall
+        guard shownOverall != nil || !models.isEmpty else { return nil }
+
+        var columns = Columns()
+        for figures in [shownOverall].compactMap({ $0 }) + models.map(\.figures) {
+            if figures.cacheHitRate != nil { columns.cacheHitRate = true }
+            if figures.cache != nil { columns.cache = true }
+            if figures.cacheWrite != nil { columns.cacheWrite = true }
+            if figures.input != nil { columns.input = true }
+            if figures.output != nil { columns.output = true }
+            if figures.unclassified != nil { columns.unclassified = true }
+            if figures.speed != nil { columns.speed = true }
+            if figures.firstToken != nil { columns.firstToken = true }
+        }
         return Self(
-            title: String(localized: "Output speed", bundle: bundle),
+            title: String(localized: "Performance", bundle: bundle),
             overallTitle: String(localized: "Overall", bundle: bundle),
-            overall: overall,
-            models: models
+            overall: shownOverall,
+            models: models,
+            columns: columns
         )
     }
 }
 
-/// How tall one output-speed row is.
+/// How tall one Performance row is.
 ///
 /// The section used a settings row: 11 points of vertical padding and a
-/// 44-point minimum. A name, a rate, and sometimes a first-token line do
-/// not fill that, so six models took most of the window. These figures are
-/// what `SettingsRowDensity.compact` draws.
+/// 44-point minimum. A name and its figures do not fill that, so a list of
+/// models took most of the window. These figures are what
+/// `SettingsRowDensity.compact` draws. The first-token wait is a column,
+/// not a second line, so a model row is one line.
 enum SpendSpeedLayout {
     static let verticalPadding: CGFloat = 4
     static let minimumHeight: CGFloat = 20
@@ -153,13 +363,9 @@ enum SpendSpeedLayout {
     static let horizontalPadding: CGFloat = 12
     static let valuePointSize: CGFloat = 12
 
-    /// A model row, title plus the first-token subtitle. Taller than the
-    /// overall row, which has no subtitle.
+    /// One line: the name and the figures. The same height as the overall row.
     static var modelRowHeight: CGFloat {
-        max(
-            minimumHeight,
-            verticalPadding * 2 + titlePointSize + labelSpacing + subtitlePointSize
-        )
+        max(minimumHeight, verticalPadding * 2 + valuePointSize)
     }
 
     static var isDenserThanSettings: Bool {
@@ -172,14 +378,15 @@ enum SpendSpeedLayout {
 }
 
 /// The glance body, top to bottom, under the span picker.
-/// Output speed draws nothing when the span timed no reply.
+/// Performance draws nothing when the span has neither a timed reply nor a
+/// classified token split.
 enum TokenGlanceSection: String, CaseIterable, Equatable, Hashable, Sendable {
-    case outputSpeed
     case tokenActivity
+    case performance
     case usageRhythm
     case dimension
 
-    static let order: [TokenGlanceSection] = [.outputSpeed, .tokenActivity, .usageRhythm, .dimension]
+    static let order: [TokenGlanceSection] = [.tokenActivity, .performance, .usageRhythm, .dimension]
 }
 
 /// The Pattern row. The four captions already on that row, spread across it.

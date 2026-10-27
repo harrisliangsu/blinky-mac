@@ -1056,7 +1056,10 @@
 "%@ s" = "%@초";
 "%@ tok/s" = "%@ tok/s";
 "First token %@ s" = "첫 토큰 %@초";
-"Output speed" = "출력 속도";
+"Performance" = "성능";
+"Cache" = "캐시";
+"Cache write" = "캐시 쓰기";
+"Recorded cache writes. Already included in Input." = "기록된 캐시 쓰기이며, 입력에 이미 포함되어 있습니다.";
 "Overall" = "평균";
 "Prompt cache (%@)" = "프롬프트 캐시(%@)";
 "%@ left" = "%@ 남음";

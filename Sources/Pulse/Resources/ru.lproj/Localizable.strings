@@ -984,7 +984,10 @@
 "%@ s" = "%@ с";
 "%@ tok/s" = "%@ tok/s";
 "First token %@ s" = "Первый токен: %@ с";
-"Output speed" = "Скорость вывода";
+"Performance" = "Производительность";
+"Cache" = "Кэш";
+"Cache write" = "Запись в кэш";
+"Recorded cache writes. Already included in Input." = "Запись в кэш по журналам. Уже учтена во вводе.";
 "Overall" = "В среднем";
 "Prompt cache (%@)" = "Кэш промптов (%@)";
 "%@ left" = "осталось %@";

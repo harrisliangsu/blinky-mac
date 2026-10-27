@@ -38,8 +38,8 @@ struct SettingsGroup<Content: View>: View {
     }
 }
 
-/// The settings window's row. The Token window's speed list uses
-/// `SpendSpeedLayout` instead, through `SettingsRowDensity.compact`.
+/// The settings window's row. The Token window's Performance table takes its
+/// row height from `SpendSpeedLayout`, which is also `SettingsRowDensity.compact`.
 enum SettingsRowMetrics {
     static let verticalPadding: CGFloat = 11
     static let minimumHeight: CGFloat = 44
@@ -49,7 +49,7 @@ enum SettingsRowMetrics {
     static let horizontalPadding: CGFloat = 14
 }
 
-/// `.regular` is every settings row. `.compact` is the output-speed list.
+/// `.regular` is every settings row. `.compact` is the Performance table.
 enum SettingsRowDensity: Equatable {
     case regular
     case compact

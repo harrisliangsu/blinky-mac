@@ -1056,7 +1056,10 @@
 "%@ s" = "%@ 秒";
 "%@ tok/s" = "%@ tok/s";
 "First token %@ s" = "最初のトークン %@ 秒";
-"Output speed" = "出力速度";
+"Performance" = "性能";
+"Cache" = "キャッシュ";
+"Cache write" = "キャッシュ書き込み";
+"Recorded cache writes. Already included in Input." = "記録されたキャッシュ書き込みです。入力に含まれています。";
 "Overall" = "平均";
 "Prompt cache (%@)" = "プロンプトキャッシュ（%@）";
 "%@ left" = "残り %@";

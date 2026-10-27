@@ -463,8 +463,8 @@ struct SpendGlanceView: View {
     }
 
     /// Tokens large, the estimate under them. Both follow the selected span
-    /// and are centered. Output speed is a section of its own, under the
-    /// span picker, and a mix is not labelled "Partial estimate" here.
+    /// and are centered. Performance is a section of its own, under Token
+    /// activity, and a mix is not labelled "Partial estimate" here.
     private var headline: some View {
         let picture = model.picture
         let centered = SpendGlanceHeadline.centersFigures

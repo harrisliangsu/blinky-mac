@@ -806,16 +806,16 @@ struct TokenSpendView: View {
             .frame(maxWidth: spread ? .infinity : nil, alignment: .center)
     }
 
-    /// Output speed when a reply in the span was timed, then Token activity,
-    /// the rhythm, and one breakdown.
+    /// Token activity, then Performance when the span has a timed reply or a
+    /// classified split, then the rhythm, and one breakdown.
     @ViewBuilder
     private func glanceBody(_ summary: SpendSummary) -> some View {
         ForEach(TokenGlanceSection.order, id: \.self) { section in
             switch section {
-            case .outputSpeed:
-                speedSection(summary)
             case .tokenActivity:
                 activitySection
+            case .performance:
+                speedSection(summary)
             case .usageRhythm:
                 streaks(summary)
             case .dimension:
@@ -824,37 +824,16 @@ struct TokenSpendView: View {
         }
     }
 
-    /// The span's average output speed, then each model that has a speed or
-    /// a first-token wait. Absent when the span timed nothing — not a zero.
-    /// The unit is `tok/s`. There is no note under the figure. The rows are
-    /// the compact density: a settings row's padding left this list empty.
+    /// The span, then each model that has a speed, a first-token wait, or a
+    /// classified split. Absent when the span has none of those — not a zero.
+    /// A column with no figure anywhere is left out. The unit on a speed is
+    /// `tok/s`. There is no note under the table. The rows use the compact
+    /// density: a settings row's padding left this list empty.
     @ViewBuilder
     private func speedSection(_ summary: SpendSummary) -> some View {
         if let section = SpendSpeedSection.make(summary: summary) {
             SettingsGroup(section.title) {
-                VStack(spacing: 0) {
-                    if let overall = section.overall {
-                        SettingsRow(section.overallTitle, density: .compact) {
-                            Text(verbatim: overall)
-                                .font(.system(size: SpendGlanceHeadline.speedPointSize, weight: .medium))
-                                .monospacedDigit()
-                                .accessibilityIdentifier("spend-glance-speed")
-                        }
-                    }
-                    ForEach(Array(section.models.enumerated()), id: \.element.id) { index, model in
-                        if section.overall != nil || index > 0 {
-                            SettingsRowDivider(leadingInset: SettingsRowDensity.compact.horizontalPadding)
-                        }
-                        SettingsRow(model.name, subtitle: model.firstToken, density: .compact) {
-                            if let speed = model.speed {
-                                Text(verbatim: speed)
-                                    .font(.system(size: SpendSpeedLayout.valuePointSize))
-                                    .monospacedDigit()
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                    }
-                }
+                PerformanceTable(section: section)
             }
             .accessibilityIdentifier("spend-glance-speed-section")
         }
@@ -1115,6 +1094,130 @@ struct TokenSpendView: View {
 
     private static func shortDate(_ date: Date) -> String {
         date.formatted(.dateTime.month(.abbreviated).day().locale(LocalizationSource.locale))
+    }
+}
+
+/// The Performance table. One header, the span, then each model. Columns
+/// come from `SpendSpeedSection.columns`, so a figure nobody recorded is
+/// not an empty column of dashes.
+private struct PerformanceTable: View {
+    let section: SpendSpeedSection
+
+    var body: some View {
+        VStack(spacing: 0) {
+            row(name: "", figures: nil, header: true, emphasized: false)
+            if let overall = section.overall {
+                SettingsRowDivider(leadingInset: SpendSpeedLayout.horizontalPadding)
+                row(name: section.overallTitle, figures: overall, header: false, emphasized: true)
+                    .accessibilityIdentifier("spend-glance-speed")
+            }
+            ForEach(section.models) { model in
+                SettingsRowDivider(leadingInset: SpendSpeedLayout.horizontalPadding)
+                row(name: model.name, figures: model.figures, header: false, emphasized: false)
+            }
+        }
+        .padding(.vertical, 2)
+    }
+
+    private func row(
+        name: String,
+        figures: SpendSpeedSection.Figures?,
+        header: Bool,
+        emphasized: Bool
+    ) -> some View {
+        HStack(spacing: 8) {
+            Text(verbatim: name)
+                .font(.system(size: SpendSpeedLayout.titlePointSize, weight: emphasized ? .medium : .regular))
+                .lineLimit(1)
+                .truncationMode(.middle)
+                .frame(minWidth: 88, maxWidth: .infinity, alignment: .leading)
+                .accessibilityHidden(header)
+
+            ForEach(section.columns.shown, id: \.self) { column in
+                cell(column, figures: figures, header: header, emphasized: emphasized)
+                    .frame(width: column.width, alignment: .trailing)
+            }
+        }
+        .padding(.horizontal, SpendSpeedLayout.horizontalPadding)
+        .padding(.vertical, SpendSpeedLayout.verticalPadding)
+        .frame(minHeight: SpendSpeedLayout.minimumHeight, alignment: .center)
+    }
+
+    @ViewBuilder
+    private func cell(
+        _ column: SpendSpeedSection.Column,
+        figures: SpendSpeedSection.Figures?,
+        header: Bool,
+        emphasized: Bool
+    ) -> some View {
+        if header {
+            headerText(column)
+        } else {
+            let text = figures?.text(column)
+            let label = Text(verbatim: text ?? SpendSpeedSection.missing)
+                .font(.system(
+                    size: SpendSpeedLayout.valuePointSize,
+                    weight: emphasized && text != nil ? .medium : .regular
+                ))
+                .monospacedDigit()
+                .foregroundStyle(text == nil ? AnyShapeStyle(.tertiary) : (emphasized ? AnyShapeStyle(.primary) : AnyShapeStyle(.secondary)))
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+                .accessibilityLabel(title(column))
+                .accessibilityValue(text ?? SpendSpeedSection.missing)
+            if let exact = figures?.exact(column) {
+                label.help(SpendFormat.tokens(exact))
+            } else {
+                label
+            }
+        }
+    }
+
+    private func headerText(_ column: SpendSpeedSection.Column) -> some View {
+        let text = Text(verbatim: title(column))
+            .font(.system(size: 11))
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+            .minimumScaleFactor(0.65)
+            .accessibilityAddTraits(.isHeader)
+        return Group {
+            if let help = help(column) {
+                text.help(help)
+            } else {
+                text
+            }
+        }
+    }
+
+    private func title(_ column: SpendSpeedSection.Column) -> String {
+        switch column {
+        case .cacheHitRate: String.localized("Cache hit rate")
+        case .cache: String.localized("Cache")
+        case .cacheWrite: String.localized("Cache write")
+        case .input: String.localized("Input")
+        case .output: String.localized("Output")
+        case .unclassified: String.localized("Unclassified")
+        case .speed: "tok/s"
+        case .firstToken: String.localized("First token")
+        }
+    }
+
+    /// What the column is. The cell's own help is the exact count.
+    private func help(_ column: SpendSpeedSection.Column) -> String? {
+        switch column {
+        case .cache:
+            String.localized("Recorded cache hits. Unreported cache use is not estimated.")
+        case .cacheWrite:
+            String.localized("Recorded cache writes. Already included in Input.")
+        case .input:
+            String.localized("Recorded input, with reported cache hits counted separately.")
+        case .output:
+            String.localized("Model output as recorded by each agent.")
+        case .unclassified:
+            String.localized("Reported tokens without a usable category breakdown.")
+        case .cacheHitRate, .speed, .firstToken:
+            nil
+        }
     }
 }
 
