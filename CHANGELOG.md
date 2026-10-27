@@ -12,7 +12,7 @@ bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
 ## 1.5.28
 
-- **The Token window gives output speed its own section.** The Token spend window beside the usage card lists the selected span's average and each timed model's speed in tok/s, with first-token latency beside that model when a log recorded it, and no longer writes Partial estimate or an explanation under the totals.
+- **The Token window gives output speed its own section.** The Token spend window beside the usage card lists the selected span's average and each timed model's speed in tok/s, with first-token latency beside that model when a log recorded it, and no longer writes Partial estimate or an explanation under the totals. [#90](https://github.com/harrisliangsu/blinky-mac/pull/90)
 
 ## 1.5.27
 
