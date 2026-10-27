@@ -6,34 +6,34 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.29</title>
-            <pubDate>Tue, 27 Oct 2026 05:03:58 -0000</pubDate>
-            <sparkle:version>1.5.29</sparkle:version>
-            <sparkle:shortVersionString>1.5.29</sparkle:shortVersionString>
+            <title>1.5.30</title>
+            <pubDate>Tue, 27 Oct 2026 10:00:21 -0000</pubDate>
+            <sparkle:version>1.5.30</sparkle:version>
+            <sparkle:shortVersionString>1.5.30</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.29</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.30</link>
             <description xml:lang="zh-Hans"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.29</h2><ul><li><strong>「Token 消耗」不再一直停在其他窗口前面。</strong> 从用量卡片打开「Token 消耗」后，点到别的窗口，这一窗口会退到后面。<a href="https://github.com/harrisliangsu/blinky-mac/pull/91">#91</a></li><li><strong>「输出速度」的列表更紧凑。</strong> 「Token 消耗」窗口仍以 tok/s 列出所选统计区间的平均速度和每个已计时模型的速度，日志里有首字时间时写在该模型下面，每一行比设置里的一行更矮。<a href="https://github.com/harrisliangsu/blinky-mac/pull/91">#91</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.29">在 GitHub 查看更新说明</a></p>]]></description>
+</style><h2>Blinky 1.5.30</h2><ul><li><strong>「输出速度」改名为「性能」。</strong> 「Token 消耗」窗口里，这一节位于「Token 活动」下面；有这些记录时，每个模型列出缓存命中率、缓存、输入和输出，计时过的回复仍列出 tok/s 和首字延迟。<a href="https://github.com/harrisliangsu/blinky-mac/pull/92">#92</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.30">在 GitHub 查看更新说明</a></p>]]></description>
             <description xml:lang="zh-Hant"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.29</h2><ul><li><strong>「Token 消耗」不再一直停在其他窗口前面。</strong> 从用量卡片打开「Token 消耗」后，点到别的窗口，这一窗口会退到后面。<a href="https://github.com/harrisliangsu/blinky-mac/pull/91">#91</a></li><li><strong>「输出速度」的列表更紧凑。</strong> 「Token 消耗」窗口仍以 tok/s 列出所选统计区间的平均速度和每个已计时模型的速度，日志里有首字时间时写在该模型下面，每一行比设置里的一行更矮。<a href="https://github.com/harrisliangsu/blinky-mac/pull/91">#91</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.29">在 GitHub 查看更新说明</a></p>]]></description>
+</style><h2>Blinky 1.5.30</h2><ul><li><strong>「输出速度」改名为「性能」。</strong> 「Token 消耗」窗口里，这一节位于「Token 活动」下面；有这些记录时，每个模型列出缓存命中率、缓存、输入和输出，计时过的回复仍列出 tok/s 和首字延迟。<a href="https://github.com/harrisliangsu/blinky-mac/pull/92">#92</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.30">在 GitHub 查看更新说明</a></p>]]></description>
             <description xml:lang="en"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.29</h2><ul><li><strong>The Token spend window no longer stays in front of other apps.</strong> With Token spend open from the usage card, clicking another window brings that window forward and leaves this one behind it. <a href="https://github.com/harrisliangsu/blinky-mac/pull/91">#91</a></li><li><strong>Output speed uses a shorter list.</strong> The Token spend window still shows the selected span&#x27;s average and each timed model&#x27;s speed in tok/s, with first-token latency under that model when a log recorded it, and each row is shorter than a settings row. <a href="https://github.com/harrisliangsu/blinky-mac/pull/91">#91</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.29">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.29/Blinky-1.5.29.zip"
-                       length="23257315"
+</style><h2>Blinky 1.5.30</h2><ul><li><strong>Performance replaces Output speed.</strong> Under Token activity in the Token spend window, each model lists its cache hit rate, cache, input and output when those records exist, and still lists tok/s and the first-token wait when a reply was timed. <a href="https://github.com/harrisliangsu/blinky-mac/pull/92">#92</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.30">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.30/Blinky-1.5.30.zip"
+                       length="23315003"
                        type="application/octet-stream"
-                       sparkle:edSignature="jmyy88wmSS8JN0b/PQ8/T/CusUIZJ68Oaxtdr3X3WI848uCLKrcoVKhhhXIi4LZ1ChKd+KvPFoYSaMM6uvwCDA==" />
+                       sparkle:edSignature="pWYoRb5HC9YVd3yhwuKvDUxyQjqewoFTG+l5lS4V8O7newXA2UL9ZEx9DCxRl3NBO/ygd/Oiz5obqu8gUB5eAQ==" />
         </item>
     </channel>
 </rss>
