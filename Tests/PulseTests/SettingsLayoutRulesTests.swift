@@ -270,6 +270,8 @@ struct SettingsLayoutRulesTests {
         #expect(String.localized("When it is down") == "出故障时")
         #expect(String.localized("When it is ready") == "生成时")
         #expect(String.localized("Limit reset credits") == "额度重置券")
+        #expect(String.localized("Writes a line under the weekly limit, or under the longest other limit when there is no weekly one, about how long it may last. A shorter limit that states its length, including the five-hour limit, is written under that row when the current pace runs out before its reset.")
+            == "在每周限额下写一行，说明按当前速度还要多久用尽。没有每周限额时，写在其余限额里最长的那条上。长度已经写明的较短限额，包括 5 小时限额，按当前速度会在重置前用尽时，写在这条限额下面。")
 
         LocalizationSource.use(.english)
         #expect(NotificationSettingsSections.titles == [
@@ -282,7 +284,7 @@ struct SettingsLayoutRulesTests {
         #expect(!NotificationSettingsSections.runningOutRow.localizedStandardContains("notify"))
         #expect(String.localized("The furthest time, in hours, at which a countdown is written.")
             == "The furthest time, in hours, at which a countdown is written.")
-        #expect(String.localized("Writes a line under the weekly limit, or under the longest other limit when there is no weekly one, about how long it may last. A five-hour limit is left out.")
+        #expect(String.localized("Writes a line under the weekly limit, or under the longest other limit when there is no weekly one, about how long it may last. A shorter limit that states its length, including the five-hour limit, is written under that row when the current pace runs out before its reset.")
             .contains("weekly"))
     }
 

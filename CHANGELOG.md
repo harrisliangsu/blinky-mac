@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.32
+
+- **A shorter limit that states its length shows when it may run out.** With Show the estimate on under Settings → Usage, that limit, including Kimi Code's five-hour limit, writes the time under its own row when the current pace runs out before its reset. A weekly limit with no stated length still says it is expected to last while less than a quarter is spent, and stays quiet once a quarter is spent.
+
 ## 1.5.31
 
 - **A lightly used week still shows the exhaustion estimate.** With Show the estimate on under Settings → Usage, a weekly limit that reports a reset and no length, including Kimi Code, still says the window is expected to last while less than a quarter is spent, even when that window is already open. At a quarter spent, with no length reported, that line stays off. [#93](https://github.com/harrisliangsu/blinky-mac/pull/93)

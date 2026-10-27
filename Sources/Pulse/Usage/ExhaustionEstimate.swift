@@ -1,13 +1,19 @@
 // Copyright (c) 2026 qunqin24. Licensed under the Apache License, Version 2.0.
 import Foundation
 
-/// Which limit the exhaustion estimate and the remaining-time notices may use.
+/// Which limit the remaining-time notices may use, and which limit may say
+/// the window is expected to last.
 ///
 /// The weekly limit, when the reading has one. A five-hour window is never
 /// one of them: it turns over several times a day, and a pace taken from it
-/// is not the estimate the card or those notices are for. A reading with no
-/// weekly limit uses its longest other limit that states a length. A reading
-/// whose only limit is five hours has nothing to estimate.
+/// is not what those notices are for. A reading with no weekly limit uses
+/// its longest other limit that states a length. A reading whose only limit
+/// is five hours has nothing for the notices to estimate.
+///
+/// The card is wider than this set. `BurnRate.forecastLine` still writes a
+/// time under a length-stated window this set leaves out — the five-hour
+/// limit — when that window's own pace runs out before its reset. That line
+/// does not say the short window will last, and these notices do not use it.
 enum ExhaustionEstimate {
     /// Five hours, whether or not the provider's row was classified as that kind.
     static let fiveHourSeconds = 5 * 3_600

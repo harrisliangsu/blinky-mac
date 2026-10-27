@@ -1444,7 +1444,7 @@
 "Open Blinky" = "Blinky を開く";
 "Could not copy." = "コピーできませんでした。";
 "Low balance" = "残高が少ない";
-"Writes a line under the weekly limit, or under the longest other limit when there is no weekly one, about how long it may last. A five-hour limit is left out." = "毎週の上限の下に、現在のペースであとどれくらいか一行で示します。毎週の上限がないときは、それ以外で最も長い上限に示します。5時間の上限には示しません。";
+"Writes a line under the weekly limit, or under the longest other limit when there is no weekly one, about how long it may last. A shorter limit that states its length, including the five-hour limit, is written under that row when the current pace runs out before its reset." = "毎週の上限の下に、現在のペースであとどれくらいか一行で示します。毎週の上限がないときは、それ以外で最も長い上限に示します。長さが示されているより短い上限（5時間を含む）は、今のペースではリセット前に尽きるとき、その行の下に示します。";
 "Notifies once when the time left reaches a stage, on the weekly limit, or on the longest other limit when there is no weekly one. A five-hour limit is left out." = "残り時間が段階に達したとき一度知らせます。対象は毎週の上限です。毎週の上限がないときは、それ以外で最も長い上限です。5時間の上限は対象にしません。";
 "The estimate and the running-out notices both use this list." = "見通しと使い切りの知らせは、この一覧を使います。";
 "The furthest time, in hours, at which a countdown is written." = "カウントダウンを書く最も遠い時間（時間）。";
