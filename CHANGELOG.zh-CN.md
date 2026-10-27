@@ -6,6 +6,10 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.32
+
+- **写明长度的较短限额会写出预计用尽时间。** 在「设置 → 用量」打开「显示预估」后，包括 Kimi Code 的 5 小时限额在内，按当前速度会在本次重置前用尽的限额会在自己那一行下面写出这个时间。没有写明长度的每周限额，已用不到四分之一时仍显示「预计可维持到本轮重置」；已用达到四分之一时，这一行不显示。[#94](https://github.com/harrisliangsu/blinky-mac/pull/94)
+
 ## 1.5.31
 
 - **用得不多的每周限额仍会写出用尽预估。** 在「设置 → 用量」打开「显示预估」后，只报告重置时间、不报告窗口长度的每周限额（包括 Kimi Code）在已用不到四分之一时仍显示「预计可维持到本轮重置」，窗口已经打开一段时间也一样；已用达到四分之一、仍然没有长度时，这一行不显示。[#93](https://github.com/harrisliangsu/blinky-mac/pull/93)

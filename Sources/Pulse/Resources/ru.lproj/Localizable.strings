@@ -1436,7 +1436,7 @@
 "Open Blinky" = "Открыть Blinky";
 "Could not copy." = "Не удалось скопировать.";
 "Low balance" = "Низкий баланс";
-"Writes a line under the weekly limit, or under the longest other limit when there is no weekly one, about how long it may last. A five-hour limit is left out." = "Под недельным лимитом пишется строка, на сколько его ещё хватит при текущем темпе. Если недельного лимита нет, строка пишется у самого длинного из остальных. Пятичасовой лимит не оценивается.";
+"Writes a line under the weekly limit, or under the longest other limit when there is no weekly one, about how long it may last. A shorter limit that states its length, including the five-hour limit, is written under that row when the current pace runs out before its reset." = "Под недельным лимитом пишется строка, на сколько его ещё хватит при текущем темпе. Если недельного лимита нет, строка пишется у самого длинного из остальных. Более короткий лимит с известной длительностью, включая пятичасовой, пишется под своей строкой, когда при текущем темпе он кончится до сброса.";
 "Notifies once when the time left reaches a stage, on the weekly limit, or on the longest other limit when there is no weekly one. A five-hour limit is left out." = "Когда оставшееся время доходит до ступени, одно уведомление. Только для недельного лимита. Если его нет — для самого длинного из остальных. Пятичасовой лимит не входит.";
 "The estimate and the running-out notices both use this list." = "Оценка и уведомления о том, что лимит на исходе, используют этот список.";
 "The furthest time, in hours, at which a countdown is written." = "Самое дальнее время в часах, для которого пишется отсчёт.";

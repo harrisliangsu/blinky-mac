@@ -1442,7 +1442,7 @@
 "Open Blinky" = "打开 Blinky";
 "Could not copy." = "未能复制。";
 "Low balance" = "余额偏低";
-"Writes a line under the weekly limit, or under the longest other limit when there is no weekly one, about how long it may last. A five-hour limit is left out." = "在每周限额下写一行，说明按当前速度还要多久用尽。没有每周限额时，写在其余限额里最长的那条上。5 小时限额不写。";
+"Writes a line under the weekly limit, or under the longest other limit when there is no weekly one, about how long it may last. A shorter limit that states its length, including the five-hour limit, is written under that row when the current pace runs out before its reset." = "在每周限额下写一行，说明按当前速度还要多久用尽。没有每周限额时，写在其余限额里最长的那条上。长度已经写明的较短限额，包括 5 小时限额，按当前速度会在重置前用尽时，写在这条限额下面。";
 "Notifies once when the time left reaches a stage, on the weekly limit, or on the longest other limit when there is no weekly one. A five-hour limit is left out." = "剩余时间到了某一档时通知一次，只针对每周限额。没有每周限额时，针对其余限额里最长的那条。5 小时限额不通知。";
 "The estimate and the running-out notices both use this list." = "用尽预估和用量用尽都用这份名单。";
 "The furthest time, in hours, at which a countdown is written." = "写出具体倒计时的最远时间（小时）。";

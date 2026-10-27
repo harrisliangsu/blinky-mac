@@ -103,8 +103,9 @@ enum BurnRate {
         let used = min(max(window.usedFraction, 0), 1)
         // `elapsedFraction` already refuses a window whose length was chosen
         // to sort by rather than reported — which is exactly the length this
-        // would otherwise divide by. A sort key is not a pace. Which of a
-        // reading's windows may be shown is `ExhaustionEstimate`, not this.
+        // would otherwise divide by. A sort key is not a pace. Which window
+        // may say it lasts is `ExhaustionEstimate`. A shorter window this
+        // reading can divide is decided in `forecastLine`.
         //
         // Light use still lasts, and that sentence does not divide. An idle
         // weekly row — Kimi's rolling week, whose seconds only sort it —
@@ -312,9 +313,12 @@ enum BurnRate {
     /// The line the card draws under one window.
     ///
     /// `showsForecast` is the card switch already combined with the account
-    /// list. The weekly limit is the one this may speak for, or the longest
-    /// other stated limit when there is no weekly one. A five-hour window is
-    /// never that line.
+    /// list. The weekly limit may say it is expected to last, or when it
+    /// runs out; with no weekly limit, the longest other stated limit may.
+    /// A shorter window that states a length — the five-hour limit — may
+    /// say when its own pace runs out before its reset, under that row.
+    /// It does not say it will last. Remaining-time notices still ignore
+    /// it (`ExhaustionEstimate.windows`).
     static func forecastLine(
         for window: UsageWindow,
         among windows: [UsageWindow],
@@ -324,8 +328,12 @@ enum BurnRate {
         beforeReset: Bool,
         now: Date = Date()
     ) -> CardLine? {
-        guard showsForecast, ExhaustionEstimate.includes(window, among: windows) else { return nil }
+        guard showsForecast else { return nil }
         guard let reading = reading(for: window, now: now) else { return nil }
+        if !ExhaustionEstimate.includes(window, among: windows),
+           !statesOwnExhaustion(window, reading: reading) {
+            return nil
+        }
         return cardLine(
             for: window,
             reading: reading,
@@ -333,6 +341,26 @@ enum BurnRate {
             softHint: softHint,
             beforeReset: beforeReset
         )
+    }
+
+    /// A window the weekly line leaves out, stating the time it runs out.
+    ///
+    /// The length has to be one the provider reported, and the pace has to
+    /// run out before this window's own reset. Balance, a top-up, messages,
+    /// and spend are not that line. A window that will last stays quiet:
+    /// "expected to last" belongs to the weekly line, including a week whose
+    /// length is only a sort key.
+    private static func statesOwnExhaustion(_ window: UsageWindow, reading: Reading) -> Bool {
+        guard window.reportsLength,
+              reading.exhaustsBeforeReset,
+              reading.timeToExhaustion != nil
+        else { return false }
+        switch window.kind {
+        case .balance, .topUp, .messages, .spend:
+            return false
+        default:
+            return true
+        }
     }
 
     private enum Rounded: Equatable {

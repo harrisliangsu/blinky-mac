@@ -418,13 +418,15 @@ struct UsageDetailCard: View {
                     percentageText: window.percentText(remaining: showsRemaining),
                     isSpent: UsageTint.isSpent(window),
                     showsRemaining: showsRemaining,
-                    // The weekly limit, or the longest other limit. A five-hour
-                    // window is not estimated. Light use still says the window
-                    // is expected to last, including when the service did not
-                    // state a length and the window is already open. Use
-                    // already high while the window has barely opened still
-                    // shows the estimate, with a note that the early pace is
-                    // only a guide.
+                    // The weekly limit, or the longest other limit, including
+                    // the sentence that a light window is expected to last
+                    // when the service did not state a length. A shorter
+                    // window that states a length — the five-hour limit —
+                    // writes a time under its own row when that pace runs
+                    // out before its reset, and stays quiet when it will
+                    // last. Use already high while a window has barely
+                    // opened still shows the estimate, with a note that the
+                    // early pace is only a guide.
                     forecast: forecastLine(for: window),
                     value: valueText(window),
                     amount: showsAmounts || window.amounts?.currency != nil
@@ -2467,8 +2469,10 @@ extension ProgressMetricRow {
             if let note = forecast.note {
                 // One extra line, only while the window is barely open and
                 // already well used. The frame reserves a forecast line on
-                // every limit and only one limit draws it, so this stays
-                // inside the window.
+                // every limit. The weekly row draws the lasting sentence or
+                // its pace; a shorter stated window uses its own reserved
+                // line only when it runs out before its reset. The note
+                // stays inside that budget.
                 VStack(alignment: .leading, spacing: DetailCardLayout.headerLineSpacing) {
                     forecastSentence(forecast.text, ink: ink)
                     Text(verbatim: note)

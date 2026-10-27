@@ -515,6 +515,180 @@ struct BurnRateTests {
         #expect(chinese?.note == nil)
     }
 
+    /// The panel Harris opened after 1.5.31: Kimi at about 18% left on the
+    /// five-hour limit and about 70% left on the week, both resets still
+    /// ahead. The week states no length and is already past light use, so
+    /// that row stays quiet. The five-hour window states five hours and runs
+    /// out before its reset, so the card writes a time under that row. A
+    /// light week beside the same five-hour pace still says it lasts. A
+    /// five-hour window that will last stays quiet. Notices still follow
+    /// the weekly limit only.
+    @Test("A fast length-stated window shows when it runs out, and a light week still says it lasts")
+    func fastStatedWindowShowsExhaustionBesideAQuietWeek() throws {
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
+
+        let fiveReset = Self.now.addingTimeInterval(4 * 3_600)
+        let weekReset = Self.now.addingTimeInterval(2 * 86_400 + 6 * 3_600)
+        let windows = KimiCodeUsageService.windows(from: try Self.kimiReply(
+            fiveRemaining: "18", weekUsed: "30", fiveReset: fiveReset, weekReset: weekReset
+        ))
+        let weekly = try #require(windows.first { $0.kind == .weekly })
+        let five = try #require(windows.first { $0.kind == .fiveHour })
+
+        #expect(weekly.reportsLength == false)
+        #expect(abs(weekly.usedFraction - 0.30) < 0.000_001)
+        #expect(weekly.percentText(remaining: true) == "70%")
+        #expect(five.reportsLength == true)
+        #expect(abs(five.usedFraction - 0.82) < 0.000_001)
+        #expect(five.percentText(remaining: true) == "18%")
+        #expect(weekly.resetsAt.map { $0 > Self.now } == true)
+        #expect(five.resetsAt.map { $0 > Self.now } == true)
+
+        #expect(ExhaustionEstimate.windows(in: windows).map(\.id) == [weekly.id])
+        #expect(!ExhaustionEstimate.includes(five, among: windows))
+        #expect(BurnRate.reading(for: weekly, now: Self.now) == nil)
+
+        let pace = try #require(BurnRate.reading(for: five, now: Self.now))
+        #expect(pace.exhaustsBeforeReset == true)
+        #expect(pace.earlyPace == false)
+        let untilEmpty = try #require(pace.timeToExhaustion)
+        #expect(untilEmpty < fiveReset.timeIntervalSince(Self.now))
+        #expect(untilEmpty < 15 * 60)
+
+        let line = BurnRate.forecastLine(
+            for: five, among: windows, showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        )
+        #expect(line?.tone == .countdown)
+        #expect(line?.text == "5-hour · may run out in under 15 minutes")
+        #expect(line?.note == nil)
+        #expect(BurnRate.forecastLine(
+            for: weekly, among: windows, showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        ) == nil)
+        #expect(BurnRate.forecastLine(
+            for: five, among: windows, showsForecast: false,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        ) == nil)
+
+        let pastHorizon = BurnRate.forecastLine(
+            for: five, among: windows, showsForecast: true,
+            horizon: 60, softHint: false, beforeReset: true, now: Self.now
+        )
+        #expect(pastHorizon?.tone == .beforeReset)
+        #expect(BurnRate.forecastLine(
+            for: five, among: windows, showsForecast: true,
+            horizon: 60, softHint: false, beforeReset: false, now: Self.now
+        ) == nil)
+
+        let lightWindows = KimiCodeUsageService.windows(from: try Self.kimiReply(
+            fiveRemaining: "18", weekUsed: "6", fiveReset: fiveReset, weekReset: weekReset
+        ))
+        let lightWeek = try #require(lightWindows.first { $0.kind == .weekly })
+        let lightFive = try #require(lightWindows.first { $0.kind == .fiveHour })
+        let lasts = BurnRate.forecastLine(
+            for: lightWeek, among: lightWindows, showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        )
+        #expect(lasts?.tone == .lasts)
+        #expect(lasts?.text == "Expected to last the window")
+        #expect(BurnRate.forecastLine(
+            for: lightFive, among: lightWindows, showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        )?.tone == .countdown)
+
+        let calmFiveReset = Self.now.addingTimeInterval(96 * 60)
+        let calm = KimiCodeUsageService.windows(from: try Self.kimiReply(
+            fiveRemaining: "89", weekUsed: "30", fiveReset: calmFiveReset, weekReset: weekReset
+        ))
+        let calmFive = try #require(calm.first { $0.kind == .fiveHour })
+        let calmWeek = try #require(calm.first { $0.kind == .weekly })
+        #expect(BurnRate.reading(for: calmFive, now: Self.now)?.exhaustsBeforeReset == false)
+        #expect(BurnRate.forecastLine(
+            for: calmFive, among: calm, showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        ) == nil)
+        #expect(BurnRate.forecastLine(
+            for: calmWeek, among: calm, showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        ) == nil)
+
+        let statedWeek = Self.named(
+            "week", kind: .weekly,
+            used: Self.pace(remaining: 4 * 3600),
+            seconds: 604_800,
+            resetsAt: Self.now.addingTimeInterval(302_400),
+            reportsLength: true
+        )
+        let fastFive = Self.named(
+            "five", kind: .fiveHour, used: 0.82, seconds: 18_000,
+            resetsAt: fiveReset, reportsLength: true
+        )
+        #expect(BurnRate.forecastLine(
+            for: statedWeek, among: [fastFive, statedWeek], showsForecast: true,
+            horizon: 6 * 3600, softHint: false, beforeReset: false, now: Self.now
+        )?.text == "Weekly · may run out in about 4 hours")
+        #expect(BurnRate.forecastLine(
+            for: fastFive, among: [fastFive, statedWeek], showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        )?.text == "5-hour · may run out in under 15 minutes")
+
+        let earlyFive = Self.named(
+            "five", kind: .fiveHour, used: 0.20, seconds: 18_000,
+            resetsAt: Self.now.addingTimeInterval(17_640), reportsLength: true
+        )
+        let earlyLine = BurnRate.forecastLine(
+            for: earlyFive, among: [earlyFive, lightWeek], showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        )
+        #expect(earlyLine?.tone == .countdown)
+        #expect(earlyLine?.text == "5-hour · may run out in about 30 minutes")
+        #expect(earlyLine?.note == "A fast start. The estimate is only a guide.")
+
+        let day = Self.named(
+            "day", kind: .daily, used: 0.8, seconds: 86_400,
+            resetsAt: Self.now.addingTimeInterval(6 * 3_600), reportsLength: true
+        )
+        let quietWeek = Self.named(
+            "week", kind: .weekly, used: 0.30, seconds: 604_800,
+            resetsAt: weekReset, reportsLength: false
+        )
+        #expect(BurnRate.forecastLine(
+            for: day, among: [day, quietWeek], showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        )?.text == "Daily · may run out in about 4.5 hours")
+        #expect(BurnRate.forecastLine(
+            for: quietWeek, among: [day, quietWeek], showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        ) == nil)
+
+        let spend = Self.named(
+            "spend", kind: .spend, used: 0.9, seconds: 86_400,
+            resetsAt: Self.now.addingTimeInterval(3_600), reportsLength: true
+        )
+        #expect(BurnRate.forecastLine(
+            for: spend, among: [spend], showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        ) == nil)
+
+        LocalizationSource.use(.chineseSimplified)
+        let chinese = BurnRate.forecastLine(
+            for: five, among: windows, showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        )
+        #expect(chinese?.text == "5 小时 · 不到 15 分钟后用尽")
+        #expect(chinese?.note == nil)
+        #expect(BurnRate.forecastLine(
+            for: lightWeek, among: lightWindows, showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        )?.text == "预计可维持到本轮重置")
+        #expect(BurnRate.forecastLine(
+            for: earlyFive, among: [earlyFive], showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        )?.note == "开头偏快，预估仅供参考。")
+    }
+
     @Test("Lasting is green and regular; a pace that may not last is amber and a step heavier")
     @MainActor
     func forecastInkFollowsTheTone() {
@@ -544,9 +718,14 @@ struct BurnRateTests {
     /// Kimi's two limits as the panel showed them: 89% left on the five-hour
     /// window, 94% left on the week, both resets still ahead. Counts are
     /// strings, the same shape as the live reply.
-    private static func kimiReply(fiveReset: Date, weekReset: Date) throws -> KimiCodeUsageService.Reply {
+    private static func kimiReply(
+        fiveRemaining: String = "89",
+        weekUsed: String = "6",
+        fiveReset: Date,
+        weekReset: Date
+    ) throws -> KimiCodeUsageService.Reply {
         let json = """
-        {"limits":[{"window":{"duration":5,"timeUnit":"TIME_UNIT_HOUR"},"detail":{"limit":"100","remaining":"89","resetTime":"\(Self.iso(fiveReset))"}}],"usage":{"limit":"100","used":"6","resetTime":"\(Self.iso(weekReset))"}}
+        {"limits":[{"window":{"duration":5,"timeUnit":"TIME_UNIT_HOUR"},"detail":{"limit":"100","remaining":"\(fiveRemaining)","resetTime":"\(Self.iso(fiveReset))"}}],"usage":{"limit":"100","used":"\(weekUsed)","resetTime":"\(Self.iso(weekReset))"}}
         """
         return try JSONDecoder().decode(KimiCodeUsageService.Reply.self, from: Data(json.utf8))
     }

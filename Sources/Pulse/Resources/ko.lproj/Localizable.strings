@@ -1444,7 +1444,7 @@
 "Open Blinky" = "Blinky 열기";
 "Could not copy." = "복사하지 못했습니다.";
 "Low balance" = "잔액 부족";
-"Writes a line under the weekly limit, or under the longest other limit when there is no weekly one, about how long it may last. A five-hour limit is left out." = "주간 한도 아래에, 현재 속도로 얼마나 더 갈 수 있는지 한 줄을 씁니다. 주간 한도가 없으면 나머지 중 가장 긴 한도에 씁니다. 5시간 한도는 쓰지 않습니다.";
+"Writes a line under the weekly limit, or under the longest other limit when there is no weekly one, about how long it may last. A shorter limit that states its length, including the five-hour limit, is written under that row when the current pace runs out before its reset." = "주간 한도 아래에, 현재 속도로 얼마나 더 갈 수 있는지 한 줄을 씁니다. 주간 한도가 없으면 나머지 중 가장 긴 한도에 씁니다. 길이가 적혀 있는 더 짧은 한도(5시간 포함)는 현재 속도로 초기화 전에 소진되면 그 한도 아래에 씁니다.";
 "Notifies once when the time left reaches a stage, on the weekly limit, or on the longest other limit when there is no weekly one. A five-hour limit is left out." = "남은 시간이 단계에 닿으면 한 번 알립니다. 대상은 주간 한도입니다. 주간 한도가 없으면 나머지 중 가장 긴 한도입니다. 5시간 한도는 알리지 않습니다.";
 "The estimate and the running-out notices both use this list." = "소진 예상과 소진 알림이 이 목록을 함께 씁니다.";
 "The furthest time, in hours, at which a countdown is written." = "카운트다운을 적는 가장 먼 시간(시간)입니다.";

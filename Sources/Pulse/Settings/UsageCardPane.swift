@@ -156,7 +156,7 @@ struct UsageCardPane: View {
         SettingsGroup(ExhaustionSettingsSections.card) {
             SettingsRow(
                 String.localized("Show the estimate"),
-                subtitle: String.localized("Writes a line under the weekly limit, or under the longest other limit when there is no weekly one, about how long it may last. A five-hour limit is left out.")
+                subtitle: String.localized("Writes a line under the weekly limit, or under the longest other limit when there is no weekly one, about how long it may last. A shorter limit that states its length, including the five-hour limit, is written under that row when the current pace runs out before its reset.")
             ) {
                 Toggle("", isOn: Binding(
                     get: { settings.showsForecast },
