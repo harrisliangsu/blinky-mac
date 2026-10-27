@@ -658,9 +658,9 @@ struct SpendGlanceTests {
         #expect(!SpendGlanceDismissal.claimsCloseClick(buttonBounds: .null, pointInButton: CGPoint(x: 1, y: 1)))
     }
 
-    @Test("The glance lists activity, then the rhythm, then one breakdown")
+    @Test("The glance lists activity, then Performance, then the rhythm, then one breakdown")
     func glanceOrder() {
-        #expect(TokenGlanceSection.order == [.outputSpeed, .tokenActivity, .usageRhythm, .dimension])
+        #expect(TokenGlanceSection.order == [.tokenActivity, .performance, .usageRhythm, .dimension])
         #expect(UsageRhythm.metricKeys(hoursComplete: true, hasPeakHour: true, hasModel: true) == [
             "Current streak", "Longest streak", "Peak hour", "Most tokens",
         ])
@@ -714,14 +714,16 @@ struct SpendGlanceTests {
             SpendSummary.Model(name: "Wait", tokens: 1, agents: [], tokensPerSecond: nil, firstToken: 1.2),
         ]
         let section = SpendSpeedSection.make(summary: summary, locale: Self.englishLocale, bundle: Self.english)
-        #expect(section?.title == "Output speed")
+        #expect(section?.title == "Performance")
         #expect(section?.overallTitle == "Overall")
-        #expect(section?.overall == "86 tok/s")
+        #expect(section?.overall?.speed == "86 tok/s")
+        #expect(section?.columns.shown == [.speed, .firstToken])
         #expect(section?.models.map(\.name) == ["Fast", "Slow", "Wait"])
         #expect(section?.models.map(\.speed) == ["100 tok/s", "0.2 tok/s", nil])
-        #expect(section?.models[0].firstToken == "First token 2.5 s")
+        #expect(section?.models[0].firstToken == "2.5 s")
         #expect(section?.models[1].firstToken == nil)
-        #expect(section?.models[2].firstToken == "First token 1.2 s")
+        #expect(section?.models[2].firstToken == "1.2 s")
+        #expect(section?.models.allSatisfy { $0.figures.cache == nil && $0.figures.input == nil })
         #expect(SpendSpeedLayout.isDenserThanSettings)
         #expect(SpendSpeedLayout.verticalPadding <= 4)
         #expect(SpendSpeedLayout.minimumHeight <= 24)
@@ -750,6 +752,115 @@ struct SpendGlanceTests {
         #expect(SpendSpeedSection.make(summary: summary, locale: Self.englishLocale, bundle: Self.english) == nil)
         let quiet = Self.picture(summary: summary)
         #expect(!quiet.drawnText.contains { $0.contains("tok/s") })
+    }
+
+    @Test("Performance shows cache, input and output when the records classified them, and omits a column nobody has")
+    func performanceSection() {
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
+
+        let fast = TokenTally(input: 400_000, cacheWrite: 100_000, cacheRead: 1_500_000, output: 80_000)
+        let silent = TokenTally(input: 3_000, cacheWrite: 0, cacheRead: 0, output: 2_000, repliesWithoutCacheFields: 2)
+        let missed = TokenTally(input: 6_000, cacheWrite: 0, cacheRead: 0, output: 4_000)
+        var summary = SpendSummary()
+        summary.hasTokenBreakdown = true
+        summary.cacheMeasured = true
+        summary.cacheHitRate = 0.5
+        summary.tally = fast
+        summary.unclassifiedTokens = 0
+        summary.outputTokensPerSecond = 21
+        summary.firstToken = 13.8
+        summary.models = [
+            SpendSummary.Model(
+                name: "Fast", tokens: fast.total, agents: [],
+                tally: fast, unclassifiedTokens: 0, cacheMeasured: true,
+                cacheHitRate: 1_500_000.0 / 2_000_000.0, tokensPerSecond: 21, firstToken: 13.8
+            ),
+            SpendSummary.Model(
+                name: "Silent", tokens: silent.total, agents: [],
+                tally: silent, unclassifiedTokens: 0, cacheMeasured: false,
+                cacheHitRate: nil, tokensPerSecond: nil, firstToken: nil
+            ),
+            SpendSummary.Model(
+                name: "Miss", tokens: missed.total, agents: [],
+                tally: missed, unclassifiedTokens: 0, cacheMeasured: true,
+                cacheHitRate: 0, tokensPerSecond: nil, firstToken: nil
+            ),
+            SpendSummary.Model(
+                name: "Part", tokens: 10, agents: [],
+                tally: TokenTally(input: 4, cacheRead: 2, output: 0), unclassifiedTokens: 4,
+                cacheMeasured: true, cacheHitRate: nil
+            ),
+            SpendSummary.Model(name: "Quiet", tokens: 1, agents: []),
+        ]
+        let section = SpendSpeedSection.make(summary: summary, locale: Self.englishLocale, bundle: Self.english)
+        #expect(section?.columns.shown == [.cacheHitRate, .cache, .cacheWrite, .input, .output, .unclassified, .speed, .firstToken])
+        #expect(section?.overall?.cacheHitRate == "50%")
+        #expect(section?.overall?.cache == "1.5M")
+        #expect(section?.overall?.cacheExact == 1_500_000)
+        #expect(section?.overall?.cacheWrite == "100K")
+        #expect(section?.overall?.input == "500K")
+        #expect(section?.overall?.output == "80K")
+        #expect(section?.overall?.speed == "21 tok/s")
+        #expect(section?.overall?.firstToken == "13.8 s")
+        #expect(section?.models.map(\.name) == ["Fast", "Silent", "Miss", "Part"])
+        #expect(section?.models[0].figures.cacheHitRate == "75%")
+        #expect(section?.models[0].figures.cache == "1.5M")
+        #expect(section?.models[0].figures.input == "500K")
+        #expect(section?.models[0].figures.output == "80K")
+        // A reply that named no cache field is not a measured zero.
+        #expect(section?.models[1].figures.cache == nil)
+        #expect(section?.models[1].figures.cacheHitRate == nil)
+        #expect(section?.models[1].figures.input == "3K")
+        #expect(section?.models[1].figures.output == "2K")
+        // A recorded miss is 0%, and a write of zero shows once anyone wrote.
+        #expect(section?.models[2].figures.cacheHitRate == "0%")
+        #expect(section?.models[2].figures.cache == "0")
+        #expect(section?.models[2].figures.cacheWrite == "0")
+        #expect(section?.models[2].figures.speed == nil)
+        // Unclassified tokens keep their count and withhold the rate.
+        #expect(section?.models[3].figures.unclassified == "4")
+        #expect(section?.models[3].figures.cache == "2")
+        #expect(section?.models[3].figures.cacheHitRate == nil)
+        #expect(section?.models[3].figures.input == "4")
+
+        // A positive rate that would round to 0% stays visible.
+        summary.cacheHitRate = 0.004
+        let tiny = SpendSpeedSection.make(summary: summary, locale: Self.englishLocale, bundle: Self.english)
+        #expect(tiny?.overall?.cacheHitRate == "<1%")
+        #expect(tiny?.overall?.cacheHitRate != "0%")
+
+        let chinese = LocalizationSource.bundle(for: .chineseSimplified)
+        let hans = Locale(identifier: "zh_Hans")
+        summary.cacheHitRate = 0.5
+        summary.tally.cacheRead = 150_000_000
+        let zh = SpendSpeedSection.make(summary: summary, locale: hans, bundle: chinese)
+        #expect(zh?.title == "性能")
+        #expect(zh?.overallTitle == "平均")
+        #expect(zh?.overall?.cache == "1.5亿")
+        #expect(zh?.overall?.firstToken == "13.8 秒")
+        #expect(zh?.overall?.speed == "21 tok/s")
+
+        // Kinds without a timed reply still open the section. Nothing classified
+        // and nothing timed leaves it out.
+        summary.outputTokensPerSecond = nil
+        summary.firstToken = nil
+        summary.models = [
+            SpendSummary.Model(
+                name: "Only", tokens: fast.total, agents: [],
+                tally: fast, unclassifiedTokens: 0, cacheMeasured: true, cacheHitRate: 0.75
+            ),
+        ]
+        let kindsOnly = SpendSpeedSection.make(summary: summary, locale: Self.englishLocale, bundle: Self.english)
+        #expect(kindsOnly?.columns.speed == false)
+        #expect(kindsOnly?.columns.input == true)
+        #expect(kindsOnly?.models.map(\.name) == ["Only"])
+
+        summary.hasTokenBreakdown = false
+        summary.cacheMeasured = false
+        summary.cacheHitRate = nil
+        summary.models = [SpendSummary.Model(name: "Quiet", tokens: 5, agents: [])]
+        #expect(SpendSpeedSection.make(summary: summary, locale: Self.englishLocale, bundle: Self.english) == nil)
     }
 
     private static func picture(

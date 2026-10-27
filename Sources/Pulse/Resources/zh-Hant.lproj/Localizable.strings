@@ -1056,7 +1056,10 @@
 "%@ s" = "%@ 秒";
 "%@ tok/s" = "%@ tok/s";
 "First token %@ s" = "首字延遲 %@ 秒";
-"Output speed" = "輸出速度";
+"Performance" = "效能";
+"Cache" = "快取";
+"Cache write" = "快取寫入";
+"Recorded cache writes. Already included in Input." = "已記錄的快取寫入，已計入輸入。";
 "Overall" = "平均";
 "Prompt cache (%@)" = "提示快取（%@）";
 "%@ left" = "還剩 %@";

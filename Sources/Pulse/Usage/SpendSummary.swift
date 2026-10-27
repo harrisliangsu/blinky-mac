@@ -34,10 +34,10 @@ struct SpendSummary: Equatable, Sendable {
 
     /// One model's share, across every agent that used it.
     ///
-    /// **Tokens only, and deliberately.** The ledger keeps money per *day* and
-    /// tokens per *model*; there is no per-model cost to add up, and working
-    /// one out from a day's blended rate would be inventing it. The share is
-    /// of tokens and the column says so.
+    /// **No per-model cost here.** The ledger keeps money per day and per raw
+    /// id; a blended rate spread across a display name would be inventing it.
+    /// The share is of tokens. Kinds, where every token of this model was
+    /// classified, are `tally`. The drill-down is where one model's money is.
     struct Model: Identifiable, Equatable, Sendable {
         /// The name the provider publishes, where models.dev has one.
         let name: String
@@ -48,6 +48,24 @@ struct SpendSummary: Equatable, Sendable {
         var id: String { name }
 
         var share: Double = 0
+
+        /// Classified kinds over the span. Nil when any of this model's
+        /// tokens cannot be sorted into a kind — a missing per-model tally,
+        /// or kinds that do not add up to the model's own total. Never a
+        /// partial split, and never the day's combined tally borrowed for it.
+        var tally: TokenTally? = nil
+        /// Explicit unclassified tokens beside `tally`. Nil when the split
+        /// itself is unavailable. Zero means the records classified every token.
+        var unclassifiedTokens: Int? = nil
+        /// Whether `tally`'s cache reads and writes are a measurement.
+        /// False when an agent records no cache, or the replies named no
+        /// cache field. False is not a hit rate of zero.
+        var cacheMeasured: Bool = false
+        /// Cache reads over input, cache writes and cache reads. Nil when
+        /// the cache was not measured for every one of this model's tokens,
+        /// when unclassified tokens remain, when a ledger's counts may be
+        /// missing, or when there is no input to measure.
+        var cacheHitRate: Double? = nil
 
         /// Timed replies in the same span, weighted by the output they wrote.
         /// Nil when this model had none — not a speed of zero.
@@ -160,6 +178,22 @@ struct SpendSummary: Equatable, Sendable {
     /// than a short one. The account card's rolling day and five-reply floor
     /// are a different reading (`UsageLedger.outputSpeedsByModel(since:)`).
     var outputTokensPerSecond: Double? = nil
+
+    /// Mean wait for the first token across timed replies in the span.
+    /// Nil when no log recorded one — not a wait of zero.
+    var firstToken: TimeInterval? = nil
+
+    /// Whether `tally`'s cache counts are a measurement of the span.
+    /// False when no contributing agent records a cache, or every reply
+    /// named no cache field. False is not a hit rate of zero. A mix of
+    /// agents, some of which record a cache, still shows the recorded hits;
+    /// the rate beside them does not, because it would count the rest as misses.
+    var cacheMeasured: Bool = false
+
+    /// Cache reads over the span's measured input. Nil when the cache was
+    /// not measured for every contributing token, when unclassified tokens
+    /// remain, when a ledger's counts may be missing, or when there is no input.
+    var cacheHitRate: Double? = nil
 
     var isEmpty: Bool { tokens == 0 && cost == 0 }
 
@@ -411,6 +445,19 @@ struct SpendSummary: Equatable, Sendable {
         var worked: Set<Date> = []
         var modelTimings: [String: ReplyTiming] = [:]
         var spanTiming = ReplyTiming()
+        // Per display name. A day that cannot vouch for its kinds marks the
+        // whole name, so a later day cannot publish a partial split.
+        var modelKinds: [String: TokenTally] = [:]
+        var modelExtra: [String: Int] = [:]
+        var modelUnvouched: Set<String> = []
+        /// Tokens whose agent records no cache. They are not misses.
+        var modelCacheExcluded: [String: Int] = [:]
+        /// A partial ledger, or any other reason a rate would cover only
+        /// part of the model's work.
+        var modelRateBlocked: Set<String> = []
+        var measuredCache = TokenTally()
+        var rateBlocked = false
+        var sawCachingAgent = false
 
         for (agent, ledger) in ledgers {
             guard !Task.isCancelled else { return SpendSummary() }
@@ -475,10 +522,27 @@ struct SpendSummary: Equatable, Sendable {
                 dayUnpriced[day.date, default: 0] += day.unpricedTokens
                 dayTally[day.date] = (dayTally[day.date] ?? TokenTally()) + day.tally
 
+                let recordsCache = agent.reportsCacheReads && ledger.reportsCacheReads
                 for (model, tokens) in day.models {
                     let name = ledger.modelNames[model] ?? model
                     modelTokens[name, default: 0] += tokens
                     modelAgents[name, default: []].insert(agent)
+                    guard tokens > 0 else { continue }
+                    // The day's combined tally is not this model's. A raw id
+                    // with no tally of its own, or one that does not add up
+                    // to the id's tokens, leaves the name without a split.
+                    let extra = day.modelUnclassifiedTokens[model] ?? 0
+                    if let piece = day.modelTallies[model],
+                       piece.accountsFor(tokens: tokens, unclassified: extra) {
+                        modelKinds[name] = (modelKinds[name] ?? TokenTally()) + piece
+                        modelExtra[name, default: 0] += extra
+                        if !recordsCache {
+                            modelCacheExcluded[name, default: 0] += tokens
+                        }
+                    } else {
+                        modelUnvouched.insert(name)
+                    }
+                    if ledger.hasPartialCounts { modelRateBlocked.insert(name) }
                 }
             }
 
@@ -517,6 +581,27 @@ struct SpendSummary: Equatable, Sendable {
                 projectLastUsed[project] = max(projectLastUsed[project] ?? windowed.last, windowed.last)
             }
 
+            if agentTokens > 0 {
+                let recordsCache = agent.reportsCacheReads && ledger.reportsCacheReads
+                if !recordsCache {
+                    // Its zeros are not hits that missed, and they are not
+                    // the denominator of anyone else's rate.
+                    rateBlocked = true
+                } else {
+                    sawCachingAgent = true
+                    if ledger.hasPartialCounts {
+                        rateBlocked = true
+                    } else {
+                        switch ledger.cacheReading(in: window) {
+                        case .measured(let measured):
+                            measuredCache = measuredCache + measured
+                        case .unrecorded, .unvouched:
+                            rateBlocked = true
+                        }
+                    }
+                }
+            }
+
             guard agentTokens > 0 || agentCost > 0 else { continue }
 
             // A ledger that contributed and had aggregate timing taints the
@@ -539,16 +624,36 @@ struct SpendSummary: Equatable, Sendable {
         summary.agents.sort { $0.tokens > $1.tokens }
 
         summary.outputTokensPerSecond = spanTiming.outputTokensPerSecond
+        summary.firstToken = spanTiming.meanFirstToken
         let overall = modelTokens.values.reduce(0, +)
         summary.models = modelTokens
             .map { name, tokens in
                 let timing = modelTimings[name] ?? ReplyTiming()
+                let unvouched = modelUnvouched.contains(name)
+                let extra: Int? = unvouched ? nil : (modelExtra[name] ?? 0)
+                let split: TokenTally? = {
+                    guard !unvouched, let kinds = modelKinds[name], let extra else { return nil }
+                    guard kinds.accountsFor(tokens: tokens, unclassified: extra) else { return nil }
+                    return kinds
+                }()
+                let cacheMeasured = split != nil
+                    && (modelCacheExcluded[name] ?? 0) == 0
+                    && split?.reportsNoCache == false
+                var rate: Double? = nil
+                if cacheMeasured, !modelRateBlocked.contains(name), let split, extra == 0 {
+                    let input = split.input + split.cacheWrite + split.cacheRead
+                    if input > 0 { rate = Double(split.cacheRead) / Double(input) }
+                }
                 return Model(
                     name: name,
                     tokens: tokens,
                     // Sorted so a row's agents do not shuffle between reads.
                     agents: (modelAgents[name] ?? []).sorted { $0.displayName < $1.displayName },
                     share: overall > 0 ? Double(tokens) / Double(overall) : 0,
+                    tally: split,
+                    unclassifiedTokens: extra,
+                    cacheMeasured: cacheMeasured,
+                    cacheHitRate: rate,
                     tokensPerSecond: timing.outputTokensPerSecond,
                     firstToken: timing.meanFirstToken
                 )
@@ -631,6 +736,21 @@ struct SpendSummary: Equatable, Sendable {
         summary.tally = tally
         summary.hasTokenBreakdown = categoriesComplete
             && tally.accountsFor(tokens: summary.tokens, unclassified: summary.unclassifiedTokens)
+        // Counts follow the kind breakdown: recorded hits, including a real
+        // zero, and nothing where the cache was not recorded at all. The rate
+        // is stricter. It has to describe every contributing token, so a
+        // partial ledger, an unclassified remainder, an agent with no cache
+        // column, or a measured subset that is not the whole tally leaves it nil.
+        summary.cacheMeasured = summary.hasTokenBreakdown
+            && !tally.reportsNoCache
+            && sawCachingAgent
+        if summary.cacheMeasured, !rateBlocked, summary.unclassifiedTokens == 0 {
+            let displayed = tally.input + tally.cacheWrite + tally.cacheRead
+            let measuredInput = measuredCache.input + measuredCache.cacheWrite + measuredCache.cacheRead
+            if displayed > 0, measuredInput == displayed, measuredCache.cacheRead == tally.cacheRead {
+                summary.cacheHitRate = Double(tally.cacheRead) / Double(displayed)
+            }
+        }
         summary.hours = hourTokens
         summary.unpricedModels = unpriced.sorted()
         summary.hasAggregateTiming = hasAggregate

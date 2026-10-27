@@ -666,6 +666,12 @@ struct SpendSummaryTests {
         #expect(fast?.tokens == 35)
         #expect(fast?.tokensPerSecond == 100)
         #expect(fast?.firstToken == 3)
+        // The days name models and carry no per-model split. The speed stays;
+        // a kind is not invented from the missing tally.
+        #expect(fast?.tally == nil)
+        #expect(fast?.cacheHitRate == nil)
+        #expect(summary.firstToken == 7.0 / 3.0)
+        #expect(summary.cacheHitRate == nil)
 
         let slow = summary.models.first { $0.name == "Slow" }
         #expect(slow?.tokensPerSecond == 50)
@@ -695,5 +701,178 @@ struct SpendSummaryTests {
         )
         #expect(ignored.tokens == 0)
         #expect(ignored.outputTokensPerSecond == nil)
+    }
+
+    @Test("Per-model cache, input and output follow the span, and a missing split stays missing")
+    func performanceMetricsFollowTheSpan() {
+        let tomorrow = Self.calendar.date(byAdding: .day, value: 1, to: Self.today)!
+        let yesterday = Self.calendar.date(byAdding: .day, value: -1, to: Self.today)!
+
+        let fast = TokenTally(input: 10, cacheWrite: 5, cacheRead: 20, output: 5)
+        let slow = TokenTally(input: 6, cacheWrite: 0, cacheRead: 0, output: 4)
+        let claude = Self.ledger([
+            LedgerDay(
+                date: yesterday, tokens: 100, cost: 0, unpricedTokens: 0,
+                models: ["fast": 100],
+                tally: TokenTally(input: 0, cacheRead: 100, output: 0),
+                modelTallies: ["fast": TokenTally(input: 0, cacheRead: 100, output: 0)]
+            ),
+            Self.measuredDay([
+                ("fast", fast, 0),
+                ("slow", slow, 0),
+                ("a", TokenTally(input: 2, cacheRead: 3, output: 1), 0),
+                ("b", TokenTally(input: 1, cacheRead: 2, output: 1), 0),
+            ]),
+        ], names: ["a": "Same", "b": "Same"])
+
+        let summary = SpendSummary.of(
+            [.claudeCode: claude],
+            starting: Self.today, before: tomorrow, now: Self.today, calendar: Self.calendar
+        )
+
+        let fastRow = summary.models.first { $0.name == "fast" }
+        #expect(fastRow?.tokens == 40)
+        #expect(fastRow?.tally == fast)
+        #expect(fastRow?.cacheMeasured == true)
+        #expect(fastRow?.cacheHitRate == 20.0 / 35.0)
+        #expect(fastRow?.unclassifiedTokens == 0)
+
+        let slowRow = summary.models.first { $0.name == "slow" }
+        #expect(slowRow?.cacheMeasured == true)
+        #expect(slowRow?.cacheHitRate == 0)
+        #expect(slowRow?.tally?.cacheRead == 0)
+        #expect(slowRow?.tally?.fresh == 6)
+
+        let same = summary.models.first { $0.name == "Same" }
+        #expect(same?.tokens == 10)
+        #expect(same?.tally == TokenTally(input: 3, cacheRead: 5, output: 2))
+        #expect(same?.cacheHitRate == 5.0 / 8.0)
+
+        // Yesterday's cache read is outside the span.
+        #expect(summary.cacheMeasured == true)
+        #expect(summary.tally.cacheRead == 25)
+        #expect(summary.cacheHitRate == 25.0 / 49.0)
+
+        // No per-model tally: the day's kinds can still be shown, and this
+        // model's row does not borrow them.
+        let bareDay = LedgerDay(
+            date: Self.today, tokens: 50, cost: 1, unpricedTokens: 0,
+            models: ["fast": 40, "bare": 10],
+            tally: fast + TokenTally(input: 10),
+            modelTallies: ["fast": fast]
+        )
+        let borrowed = SpendSummary.of(
+            [.claudeCode: Self.ledger([bareDay])],
+            starting: Self.today, before: tomorrow, now: Self.today, calendar: Self.calendar
+        )
+        #expect(borrowed.hasTokenBreakdown == true)
+        #expect(borrowed.models.first { $0.name == "bare" }?.tally == nil)
+        #expect(borrowed.models.first { $0.name == "fast" }?.cacheHitRate == 20.0 / 35.0)
+        #expect(borrowed.cacheHitRate == nil)
+
+        let silent = TokenTally(input: 8, output: 2, repliesWithoutCacheFields: 3)
+        let silentSummary = Self.one(.claudeCode, silent, tokens: 10)
+        #expect(silentSummary.models.first?.cacheMeasured == false)
+        #expect(silentSummary.models.first?.cacheHitRate == nil)
+        #expect(silentSummary.models.first?.tally?.fresh == 8)
+        #expect(silentSummary.cacheMeasured == false)
+        #expect(silentSummary.cacheHitRate == nil)
+        #expect(silentSummary.hasTokenBreakdown == true)
+
+        let goose = Self.one(.goose, fast, tokens: 40)
+        #expect(goose.models.first?.cacheMeasured == false)
+        #expect(goose.models.first?.cacheHitRate == nil)
+        #expect(goose.models.first?.tally?.fresh == 15)
+        #expect(goose.models.first?.tally?.output == 5)
+        #expect(goose.cacheMeasured == false)
+
+        let partialLedger = Self.ledger([Self.measuredDay([("fast", fast, 0)])])
+        var partialCopy = partialLedger
+        partialCopy.hasPartialCounts = true
+        let partial = SpendSummary.of(
+            [.claudeCode: partialCopy],
+            starting: Self.today, before: tomorrow, now: Self.today, calendar: Self.calendar
+        )
+        #expect(partial.models.first?.cacheMeasured == true)
+        #expect(partial.models.first?.tally?.cacheRead == 20)
+        #expect(partial.models.first?.cacheHitRate == nil)
+        #expect(partial.cacheMeasured == true)
+        #expect(partial.cacheHitRate == nil)
+
+        let unknown = TokenTally(input: 4, cacheRead: 2)
+        let withRemainder = SpendSummary.of(
+            [.claudeCode: Self.ledger([Self.measuredDay([("mix", unknown, 4)])])],
+            starting: Self.today, before: tomorrow, now: Self.today, calendar: Self.calendar
+        )
+        let mix = withRemainder.models.first { $0.name == "mix" }
+        #expect(mix?.tally == unknown)
+        #expect(mix?.unclassifiedTokens == 4)
+        #expect(mix?.cacheMeasured == true)
+        #expect(mix?.cacheHitRate == nil)
+        #expect(withRemainder.cacheMeasured == true)
+        #expect(withRemainder.cacheHitRate == nil)
+        #expect(withRemainder.unclassifiedTokens == 4)
+
+        let mixedAgents = SpendSummary.of(
+            [
+                .claudeCode: Self.ledger([Self.measuredDay([("fast", fast, 0)])]),
+                .goose: Self.ledger([Self.measuredDay([("bird", TokenTally(input: 4, output: 1), 0)])]),
+            ],
+            starting: Self.today, before: tomorrow, now: Self.today, calendar: Self.calendar
+        )
+        #expect(mixedAgents.models.first { $0.name == "fast" }?.cacheHitRate == 20.0 / 35.0)
+        #expect(mixedAgents.models.first { $0.name == "bird" }?.cacheMeasured == false)
+        #expect(mixedAgents.models.first { $0.name == "bird" }?.tally?.fresh == 4)
+        #expect(mixedAgents.cacheMeasured == true)
+        #expect(mixedAgents.cacheHitRate == nil)
+        #expect(mixedAgents.tally.cacheRead == 20)
+
+        let broken = LedgerDay(
+            date: Self.today, tokens: 100, cost: 1, unpricedTokens: 0,
+            models: ["bad": 100],
+            tally: TokenTally(input: 100),
+            modelTallies: ["bad": TokenTally(input: 10)]
+        )
+        let brokenSummary = SpendSummary.of(
+            [.claudeCode: Self.ledger([broken])],
+            starting: Self.today, before: tomorrow, now: Self.today, calendar: Self.calendar
+        )
+        #expect(brokenSummary.hasTokenBreakdown == true)
+        #expect(brokenSummary.models.first?.tally == nil)
+        #expect(brokenSummary.models.first?.cacheHitRate == nil)
+        #expect(brokenSummary.cacheHitRate == nil)
+    }
+
+    /// One model, one day, kinds that add up to `tokens`.
+    private static func one(_ agent: SpendAgent, _ tally: TokenTally, tokens: Int) -> SpendSummary {
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
+        let day = LedgerDay(
+            date: today, tokens: tokens, cost: 1, unpricedTokens: 0,
+            models: ["m": tokens], tally: tally, modelTallies: ["m": tally]
+        )
+        return SpendSummary.of(
+            [agent: ledger([day])],
+            starting: today, before: tomorrow, now: today, calendar: calendar
+        )
+    }
+
+    private static func measuredDay(_ models: [(String, TokenTally, Int)]) -> LedgerDay {
+        var tally = TokenTally()
+        var byModel: [String: Int] = [:]
+        var tallies: [String: TokenTally] = [:]
+        var unknowns: [String: Int] = [:]
+        var tokens = 0
+        for (raw, piece, extra) in models {
+            tally = tally + piece
+            let count = piece.total + extra
+            tokens += count
+            byModel[raw, default: 0] += count
+            tallies[raw] = (tallies[raw] ?? TokenTally()) + piece
+            if extra > 0 { unknowns[raw, default: 0] += extra }
+        }
+        return LedgerDay(
+            date: today, tokens: tokens, cost: 1, unpricedTokens: 0,
+            models: byModel, tally: tally, modelTallies: tallies, modelUnclassifiedTokens: unknowns
+        )
     }
 }
