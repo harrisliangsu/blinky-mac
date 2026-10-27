@@ -1172,6 +1172,20 @@ struct AlertMemoryTests {
             threshold: .off, announcesReset: false, announcesFailure: false,
             announcesExhaustion: true, exhaustionStages: [.defaultStage]
         ).isEmpty)
+
+        // Light use with no stated length draws the card line. It does not
+        // notify: the line says the window lasts, and a notice still needs
+        // a pace that runs out first.
+        var light = AlertMemory()
+        let lasting = Self.live(Self.window(
+            used: 0.06, resetsAt: resets, reportsLength: false
+        ))
+        #expect(run(
+            &light, lasting,
+            threshold: .off, announcesReset: false, announcesFailure: false,
+            announcesExhaustion: true, exhaustionStages: [.defaultStage],
+            announcesBeforeReset: true
+        ).isEmpty)
     }
 
     @Test("A fast start inside the early floor does not notify; the same pace later does")

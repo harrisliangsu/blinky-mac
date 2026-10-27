@@ -419,11 +419,12 @@ struct UsageDetailCard: View {
                     isSpent: UsageTint.isSpent(window),
                     showsRemaining: showsRemaining,
                     // The weekly limit, or the longest other limit. A five-hour
-                    // window is not estimated. Little or nothing spent still
-                    // says the window is expected to last, including when the
-                    // service did not state a length. Use already high while
-                    // the window has barely opened still shows the estimate,
-                    // with a note that the early pace is only a guide.
+                    // window is not estimated. Light use still says the window
+                    // is expected to last, including when the service did not
+                    // state a length and the window is already open. Use
+                    // already high while the window has barely opened still
+                    // shows the estimate, with a note that the early pace is
+                    // only a guide.
                     forecast: forecastLine(for: window),
                     value: valueText(window),
                     amount: showsAmounts || window.amounts?.currency != nil

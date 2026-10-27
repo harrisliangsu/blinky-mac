@@ -379,7 +379,11 @@ struct BurnRateTests {
             "week", kind: .weekly, used: BurnRate.earlyQuietUsed, seconds: 604_800,
             resetsAt: Self.now.addingTimeInterval(500_000), reportsLength: false
         )
-        #expect(BurnRate.reading(for: edge, now: Self.now) == nil)
+        #expect(BurnRate.reading(for: edge, now: Self.now)?.exhaustsBeforeReset == false)
+        #expect(BurnRate.forecastLine(
+            for: edge, among: [edge], showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        )?.tone == .lasts)
 
         let spent = Self.named(
             "week", kind: .weekly, used: 0.4, seconds: 604_800,
@@ -399,6 +403,116 @@ struct BurnRateTests {
         )
         #expect(stated?.exhaustsBeforeReset == false)
         #expect(stated?.timeToExhaustion == nil)
+    }
+
+    /// The panel Harris opened: Kimi at 89% left on the five-hour limit and
+    /// 94% left on the week, reset still days away. The week states no length,
+    /// so nothing is divided. Six percent used is light, and the line says the
+    /// week lasts. The five-hour row is not that line. The same six percent on
+    /// a stated length that has barely opened still divides.
+    @Test("A lightly used week with no stated length still says it will last")
+    func lightUnstatedWeekStillSaysItLasts() throws {
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
+
+        let fiveReset = Self.now.addingTimeInterval(96 * 60)
+        let weekReset = Self.now.addingTimeInterval(2 * 86_400 + 8 * 3_600 + 36 * 60)
+        let windows = KimiCodeUsageService.windows(from: try Self.kimiReply(
+            fiveReset: fiveReset, weekReset: weekReset
+        ))
+        let weekly = try #require(windows.first { $0.kind == .weekly })
+        let five = try #require(windows.first { $0.kind == .fiveHour })
+
+        #expect(weekly.reportsLength == false)
+        #expect(abs(weekly.usedFraction - 0.06) < 0.000_001)
+        #expect(weekly.percentText(remaining: true) == "94%")
+        #expect(five.reportsLength == true)
+        #expect(abs(five.usedFraction - 0.11) < 0.000_001)
+        #expect(five.percentText(remaining: true) == "89%")
+
+        let fivePace = BurnRate.reading(for: five, now: Self.now)
+        #expect(fivePace?.exhaustsBeforeReset == false)
+        #expect(fivePace?.timeToExhaustion == nil)
+        #expect(fivePace?.earlyPace == false)
+
+        let line = BurnRate.forecastLine(
+            for: weekly, among: windows, showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        )
+        #expect(line?.tone == .lasts)
+        #expect(line?.text == "Expected to last the window")
+        #expect(line?.note == nil)
+        #expect(BurnRate.forecastLine(
+            for: five, among: windows, showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        ) == nil)
+        #expect(BurnRate.forecastLine(
+            for: weekly, among: windows, showsForecast: false,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        ) == nil)
+
+        let reading = BurnRate.reading(for: weekly, now: Self.now)
+        #expect(reading?.exhaustsBeforeReset == false)
+        #expect(reading?.timeToExhaustion == nil)
+        #expect(reading?.earlyPace == false)
+
+        let mid = Self.window(used: 0.06, resetsAt: Self.now.addingTimeInterval(604_800 * 0.34))
+        let midReading = try #require(BurnRate.reading(for: mid, now: Self.now))
+        #expect(midReading.exhaustsBeforeReset == false)
+        #expect(midReading.earlyPace == false)
+        #expect(BurnRate.cardLine(
+            for: mid, reading: midReading, horizon: 6 * 3600, softHint: true, beforeReset: true
+        )?.tone == .lasts)
+
+        let early = Self.window(used: 0.06, resetsAt: Self.now.addingTimeInterval(604_800 * 0.99))
+        let earlyReading = try #require(BurnRate.reading(for: early, now: Self.now))
+        #expect(earlyReading.earlyPace == true)
+        #expect(earlyReading.exhaustsBeforeReset == true)
+        #expect(BurnRate.cardLine(
+            for: early, reading: earlyReading, horizon: 6 * 3600, softHint: true, beforeReset: true
+        )?.note == "A fast start. The estimate is only a guide.")
+
+        #expect(BurnRate.lightUnstatedUsed > 0.11)
+        let stillLight = Self.window(used: 0.11, resetsAt: weekReset, reportsLength: false)
+        #expect(BurnRate.forecastLine(
+            for: stillLight, among: [stillLight], showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        )?.tone == .lasts)
+
+        let under = Self.window(
+            used: BurnRate.lightUnstatedUsed - 0.001,
+            resetsAt: weekReset,
+            reportsLength: false
+        )
+        #expect(BurnRate.reading(for: under, now: Self.now)?.exhaustsBeforeReset == false)
+
+        let ceiling = Self.window(
+            used: BurnRate.lightUnstatedUsed, resetsAt: weekReset, reportsLength: false
+        )
+        #expect(BurnRate.reading(for: ceiling, now: Self.now) == nil)
+
+        let spent = Self.window(used: 0.4, resetsAt: weekReset, reportsLength: false)
+        #expect(BurnRate.reading(for: spent, now: Self.now) == nil)
+
+        let past = Self.window(
+            used: 0.06, resetsAt: Self.now.addingTimeInterval(-60), reportsLength: false
+        )
+        #expect(BurnRate.reading(for: past, now: Self.now) == nil)
+
+        #expect(BurnRate.reading(
+            for: Self.window(used: 0.06, resetsAt: nil, reportsLength: false), now: Self.now
+        ) == nil)
+        #expect(BurnRate.reading(
+            for: Self.window(used: 0.04, resetsAt: nil, reportsLength: false), now: Self.now
+        )?.exhaustsBeforeReset == false)
+
+        LocalizationSource.use(.chineseSimplified)
+        let chinese = BurnRate.forecastLine(
+            for: weekly, among: windows, showsForecast: true,
+            horizon: 6 * 3600, softHint: true, beforeReset: true, now: Self.now
+        )
+        #expect(chinese?.text == "预计可维持到本轮重置")
+        #expect(chinese?.note == nil)
     }
 
     @Test("Lasting is green and regular; a pace that may not last is amber and a step heavier")
@@ -425,6 +539,23 @@ struct BurnRateTests {
         #expect(ForecastLineInk.opacity > 0)
         #expect(ForecastLineInk.opacity < 1)
         #expect(ForecastLineInk.style(for: .lasts).lineColor != ForecastLineInk.style(for: .countdown).lineColor)
+    }
+
+    /// Kimi's two limits as the panel showed them: 89% left on the five-hour
+    /// window, 94% left on the week, both resets still ahead. Counts are
+    /// strings, the same shape as the live reply.
+    private static func kimiReply(fiveReset: Date, weekReset: Date) throws -> KimiCodeUsageService.Reply {
+        let json = """
+        {"limits":[{"window":{"duration":5,"timeUnit":"TIME_UNIT_HOUR"},"detail":{"limit":"100","remaining":"89","resetTime":"\(Self.iso(fiveReset))"}}],"usage":{"limit":"100","used":"6","resetTime":"\(Self.iso(weekReset))"}}
+        """
+        return try JSONDecoder().decode(KimiCodeUsageService.Reply.self, from: Data(json.utf8))
+    }
+
+    private static func iso(_ date: Date) -> String {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        return formatter.string(from: date)
     }
 
     private static func named(
