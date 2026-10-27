@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.27</title>
-            <pubDate>Mon, 26 Oct 2026 19:10:21 -0000</pubDate>
-            <sparkle:version>1.5.27</sparkle:version>
-            <sparkle:shortVersionString>1.5.27</sparkle:shortVersionString>
+            <title>1.5.28</title>
+            <pubDate>Tue, 27 Oct 2026 04:03:20 -0000</pubDate>
+            <sparkle:version>1.5.28</sparkle:version>
+            <sparkle:shortVersionString>1.5.28</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.27</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.28</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.27</h2><ul><li><strong>The menu bar shows Blinky when its window is shown.</strong> Opening Settings, or making that window key, puts Blinky&#x27;s name in the menu bar. <a href="https://github.com/harrisliangsu/blinky-mac/pull/85">#85</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.27">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.27/Blinky-1.5.27.zip"
-                       length="23231716"
+</style><h2>Blinky 1.5.28</h2><ul><li><strong>The Token window gives output speed its own section.</strong> The Token spend window beside the usage card lists the selected span&#x27;s average and each timed model&#x27;s speed in tok/s, with first-token latency beside that model when a log recorded it, and no longer writes Partial estimate or an explanation under the totals. <a href="https://github.com/harrisliangsu/blinky-mac/pull/90">#90</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.28">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.28/Blinky-1.5.28.zip"
+                       length="23242087"
                        type="application/octet-stream"
-                       sparkle:edSignature="acsWwt3vY8HRTiU2fSU/287aKnzwGVtWxIJePWL0P1EZvCLY/QD5xVY05zw8Nf7rljEKBqyvSR6hl66qdmMtCQ==" />
+                       sparkle:edSignature="vUjy9zj9NUtAvP0shGZfrQluFaS58QEF3laak0ZoOD2JMUaLSPaveNWBsHWIleexPRN2uPAvWbtP8nEYZRMfAg==" />
         </item>
     </channel>
 </rss>
