@@ -49,15 +49,29 @@ enum BurnRate {
     /// is wanted; hiding it until the floor left the card blank for the
     /// people who needed it. The card keeps the ordinary wording and adds a
     /// quieter line that the early pace is only a guide (`Reading.earlyPace`).
-    /// A window with no stated length stays quiet once use is at that share.
-    /// A reset that has already passed stays quiet too. A clock that has not
+    /// A reset that has already passed stays quiet. A clock that has not
     /// moved still cannot be divided, so that reading stays absent.
+    ///
+    /// A window with no stated length is a different sentence. It never
+    /// divides, so the five-percent floor is not its hide: crossing that
+    /// share is ordinary use, and treating it as "well spent" blanked Kimi's
+    /// rolling week for the rest of the window. Light use there stays on
+    /// course up to `lightUnstatedUsed`.
     static let minimumElapsed = 0.03
 
-    /// Used share below which a window still inside `minimumElapsed`, or a
-    /// window with no stated length, is said to be on course, with no time.
-    /// At or above it, a stated length is divided even inside the floor.
+    /// Used share below which a window still inside `minimumElapsed` is said
+    /// to be on course, with no time. At or above it, a stated length is
+    /// divided even inside the floor.
     static let earlyQuietUsed = 0.05
+
+    /// Used share below which a window with no stated length, and a reset
+    /// still ahead, is said to be on course. The sentence does not divide.
+    /// A quarter of the allowance is still light for that claim — six percent
+    /// of Kimi's rolling week, with days left before the reset, is the case
+    /// the five-percent floor was blanking. At or above this share there is
+    /// no pace to invent, so the line stays quiet. With no reset at all, only
+    /// `earlyQuietUsed` is said to last.
+    static let lightUnstatedUsed = 0.25
 
     struct Reading: Equatable, Sendable {
         /// Whether it is on course to run out before the window resets.
@@ -92,20 +106,19 @@ enum BurnRate {
         // would otherwise divide by. A sort key is not a pace. Which of a
         // reading's windows may be shown is `ExhaustionEstimate`, not this.
         //
-        // Little or nothing spent still lasts, and that sentence does not
-        // divide. An idle weekly row — Kimi's rolling week, whose seconds
-        // only sort it — was returning nil here, so the card stayed blank
-        // while a window that stated a length (Codex) drew a line. A window
-        // already well spent, with no stated length, stays quiet: there is
-        // no pace to invent. A reset that has already passed stays quiet too.
+        // Light use still lasts, and that sentence does not divide. An idle
+        // weekly row — Kimi's rolling week, whose seconds only sort it —
+        // was returning nil here, so the card stayed blank while a window
+        // that stated a length (Codex) drew a line. Holding that sentence
+        // to the five-percent floor blanked the same row again once ordinary
+        // use crossed it. Light use, under `lightUnstatedUsed`, keeps the
+        // line. A window already a quarter spent, with no stated length,
+        // stays quiet: there is no pace to invent. A reset that has already
+        // passed stays quiet too.
         guard let elapsed = window.elapsedFraction(at: now),
               let resetsAt = window.resetsAt
         else {
-            if let resetsAt = window.resetsAt, resetsAt.timeIntervalSince(now) <= 0 {
-                return nil
-            }
-            guard used < earlyQuietUsed else { return nil }
-            return Reading(exhaustsBeforeReset: false, timeToExhaustion: nil)
+            return unpaced(used: used, resetsAt: window.resetsAt, now: now)
         }
 
         let untilReset = resetsAt.timeIntervalSince(now)
@@ -141,6 +154,24 @@ enum BurnRate {
             timeToExhaustion: first ? untilEmpty : nil,
             earlyPace: earlyPace
         )
+    }
+
+    /// No elapsed share, so nothing may be divided. The length was a sort key,
+    /// or the reset was never stated.
+    ///
+    /// Reset still ahead and use still light: the window is expected to last.
+    /// That is the line under a rolling week whose seconds only sort the row.
+    /// At or above `lightUnstatedUsed` there is no pace to invent. A reset
+    /// that has already passed stays quiet. With no reset at all, only little
+    /// or nothing spent is said to last — the same floor as an early window,
+    /// because there is no clock to put the use in.
+    private static func unpaced(used: Double, resetsAt: Date?, now: Date) -> Reading? {
+        guard let resetsAt else {
+            guard used < earlyQuietUsed else { return nil }
+            return Reading(exhaustsBeforeReset: false, timeToExhaustion: nil)
+        }
+        guard resetsAt.timeIntervalSince(now) > 0, used < lightUnstatedUsed else { return nil }
+        return Reading(exhaustsBeforeReset: false, timeToExhaustion: nil)
     }
 
     /// "about an hour", "about 40 minutes", "1d 13h" — **rounded, because the
