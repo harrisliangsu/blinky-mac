@@ -6,6 +6,10 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.30
+
+- **「输出速度」改名为「性能」。** 「Token 消耗」窗口里，这一节位于「Token 活动」下面；有这些记录时，每个模型列出缓存命中率、缓存、输入和输出，计时过的回复仍列出 tok/s 和首字延迟。[#92](https://github.com/harrisliangsu/blinky-mac/pull/92)
+
 ## 1.5.29
 
 - **「Token 消耗」不再一直停在其他窗口前面。** 从用量卡片打开「Token 消耗」后，点到别的窗口，这一窗口会退到后面。[#91](https://github.com/harrisliangsu/blinky-mac/pull/91)

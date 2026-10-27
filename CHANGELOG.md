@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.30
+
+- **Performance replaces Output speed.** Under Token activity in the Token spend window, each model lists its cache hit rate, cache, input and output when those records exist, and still lists tok/s and the first-token wait when a reply was timed. [#92](https://github.com/harrisliangsu/blinky-mac/pull/92)
+
 ## 1.5.29
 
 - **The Token spend window no longer stays in front of other apps.** With Token spend open from the usage card, clicking another window brings that window forward and leaves this one behind it. [#91](https://github.com/harrisliangsu/blinky-mac/pull/91)
