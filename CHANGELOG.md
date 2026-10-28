@@ -12,8 +12,8 @@ bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
 ## 1.5.33
 
-- **About these figures is two groups.** Opening that line at the bottom of the Token spend window shows the estimate and the sources with no usage data as separate groups; those source names wrap, and the heading shows how many there are.
-- **Mission Control can select the Token spend window.** A three-finger swipe up, then a click on that window, brings it forward. Clicking another app's window still leaves Token spend behind.
+- **About these figures is two groups.** Opening that line at the bottom of the Token spend window shows the estimate and the sources with no usage data as separate groups; those source names wrap, and the heading shows how many there are. [#95](https://github.com/harrisliangsu/blinky-mac/pull/95)
+- **Mission Control can select the Token spend window.** A three-finger swipe up, then a click on that window, brings it forward. Clicking another app's window still leaves Token spend behind. [#95](https://github.com/harrisliangsu/blinky-mac/pull/95)
 
 ## 1.5.32
 
