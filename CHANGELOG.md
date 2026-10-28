@@ -10,6 +10,11 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.33
+
+- **About these figures is two groups.** Opening that line at the bottom of the Token spend window shows the estimate and the sources with no usage data as separate groups; those source names wrap, and the heading shows how many there are.
+- **Mission Control can select the Token spend window.** A three-finger swipe up, then a click on that window, brings it forward. Clicking another app's window still leaves Token spend behind.
+
 ## 1.5.32
 
 - **A shorter limit that states its length shows when it may run out.** With Show the estimate on under Settings → Usage, that limit, including Kimi Code's five-hour limit, writes the time under its own row when the current pace runs out before its reset. A weekly limit with no stated length still says it is expected to last while less than a quarter is spent, and stays quiet once a quarter is spent. [#94](https://github.com/harrisliangsu/blinky-mac/pull/94)

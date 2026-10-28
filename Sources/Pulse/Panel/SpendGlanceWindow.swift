@@ -58,7 +58,11 @@ final class SpendGlanceController {
         // 1.5.11 did, kept this window above every other app. Settings and
         // the recap stay at `.normal`; this window does too. The frame is
         // still taken from the rail the first time the window appears.
+        // The collection flags are not the rail's. `.stationary` and
+        // `.canJoinAllSpaces` left the window visible in Mission Control
+        // and ignored the click that should have brought it forward.
         let placed = anchor()
+        window.collectionBehavior = SpendGlanceWindowParticipation.collectionBehavior
         window.level = SpendGlanceWindowLevel.resolved(beside: placed?.level ?? .normal)
         if let placed, !window.isVisible {
             let frame = SpendGlancePlacement.frame(
@@ -151,9 +155,11 @@ final class SpendGlanceController {
         window.isMovableByWindowBackground = true
         window.backgroundColor = .windowBackgroundColor
         window.hidesOnDeactivate = false
-        // The same spaces as the rail. These flags do not raise the window:
-        // the level below is what other apps stack against.
-        window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary]
+        // Selectable in Mission Control. The rail's flags are not: a
+        // stationary window on every Space is drawn there, and a click does
+        // not take it. The level stays normal, so another app's window can
+        // still cover this one.
+        window.collectionBehavior = SpendGlanceWindowParticipation.collectionBehavior
         window.level = SpendGlanceWindowLevel.standard
         window.onDismiss = { [weak self] in self?.close() }
         window.contentView = SpendGlanceHostingView(rootView: SpendGlanceView(
@@ -221,6 +227,36 @@ enum SpendGlanceWindowLevel {
             || className.contains("Date")
     }
 
+}
+
+/// How the Token window takes part in Spaces and Mission Control.
+///
+/// 1.5.29 dropped the raised level and left the rail's collection flags in
+/// place: `.canJoinAllSpaces` and `.stationary`. A stationary window is
+/// desktop furniture. Mission Control draws it and does not select it, and
+/// an all-spaces window of an accessory app is badged with whichever regular
+/// app is in front. Settings leaves these flags unset. This window is
+/// managed, joins the window cycle, moves onto the Space where it is shown,
+/// and may sit beside a full-screen app. The level stays `.normal`.
+enum SpendGlanceWindowParticipation {
+    static let collectionBehavior: NSWindow.CollectionBehavior = [
+        .managed,
+        .participatesInCycle,
+        .moveToActiveSpace,
+        .fullScreenAuxiliary,
+    ]
+
+    /// A click in Mission Control can take this window. The rail's mask
+    /// cannot: it is stationary and joined to every Space. `.transient` and
+    /// `.ignoresCycle` are the same kind of refusal. The level is a separate
+    /// question and stays `.normal`.
+    static func isSelectableInMissionControl(_ behavior: NSWindow.CollectionBehavior) -> Bool {
+        let blocked: NSWindow.CollectionBehavior = [
+            .stationary, .transient, .canJoinAllSpaces, .ignoresCycle,
+        ]
+        guard behavior.isDisjoint(with: blocked) else { return false }
+        return behavior.contains(.managed) && behavior.contains(.participatesInCycle)
+    }
 }
 
 /// Leaving the app does not close the Token window. 1.5.16 treated
