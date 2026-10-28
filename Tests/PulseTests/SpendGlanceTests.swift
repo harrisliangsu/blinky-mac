@@ -695,6 +695,29 @@ struct SpendGlanceTests {
         #expect(unreadOnly.estimate.isEmpty)
         #expect(unreadOnly.unread == ["Zed"])
         #expect(!notes.estimate.map(\.text).contains("By agent"))
+
+        #expect(SpendGlanceNotesLayout.unreadNamesAreChips)
+        #expect(SpendGlanceNotesLayout.unreadHeadingShowsCount)
+        #expect(SpendGlanceNotesLayout.sectionOrder == [.estimate, .unread])
+        #expect(SpendGlanceNotesLayout.groups(hasEstimate: true, hasUnread: true) == [.estimate, .unread])
+        #expect(SpendGlanceNotesLayout.groups(hasEstimate: true, hasUnread: false) == [.estimate])
+        #expect(SpendGlanceNotesLayout.groups(hasEstimate: false, hasUnread: true) == [.unread])
+        #expect(SpendGlanceNotesLayout.groups(hasEstimate: false, hasUnread: false).isEmpty)
+
+        // Six names that would have been six lines share rows when they fit,
+        // and every name is still there. A row that cannot hold two keeps
+        // each name, including one wider than the row.
+        let widths: [CGFloat] = [44, 72, 78, 32, 110, 108]
+        let wrapped = SpendGlanceNotesLayout.chipRows(itemWidths: widths, containerWidth: 360, spacing: 6)
+        #expect(wrapped.count < widths.count)
+        #expect(wrapped.count > 1)
+        #expect(wrapped.flatMap(\.indexes) == Array(widths.indices))
+        #expect(SpendGlanceNotesLayout.chipRows(itemWidths: [10, 10], containerWidth: 26, spacing: 6).map(\.indexes) == [[0, 1]])
+        #expect(SpendGlanceNotesLayout.chipRows(itemWidths: [10, 10], containerWidth: 25, spacing: 6).map(\.indexes) == [[0], [1]])
+        #expect(SpendGlanceNotesLayout.chipRows(itemWidths: [10, 10, 10, 10], containerWidth: 42, spacing: 6).map(\.indexes) == [[0, 1, 2], [3]])
+        #expect(SpendGlanceNotesLayout.chipRows(itemWidths: [80, 20], containerWidth: 50, spacing: 6).map(\.indexes) == [[0], [1]])
+        #expect(SpendGlanceNotesLayout.chipRows(itemWidths: [10, 10], containerWidth: 0, spacing: 6).map(\.indexes) == [[0], [1]])
+        #expect(SpendGlanceNotesLayout.chipRows(itemWidths: [], containerWidth: 200, spacing: 6).isEmpty)
     }
 
     @Test("The speed section lists the span average and each timed model, in tok/s")

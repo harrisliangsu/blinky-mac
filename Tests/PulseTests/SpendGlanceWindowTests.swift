@@ -28,6 +28,36 @@ struct SpendGlanceWindowTests {
         #expect(SpendGlanceWindowLevel.isAuxiliary(level: .normal, className: "NSMenuWindow"))
         #expect(SpendGlanceWindowLevel.isAuxiliary(level: .normal, className: "DatePickerPanel"))
         #expect(!SpendGlanceWindowLevel.isAuxiliary(level: .floating, className: "SpendGlancePanel"))
+
+        // Mission Control selects a managed window that joins the cycle.
+        // The rail's mask — every Space, and stationary — is drawn and not selected.
+        let participation = SpendGlanceWindowParticipation.collectionBehavior
+        #expect(participation == [
+            .managed, .participatesInCycle, .moveToActiveSpace, .fullScreenAuxiliary,
+        ])
+        #expect(SpendGlanceWindowParticipation.isSelectableInMissionControl(participation))
+        #expect(participation.contains(.moveToActiveSpace))
+        #expect(participation.contains(.fullScreenAuxiliary))
+        #expect(!participation.contains(.stationary))
+        #expect(!participation.contains(.canJoinAllSpaces))
+        #expect(!participation.contains(.transient))
+        #expect(!participation.contains(.ignoresCycle))
+        #expect(!SpendGlanceWindowParticipation.isSelectableInMissionControl([
+            .canJoinAllSpaces, .fullScreenAuxiliary, .stationary,
+        ]))
+        #expect(!SpendGlanceWindowParticipation.isSelectableInMissionControl([
+            .managed, .stationary, .participatesInCycle,
+        ]))
+        #expect(!SpendGlanceWindowParticipation.isSelectableInMissionControl([
+            .managed, .canJoinAllSpaces, .participatesInCycle,
+        ]))
+        #expect(!SpendGlanceWindowParticipation.isSelectableInMissionControl([
+            .transient, .participatesInCycle,
+        ]))
+        #expect(!SpendGlanceWindowParticipation.isSelectableInMissionControl([
+            .managed, .ignoresCycle,
+        ]))
+        #expect(!SpendGlanceWindowParticipation.isSelectableInMissionControl([]))
     }
 
     @Test("Span, breakdown, Refresh, Share, the close button, and Escape all reach the window")
@@ -69,6 +99,15 @@ struct SpendGlanceWindowTests {
         #expect(window.level == .normal)
         #expect(window.level == SpendGlanceWindowLevel.resolved(beside: .statusBar))
         #expect(window.hidesOnDeactivate == false)
+        #expect(SpendGlanceWindowParticipation.isSelectableInMissionControl(window.collectionBehavior))
+        #expect(window.collectionBehavior.contains(.managed))
+        #expect(window.collectionBehavior.contains(.participatesInCycle))
+        #expect(window.collectionBehavior.contains(.moveToActiveSpace))
+        #expect(window.collectionBehavior.contains(.fullScreenAuxiliary))
+        #expect(!window.collectionBehavior.contains(.stationary))
+        #expect(!window.collectionBehavior.contains(.canJoinAllSpaces))
+        #expect(!window.collectionBehavior.contains(.transient))
+        #expect(!window.collectionBehavior.contains(.ignoresCycle))
         #expect(window.contentView?.acceptsFirstMouse(for: nil) == true)
         #expect(window.title == "Token spend")
 

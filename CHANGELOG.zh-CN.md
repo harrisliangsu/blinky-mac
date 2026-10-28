@@ -6,6 +6,11 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.33
+
+- **「关于这些数字」分成估价和未读取用量两块。** 在「Token 消耗」窗口底部展开这一行后，估价说明和未读取到用量各自成一块；未读取到的来源排成可换行的标签，标题旁写出个数。[#95](https://github.com/harrisliangsu/blinky-mac/pull/95)
+- **调度中心可以点选「Token 消耗」。** 三指上滑后点击「Token 消耗」，该窗口会来到前面；点击其他应用的窗口后，「Token 消耗」仍会退到后面。[#95](https://github.com/harrisliangsu/blinky-mac/pull/95)
+
 ## 1.5.32
 
 - **写明长度的较短限额会写出预计用尽时间。** 在「设置 → 用量」打开「显示预估」后，包括 Kimi Code 的 5 小时限额在内，按当前速度会在本次重置前用尽的限额会在自己那一行下面写出这个时间。没有写明长度的每周限额，已用不到四分之一时仍显示「预计可维持到本轮重置」；已用达到四分之一时，这一行不显示。[#94](https://github.com/harrisliangsu/blinky-mac/pull/94)

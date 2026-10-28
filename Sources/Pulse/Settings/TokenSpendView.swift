@@ -204,9 +204,10 @@ struct TokenSpendView: View {
     // MARK: - Nothing read from a source
 
     /// Pricing, a partial read, and the sources that produced no records.
-    /// One secondary line until it is opened. Opened, the estimate is one
-    /// section and each unread source is its own line. A model's own page
-    /// carries its note, so this block is absent there.
+    /// One secondary line until it is opened. Opened, the estimate and the
+    /// unread sources are two labelled groups. The names wrap as chips, with
+    /// the count in the heading, so the list is not one grey line per source.
+    /// A model's own page carries its note, so this block is absent there.
     @ViewBuilder
     private var notesBlock: some View {
         if modelFocus == nil {
@@ -215,37 +216,10 @@ struct TokenSpendView: View {
                 unreadNames: focus == nil ? noRecords.map(\.displayName) : []
             )
             if !sections.isEmpty {
-                VStack(alignment: .leading, spacing: 4) {
-                    Button {
-                        notesExpanded.toggle()
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text(localized: "About these figures")
-                                .font(.system(size: SpendQuietCopy.pointSize))
-                                .foregroundStyle(.secondary)
-                            Image(systemName: notesExpanded ? "chevron.up" : "chevron.down")
-                                .font(.system(size: 9, weight: .semibold))
-                                .foregroundStyle(.tertiary)
-                        }
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("spend-glance-notes")
+                VStack(alignment: .leading, spacing: 8) {
+                    notesDisclosure
                     if notesExpanded {
-                        VStack(alignment: .leading, spacing: 8) {
-                            if !sections.estimate.isEmpty {
-                                noteSection(title: String.localized("About the estimate"), lines: sections.estimate)
-                            }
-                            if !sections.unread.isEmpty {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(localized: "No usage data read")
-                                        .font(.system(size: SpendQuietCopy.pointSize, weight: .semibold))
-                                        .foregroundStyle(.secondary)
-                                    ForEach(Array(sections.unread.enumerated()), id: \.offset) { _, name in
-                                        quietText(name)
-                                    }
-                                }
-                            }
-                        }
+                        noteGroups(sections)
                     }
                 }
                 .padding(.horizontal, 4)
@@ -253,27 +227,129 @@ struct TokenSpendView: View {
         }
     }
 
-    /// A secondary heading and the sentences under it. The heading is the
-    /// same size as the sentences, so the opened notes stay quieter than
-    /// the totals above them.
-    private func noteSection(title: String, lines: [SpendGlanceNote]) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(verbatim: title)
-                .font(.system(size: SpendQuietCopy.pointSize, weight: .semibold))
-                .foregroundStyle(.secondary)
-            ForEach(lines) { line in
-                noteLine(line)
+    private var notesDisclosure: some View {
+        Button {
+            notesExpanded.toggle()
+        } label: {
+            HStack(spacing: 4) {
+                Text(localized: "About these figures")
+                    .font(.system(size: SpendQuietCopy.pointSize, weight: .medium))
+                    .foregroundStyle(.secondary)
+                Image(systemName: notesExpanded ? "chevron.up" : "chevron.down")
+                    .font(.system(size: 9, weight: .semibold))
+                    .foregroundStyle(.tertiary)
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("spend-glance-notes")
+    }
+
+    /// Estimate first, then the unread sources. An empty group is left out.
+    /// The order is `SpendGlanceNotesLayout.sectionOrder`.
+    @ViewBuilder
+    private func noteGroups(_ sections: SpendGlanceNoteSections) -> some View {
+        let shown = SpendGlanceNotesLayout.groups(
+            hasEstimate: !sections.estimate.isEmpty,
+            hasUnread: !sections.unread.isEmpty
+        )
+        VStack(alignment: .leading, spacing: 8) {
+            ForEach(shown, id: \.self) { group in
+                noteGroup(group, sections: sections)
             }
         }
     }
 
     @ViewBuilder
-    private func noteLine(_ line: SpendGlanceNote) -> some View {
-        if let help = line.help, !help.isEmpty {
-            quietText(line.text).help(help)
-        } else {
-            quietText(line.text)
+    private func noteGroup(_ group: SpendGlanceNotesGroup, sections: SpendGlanceNoteSections) -> some View {
+        switch group {
+        case .estimate:
+            noteCard(title: String.localized("About the estimate"), count: nil) {
+                VStack(alignment: .leading, spacing: 3) {
+                    ForEach(sections.estimate) { line in
+                        noteLine(line)
+                    }
+                }
+            }
+            .accessibilityIdentifier("spend-glance-notes-estimate")
+        case .unread:
+            noteCard(
+                title: String.localized("No usage data read"),
+                count: SpendGlanceNotesLayout.unreadHeadingShowsCount ? sections.unread.count : nil
+            ) {
+                SpendNoteChipFlow(spacing: 6, lineSpacing: 6) {
+                    ForEach(Array(sections.unread.enumerated()), id: \.offset) { _, name in
+                        unreadChip(name)
+                    }
+                }
+            }
+            .accessibilityIdentifier("spend-glance-notes-unread")
         }
+    }
+
+    /// A heading that reads as a heading, and the lines under it. The two
+    /// groups stay apart so the estimate is not another paragraph above a
+    /// column of names.
+    private func noteCard<Content: View>(
+        title: String,
+        count: Int?,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 6) {
+                Text(verbatim: title)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(.primary)
+                if let count {
+                    Text(verbatim: String(count))
+                        .font(.system(size: 11, weight: .semibold))
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 1)
+                        .background(Color.primary.opacity(0.08), in: Capsule())
+                }
+                Spacer(minLength: 0)
+            }
+            content()
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(Color.primary.opacity(0.04))
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+                .allowsHitTesting(false)
+        }
+    }
+
+    @ViewBuilder
+    private func noteLine(_ line: SpendGlanceNote) -> some View {
+        let row = HStack(alignment: .firstTextBaseline, spacing: 6) {
+            Text(verbatim: "·")
+                .font(.system(size: SpendQuietCopy.pointSize))
+                .foregroundStyle(.tertiary)
+            quietText(line.text)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        if let help = line.help, !help.isEmpty {
+            row.help(help)
+        } else {
+            row
+        }
+    }
+
+    private func unreadChip(_ name: String) -> some View {
+        Text(verbatim: name)
+            .font(.system(size: 11, weight: .medium))
+            .foregroundStyle(.primary)
+            .lineLimit(1)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
+            .background(Color.primary.opacity(0.07), in: Capsule())
     }
 
     /// A sentence that says nothing was measured. Smaller and secondary, so
@@ -1088,7 +1164,8 @@ struct TokenSpendView: View {
     // MARK: - What the figures are not
 
     // The sentences live in `SpendGlanceNotes`. The page shows them behind
-    // one line, collapsed until the reader opens it.
+    // one line, collapsed until the reader opens it. Opened, the estimate
+    // and the unread sources are two groups, and the names wrap.
 
     // MARK: - Formatting
 
@@ -1230,13 +1307,134 @@ struct SpendGlanceNote: Equatable, Identifiable {
 }
 
 /// The opened notes: the estimate, then each source that produced no records.
-/// The unread names stay a list. Joining them onto one line is what made the
-/// footer a wall of text.
+/// The page wraps the names as chips. Joining them into one sentence was a
+/// wall of text, and one name per line made the same wall vertical.
 struct SpendGlanceNoteSections: Equatable {
     var estimate: [SpendGlanceNote]
     var unread: [String]
 
     var isEmpty: Bool { estimate.isEmpty && unread.isEmpty }
+}
+
+/// Which opened group is on screen, and how the unread names share a line.
+enum SpendGlanceNotesGroup: String, Equatable, Hashable, Sendable {
+    case estimate
+    case unread
+}
+
+enum SpendGlanceNotesLayout {
+    /// Names wrap as chips. One name per line is the column in the screenshot.
+    static let unreadNamesAreChips = true
+    /// The unread heading carries the count, so the list has a size before it is read.
+    static let unreadHeadingShowsCount = true
+    /// Estimate, then the sources that produced no records.
+    static let sectionOrder: [SpendGlanceNotesGroup] = [.estimate, .unread]
+
+    static func groups(hasEstimate: Bool, hasUnread: Bool) -> [SpendGlanceNotesGroup] {
+        sectionOrder.filter { group in
+            switch group {
+            case .estimate: hasEstimate
+            case .unread: hasUnread
+            }
+        }
+    }
+
+    struct ChipRow: Equatable, Sendable {
+        var indexes: [Int]
+    }
+
+    /// How names share a line. A width of zero or less puts each name on its
+    /// own line: there is no row to share. A name wider than the row still
+    /// takes a line, so nothing is dropped.
+    static func chipRows(itemWidths: [CGFloat], containerWidth: CGFloat, spacing: CGFloat) -> [ChipRow] {
+        guard !itemWidths.isEmpty else { return [] }
+        var rows: [ChipRow] = []
+        var current: [Int] = []
+        var used: CGFloat = 0
+        for (index, item) in itemWidths.enumerated() {
+            let gap: CGFloat = current.isEmpty ? 0 : spacing
+            let fits = containerWidth <= 0
+                ? current.isEmpty
+                : used + gap + item <= containerWidth || current.isEmpty
+            if fits {
+                current.append(index)
+                used += gap + item
+            } else {
+                rows.append(ChipRow(indexes: current))
+                current = [index]
+                used = item
+            }
+        }
+        if !current.isEmpty {
+            rows.append(ChipRow(indexes: current))
+        }
+        return rows
+    }
+}
+
+/// Chips that wrap onto the next line. The row breaks are `SpendGlanceNotesLayout.chipRows`.
+private struct SpendNoteChipFlow: Layout {
+    var spacing: CGFloat = 6
+    var lineSpacing: CGFloat = 6
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
+        guard !sizes.isEmpty else { return CGSize(width: proposal.width ?? 0, height: 0) }
+        let widths = sizes.map(\.width)
+        // A nil or infinite proposal is "as wide as the chips need", not the
+        // largest finite number. That number is finite, and treating it as a
+        // container would report a row wider than the window.
+        let width: CGFloat
+        if let offered = proposal.width, offered.isFinite {
+            width = offered
+        } else {
+            width = widths.reduce(0, +) + spacing * CGFloat(max(widths.count - 1, 0))
+        }
+        let rows = SpendGlanceNotesLayout.chipRows(
+            itemWidths: widths,
+            containerWidth: max(width, 0),
+            spacing: spacing
+        )
+        let height = Self.height(of: rows, sizes: sizes, lineSpacing: lineSpacing)
+        return CGSize(width: max(width, 0), height: height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
+        let width = bounds.width > 0 ? bounds.width : (proposal.width ?? 0)
+        let rows = SpendGlanceNotesLayout.chipRows(
+            itemWidths: sizes.map(\.width),
+            containerWidth: width,
+            spacing: spacing
+        )
+        var y = bounds.minY
+        for row in rows {
+            var x = bounds.minX
+            var rowHeight: CGFloat = 0
+            for index in row.indexes {
+                let size = sizes[index]
+                subviews[index].place(
+                    at: CGPoint(x: x, y: y),
+                    anchor: .topLeading,
+                    proposal: ProposedViewSize(size)
+                )
+                x += size.width + spacing
+                rowHeight = max(rowHeight, size.height)
+            }
+            y += rowHeight + lineSpacing
+        }
+    }
+
+    private static func height(of rows: [SpendGlanceNotesLayout.ChipRow], sizes: [CGSize], lineSpacing: CGFloat) -> CGFloat {
+        guard !rows.isEmpty else { return 0 }
+        var total: CGFloat = 0
+        for (offset, row) in rows.enumerated() {
+            let rowHeight = row.indexes.map { sizes[$0].height }.max() ?? 0
+            total += rowHeight
+            if offset + 1 < rows.count { total += lineSpacing }
+        }
+        return total
+    }
 }
 
 enum SpendGlanceNotes {
