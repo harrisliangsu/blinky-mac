@@ -1,3 +1,6 @@
+"Runs dim usage --json with the CLI's saved login. Blinky does not read or store its credentials." = "运行 dim usage --json，沿用 CLI 已保存的登录。Blinky 不会读取或保存其中的凭据。";
+"Uses the login saved by dim auth login." = "使用 dim auth login 保存的登录。";
+
 /* 菜单栏 */
 "Settings…" = "设置…";
 "Quit Blinky" = "退出 Blinky";

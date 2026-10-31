@@ -541,8 +541,8 @@ struct UsageLedger: Sendable, Equatable {
 
     /// A span's tokens and money, and how many of the tokens had no price —
     /// so a span with none priced can say so rather than show `$0.00`.
-    func total(overLast count: Int) -> (tokens: Int, cost: Double, unpriced: Int) {
-        recent(count).reduce(into: (0, 0.0, 0)) {
+    func total(overLast count: Int, now: Date = Date()) -> (tokens: Int, cost: Double, unpriced: Int) {
+        recent(count, now: now).reduce(into: (0, 0.0, 0)) {
             $0.0 += $1.tokens
             $0.1 += $1.cost
             $0.2 += $1.unpricedTokens
@@ -598,8 +598,8 @@ struct UsageLedger: Sendable, Equatable {
     /// around them would state a rate for part of the work as though it were
     /// the whole; so would a store that cannot prove its counts are complete.
     /// Nil then, and nil with no input at all.
-    func cacheHitRate(overLast count: Int) -> Double? {
-        guard case .measured(let tally) = cacheReading(in: recent(count)) else { return nil }
+    func cacheHitRate(overLast count: Int, now: Date = Date()) -> Double? {
+        guard case .measured(let tally) = cacheReading(in: recent(count, now: now)) else { return nil }
         let input = tally.input + tally.cacheWrite + tally.cacheRead
         guard input > 0 else { return nil }
         return Double(tally.cacheRead) / Double(input)
@@ -753,8 +753,8 @@ struct UsageLedger: Sendable, Equatable {
     /// The model most of the work went through, and how much of it. Falls back
     /// to the whole history when the recent window is quiet, so the line
     /// doesn't vanish after a week off.
-    func topModel(overLast count: Int) -> (name: String, share: Double)? {
-        let recent = recent(count)
+    func topModel(overLast count: Int, now: Date = Date()) -> (name: String, share: Double)? {
+        let recent = recent(count, now: now)
         let window = recent.contains { $0.tokens > 0 } ? recent : days
 
         var totals: [String: Int] = [:]

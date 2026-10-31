@@ -1011,7 +1011,7 @@ final class UsageStore {
                 needsRefresh = true
                 continue
             }
-            if reading.windows.contains(where: { ($0.resetsAt ?? .distantFuture) <= now }) {
+            if reading.current(at: now)?.windows.count != reading.windows.count {
                 needsRefresh = true
             }
             alerts.observe(reading, raw: reading, as: account)
