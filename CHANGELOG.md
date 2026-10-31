@@ -12,7 +12,7 @@ bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
 ## 1.5.34
 
-- **DimAgent subscription quotas.** Turn on DimAgent under Settings → Providers to show the plan credits, add-on packs, token windows and web-search allowance the signed-in Dim CLI reports.
+- **DimAgent subscription quotas.** Turn on DimAgent under Settings → Providers to show the plan credits, add-on packs, token windows and web-search allowance the signed-in Dim CLI reports. [#96](https://github.com/harrisliangsu/blinky-mac/pull/96)
 
 ## 1.5.33
 

@@ -8,7 +8,7 @@ Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文
 
 ## 1.5.34
 
-- **新增 DimAgent 订阅额度。** 在「设置 → 供应商」打开 DimAgent 后，面板显示已登录的 Dim CLI 报告的套餐额度、加量包、token 窗口和网页搜索额度。
+- **新增 DimAgent 订阅额度。** 在「设置 → 供应商」打开 DimAgent 后，面板显示已登录的 Dim CLI 报告的套餐额度、加量包、token 窗口和网页搜索额度。[#96](https://github.com/harrisliangsu/blinky-mac/pull/96)
 
 ## 1.5.33
 
