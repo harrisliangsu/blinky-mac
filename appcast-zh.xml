@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.33</title>
-            <pubDate>Wed, 28 Oct 2026 07:55:32 -0000</pubDate>
-            <sparkle:version>1.5.33</sparkle:version>
-            <sparkle:shortVersionString>1.5.33</sparkle:shortVersionString>
+            <title>1.5.34</title>
+            <pubDate>Sat, 31 Oct 2026 09:28:07 -0000</pubDate>
+            <sparkle:version>1.5.34</sparkle:version>
+            <sparkle:shortVersionString>1.5.34</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.33</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.34</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.33</h2><ul><li><strong>「关于这些数字」分成估价和未读取用量两块。</strong> 在「Token 消耗」窗口底部展开这一行后，估价说明和未读取到用量各自成一块；未读取到的来源排成可换行的标签，标题旁写出个数。<a href="https://github.com/harrisliangsu/blinky-mac/pull/95">#95</a></li><li><strong>调度中心可以点选「Token 消耗」。</strong> 三指上滑后点击「Token 消耗」，该窗口会来到前面；点击其他应用的窗口后，「Token 消耗」仍会退到后面。<a href="https://github.com/harrisliangsu/blinky-mac/pull/95">#95</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.33">在 GitHub 查看更新说明</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.33/Blinky-1.5.33.zip"
-                       length="23367725"
+</style><h2>Blinky 1.5.34</h2><ul><li><strong>新增 DimAgent 订阅额度。</strong> 在「设置 → 供应商」打开 DimAgent 后，面板显示已登录的 Dim CLI 报告的套餐额度、加量包、token 窗口和网页搜索额度。<a href="https://github.com/harrisliangsu/blinky-mac/pull/96">#96</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.34">在 GitHub 查看更新说明</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.34/Blinky-1.5.34.zip"
+                       length="23427545"
                        type="application/octet-stream"
-                       sparkle:edSignature="mZWmhHc5+Z7IOMIH0t7QFLy9z0IQugMHiN1qPkzMtPvPFMUP5H8U6gm5oaF6kayA9Ksah3jKSypr1cGMZNCWAA==" />
+                       sparkle:edSignature="YTp/A9+OJyHu6gFFI144JtODwyFQ1qkZiyWpQCRGya/7hE/revznd+nUlo/lXCa2gRpcQc5ReipOgj6fkSGtCg==" />
         </item>
     </channel>
 </rss>

@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.33</title>
-            <pubDate>Wed, 28 Oct 2026 07:55:32 -0000</pubDate>
-            <sparkle:version>1.5.33</sparkle:version>
-            <sparkle:shortVersionString>1.5.33</sparkle:shortVersionString>
+            <title>1.5.34</title>
+            <pubDate>Sat, 31 Oct 2026 09:28:07 -0000</pubDate>
+            <sparkle:version>1.5.34</sparkle:version>
+            <sparkle:shortVersionString>1.5.34</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.33</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.34</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.33</h2><ul><li><strong>About these figures is two groups.</strong> Opening that line at the bottom of the Token spend window shows the estimate and the sources with no usage data as separate groups; those source names wrap, and the heading shows how many there are. <a href="https://github.com/harrisliangsu/blinky-mac/pull/95">#95</a></li><li><strong>Mission Control can select the Token spend window.</strong> A three-finger swipe up, then a click on that window, brings it forward. Clicking another app&#x27;s window still leaves Token spend behind. <a href="https://github.com/harrisliangsu/blinky-mac/pull/95">#95</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.33">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.33/Blinky-1.5.33.zip"
-                       length="23367725"
+</style><h2>Blinky 1.5.34</h2><ul><li><strong>DimAgent subscription quotas.</strong> Turn on DimAgent under Settings → Providers to show the plan credits, add-on packs, token windows and web-search allowance the signed-in Dim CLI reports. <a href="https://github.com/harrisliangsu/blinky-mac/pull/96">#96</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.34">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.34/Blinky-1.5.34.zip"
+                       length="23427545"
                        type="application/octet-stream"
-                       sparkle:edSignature="mZWmhHc5+Z7IOMIH0t7QFLy9z0IQugMHiN1qPkzMtPvPFMUP5H8U6gm5oaF6kayA9Ksah3jKSypr1cGMZNCWAA==" />
+                       sparkle:edSignature="YTp/A9+OJyHu6gFFI144JtODwyFQ1qkZiyWpQCRGya/7hE/revznd+nUlo/lXCa2gRpcQc5ReipOgj6fkSGtCg==" />
         </item>
     </channel>
 </rss>
