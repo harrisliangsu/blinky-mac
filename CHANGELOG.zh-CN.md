@@ -6,6 +6,10 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.34
+
+- **新增 DimAgent 订阅额度。** 在「设置 → 供应商」打开 DimAgent 后，面板显示已登录的 Dim CLI 报告的套餐额度、加量包、token 窗口和网页搜索额度。
+
 ## 1.5.33
 
 - **「关于这些数字」分成估价和未读取用量两块。** 在「Token 消耗」窗口底部展开这一行后，估价说明和未读取到用量各自成一块；未读取到的来源排成可换行的标签，标题旁写出个数。[#95](https://github.com/harrisliangsu/blinky-mac/pull/95)

@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.34
+
+- **DimAgent subscription quotas.** Turn on DimAgent under Settings → Providers to show the plan credits, add-on packs, token windows and web-search allowance the signed-in Dim CLI reports.
+
 ## 1.5.33
 
 - **About these figures is two groups.** Opening that line at the bottom of the Token spend window shows the estimate and the sources with no usage data as separate groups; those source names wrap, and the heading shows how many there are. [#95](https://github.com/harrisliangsu/blinky-mac/pull/95)

@@ -1,3 +1,6 @@
+"Runs dim usage --json with the CLI's saved login. Blinky does not read or store its credentials." = "저장된 로그인으로 dim usage --json을 실행합니다. Blinky는 그 자격 증명을 읽거나 저장하지 않습니다.";
+"Uses the login saved by dim auth login." = "dim auth login으로 저장한 로그인을 사용합니다.";
+
 /* Menu bar */
 "Settings…" = "설정…";
 "Quit Blinky" = "Blinky 종료";

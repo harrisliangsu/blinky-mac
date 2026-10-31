@@ -139,6 +139,8 @@ struct UsageWindow: Identifiable, Equatable, Codable, Sendable {
     /// Stable across refreshes, so SwiftUI keeps a row's identity while its
     /// numbers change.
     let id: String
+    /// Provider-reported grant identity, separate from the stable row and any reset date.
+    var cycleID: String?
     let kind: Kind
     /// The model this limit is scoped to, when the provider scopes it to one.
     /// A product name, so it is never translated.
@@ -283,9 +285,11 @@ struct UsageWindow: Identifiable, Equatable, Codable, Sendable {
         isExhausted: Bool = false,
         nextExpiry: Expiry? = nil,
         amounts: Amounts? = nil,
-        label: String? = nil
+        label: String? = nil,
+        cycleID: String? = nil
     ) {
         self.id = id
+        self.cycleID = cycleID
         self.kind = kind
         self.scope = scope
         self.usedFraction = usedFraction
@@ -312,6 +316,7 @@ struct UsageWindow: Identifiable, Equatable, Codable, Sendable {
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
+        cycleID = try container.decodeIfPresent(String.self, forKey: .cycleID)
         kind = try container.decode(Kind.self, forKey: .kind)
         scope = try container.decodeIfPresent(String.self, forKey: .scope)
         usedFraction = try container.decode(Double.self, forKey: .usedFraction)
@@ -338,6 +343,7 @@ struct UsageWindow: Identifiable, Equatable, Codable, Sendable {
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
+        try container.encodeIfPresent(cycleID, forKey: .cycleID)
         try container.encode(kind, forKey: .kind)
         try container.encodeIfPresent(scope, forKey: .scope)
         try container.encode(usedFraction, forKey: .usedFraction)
@@ -352,7 +358,7 @@ struct UsageWindow: Identifiable, Equatable, Codable, Sendable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, kind, scope, usedFraction, windowSeconds, resetsAt
+        case id, cycleID, kind, scope, usedFraction, windowSeconds, resetsAt
         case reportsLength, isExhausted, estimate, nextExpiry, amounts, label
         /// Written by 1.0.9 and earlier. Read, never written.
         case isEstimated
@@ -1036,7 +1042,9 @@ struct ProviderUsage: Identifiable, Equatable, Sendable {
 
     /// The reading as it stands at `now`: windows whose reset has passed are
     /// gone, and a reading whose figures are older than the cache keeps is
-    /// gone entirely. Nil means nothing current survives.
+    /// gone entirely. A profile that sets `expiresWholeBuckets` also drops a
+    /// window whose full-remainder expiry, with no grouped lots, has passed.
+    /// Nil means nothing current survives.
     ///
     /// **Shared by the cache's write path and its read path.** The read path
     /// has always filtered a restored reading this way; the write path did
@@ -1048,7 +1056,14 @@ struct ProviderUsage: Identifiable, Equatable, Sendable {
     func current(at now: Date) -> ProviderUsage? {
         if let observedAt, now.timeIntervalSince(observedAt) > UsageCache.maximumAge { return nil }
 
-        let kept = windows.filter { ($0.resetsAt ?? .distantFuture) > now }
+        let kept = windows.filter { window in
+            guard (window.resetsAt ?? .distantFuture) > now else { return false }
+            if account.provider.profile?.expiresWholeBuckets == true, let expiry = window.nextExpiry,
+               expiry.coversRemainder == true, expiry.lots == nil {
+                return expiry.at > now
+            }
+            return true
+        }
         guard !kept.isEmpty || creditBalance != nil else { return nil }
         guard kept.count != windows.count else { return self }
 

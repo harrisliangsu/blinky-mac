@@ -109,6 +109,11 @@ struct AlertMemory: Codable, Sendable, Equatable {
         /// The reading the previous pass saw, so a turnover can be spotted.
         var fraction = 0.0
         var resetsAt: Date?
+        /// Provider-reported grant identity, separate from the stable row id
+        /// and from any reset date. A change between two known identities
+        /// re-arms the threshold without announcing a reset. Missing on older
+        /// saved memory, and adopted the first time it appears.
+        var cycleID: String?
         /// A candidate turnover waiting for a second live reading.
         ///
         /// Codex can briefly report 0% used without the window having turned
@@ -124,7 +129,7 @@ struct AlertMemory: Codable, Sendable, Equatable {
         var exhaustionBeforeReset = false
 
         enum CodingKeys: String, CodingKey {
-            case announced, fraction, resetsAt, pendingReset
+            case announced, fraction, resetsAt, cycleID, pendingReset
             case exhaustionStages, exhaustionBeforeReset
         }
 
@@ -132,6 +137,7 @@ struct AlertMemory: Codable, Sendable, Equatable {
             announced: Int = 0,
             fraction: Double = 0,
             resetsAt: Date? = nil,
+            cycleID: String? = nil,
             pendingReset: Bool = false,
             exhaustionStages: [String] = [],
             exhaustionBeforeReset: Bool = false
@@ -139,6 +145,7 @@ struct AlertMemory: Codable, Sendable, Equatable {
             self.announced = announced
             self.fraction = fraction
             self.resetsAt = resetsAt
+            self.cycleID = cycleID
             self.pendingReset = pendingReset
             self.exhaustionStages = exhaustionStages
             self.exhaustionBeforeReset = exhaustionBeforeReset
@@ -149,6 +156,7 @@ struct AlertMemory: Codable, Sendable, Equatable {
             announced = try container.decodeIfPresent(Int.self, forKey: .announced) ?? 0
             fraction = try container.decodeIfPresent(Double.self, forKey: .fraction) ?? 0
             resetsAt = try container.decodeIfPresent(Date.self, forKey: .resetsAt)
+            cycleID = try container.decodeIfPresent(String.self, forKey: .cycleID)
             pendingReset = try container.decodeIfPresent(Bool.self, forKey: .pendingReset) ?? false
             exhaustionStages = try container.decodeIfPresent([String].self, forKey: .exhaustionStages) ?? []
             exhaustionBeforeReset = try container.decodeIfPresent(Bool.self, forKey: .exhaustionBeforeReset) ?? false
@@ -159,6 +167,7 @@ struct AlertMemory: Codable, Sendable, Equatable {
             try container.encode(announced, forKey: .announced)
             try container.encode(fraction, forKey: .fraction)
             try container.encodeIfPresent(resetsAt, forKey: .resetsAt)
+            try container.encodeIfPresent(cycleID, forKey: .cycleID)
             try container.encode(pendingReset, forKey: .pendingReset)
             try container.encode(exhaustionStages, forKey: .exhaustionStages)
             try container.encode(exhaustionBeforeReset, forKey: .exhaustionBeforeReset)
@@ -357,9 +366,10 @@ struct AlertMemory: Codable, Sendable, Equatable {
         // never one of them. The percentage track above still sees every limit.
         let exhaustionWindows = Set(ExhaustionEstimate.windows(in: reading.windows).map(\.id))
 
-        for window in reading.windows {
-            // A previously live snapshot can outlast its window between polls.
-            guard window.resetsAt.map({ $0 > now }) ?? true else { continue }
+        // `current` drops a window whose reset has passed, and a whole-bucket
+        // expiry the profile treats as the window's end. A previously live
+        // snapshot can outlast its window between polls.
+        for window in reading.current(at: now)?.windows ?? [] {
             let seen = record.windows[window.id]
             // First sighting starts at nothing announced, so a limit that is
             // *already* past the line is said once, now.
@@ -377,7 +387,18 @@ struct AlertMemory: Codable, Sendable, Equatable {
             // figure that has been true for days.
             var memory = seen ?? Window()
 
-            if let seen {
+            if let cycle = window.cycleID, let previous = seen?.cycleID, cycle != previous {
+                // A new grant on the same row. Re-arm the threshold and the
+                // time-to-empty notices without calling the change a reset,
+                // and take this reading as the new baseline so the drop from
+                // the old grant is not later read as a refill.
+                memory.announced = 0
+                memory.pendingReset = false
+                memory.exhaustionStages = []
+                memory.exhaustionBeforeReset = false
+                memory.fraction = window.usedFraction
+                memory.resetsAt = window.resetsAt
+            } else if let seen {
                 let jump: TimeInterval = {
                     guard let new = window.resetsAt, let old = seen.resetsAt else { return 0 }
                     return new.timeIntervalSince(old)
@@ -487,6 +508,7 @@ struct AlertMemory: Codable, Sendable, Equatable {
                 )
             }
 
+            if let cycle = window.cycleID { memory.cycleID = cycle }
             record.windows[window.id] = memory
         }
 
