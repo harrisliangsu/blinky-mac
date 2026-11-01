@@ -126,31 +126,6 @@ struct ResetCardRedeemTests {
         #expect(past.rowNote == nil)
         #expect(past.ask == .askCodex)
 
-        let soon = Date(timeIntervalSince1970: 1_800_000_000)
-        let later = Date(timeIntervalSince1970: 1_900_000_000)
-        let inventory = ZhipuResetInventory(
-            fiveHour: [
-                ZhipuResetCard(id: "11", recordID: 11, grantType: "GLOBAL", expiresAt: later),
-                ZhipuResetCard(id: "9", recordID: 9, grantType: "", expiresAt: soon),
-            ],
-            weekly: [],
-            serviceHost: "https://z.ai"
-        )
-        let hour = ResetCouponLine.zhipu(.fiveHourCard, inventory: inventory, canRedeem: true)
-        #expect(hour.count == "2 available")
-        #expect(hour.cardID == "9")
-        #expect(hour.ask == .askZhipu(.fiveHourCard, cardID: "9"))
-        #expect(hour.useTitle == "Use a 5-hour reset card")
-        #expect(hour.title == "5-hour reset cards")
-        #expect(hour.rowNote == nil)
-        #expect(hour.help == nil)
-        #expect(hour.expiry != nil)
-        let week = ResetCouponLine.zhipu(.weeklyCard, inventory: inventory, canRedeem: true)
-        #expect(week.count == "None")
-        #expect(week.ask == nil)
-        #expect(!week.hasDetail)
-        #expect(week.rowNote == nil)
-
         LocalizationSource.use(.chineseSimplified)
         let zh = ResetCouponLine.codex(.available(count: 1, nextExpiry: expiry), canRedeem: true, now: now)
         #expect(zh.title == "重置卡")
@@ -158,6 +133,115 @@ struct ResetCardRedeemTests {
         #expect(zh.title.contains("额度重置") == false)
         #expect(String.localized("Use a Codex reset card") == "使用一张 Codex 重置卡")
         #expect(String.localized("Use one Codex reset card?") == "要使用一张 Codex 重置卡吗？")
+        #expect(String.localized("The reset card was used.") == "已使用这张重置卡。")
+        #expect(!String.localized("The reset card was used.").contains("券"))
+    }
+
+    @MainActor
+    @Test("Zhipu and z.ai share one row for both kinds")
+    func zhipuRowIsOneLine() {
+        let held = LocalizationSource.hold(.english)
+        defer { held.end() }
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        let soon = Date(timeIntervalSince1970: 1_800_000_000)
+        let later = Date(timeIntervalSince1970: 1_900_000_000)
+        let weeklySooner = Date(timeIntervalSince1970: 1_750_000_000)
+        let hour = ZhipuResetCard(id: "9", recordID: 9, grantType: "", expiresAt: soon)
+        let hourLater = ZhipuResetCard(id: "11", recordID: 11, grantType: "GLOBAL", expiresAt: later)
+        let week = ZhipuResetCard(id: "3", recordID: 3, grantType: "GLOBAL", expiresAt: weeklySooner)
+
+        let both = ZhipuResetInventory(
+            fiveHour: [hourLater, hour],
+            weekly: [week],
+            serviceHost: "https://z.ai"
+        )
+        let line = ResetCouponLine.zhipu(both, canRedeem: true, now: now)
+        #expect(line?.slot == .zhipu)
+        #expect(line?.title == "Reset cards")
+        #expect(line?.count == "5h ×2 · Weekly ×1")
+        #expect(line?.expiry == nil)
+        #expect(line?.ask == nil)
+        #expect(line?.useTitle == nil)
+        #expect(line?.rowNote == UsageDetailCard.nextExpiryText(until: weeklySooner, now: now))
+        #expect(line?.rowNote?.hasPrefix("Next expires in ") == true)
+        #expect(line?.help?.contains("apply a reset card yourself") == true)
+        #expect(line?.help?.contains("5-hour quota returns to full") == true)
+        #expect(line?.help?.contains("weekly quota returns to full") == true)
+        #expect(line?.hasDetail == true)
+        #expect(line?.choices.map(\.ask) == [
+            .askZhipu(.fiveHourCard, cardID: "9"),
+            .askZhipu(.weeklyCard, cardID: "3"),
+        ])
+        #expect(line?.choices.map(\.title) == [
+            "Use a 5-hour reset card",
+            "Use a weekly reset card",
+        ])
+        #expect(UsageDetailCard.zhipuSummary(both, now: now)?.hasPrefix("5h ×2 · Weekly ×1 · ") == true)
+        #expect(UsageDetailCard.zhipuSummary(both, now: now)?.hasSuffix(UsageDetailCard.expiryText(weeklySooner)) == true)
+
+        let hoursOnly = ZhipuResetInventory(
+            fiveHour: [hourLater, hour],
+            weekly: [],
+            serviceHost: "https://api.z.ai"
+        )
+        let oneKind = ResetCouponLine.zhipu(hoursOnly, canRedeem: true, now: now)
+        #expect(oneKind?.count == "5h ×2")
+        #expect(oneKind?.choices.map(\.ask) == [.askZhipu(.fiveHourCard, cardID: "9")])
+        #expect(oneKind?.rowNote == UsageDetailCard.nextExpiryText(until: soon, now: now))
+        #expect(oneKind?.count.contains("Weekly") == false)
+
+        let empty = ZhipuResetInventory(fiveHour: [], weekly: [], serviceHost: "https://z.ai")
+        #expect(ResetCouponLine.zhipu(empty, canRedeem: true, now: now) == nil)
+        #expect(UsageDetailCard.zhipuAvailabilityText(empty) == nil)
+        #expect(UsageDetailCard.zhipuSummary(empty) == nil)
+
+        let blocked = ResetCouponLine.zhipu(both, canRedeem: false, now: now)
+        #expect(blocked?.choices.isEmpty == true)
+        #expect(blocked?.help?.isEmpty == false)
+        #expect(blocked?.hasDetail == true)
+        #expect(blocked?.rowNote != nil)
+
+        let past = ZhipuResetInventory(
+            fiveHour: [ZhipuResetCard(id: "1", recordID: 1, grantType: "", expiresAt: now.addingTimeInterval(-60))],
+            weekly: [week],
+            serviceHost: "https://z.ai"
+        )
+        let stale = ResetCouponLine.zhipu(past, canRedeem: true, now: now)
+        #expect(stale?.count == "5h ×1 · Weekly ×1")
+        #expect(stale?.rowNote == UsageDetailCard.nextExpiryText(until: weeklySooner, now: now))
+
+        #expect(ZhipuResetCardGate.inventory(
+            both, provider: .zai, showsZaiResetCards: true, showsZhipuResetCards: false
+        ) == both)
+        #expect(ZhipuResetCardGate.inventory(
+            both, provider: .zai, showsZaiResetCards: false, showsZhipuResetCards: true
+        ) == nil)
+        #expect(ZhipuResetCardGate.inventory(
+            both, provider: .glmCoding, showsZaiResetCards: false, showsZhipuResetCards: true
+        ) == both)
+        #expect(ZhipuResetCardGate.inventory(
+            both, provider: .glmCoding, showsZaiResetCards: true, showsZhipuResetCards: false
+        ) == nil)
+        #expect(ZhipuResetCardGate.inventory(
+            both, provider: .codex, showsZaiResetCards: true, showsZhipuResetCards: true
+        ) == nil)
+        #expect(ZhipuResetCardGate.inventory(
+            nil, provider: .zai, showsZaiResetCards: true, showsZhipuResetCards: true
+        ) == nil)
+
+        LocalizationSource.use(.chineseSimplified)
+        let zh = ResetCouponLine.zhipu(both, canRedeem: true, now: now)
+        #expect(zh?.title == "重置卡")
+        #expect(zh?.count == "5h ×2 · 每周 ×1")
+        #expect(zh?.rowNote?.contains("最近一张") == true)
+        #expect(zh?.help?.contains("重置卡") == true)
+        #expect(zh?.help?.contains("券") == false)
+        #expect(zh?.choices.map(\.title) == [
+            "使用一张 5 小时重置卡",
+            "使用一张每周重置卡",
+        ])
+        #expect(String.localized("Use one 5-hour reset card?") == "要使用一张 5 小时重置卡吗？")
+        #expect(String.localized("Use one weekly reset card?") == "要使用一张每周重置卡吗？")
     }
 
     @Test("The detail stays inside the card, below the row or above it")

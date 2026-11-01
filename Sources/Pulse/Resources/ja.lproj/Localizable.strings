@@ -1457,30 +1457,30 @@
 
 /* 1.5.15 */
 "Break down by" = "内訳";
-"5-hour reset cards" = "5時間のリセット券";
-"Weekly reset cards" = "週間のリセット券";
-"Use a 5-hour reset card" = "5時間のリセット券を使う";
-"Use a weekly reset card" = "週間のリセット券を使う";
+"5-hour reset cards" = "5時間のリセットカード";
+"Weekly reset cards" = "週間のリセットカード";
+"Use a 5-hour reset card" = "5時間のリセットカードを使う";
+"Use a weekly reset card" = "週間のリセットカードを使う";
 "Use a Codex reset card" = "Codex のリセットカードを使う";
-"Use this card" = "この券を使う";
-"Use one 5-hour reset card?" = "5時間のリセット券を 1 枚使いますか？";
+"Use this card" = "このカードを使う";
+"Use one 5-hour reset card?" = "5時間のリセットカードを 1 枚使いますか？";
 "The 5-hour quota returns to full, and its next reset is counted from now." = "5時間の利用枠は全額に戻り、次のリセットは今から数えます。";
-"Use one weekly reset card?" = "週間のリセット券を 1 枚使いますか？";
+"Use one weekly reset card?" = "週間のリセットカードを 1 枚使いますか？";
 "The weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "週間の利用枠は全額に戻ります。5時間の利用枠も戻り、どちらも次のリセットは今から数えます。";
 "Use one Codex reset card?" = "Codex のリセットカードを 1 枚使いますか？";
 "Codex resets the limits this card covers." = "Codex は、このカードが対象とする利用枠をリセットします。";
-"The reset card was used." = "リセット券を使いました。";
-"No reset card is available." = "使えるリセット券はありません。";
+"The reset card was used." = "リセットカードを使いました。";
+"No reset card is available." = "使えるリセットカードはありません。";
 "Nothing to reset." = "リセットする利用枠はありません。";
-"That reset card was already used." = "このリセット券はすでに使われています。";
-"Could not use the reset card." = "リセット券を使えませんでした。";
-"Could not use the reset card here. The console is open so you can use it there." = "ここではリセット券を使えませんでした。コンソールを開いたので、そちらで使えます。";
+"That reset card was already used." = "このリセットカードはすでに使われています。";
+"Could not use the reset card." = "リセットカードを使えませんでした。";
+"Could not use the reset card here. The console is open so you can use it there." = "ここではリセットカードを使えませんでした。コンソールを開いたので、そちらで使えます。";
 
 /* 1.5.17 */
 "About these figures" = "これらの数字について";
 "Open the Token spend window" = "トークン使用量のウィンドウを開く";
 "Open the Blinky window" = "Blinky のメインウィンドウを開く";
-"Reset card details" = "リセット券の詳細";
+"Reset card details" = "リセットカードの詳細";
 
 /* 1.5.18 */
 "None" = "なし";
@@ -1508,3 +1508,9 @@
 "Signed in. The CLI login is used instead." = "サインイン済み。代わりに CLI のログインが使われます。";
 "Reads ~/.grok/auth.json while that login is still good, and can keep its own login from Settings when the CLI's is missing or refused. Blinky does not write the CLI's file. No Keychain prompt." = "~/.grok/auth.json のログインが有効なあいだはそれを読み、欠損または拒否されたときは設定でサインインしたログインを保持できます。Blinky は CLI のファイルを書き換えず、キーチェーンの確認もありません。";
 "Signed in. Blinky uses this when the CLI login is missing or refused." = "サインイン済み。CLI のログインが無い、または拒否されたときに Blinky はこれを使います。";
+
+/* 1.5.36 */
+"5h ×%@" = "5h ×%@";
+"Weekly ×%@" = "週間 ×%@";
+"You apply a reset card yourself. For a 5-hour card, the 5-hour quota returns to full, and its next reset is counted from now. For a weekly card, the weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "リセットカードは自分で使います。5時間のカードは、5時間の利用枠を全額に戻し、次のリセットは今から数えます。週間のカードは、週間の利用枠を全額に戻します。5時間の利用枠も戻り、どちらも次のリセットは今から数えます。";
+"The usage card shows how many 5-hour and weekly reset cards are left, and when the next one expires." = "使用量カードに、残っている 5 時間と週間のリセットカードの枚数と、次に期限を迎えるカードを表示します。";

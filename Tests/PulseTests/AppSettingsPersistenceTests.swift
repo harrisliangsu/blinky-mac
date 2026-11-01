@@ -48,6 +48,8 @@ struct AppSettingsPersistenceTests {
             ("settings.snapsToEdges", \.snapsToEdges, false),
             ("settings.liquidDocking", \.liquidDocking, true),
             ("settings.showsCodexResetCredits", \.showsCodexResetCredits, true),
+            ("settings.showsZaiResetCards", \.showsZaiResetCards, false),
+            ("settings.showsZhipuResetCards", \.showsZhipuResetCards, false),
             ("settings.qoderShowsAmounts", \.qoderShowsAmounts, true),
             ("settings.usesGlass", \.usesGlass, true),
             ("settings.autoCollapse", \.autoCollapse, false),
@@ -309,6 +311,8 @@ struct AppSettingsPersistenceTests {
         first.recapMonthlyPrice = 20
         first.recapHidesProjects = true
         first.showsCodexResetCredits = true
+        first.showsZaiResetCards = false
+        first.showsZhipuResetCards = false
         first.ringColourScheme = .gradient
         first.celebratesReset = true
         first.celebratesHourlyReset = true
@@ -413,6 +417,8 @@ struct AppSettingsPersistenceTests {
         #expect(back.recapMonthlyPrice == 20)
         #expect(back.recapHidesProjects)
         #expect(back.showsCodexResetCredits)
+        #expect(back.showsZaiResetCards == false)
+        #expect(back.showsZhipuResetCards == false)
         #expect(back.balanceBases == ["newAPI": "budget"])
         #expect(back.balanceBudgets == ["newAPI": 10])
         #expect(back.detailedCards == ["codex"])
@@ -472,6 +478,11 @@ struct AppSettingsPersistenceTests {
         #expect(back.primerHours == .default)
         #expect(back.wantsAlerts)
         #expect(back.providersListOrder == .name)
+        #expect(back.showsZaiResetCards)
+        #expect(back.showsZhipuResetCards)
+        #expect(fresh.showsZaiResetCards)
+        #expect(fresh.showsZhipuResetCards)
+        #expect(back.showsCodexResetCredits == false)
     }
 
     @Test("An unknown Providers page order is alphabetical")

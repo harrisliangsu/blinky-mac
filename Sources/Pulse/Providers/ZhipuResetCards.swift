@@ -70,6 +70,13 @@ struct ZhipuResetInventory: Equatable, Sendable {
         cards(for: kind).min { $0.expiresAt < $1.expiresAt }
     }
 
+    /// The card that expires first among those still ahead of `now`.
+    /// The row's note and the menu's date use it. A date that has already
+    /// passed is not the next one.
+    func soonestCard(after now: Date = .distantPast) -> ZhipuResetCard? {
+        (fiveHour + weekly).filter { $0.expiresAt > now }.min { $0.expiresAt < $1.expiresAt }
+    }
+
     func card(_ kind: ZhipuResetKind, id: String) -> ZhipuResetCard? {
         cards(for: kind).first { $0.id == id }
     }

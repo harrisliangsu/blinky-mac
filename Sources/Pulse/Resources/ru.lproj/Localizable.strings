@@ -1500,3 +1500,9 @@
 "Signed in. The CLI login is used instead." = "Вход выполнен. Вместо него используется вход CLI.";
 "Reads ~/.grok/auth.json while that login is still good, and can keep its own login from Settings when the CLI's is missing or refused. Blinky does not write the CLI's file. No Keychain prompt." = "Пока вход действителен, читает ~/.grok/auth.json; если его нет или он отклонён, может хранить собственный вход из настроек. Blinky не записывает файл CLI и не запрашивает связку ключей.";
 "Signed in. Blinky uses this when the CLI login is missing or refused." = "Вход выполнен. Blinky использует его, когда вход CLI отсутствует или отклонён.";
+
+/* 1.5.36 */
+"5h ×%@" = "5h ×%@";
+"Weekly ×%@" = "Неделя ×%@";
+"You apply a reset card yourself. For a 5-hour card, the 5-hour quota returns to full, and its next reset is counted from now. For a weekly card, the weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "Карту сброса применяете вы сами. Карта на 5 часов: пятичасовой лимит снова становится полным, и следующий сброс считается от этого момента. Недельная карта: недельный лимит снова становится полным. Пятичасовой лимит восстанавливается вместе с ним, и оба срока сброса считаются от этого момента.";
+"The usage card shows how many 5-hour and weekly reset cards are left, and when the next one expires." = "Карточка расхода показывает, сколько осталось карт на 5 часов и недельных карт и когда истекает ближайшая.";

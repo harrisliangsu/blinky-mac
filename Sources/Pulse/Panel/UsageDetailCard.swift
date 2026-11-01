@@ -79,18 +79,20 @@ enum DetailCardLayout {
     /// limits (Codex adds one group per model with its own limits), so this
     /// budgets for more than are on screen today. Codex also adds the reset
     /// intel block; that height is in the budget before any card opens, so
-    /// opening one does not resize the window. The opt-in reset-card row is
-    /// the count and, when a card expires, a second line. The explanation
-    /// and the use button open in a panel that stays inside the card, so
-    /// they do not add a row and the button is not clipped.
+    /// opening one does not resize the window. The reset-card row is the
+    /// count and, when a card expires, a second line. Codex, Zhipu and z.ai
+    /// each draw at most one. The explanation and the use controls open in a
+    /// panel that stays inside the card, so they do not add a row and the
+    /// button is not clipped.
     static var maximumHeight: CGFloat {
         height(forWindows: 6, footnote: true) + codexResetCardHeight + codexIntelHeight
     }
 
-    /// The opt-in reset-card row on a Codex card: the title, and the expiry
-    /// line under it. Budgeted whether or not the switch is on and whether
-    /// or not a card has an expiry, because the frame is one size for every
-    /// card. The mark's panel is an overlay and adds nothing here.
+    /// One reset-card row: the title, and the expiry line under it. Codex,
+    /// Zhipu and z.ai each draw at most this one row. Budgeted whether or
+    /// not a switch is on and whether or not a card has an expiry, because
+    /// the frame is one size for every card. The mark's panel is an overlay
+    /// and adds nothing here.
     static var codexResetCardHeight: CGFloat {
         contentSpacing + rowTextLineHeight * 2
     }
@@ -209,7 +211,8 @@ struct UsageDetailCard: View {
     /// Codex's reset cards, when its switch is on and it has been asked.
     /// Nil draws no row at all.
     var resetCredits: CodexResetCredits?
-    /// Zhipu or z.ai reset cards, when the list was reported. Nil draws nothing.
+    /// Zhipu or z.ai reset cards, after that provider's Reset cards switch.
+    /// Nil draws no row. A list whose kinds are both empty also draws none.
     var zhipuResetCards: ZhipuResetInventory? = nil
     /// Confirmed use. Nil draws the count and no button.
     var redeemCodex: (() async -> ResetCardRedeemReport)? = nil
@@ -461,9 +464,19 @@ struct UsageDetailCard: View {
                     ))
                 }
             }
-            if let zhipuResetCards {
-                resetCoupon(ResetCouponLine.zhipu(.fiveHourCard, inventory: zhipuResetCards, canRedeem: redeemZhipu != nil))
-                resetCoupon(ResetCouponLine.zhipu(.weeklyCard, inventory: zhipuResetCards, canRedeem: redeemZhipu != nil))
+            // Both kinds on one row. The soonest expiry sits under the count
+            // and ticks with the card. A kind with none is left out; both
+            // at zero leave the row off. The mark explains each kind and
+            // lists Use for the kinds that still have a card.
+            if let zhipuResetCards,
+               ResetCouponLine.zhipu(zhipuResetCards, canRedeem: redeemZhipu != nil) != nil {
+                TimelineView(.periodic(from: .now, by: 30)) { context in
+                    if let line = ResetCouponLine.zhipu(
+                        zhipuResetCards, canRedeem: redeemZhipu != nil, now: context.date
+                    ) {
+                        resetCoupon(line)
+                    }
+                }
             }
             if let resetReport, resetPrompt == .idle {
                 Text(verbatim: resetReport.message)
@@ -619,9 +632,9 @@ struct UsageDetailCard: View {
         }
     }
 
-    /// Title and count on the card. Codex adds the soonest expiry under them.
-    /// The mark opens the explanation and Use. Use is a button. The first
-    /// click still only asks.
+    /// Title and count on the card, with the soonest expiry under them when
+    /// a card has a date. The mark opens the explanation and Use. Use is a
+    /// button. The first click still only asks.
     private func resetCoupon(_ line: ResetCouponLine) -> some View {
         let open = openCoupon == line.slot
         return VStack(alignment: .leading, spacing: 2) {
@@ -668,10 +681,10 @@ struct UsageDetailCard: View {
         .accessibilityElement(children: .contain)
     }
 
-    /// The explanation and the use button, inside the card. Zhipu's date is
-    /// here too. A clear inset holds the space above it and does not take the
-    /// click, so the mark and the header stay usable. The panel does not
-    /// change the card's height.
+    /// The explanation and the use button, inside the card. Zhipu lists one
+    /// Use button per kind that still has a card. A clear inset holds the
+    /// space above it and does not take the click, so the mark and the header
+    /// stay usable. The panel does not change the card's height.
     @ViewBuilder
     private var couponDetailPanel: some View {
         if let slot = openCoupon,
@@ -713,8 +726,8 @@ struct UsageDetailCard: View {
         switch slot {
         case .codex:
             resetCredits.map { ResetCouponLine.codex($0, canRedeem: redeemCodex != nil) }
-        case .zhipu(let kind):
-            zhipuResetCards.map { ResetCouponLine.zhipu(kind, inventory: $0, canRedeem: redeemZhipu != nil) }
+        case .zhipu:
+            zhipuResetCards.flatMap { ResetCouponLine.zhipu($0, canRedeem: redeemZhipu != nil) }
         }
     }
 
@@ -722,10 +735,28 @@ struct UsageDetailCard: View {
         switch (resetPrompt, line.slot) {
         case (.confirmingCodex, .codex):
             true
-        case (.confirmingZhipu(let kind, let cardID), .zhipu(let rowKind)):
-            kind == rowKind && line.cardID == cardID
+        case (.confirmingZhipu, .zhipu):
+            true
         default:
             false
+        }
+    }
+
+    /// The question and effect for the confirm that is open, or nil when
+    /// this row is not the one being confirmed.
+    private func confirmingCopy(_ line: ResetCouponLine) -> (question: String, detail: String)? {
+        switch (resetPrompt, line.slot) {
+        case (.confirmingCodex, .codex):
+            guard let question = line.question, let detail = line.detail else { return nil }
+            return (question, detail)
+        case (.confirmingZhipu(let kind, let cardID), .zhipu):
+            guard let choice = line.choices.first(where: { choice in
+                guard case .askZhipu(let choiceKind, let id) = choice.ask else { return false }
+                return choiceKind == kind && id == cardID
+            }) else { return nil }
+            return (choice.question, choice.detail)
+        default:
+            return nil
         }
     }
 
@@ -744,11 +775,11 @@ struct UsageDetailCard: View {
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            if isConfirming(line), let question = line.question, let detail = line.detail {
-                Text(verbatim: question)
+            if let copy = confirmingCopy(line) {
+                Text(verbatim: copy.question)
                     .font(.system(size: DetailCardLayout.rowFontSize, weight: .medium, design: .rounded))
                     .fixedSize(horizontal: false, vertical: true)
-                Text(verbatim: detail)
+                Text(verbatim: copy.detail)
                     .font(.system(size: DetailCardLayout.footnoteFontSize, weight: .regular, design: .rounded))
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -758,6 +789,13 @@ struct UsageDetailCard: View {
                     }
                     ResetCouponButton(title: String.localized("Use this card"), prominent: true, enabled: !resetBusy) {
                         applyReset(.confirm)
+                    }
+                }
+            } else if !line.choices.isEmpty {
+                ForEach(line.choices) { choice in
+                    ResetCouponButton(title: choice.title, prominent: true, enabled: !resetBusy) {
+                        resetReport = nil
+                        applyReset(choice.ask)
                     }
                 }
             } else if let title = line.useTitle, let ask = line.ask {
@@ -772,10 +810,31 @@ struct UsageDetailCard: View {
         .allowsHitTesting(true)
     }
 
-    static func zhipuKindTitle(_ kind: ZhipuResetKind) -> String {
+    /// "5h ×2 · Weekly ×1", leaving out a kind with none. Nil when both are
+    /// empty, which is the same as drawing no row.
+    static func zhipuAvailabilityText(_ inventory: ZhipuResetInventory) -> String? {
+        let parts = [ZhipuResetKind.fiveHourCard, .weeklyCard].compactMap { kind -> String? in
+            let count = inventory.cards(for: kind).count
+            guard count > 0 else { return nil }
+            return zhipuKindCount(kind, count: count)
+        }
+        guard !parts.isEmpty else { return nil }
+        return parts.joined(separator: " · ")
+    }
+
+    /// The menu's one line: the compact counts, then the soonest absolute date
+    /// that is still ahead. Nil when both kinds are empty.
+    static func zhipuSummary(_ inventory: ZhipuResetInventory, now: Date = Date()) -> String? {
+        guard let counts = zhipuAvailabilityText(inventory) else { return nil }
+        guard let soonest = inventory.soonestCard(after: now) else { return counts }
+        return [counts, expiryText(soonest.expiresAt)].joined(separator: " · ")
+    }
+
+    static func zhipuKindCount(_ kind: ZhipuResetKind, count: Int) -> String {
+        let figure = "\(count)"
         switch kind {
-        case .fiveHourCard: String.localized("5-hour reset cards")
-        case .weeklyCard: String.localized("Weekly reset cards")
+        case .fiveHourCard: return String.localized("5h ×\(figure)")
+        case .weeklyCard: return String.localized("Weekly ×\(figure)")
         }
     }
 
