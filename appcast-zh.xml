@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.34</title>
-            <pubDate>Sat, 31 Oct 2026 09:28:07 -0000</pubDate>
-            <sparkle:version>1.5.34</sparkle:version>
-            <sparkle:shortVersionString>1.5.34</sparkle:shortVersionString>
+            <title>1.5.35</title>
+            <pubDate>Sun, 01 Nov 2026 03:24:19 -0000</pubDate>
+            <sparkle:version>1.5.35</sparkle:version>
+            <sparkle:shortVersionString>1.5.35</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.34</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.35</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.34</h2><ul><li><strong>新增 DimAgent 订阅额度。</strong> 在「设置 → 供应商」打开 DimAgent 后，面板显示已登录的 Dim CLI 报告的套餐额度、加量包、token 窗口和网页搜索额度。<a href="https://github.com/harrisliangsu/blinky-mac/pull/96">#96</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.34">在 GitHub 查看更新说明</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.34/Blinky-1.5.34.zip"
-                       length="23427545"
+</style><h2>Blinky 1.5.35</h2><ul><li><strong>Codex 的重置卡只显示一行。</strong> 在「设置 → 供应商 → Codex → 面板」打开「重置卡」后，用量卡片用这一行写出还剩几张和最近一张何时到期，说明与使用前的确认从这一行的标记打开；Codex Resets 的预测、最近一次重置和公告类型仍在原处，不再重复账户里还剩几张。<a href="https://github.com/harrisliangsu/blinky-mac/pull/97">#97</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.35">在 GitHub 查看更新说明</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.35/Blinky-1.5.35.zip"
+                       length="23426648"
                        type="application/octet-stream"
-                       sparkle:edSignature="YTp/A9+OJyHu6gFFI144JtODwyFQ1qkZiyWpQCRGya/7hE/revznd+nUlo/lXCa2gRpcQc5ReipOgj6fkSGtCg==" />
+                       sparkle:edSignature="fMGCw06EWOUg4qKheZaiqJA+pJBKWGU3kSyzk/5pu5wGmfxWhvjsHGOQ/eu4MPeHa2/WG4BE6lbonelf9GpsDQ==" />
         </item>
     </channel>
 </rss>
