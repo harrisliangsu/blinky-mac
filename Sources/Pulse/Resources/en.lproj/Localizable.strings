@@ -1510,5 +1510,5 @@
 /* 1.5.36 */
 "5h ×%@" = "5h ×%@";
 "Weekly ×%@" = "Weekly ×%@";
-"You apply a reset card yourself. A 5-hour card returns the 5-hour quota to full, and its next reset is counted from now. A weekly card returns the weekly quota to full. The 5-hour quota returns with it, and both reset times are counted from now." = "You apply a reset card yourself. A 5-hour card returns the 5-hour quota to full, and its next reset is counted from now. A weekly card returns the weekly quota to full. The 5-hour quota returns with it, and both reset times are counted from now.";
+"You apply a reset card yourself. For a 5-hour card, the 5-hour quota returns to full, and its next reset is counted from now. For a weekly card, the weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "You apply a reset card yourself. For a 5-hour card, the 5-hour quota returns to full, and its next reset is counted from now. For a weekly card, the weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now.";
 "The usage card shows how many 5-hour and weekly reset cards are left, and when the next one expires." = "The usage card shows how many 5-hour and weekly reset cards are left, and when the next one expires.";

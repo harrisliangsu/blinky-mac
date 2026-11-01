@@ -1512,5 +1512,5 @@
 /* 1.5.36 */
 "5h ×%@" = "5h ×%@";
 "Weekly ×%@" = "週間 ×%@";
-"You apply a reset card yourself. A 5-hour card returns the 5-hour quota to full, and its next reset is counted from now. A weekly card returns the weekly quota to full. The 5-hour quota returns with it, and both reset times are counted from now." = "リセットカードは自分で使います。5時間のカードは、5時間の利用枠を全額に戻し、次のリセットは今から数えます。週間のカードは、週間の利用枠を全額に戻します。5時間の利用枠も戻り、どちらも次のリセットは今から数えます。";
+"You apply a reset card yourself. For a 5-hour card, the 5-hour quota returns to full, and its next reset is counted from now. For a weekly card, the weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "リセットカードは自分で使います。5時間のカードは、5時間の利用枠を全額に戻し、次のリセットは今から数えます。週間のカードは、週間の利用枠を全額に戻します。5時間の利用枠も戻り、どちらも次のリセットは今から数えます。";
 "The usage card shows how many 5-hour and weekly reset cards are left, and when the next one expires." = "使用量カードに、残っている 5 時間と週間のリセットカードの枚数と、次に期限を迎えるカードを表示します。";

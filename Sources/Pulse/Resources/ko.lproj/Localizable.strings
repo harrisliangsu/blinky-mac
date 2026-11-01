@@ -1512,5 +1512,5 @@
 /* 1.5.36 */
 "5h ×%@" = "5h ×%@";
 "Weekly ×%@" = "주간 ×%@";
-"You apply a reset card yourself. A 5-hour card returns the 5-hour quota to full, and its next reset is counted from now. A weekly card returns the weekly quota to full. The 5-hour quota returns with it, and both reset times are counted from now." = "리셋 카드는 직접 사용합니다. 5시간 카드는 5시간 한도를 가득 채우고, 다음 초기화는 지금부터 계산합니다. 주간 카드는 주간 한도를 가득 채웁니다. 5시간 한도도 함께 채워지고, 두 초기화 시각은 지금부터 계산됩니다.";
+"You apply a reset card yourself. For a 5-hour card, the 5-hour quota returns to full, and its next reset is counted from now. For a weekly card, the weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "리셋 카드는 직접 사용합니다. 5시간 카드는 5시간 한도를 가득 채우고, 다음 초기화는 지금부터 계산합니다. 주간 카드는 주간 한도를 가득 채웁니다. 5시간 한도도 함께 채워지고, 두 초기화 시각은 지금부터 계산됩니다.";
 "The usage card shows how many 5-hour and weekly reset cards are left, and when the next one expires." = "사용량 카드에 5시간 리셋 카드와 주간 리셋 카드가 몇 장 남았는지, 그리고 가장 먼저 만료되는 시각을 표시합니다.";

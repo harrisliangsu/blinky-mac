@@ -97,7 +97,7 @@ struct ResetCouponLine: Equatable, Sendable {
             useTitle: nil,
             question: nil,
             detail: nil,
-            help: String.localized("You apply a reset card yourself. A 5-hour card returns the 5-hour quota to full, and its next reset is counted from now. A weekly card returns the weekly quota to full. The 5-hour quota returns with it, and both reset times are counted from now."),
+            help: String.localized("You apply a reset card yourself. For a 5-hour card, the 5-hour quota returns to full, and its next reset is counted from now. For a weekly card, the weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now."),
             ask: nil,
             choices: zhipuChoices(inventory, canRedeem: canRedeem)
         )
