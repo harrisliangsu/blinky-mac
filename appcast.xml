@@ -6,34 +6,34 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.35</title>
-            <pubDate>Sun, 01 Nov 2026 03:24:19 -0000</pubDate>
-            <sparkle:version>1.5.35</sparkle:version>
-            <sparkle:shortVersionString>1.5.35</sparkle:shortVersionString>
+            <title>1.5.36</title>
+            <pubDate>Sun, 01 Nov 2026 04:30:04 -0000</pubDate>
+            <sparkle:version>1.5.36</sparkle:version>
+            <sparkle:shortVersionString>1.5.36</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.35</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.36</link>
             <description xml:lang="zh-Hans"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.35</h2><ul><li><strong>Codex 的重置卡只显示一行。</strong> 在「设置 → 供应商 → Codex → 面板」打开「重置卡」后，用量卡片用这一行写出还剩几张和最近一张何时到期，说明与使用前的确认从这一行的标记打开；Codex Resets 的预测、最近一次重置和公告类型仍在原处，不再重复账户里还剩几张。<a href="https://github.com/harrisliangsu/blinky-mac/pull/97">#97</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.35">在 GitHub 查看更新说明</a></p>]]></description>
+</style><h2>Blinky 1.5.36</h2><ul><li><strong>Zhipu 和 z.ai 的重置卡只显示一行。</strong> 在「设置 → 供应商 → Zhipu」或「z.ai」的「面板」中，「重置卡」默认打开；用量卡片用这一行写出 5 小时和每周还剩几张，以及最近一张何时到期，说明与使用前的确认从这一行的标记打开。<a href="https://github.com/harrisliangsu/blinky-mac/pull/98">#98</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.36">在 GitHub 查看更新说明</a></p>]]></description>
             <description xml:lang="zh-Hant"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.35</h2><ul><li><strong>Codex 的重置卡只显示一行。</strong> 在「设置 → 供应商 → Codex → 面板」打开「重置卡」后，用量卡片用这一行写出还剩几张和最近一张何时到期，说明与使用前的确认从这一行的标记打开；Codex Resets 的预测、最近一次重置和公告类型仍在原处，不再重复账户里还剩几张。<a href="https://github.com/harrisliangsu/blinky-mac/pull/97">#97</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.35">在 GitHub 查看更新说明</a></p>]]></description>
+</style><h2>Blinky 1.5.36</h2><ul><li><strong>Zhipu 和 z.ai 的重置卡只显示一行。</strong> 在「设置 → 供应商 → Zhipu」或「z.ai」的「面板」中，「重置卡」默认打开；用量卡片用这一行写出 5 小时和每周还剩几张，以及最近一张何时到期，说明与使用前的确认从这一行的标记打开。<a href="https://github.com/harrisliangsu/blinky-mac/pull/98">#98</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.36">在 GitHub 查看更新说明</a></p>]]></description>
             <description xml:lang="en"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.35</h2><ul><li><strong>Codex reset cards take one row.</strong> With Reset cards on under Settings → Providers → Codex → Panel, the usage card shows how many are left and when the next one expires, and the explanation and the confirmation open from that row&#x27;s mark; Predicted reset, Last reset, and the announcement type stay where they are and no longer repeat how many cards this account holds. <a href="https://github.com/harrisliangsu/blinky-mac/pull/97">#97</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.35">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.35/Blinky-1.5.35.zip"
-                       length="23426648"
+</style><h2>Blinky 1.5.36</h2><ul><li><strong>Zhipu and z.ai reset cards take one row.</strong> With Reset cards on under Settings → Providers → Zhipu or z.ai → Panel — on by default — the usage card shows how many 5-hour and weekly cards are left and when the next one expires, and the explanation and the confirmation open from that row&#x27;s mark. <a href="https://github.com/harrisliangsu/blinky-mac/pull/98">#98</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.36">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.36/Blinky-1.5.36.zip"
+                       length="23448619"
                        type="application/octet-stream"
-                       sparkle:edSignature="fMGCw06EWOUg4qKheZaiqJA+pJBKWGU3kSyzk/5pu5wGmfxWhvjsHGOQ/eu4MPeHa2/WG4BE6lbonelf9GpsDQ==" />
+                       sparkle:edSignature="I3KB4yA1km/4j10Myx6YrE4Uus66a5ysvzqTR4qoCXvRi933KRVbwJDWXkK2kmB2UcrlHuE62zIloNHWe50JAw==" />
         </item>
     </channel>
 </rss>
