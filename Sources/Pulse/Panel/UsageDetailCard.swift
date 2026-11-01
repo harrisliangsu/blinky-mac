@@ -833,8 +833,8 @@ struct UsageDetailCard: View {
     static func zhipuKindCount(_ kind: ZhipuResetKind, count: Int) -> String {
         let figure = "\(count)"
         switch kind {
-        case .fiveHourCard: String.localized("5h ×\(figure)")
-        case .weeklyCard: String.localized("Weekly ×\(figure)")
+        case .fiveHourCard: return String.localized("5h ×\(figure)")
+        case .weeklyCard: return String.localized("Weekly ×\(figure)")
         }
     }
 
