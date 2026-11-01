@@ -6,6 +6,10 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.35
+
+- **Codex 的重置卡只显示一行。** 在「设置 → 供应商 → Codex → 面板」打开「重置卡」后，用量卡片用这一行写出还剩几张和最近一张何时到期，说明与使用前的确认从这一行的标记打开；Codex Resets 的预测、最近一次重置和公告类型仍在原处，不再重复账户里还剩几张。[#97](https://github.com/harrisliangsu/blinky-mac/pull/97)
+
 ## 1.5.34
 
 - **新增 DimAgent 订阅额度。** 在「设置 → 供应商」打开 DimAgent 后，面板显示已登录的 Dim CLI 报告的套餐额度、加量包、token 窗口和网页搜索额度。[#96](https://github.com/harrisliangsu/blinky-mac/pull/96)

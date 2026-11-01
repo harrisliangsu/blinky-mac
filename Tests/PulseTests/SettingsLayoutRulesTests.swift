@@ -269,7 +269,9 @@ struct SettingsLayoutRulesTests {
         #expect(String.localized("Low balance") == "余额偏低")
         #expect(String.localized("When it is down") == "出故障时")
         #expect(String.localized("When it is ready") == "生成时")
-        #expect(String.localized("Limit reset credits") == "额度重置券")
+        #expect(String.localized("Reset cards") == "重置卡")
+        #expect(String.localized("How many reset cards are left, and when the next one expires. Asks Codex's app server on every refresh.")
+            == "还剩几张重置卡，以及最近一张什么时候到期。每次刷新都会询问 Codex 的 app server。")
         #expect(String.localized("Writes a line under the weekly limit, or under the longest other limit when there is no weekly one, about how long it may last. A shorter limit that states its length, including the five-hour limit, is written under that row when the current pace runs out before its reset.")
             == "在每周限额下写一行，说明按当前速度还要多久用尽。没有每周限额时，写在其余限额里最长的那条上。长度已经写明的较短限额，包括 5 小时限额，按当前速度会在重置前用尽时，写在这条限额下面。")
 

@@ -166,7 +166,7 @@ final class UsageStore {
         return .unavailable(account, reason: reason)
     }
 
-    /// How many limit reset credits Codex's first account has, for its card —
+    /// How many reset cards Codex's first account has, for its card —
     /// nil while the switch is off or before the first answer. Asked beside
     /// every Codex refresh rather than inside it: it is a second call to a
     /// different route, and a slow app server must not hold the ring up.
@@ -250,7 +250,8 @@ final class UsageStore {
     /// The public Codex Resets status, when a fetch or the disk cache has one.
     private(set) var codexResetStatus: CodexResetStatus?
     /// Banked reset credits for the primary Codex login, when the app server
-    /// has answered. Nil means unknown — the card omits the line.
+    /// has answered. Nil means unknown. The card does not draw this; the
+    /// opt-in row is `codexResetCredits`.
     private(set) var codexCredits: CodexCreditSummary?
     private var codexResets: CodexResetMonitor?
     private var codexCreditsFetchedAt: Date?

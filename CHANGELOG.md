@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.35
+
+- **Codex reset cards take one row.** With Reset cards on under Settings → Providers → Codex → Panel, the usage card shows how many are left and when the next one expires, and the explanation and the confirmation open from that row's mark; Predicted reset, Last reset, and the announcement type stay where they are and no longer repeat how many cards this account holds. [#97](https://github.com/harrisliangsu/blinky-mac/pull/97)
+
 ## 1.5.34
 
 - **DimAgent subscription quotas.** Turn on DimAgent under Settings → Providers to show the plan credits, add-on packs, token windows and web-search allowance the signed-in Dim CLI reports. [#96](https://github.com/harrisliangsu/blinky-mac/pull/96)

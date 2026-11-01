@@ -256,7 +256,6 @@
 "Dates" = "Даты";
 "First day" = "Первый день";
 "Last day" = "Последний день";
-"Limit reset credits" = "Кредиты на сброс лимита";
 "Next expiry" = "Ближайший истекает";
 "1 available" = "Доступен 1";
 "%@ available" = "Доступно: %@";
@@ -918,9 +917,8 @@
 "Enabled" = "Включённые";
 "The money left, with no ring. There is no allowance to measure against." = "Только остаток средств, без кольца: сравнивать его не с чем.";
 
-/* Codex reset credits */
-"Reset credits on the card" = "Кредиты на сброс лимита в карточке";
-"How many limit reset credits are left, and when the next one expires. Asks Codex's app server on every refresh." = "Сколько осталось кредитов на сброс лимита и когда сгорает ближайший. Запрашивается у app server Codex при каждом обновлении.";
+/* Codex reset cards */
+"How many reset cards are left, and when the next one expires. Asks Codex's app server on every refresh." = "Сколько осталось карт сброса и когда сгорает ближайшая. Запрашивается у app server Codex при каждом обновлении.";
 "Not available" = "Недоступно";
 "codex not found" = "codex не найден";
 "Show usage in the menu bar" = "Показывать расход в строке меню";

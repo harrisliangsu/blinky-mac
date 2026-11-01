@@ -263,7 +263,6 @@
 "Dates" = "日付";
 "First day" = "開始日";
 "Last day" = "終了日";
-"Limit reset credits" = "上限リセット券";
 "Next expiry" = "次の期限";
 "1 available" = "残り 1 枚";
 "%@ available" = "残り %@ 枚";
@@ -990,9 +989,8 @@
 "Enabled" = "有効";
 "The money left, with no ring. There is no allowance to measure against." = "残高だけを表示し、リングは描きません。比べる上限がないためです。";
 
-/* Codex reset credits */
-"Reset credits on the card" = "カードにリセット券を表示";
-"How many limit reset credits are left, and when the next one expires. Asks Codex's app server on every refresh." = "残っている上限リセット券の枚数と、次の券の有効期限。更新のたびに Codex の app server に問い合わせます。";
+/* Codex reset cards */
+"How many reset cards are left, and when the next one expires. Asks Codex's app server on every refresh." = "残っているリセットカードの枚数と、次のカードの有効期限。更新のたびに Codex の app server に問い合わせます。";
 "Not available" = "取得できません";
 "codex not found" = "codex が見つかりません";
 "Show usage in the menu bar" = "メニューバーに使用量を表示";
@@ -1463,14 +1461,14 @@
 "Weekly reset cards" = "週間のリセット券";
 "Use a 5-hour reset card" = "5時間のリセット券を使う";
 "Use a weekly reset card" = "週間のリセット券を使う";
-"Use a Codex reset card" = "Codex のリセット券を使う";
+"Use a Codex reset card" = "Codex のリセットカードを使う";
 "Use this card" = "この券を使う";
 "Use one 5-hour reset card?" = "5時間のリセット券を 1 枚使いますか？";
 "The 5-hour quota returns to full, and its next reset is counted from now." = "5時間の利用枠は全額に戻り、次のリセットは今から数えます。";
 "Use one weekly reset card?" = "週間のリセット券を 1 枚使いますか？";
 "The weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "週間の利用枠は全額に戻ります。5時間の利用枠も戻り、どちらも次のリセットは今から数えます。";
-"Use one Codex reset card?" = "Codex のリセット券を 1 枚使いますか？";
-"Codex resets the limits this card covers." = "Codex は、この券が対象とする利用枠をリセットします。";
+"Use one Codex reset card?" = "Codex のリセットカードを 1 枚使いますか？";
+"Codex resets the limits this card covers." = "Codex は、このカードが対象とする利用枠をリセットします。";
 "The reset card was used." = "リセット券を使いました。";
 "No reset card is available." = "使えるリセット券はありません。";
 "Nothing to reset." = "リセットする利用枠はありません。";

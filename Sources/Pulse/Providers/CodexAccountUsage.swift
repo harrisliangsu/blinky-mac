@@ -55,9 +55,11 @@ struct CodexAccountUsage: Equatable, Sendable {
 
 /// Banked reset credits, without the token history they travel with.
 ///
-/// The open card's "how many are left" row is `CodexResetCredits`, behind its
-/// own switch. This summary is the line under the Codex Resets forecast: a
-/// known zero stays quiet, and an unknown read is not a summary at all.
+/// The open card's only inventory row is `CodexResetCredits`, behind its
+/// own switch. This summary is still reconciled from the usage reply and the
+/// app server, and the card does not draw it: a second line under the Codex
+/// Resets forecast repeated the same count. A known zero stays quiet, and an
+/// unknown read is not a summary at all.
 struct CodexCreditSummary: Equatable, Sendable {
     /// Where the count came from.
     ///

@@ -8,41 +8,53 @@ enum ResetCouponSlot: Hashable, Sendable {
     case zhipu(ZhipuResetKind)
 }
 
-/// One coupon row. The card shows `title` and `count`. Expiry and the use
-/// button stay in the detail, so the row does not list them.
+/// One coupon row. The card shows `title` and `count`. Codex also shows the
+/// soonest expiry under that row (`rowNote`). Zhipu's date, and every
+/// provider's Use button, stay in the detail.
 struct ResetCouponLine: Equatable, Sendable {
     var slot: ResetCouponSlot
     var title: String
     var count: String
+    /// Soonest expiry, on the row. Nil leaves the row as one line.
+    var rowNote: String?
+    /// Absolute date in the detail. Zhipu keeps this. Codex leaves it nil.
     var expiry: String?
     /// The soonest card, when this row can spend one.
     var cardID: String?
     var useTitle: String?
     var question: String?
     var detail: String?
+    /// How the cards work. Shown in the detail, not on the row.
+    var help: String?
     var ask: ResetCardPrompt.Action?
 
-    /// There is something to open: a date, or a card that can be used.
-    var hasDetail: Bool { expiry != nil || ask != nil }
+    /// There is something to open: a date, an explanation, or a card that can be used.
+    var hasDetail: Bool { expiry != nil || ask != nil || help?.isEmpty == false }
 
     /// The use control is a button. It is not a line of body text.
     static let useControlIsButton = true
 
     @MainActor
-    static func codex(_ credits: CodexResetCredits, canRedeem: Bool) -> Self {
+    static func codex(_ credits: CodexResetCredits, canRedeem: Bool, now: Date = Date()) -> Self {
         let redeem: Bool = {
             guard canRedeem, case .available(let count, _) = credits, count > 0 else { return false }
             return true
         }()
+        let rowNote: String? = {
+            guard case .available(let count, let expiry?) = credits, count > 0 else { return nil }
+            return UsageDetailCard.nextExpiryText(until: expiry, now: now)
+        }()
         return Self(
             slot: .codex,
-            title: String.localized("Limit reset credits"),
+            title: String.localized("Reset cards"),
             count: UsageDetailCard.resetCreditsText(credits),
-            expiry: UsageDetailCard.resetCreditExpiryText(credits),
+            rowNote: rowNote,
+            expiry: nil,
             cardID: nil,
             useTitle: redeem ? String.localized("Use a Codex reset card") : nil,
             question: redeem ? String.localized("Use one Codex reset card?") : nil,
             detail: redeem ? String.localized("Codex resets the limits this card covers.") : nil,
+            help: CodexResetPresentation.help(resetType: "banked", announcement: nil),
             ask: redeem ? .askCodex : nil
         )
     }
@@ -56,11 +68,13 @@ struct ResetCouponLine: Equatable, Sendable {
             slot: .zhipu(kind),
             title: UsageDetailCard.zhipuKindTitle(kind),
             count: UsageDetailCard.availableCountText(cards.count),
+            rowNote: nil,
             expiry: soonest.map { UsageDetailCard.expiryText($0.expiresAt) },
             cardID: soonest?.id,
             useTitle: redeem ? UsageDetailCard.zhipuUseTitle(kind) : nil,
             question: redeem ? UsageDetailCard.zhipuQuestion(kind) : nil,
             detail: redeem ? UsageDetailCard.zhipuDetail(kind) : nil,
+            help: nil,
             ask: redeem ? soonest.map { .askZhipu(kind, cardID: $0.id) } : nil
         )
     }

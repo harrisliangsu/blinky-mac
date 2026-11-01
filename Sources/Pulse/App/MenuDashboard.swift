@@ -295,7 +295,7 @@ private struct MenuAccountDetail: View {
     private var extras: some View {
         if account == AccountKey(.codex), let credits = store.codexResetCredits {
             valueRow(
-                String.localized("Limit reset credits"),
+                String.localized("Reset cards"),
                 [UsageDetailCard.resetCreditsText(credits), UsageDetailCard.resetCreditExpiryText(credits)]
                     .compactMap { $0 }.joined(separator: " · ")
             )
