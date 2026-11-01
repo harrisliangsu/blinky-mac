@@ -151,7 +151,7 @@ struct FloatingUsagePanelContent: View {
                             exhaustionBeforeReset: settings.exhaustionBeforeReset,
                             showsAmounts: selected.account.provider == .qoder && settings.qoderShowsAmounts,
                             resetCredits: selected.account == AccountKey(.codex) ? store.codexResetCredits : nil,
-                            zhipuResetCards: Self.zhipuCards(of: selected),
+                            zhipuResetCards: zhipuCards(of: selected),
                             redeemCodex: selected.account == AccountKey(.codex)
                                 ? { await store.redeemCodexResetCard() } : nil,
                             redeemZhipu: Self.offersZhipuRedeem(selected)
@@ -696,13 +696,16 @@ struct FloatingUsagePanelContent: View {
         selectedSlot = nil
     }
 
-    /// The list attached to this reading. Nil when the provider is not Zhipu
-    /// or z.ai, and nil when that check did not report a list.
-    private static func zhipuCards(of usage: ProviderUsage) -> ZhipuResetInventory? {
-        switch usage.provider {
-        case .zai, .glmCoding: usage.zhipuResetCards
-        default: nil
-        }
+    /// The list attached to this reading, when that provider's Reset cards
+    /// switch is on. Nil otherwise, including a provider that has no list.
+    /// The list itself is still read; the switch only hides the row.
+    private func zhipuCards(of usage: ProviderUsage) -> ZhipuResetInventory? {
+        ZhipuResetCardGate.inventory(
+            usage.zhipuResetCards,
+            provider: usage.provider,
+            showsZaiResetCards: settings.showsZaiResetCards,
+            showsZhipuResetCards: settings.showsZhipuResetCards
+        )
     }
 
     private static func offersZhipuRedeem(_ usage: ProviderUsage) -> Bool {

@@ -56,6 +56,23 @@ struct AccountPanelGroup: View {
                 }
             }
 
+            // Already read with the quota. On by default. Off removes the
+            // row and its mark and does not stop the read.
+            if account == AccountKey(.zai) {
+                SettingsRowDivider()
+                resetCardsToggle(Binding(
+                    get: { settings.showsZaiResetCards },
+                    set: { settings.showsZaiResetCards = $0 }
+                ))
+            }
+            if account == AccountKey(.glmCoding) {
+                SettingsRowDivider()
+                resetCardsToggle(Binding(
+                    get: { settings.showsZhipuResetCards },
+                    set: { settings.showsZhipuResetCards = $0 }
+                ))
+            }
+
             // Qoder's three parts, each spent and lapsing on its own. Off
             // by default: they count the same credits as the total again.
             if account == AccountKey(.qoder) {
@@ -332,6 +349,18 @@ struct AccountPanelGroup: View {
             ))
             .labelsHidden()
             .toggleStyle(.switch)
+        }
+    }
+
+    /// Zhipu and z.ai. The label matches the row on the usage card.
+    private func resetCardsToggle(_ isOn: Binding<Bool>) -> some View {
+        SettingsRow(
+            String.localized("Reset cards"),
+            subtitle: String.localized("The usage card shows how many 5-hour and weekly reset cards are left, and when the next one expires.")
+        ) {
+            Toggle("", isOn: isOn)
+                .labelsHidden()
+                .toggleStyle(.switch)
         }
     }
 

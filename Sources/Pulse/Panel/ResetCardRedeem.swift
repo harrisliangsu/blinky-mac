@@ -5,21 +5,34 @@ import Foundation
 /// Which coupon the card's detail mark has open.
 enum ResetCouponSlot: Hashable, Sendable {
     case codex
-    case zhipu(ZhipuResetKind)
+    /// Zhipu and z.ai share one row. The kind is chosen inside the detail.
+    case zhipu
 }
 
-/// One coupon row. The card shows `title` and `count`. Codex also shows the
-/// soonest expiry under that row (`rowNote`). Zhipu's date, and every
-/// provider's Use button, stay in the detail.
+/// One way to spend a card from the detail. Zhipu lists one of these per
+/// kind that still has stock. Codex keeps a single Use control on the line.
+struct ResetCouponChoice: Equatable, Sendable, Identifiable {
+    /// The kind's wire name, so the buttons stay put while the card refreshes.
+    var id: String
+    var title: String
+    var question: String
+    var detail: String
+    var ask: ResetCardPrompt.Action
+}
+
+/// One coupon row. The card shows `title` and `count`, and the soonest
+/// expiry under that row (`rowNote`) when a card has a date. The explanation
+/// and every Use button stay in the detail.
 struct ResetCouponLine: Equatable, Sendable {
     var slot: ResetCouponSlot
     var title: String
     var count: String
     /// Soonest expiry, on the row. Nil leaves the row as one line.
     var rowNote: String?
-    /// Absolute date in the detail. Zhipu keeps this. Codex leaves it nil.
+    /// Absolute date in the detail. Codex and Zhipu leave it nil; the date
+    /// is the row note.
     var expiry: String?
-    /// The soonest card, when this row can spend one.
+    /// The soonest card, when this row can spend one. Codex leaves it nil.
     var cardID: String?
     var useTitle: String?
     var question: String?
@@ -27,9 +40,13 @@ struct ResetCouponLine: Equatable, Sendable {
     /// How the cards work. Shown in the detail, not on the row.
     var help: String?
     var ask: ResetCardPrompt.Action?
+    /// Use controls for a row that can spend more than one kind. Empty for Codex.
+    var choices: [ResetCouponChoice] = []
 
     /// There is something to open: a date, an explanation, or a card that can be used.
-    var hasDetail: Bool { expiry != nil || ask != nil || help?.isEmpty == false }
+    var hasDetail: Bool {
+        expiry != nil || ask != nil || help?.isEmpty == false || !choices.isEmpty
+    }
 
     /// The use control is a button. It is not a line of body text.
     static let useControlIsButton = true
@@ -59,24 +76,69 @@ struct ResetCouponLine: Equatable, Sendable {
         )
     }
 
+    /// One row for both kinds, or nil when neither has a card left. A kind
+    /// with none is left out of the count and out of the Use list. The note
+    /// is the soonest expiry across the kinds that remain.
     @MainActor
-    static func zhipu(_ kind: ZhipuResetKind, inventory: ZhipuResetInventory, canRedeem: Bool) -> Self {
-        let cards = inventory.cards(for: kind)
-        let soonest = inventory.soonest(kind)
-        let redeem = canRedeem && soonest != nil
+    static func zhipu(
+        _ inventory: ZhipuResetInventory,
+        canRedeem: Bool,
+        now: Date = Date()
+    ) -> Self? {
+        guard let count = UsageDetailCard.zhipuAvailabilityText(inventory) else { return nil }
+        let soonest = inventory.soonestCard(after: now)
         return Self(
-            slot: .zhipu(kind),
-            title: UsageDetailCard.zhipuKindTitle(kind),
-            count: UsageDetailCard.availableCountText(cards.count),
-            rowNote: nil,
-            expiry: soonest.map { UsageDetailCard.expiryText($0.expiresAt) },
-            cardID: soonest?.id,
-            useTitle: redeem ? UsageDetailCard.zhipuUseTitle(kind) : nil,
-            question: redeem ? UsageDetailCard.zhipuQuestion(kind) : nil,
-            detail: redeem ? UsageDetailCard.zhipuDetail(kind) : nil,
-            help: nil,
-            ask: redeem ? soonest.map { .askZhipu(kind, cardID: $0.id) } : nil
+            slot: .zhipu,
+            title: String.localized("Reset cards"),
+            count: count,
+            rowNote: soonest.flatMap { UsageDetailCard.nextExpiryText(until: $0.expiresAt, now: now) },
+            expiry: nil,
+            cardID: nil,
+            useTitle: nil,
+            question: nil,
+            detail: nil,
+            help: String.localized("You apply a reset card yourself. A 5-hour card returns the 5-hour quota to full, and its next reset is counted from now. A weekly card returns the weekly quota to full. The 5-hour quota returns with it, and both reset times are counted from now."),
+            ask: nil,
+            choices: zhipuChoices(inventory, canRedeem: canRedeem)
         )
+    }
+
+    @MainActor
+    private static func zhipuChoices(
+        _ inventory: ZhipuResetInventory,
+        canRedeem: Bool
+    ) -> [ResetCouponChoice] {
+        guard canRedeem else { return [] }
+        return [ZhipuResetKind.fiveHourCard, .weeklyCard].compactMap { kind in
+            guard let card = inventory.soonest(kind) else { return nil }
+            return ResetCouponChoice(
+                id: kind.rawValue,
+                title: UsageDetailCard.zhipuUseTitle(kind),
+                question: UsageDetailCard.zhipuQuestion(kind),
+                detail: UsageDetailCard.zhipuDetail(kind),
+                ask: .askZhipu(kind, cardID: card.id)
+            )
+        }
+    }
+}
+
+/// Whether the usage card may draw a Zhipu or z.ai reset-card row.
+///
+/// The list is still read with the quota. The switch only decides whether
+/// the card gets that list. Off, the row and its mark are absent.
+enum ZhipuResetCardGate {
+    static func inventory(
+        _ inventory: ZhipuResetInventory?,
+        provider: Provider,
+        showsZaiResetCards: Bool,
+        showsZhipuResetCards: Bool
+    ) -> ZhipuResetInventory? {
+        guard let inventory else { return nil }
+        switch provider {
+        case .zai: return showsZaiResetCards ? inventory : nil
+        case .glmCoding: return showsZhipuResetCards ? inventory : nil
+        default: return nil
+        }
     }
 }
 

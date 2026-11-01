@@ -873,6 +873,20 @@ final class AppSettings {
         didSet { showsCodexResetCreditsChanged(from: oldValue) }
     }
 
+    /// Whether z.ai's usage card shows its reset cards.
+    ///
+    /// **On by default**, so a card that already listed them keeps doing so.
+    /// The list is read with the quota either way. The switch only removes
+    /// the row and its mark. No `onChange`: that refetches every provider.
+    var showsZaiResetCards = true {
+        didSet { showsZaiResetCardsChanged(from: oldValue) }
+    }
+
+    /// Whether Zhipu's usage card shows its reset cards. Same rule as z.ai.
+    var showsZhipuResetCards = true {
+        didSet { showsZhipuResetCardsChanged(from: oldValue) }
+    }
+
     /// Where each API account's ring gets its denominator, keyed by account.
     /// DeepSeek's own lives in `deepSeekBasis`, from before there were others;
     /// `balanceBasis(for:)` reads either. A missing entry is the default.

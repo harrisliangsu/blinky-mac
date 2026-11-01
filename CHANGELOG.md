@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.36
+
+- **Zhipu and z.ai reset cards take one row.** With Reset cards on under Settings → Providers → Zhipu or z.ai → Panel — on by default — the usage card shows how many 5-hour and weekly cards are left and when the next one expires, and the explanation and the confirmation open from that row's mark.
+
 ## 1.5.35
 
 - **Codex reset cards take one row.** With Reset cards on under Settings → Providers → Codex → Panel, the usage card shows how many are left and when the next one expires, and the explanation and the confirmation open from that row's mark; Predicted reset, Last reset, and the announcement type stay where they are and no longer repeat how many cards this account holds. [#97](https://github.com/harrisliangsu/blinky-mac/pull/97)

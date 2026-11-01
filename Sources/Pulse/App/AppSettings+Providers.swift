@@ -18,6 +18,8 @@ extension AppSettings.Key {
     static let minimaxSite = "settings.minimaxSite"
     static let serverAddresses = "settings.serverAddresses"
     static let showsCodexResetCredits = "settings.showsCodexResetCredits"
+    static let showsZaiResetCards = "settings.showsZaiResetCards"
+    static let showsZhipuResetCards = "settings.showsZhipuResetCards"
     static let balanceBases = "settings.balanceBases"
     static let balanceBudgets = "settings.balanceBudgets"
     static let sessionBrowsers = "settings.sessionBrowsers"
@@ -115,6 +117,18 @@ extension AppSettings {
     func showsCodexResetCreditsChanged(from old: Bool) {
         guard showsCodexResetCredits != old else { return }
         defaults.set(showsCodexResetCredits, forKey: Key.showsCodexResetCredits)
+    }
+
+    /// No `onChange`: the list is already read with the quota.
+    func showsZaiResetCardsChanged(from old: Bool) {
+        guard showsZaiResetCards != old else { return }
+        defaults.set(showsZaiResetCards, forKey: Key.showsZaiResetCards)
+    }
+
+    /// No `onChange`: the list is already read with the quota.
+    func showsZhipuResetCardsChanged(from old: Bool) {
+        guard showsZhipuResetCards != old else { return }
+        defaults.set(showsZhipuResetCards, forKey: Key.showsZhipuResetCards)
     }
 
     func balanceBasesChanged(from old: [String: String]) {
@@ -239,6 +253,9 @@ extension AppSettings {
     /// The settings `init` has no parameter for.
     func restoreProviders(from defaults: UserDefaults) {
         showsCodexResetCredits = defaults.bool(forKey: Key.showsCodexResetCredits)
+        // Absent means on: the row was always shown before the switch existed.
+        showsZaiResetCards = defaults.settingsFlag(Key.showsZaiResetCards, default: true)
+        showsZhipuResetCards = defaults.settingsFlag(Key.showsZhipuResetCards, default: true)
         balanceBases = defaults.dictionary(forKey: Key.balanceBases) as? [String: String] ?? [:]
         balanceBudgets = (defaults.dictionary(forKey: Key.balanceBudgets) as? [String: Double] ?? [:])
             .filter { $0.value.isFinite && $0.value > 0 }

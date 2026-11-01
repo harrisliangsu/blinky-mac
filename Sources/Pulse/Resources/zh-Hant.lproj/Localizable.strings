@@ -1457,30 +1457,30 @@
 
 /* 1.5.15 */
 "Break down by" = "劃分方式";
-"5-hour reset cards" = "5 小時重設券";
-"Weekly reset cards" = "每週重設券";
-"Use a 5-hour reset card" = "使用一張 5 小時重設券";
-"Use a weekly reset card" = "使用一張每週重設券";
+"5-hour reset cards" = "5 小時重置卡";
+"Weekly reset cards" = "每週重置卡";
+"Use a 5-hour reset card" = "使用一張 5 小時重置卡";
+"Use a weekly reset card" = "使用一張每週重置卡";
 "Use a Codex reset card" = "使用一張 Codex 重置卡";
 "Use this card" = "使用這張";
-"Use one 5-hour reset card?" = "要使用一張 5 小時重設券嗎？";
+"Use one 5-hour reset card?" = "要使用一張 5 小時重置卡嗎？";
 "The 5-hour quota returns to full, and its next reset is counted from now." = "5 小時額度會恢復為全額，下次重設從現在起算。";
-"Use one weekly reset card?" = "要使用一張每週重設券嗎？";
+"Use one weekly reset card?" = "要使用一張每週重置卡嗎？";
 "The weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "每週額度會恢復為全額，5 小時額度一併恢復，兩段重設都從現在起算。";
 "Use one Codex reset card?" = "要使用一張 Codex 重置卡嗎？";
 "Codex resets the limits this card covers." = "Codex 會重設這張卡對應的額度。";
-"The reset card was used." = "已使用這張重設券。";
-"No reset card is available." = "沒有可用的重設券。";
+"The reset card was used." = "已使用這張重置卡。";
+"No reset card is available." = "沒有可用的重置卡。";
 "Nothing to reset." = "沒有需要重設的額度。";
-"That reset card was already used." = "這張重設券已經使用過。";
-"Could not use the reset card." = "未能使用這張重設券。";
-"Could not use the reset card here. The console is open so you can use it there." = "這裡未能使用這張重設券。控制台已打開，可以在那裡使用。";
+"That reset card was already used." = "這張重置卡已經使用過。";
+"Could not use the reset card." = "未能使用這張重置卡。";
+"Could not use the reset card here. The console is open so you can use it there." = "這裡未能使用這張重置卡。控制台已打開，可以在那裡使用。";
 
 /* 1.5.17 */
 "About these figures" = "關於這些數字";
 "Open the Token spend window" = "打開 Token 消耗視窗";
 "Open the Blinky window" = "打開 Blinky 主視窗";
-"Reset card details" = "重設券詳情";
+"Reset card details" = "重置卡詳情";
 
 /* 1.5.18 */
 "None" = "無";
@@ -1508,3 +1508,9 @@
 "Signed in. The CLI login is used instead." = "已登入。讀取用量時用的是命令列的登入。";
 "Reads ~/.grok/auth.json while that login is still good, and can keep its own login from Settings when the CLI's is missing or refused. Blinky does not write the CLI's file. No Keychain prompt." = "命令列的登入還有效時，讀取 ~/.grok/auth.json；缺失或被拒絕時，可以使用你在設定裡登入後由 Blinky 保存的登入。Blinky 不會寫入命令列的檔案，也不會出現鑰匙圈提示。";
 "Signed in. Blinky uses this when the CLI login is missing or refused." = "已登入。命令列的登入缺失或被拒絕時，Blinky 會改用這份登入。";
+
+/* 1.5.36 */
+"5h ×%@" = "5h ×%@";
+"Weekly ×%@" = "每週 ×%@";
+"You apply a reset card yourself. A 5-hour card returns the 5-hour quota to full, and its next reset is counted from now. A weekly card returns the weekly quota to full. The 5-hour quota returns with it, and both reset times are counted from now." = "重置卡需要自己使用。5 小時重置卡會把 5 小時額度恢復為全額，下次重設從現在起算。每週重置卡會把每週額度恢復為全額，5 小時額度一併恢復，兩段重設都從現在起算。";
+"The usage card shows how many 5-hour and weekly reset cards are left, and when the next one expires." = "用量卡片顯示還剩幾張 5 小時重置卡和每週重置卡，以及最近一張什麼時候到期。";
