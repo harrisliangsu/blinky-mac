@@ -84,32 +84,47 @@ struct ResetCardRedeemTests {
     }
 
     @MainActor
-    @Test("The card shows the count; the date and Use stay in the detail")
+    @Test("Codex shows the count and the soonest expiry; Use stays in the detail")
     func couponRowIsTheCount() {
         let held = LocalizationSource.hold(.english)
         defer { held.end() }
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
         let none = ResetCouponLine.codex(
             .available(count: 0, nextExpiry: Date(timeIntervalSince1970: 1_800_000_000)),
-            canRedeem: true
+            canRedeem: true,
+            now: now
         )
-        #expect(none.title == "Limit reset credits")
+        #expect(none.title == "Reset cards")
         #expect(none.count == "None")
         #expect(none.expiry == nil)
+        #expect(none.rowNote == nil)
         #expect(none.ask == nil)
-        #expect(!none.hasDetail)
+        #expect(none.help?.isEmpty == false)
+        #expect(none.hasDetail)
 
         let expiry = Date(timeIntervalSince1970: 1_800_000_000)
-        let some = ResetCouponLine.codex(.available(count: 2, nextExpiry: expiry), canRedeem: true)
+        let some = ResetCouponLine.codex(.available(count: 2, nextExpiry: expiry), canRedeem: true, now: now)
         #expect(some.hasDetail)
         #expect(some.ask == .askCodex)
         #expect(some.useTitle == "Use a Codex reset card")
-        #expect(some.expiry != nil)
+        #expect(some.expiry == nil)
+        #expect(some.rowNote == UsageDetailCard.nextExpiryText(until: expiry, now: now))
+        #expect(some.rowNote?.hasPrefix("Next expires in ") == true)
         #expect(!some.count.contains("Use"))
         #expect(ResetCouponLine.useControlIsButton)
 
-        let blocked = ResetCouponLine.codex(.available(count: 2, nextExpiry: expiry), canRedeem: false)
+        let blocked = ResetCouponLine.codex(.available(count: 2, nextExpiry: expiry), canRedeem: false, now: now)
         #expect(blocked.ask == nil)
         #expect(blocked.hasDetail)
+        #expect(blocked.rowNote != nil)
+
+        let past = ResetCouponLine.codex(
+            .available(count: 1, nextExpiry: now.addingTimeInterval(-60)),
+            canRedeem: true,
+            now: now
+        )
+        #expect(past.rowNote == nil)
+        #expect(past.ask == .askCodex)
 
         let soon = Date(timeIntervalSince1970: 1_800_000_000)
         let later = Date(timeIntervalSince1970: 1_900_000_000)
@@ -127,10 +142,22 @@ struct ResetCardRedeemTests {
         #expect(hour.ask == .askZhipu(.fiveHourCard, cardID: "9"))
         #expect(hour.useTitle == "Use a 5-hour reset card")
         #expect(hour.title == "5-hour reset cards")
+        #expect(hour.rowNote == nil)
+        #expect(hour.help == nil)
+        #expect(hour.expiry != nil)
         let week = ResetCouponLine.zhipu(.weeklyCard, inventory: inventory, canRedeem: true)
         #expect(week.count == "None")
         #expect(week.ask == nil)
         #expect(!week.hasDetail)
+        #expect(week.rowNote == nil)
+
+        LocalizationSource.use(.chineseSimplified)
+        let zh = ResetCouponLine.codex(.available(count: 1, nextExpiry: expiry), canRedeem: true, now: now)
+        #expect(zh.title == "重置卡")
+        #expect(zh.rowNote?.contains("最近一张") == true)
+        #expect(zh.title.contains("额度重置") == false)
+        #expect(String.localized("Use a Codex reset card") == "使用一张 Codex 重置卡")
+        #expect(String.localized("Use one Codex reset card?") == "要使用一张 Codex 重置卡吗？")
     }
 
     @Test("The detail stays inside the card, below the row or above it")

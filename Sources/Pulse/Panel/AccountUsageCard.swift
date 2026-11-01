@@ -103,7 +103,7 @@ struct AccountUsageCard: View {
     private func resetCredits(_ credits: CodexAccountUsage) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
             VStack(alignment: .leading, spacing: 3) {
-                Text(localized: "Limit reset credits")
+                Text(localized: "Reset cards")
                     .font(.system(size: 13, weight: .semibold))
 
                 if let expiry = expiry(credits) {

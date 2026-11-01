@@ -860,7 +860,7 @@ final class AppSettings {
         didSet { serverAddressesChanged(from: oldValue) }
     }
 
-    /// Whether Codex's card shows how many limit reset credits are left.
+    /// Whether Codex's card shows how many reset cards are left.
     ///
     /// **Off by default**, because it is not free: the count is only in
     /// Codex's app server, so while this is on every Codex refresh starts or

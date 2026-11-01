@@ -263,7 +263,6 @@
 "Dates" = "日期";
 "First day" = "开始日期";
 "Last day" = "结束日期";
-"Limit reset credits" = "额度重置券";
 "Next expiry" = "最近一张到期";
 "1 available" = "可用 1 张";
 "%@ available" = "可用 %@ 张";
@@ -988,9 +987,8 @@
 "Enabled" = "已启用";
 "The money left, with no ring. There is no allowance to measure against." = "只显示余额，不画圆环：没有可以对照的额度。";
 
-/* Codex reset credits */
-"Reset credits on the card" = "在卡片上显示额度重置券";
-"How many limit reset credits are left, and when the next one expires. Asks Codex's app server on every refresh." = "还剩几张额度重置券，以及最近一张什么时候到期。每次刷新都会询问 Codex 的 app server。";
+/* Codex reset cards */
+"How many reset cards are left, and when the next one expires. Asks Codex's app server on every refresh." = "还剩几张重置卡，以及最近一张什么时候到期。每次刷新都会询问 Codex 的 app server。";
 "Not available" = "不可用";
 "codex not found" = "找不到 codex";
 "Show usage in the menu bar" = "在菜单栏显示用量";
@@ -1461,14 +1459,14 @@
 "Weekly reset cards" = "每周重置券";
 "Use a 5-hour reset card" = "使用一张 5 小时重置券";
 "Use a weekly reset card" = "使用一张每周重置券";
-"Use a Codex reset card" = "使用一张 Codex 额度重置券";
+"Use a Codex reset card" = "使用一张 Codex 重置卡";
 "Use this card" = "使用这张";
 "Use one 5-hour reset card?" = "要使用一张 5 小时重置券吗？";
 "The 5-hour quota returns to full, and its next reset is counted from now." = "5 小时额度会恢复为全额，下次重置从现在起算。";
 "Use one weekly reset card?" = "要使用一张每周重置券吗？";
 "The weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "每周额度会恢复为全额，5 小时额度一并恢复，两段重置都从现在起算。";
-"Use one Codex reset card?" = "要使用一张 Codex 额度重置券吗？";
-"Codex resets the limits this card covers." = "Codex 会重置这张券对应的额度。";
+"Use one Codex reset card?" = "要使用一张 Codex 重置卡吗？";
+"Codex resets the limits this card covers." = "Codex 会重置这张卡对应的额度。";
 "The reset card was used." = "已使用这张重置券。";
 "No reset card is available." = "没有可用的重置券。";
 "Nothing to reset." = "没有需要重置的额度。";

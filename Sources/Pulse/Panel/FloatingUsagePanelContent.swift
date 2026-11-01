@@ -53,7 +53,6 @@ struct FloatingUsagePanelContent: View {
         // status and an empty prediction both say, so the Last reset branch
         // stayed out of the tree. The footer under it never moved.
         let codexResetStatus = store.codexResetStatus
-        let codexCredits = store.codexCredits
         // The rail is pinned to the trailing edge of a spacer that fills the
         // panel, as an overlay rather than a stack child: overlays keep their
         // ideal size instead of being squeezed by the space available, so the
@@ -178,8 +177,6 @@ struct FloatingUsagePanelContent: View {
                             onHeaderFrame: onHeaderFrame,
                             codexReset: selected.provider == .codex ? codexResetStatus : nil,
                             codexResets: selected.provider == .codex ? store : nil,
-                            codexCredits: selected.provider == .codex && selected.account.isPrimary
-                                ? codexCredits : nil,
                             maxHeight: placement.cardRoom
                         )
                         .fixedSize()

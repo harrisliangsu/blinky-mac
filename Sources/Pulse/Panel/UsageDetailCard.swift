@@ -79,31 +79,42 @@ enum DetailCardLayout {
     /// limits (Codex adds one group per model with its own limits), so this
     /// budgets for more than are on screen today. Codex also adds the reset
     /// intel block; that height is in the budget before any card opens, so
-    /// opening one does not resize the window. A reset coupon is one line,
-    /// the count. Its date and the use button open in a panel that stays
-    /// inside the card, so they do not add a row and the button is not clipped.
-    static var maximumHeight: CGFloat { height(forWindows: 6, footnote: true) + codexIntelHeight }
+    /// opening one does not resize the window. The opt-in reset-card row is
+    /// the count and, when a card expires, a second line. The explanation
+    /// and the use button open in a panel that stays inside the card, so
+    /// they do not add a row and the button is not clipped.
+    static var maximumHeight: CGFloat {
+        height(forWindows: 6, footnote: true) + codexResetCardHeight + codexIntelHeight
+    }
 
-    /// Title row, the local bound (may wrap), the latest announcement (one
-    /// line of relative time, then a type-and-clock line that may wrap), and
-    /// banked credits. The countdown shares the title row — on the right, as
-    /// Last reset places its relative time — and that row may take two lines
-    /// when the countdown wraps. With no countdown, confidence or "no
-    /// prediction yet" may wrap inside the same two lines. The bound, the
-    /// type line, and the credits may each take two lines. The budget is
-    /// that tall case — a watch, a latest announcement, and reset cards
-    /// together — even when a given card draws fewer of them. The relative
-    /// time stays on one line. The type's explanation is a tooltip on those
-    /// words, not another row and not an icon. The link to the site and the
-    /// help mark sit on the title row, so neither adds a row of its own. The
-    /// event note is an overlay on that mark, not a line and not a system
-    /// tooltip — unfolding it does not change this height.
+    /// The opt-in reset-card row on a Codex card: the title, and the expiry
+    /// line under it. Budgeted whether or not the switch is on and whether
+    /// or not a card has an expiry, because the frame is one size for every
+    /// card. The mark's panel is an overlay and adds nothing here.
+    static var codexResetCardHeight: CGFloat {
+        contentSpacing + rowTextLineHeight * 2
+    }
+
+    /// Title row, the local bound (may wrap), and the latest announcement
+    /// (one line of relative time, then a type-and-clock line that may wrap).
+    /// The countdown shares the title row — on the right, as Last reset
+    /// places its relative time — and that row may take two lines when the
+    /// countdown wraps. With no countdown, confidence or "no prediction yet"
+    /// may wrap inside the same two lines. The bound and the type line may
+    /// each take two lines. The budget is that tall case — a watch and a
+    /// latest announcement together — even when a given card draws fewer of
+    /// them. Account reset cards are the opt-in row above this block
+    /// (`codexResetCardHeight`), not a line here. The relative time stays on
+    /// one line. The type's explanation is a tooltip on those words, not
+    /// another row and not an icon. The link to the site and the help mark
+    /// sit on the title row, so neither adds a row of its own. The event
+    /// note is an overlay on that mark, not a line and not a system tooltip
+    /// — unfolding it does not change this height.
     static var codexIntelHeight: CGFloat {
         contentSpacing
             + rowTextLineHeight * 2
             + rowInternalSpacing + rowTextLineHeight * 2
             + rowInternalSpacing + rowTextLineHeight
-            + rowInternalSpacing + rowTextLineHeight * 2
             + rowInternalSpacing + rowTextLineHeight * 2
     }
 
@@ -195,8 +206,8 @@ struct UsageDetailCard: View {
     /// Put the allowance in its own unit beside each row's name, where the
     /// provider states one (`UsageWindow.amounts`; Qoder's credits, #88).
     var showsAmounts: Bool = false
-    /// Codex's limit reset credits, when its switch is on and it has been
-    /// asked. Nil draws no row at all.
+    /// Codex's reset cards, when its switch is on and it has been asked.
+    /// Nil draws no row at all.
     var resetCredits: CodexResetCredits?
     /// Zhipu or z.ai reset cards, when the list was reported. Nil draws nothing.
     var zhipuResetCards: ZhipuResetInventory? = nil
@@ -251,9 +262,6 @@ struct UsageDetailCard: View {
     /// card is up still draws the row. Nil in previews, which pass
     /// `codexReset` instead.
     var codexResets: UsageStore? = nil
-    /// Banked credits for the primary Codex login. Nil when the app server
-    /// has not answered; the line is omitted.
-    var codexCredits: CodexCreditSummary? = nil
     /// The event note, drawn over the prediction. A system tooltip does not
     /// appear on this panel. Kept out of the layout: showing it must not move
     /// the mark or grow the card, or the pointer's own enter and exit would
@@ -261,7 +269,7 @@ struct UsageDetailCard: View {
     @State private var predictionNoteVisible = false
     /// The first click only asks. Confirm is what sends.
     @State private var resetPrompt = ResetCardPrompt.idle
-    /// Which coupon's detail is open. Expiry and Use stay in that panel.
+    /// Which coupon's detail is open. The explanation and Use stay in that panel.
     /// The panel is placed inside the card, so it is not clipped and the
     /// next row cannot cover the button. A click outside the panel closes it.
     @State private var openCoupon: ResetCouponSlot?
@@ -442,10 +450,16 @@ struct UsageDetailCard: View {
             // reports money and no limits *by design*, and the money is then
             // the whole reading — so it is what the card says.
             // The count Codex reported, or that it reported none — never one
-            // Pulse worked out. Then when the soonest of them lapses, to the
-            // minute, since that decides whether to spend one now (issue #67).
+            // Pulse worked out. The soonest expiry sits on the row and ticks
+            // with the card, since that decides whether to spend one now
+            // (issue #67). This is the only inventory row. The public Codex
+            // Resets block below does not repeat the count.
             if let resetCredits {
-                resetCoupon(ResetCouponLine.codex(resetCredits, canRedeem: redeemCodex != nil))
+                TimelineView(.periodic(from: .now, by: 30)) { context in
+                    resetCoupon(ResetCouponLine.codex(
+                        resetCredits, canRedeem: redeemCodex != nil, now: context.date
+                    ))
+                }
             }
             if let zhipuResetCards {
                 resetCoupon(ResetCouponLine.zhipu(.fiveHourCard, inventory: zhipuResetCards, canRedeem: redeemZhipu != nil))
@@ -545,6 +559,26 @@ struct UsageDetailCard: View {
         return formatter.string(from: expiry)
     }
 
+    /// "Next expires in …", or nil once that instant has passed. The reset-card
+    /// row prints this under the count. A missing date adds no line.
+    static func nextExpiryText(until expires: Date, now: Date) -> String? {
+        guard expires > now, let remaining = remainingFormatter.string(from: now, to: expires) else { return nil }
+        return .localized("Next expires in \(remaining)")
+    }
+
+    private static var remainingFormatter: DateComponentsFormatter {
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.day, .hour]
+        formatter.unitsStyle = .abbreviated
+        formatter.maximumUnitCount = 2
+        formatter.calendar = {
+            var calendar = Calendar.current
+            calendar.locale = LocalizationSource.locale
+            return calendar
+        }()
+        return formatter
+    }
+
     static func resetCreditsText(_ credits: CodexResetCredits) -> String {
         switch credits {
         case .available(let count, _):
@@ -585,34 +619,42 @@ struct UsageDetailCard: View {
         }
     }
 
-    /// Title and count on the card. The mark opens the date and Use. The row
-    /// itself does not grow. Use is a button. The first click still only asks.
+    /// Title and count on the card. Codex adds the soonest expiry under them.
+    /// The mark opens the explanation and Use. Use is a button. The first
+    /// click still only asks.
     private func resetCoupon(_ line: ResetCouponLine) -> some View {
         let open = openCoupon == line.slot
-        return HStack(alignment: .firstTextBaseline, spacing: 4) {
-            Text(verbatim: line.title)
-                .foregroundStyle(.primary)
-                .lineLimit(1)
-            if line.hasDetail {
-                ResetCouponDetailMark(open: open) {
-                    if open {
-                        openCoupon = nil
-                        if isConfirming(line) { applyReset(.cancel) }
-                    } else {
-                        openCoupon = line.slot
+        return VStack(alignment: .leading, spacing: 2) {
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
+                Text(verbatim: line.title)
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+                if line.hasDetail {
+                    ResetCouponDetailMark(open: open) {
+                        if open {
+                            openCoupon = nil
+                            if isConfirming(line) { applyReset(.cancel) }
+                        } else {
+                            openCoupon = line.slot
+                        }
+                    }
+                    .background {
+                        if open {
+                            ScreenRectReporter(outset: 0) { couponMarkScreen = $0 }
+                        }
                     }
                 }
-                .background {
-                    if open {
-                        ScreenRectReporter(outset: 0) { couponMarkScreen = $0 }
-                    }
-                }
+                Spacer(minLength: 4)
+                Text(verbatim: line.count)
+                    .foregroundStyle(.primary.opacity(0.9))
+                    .lineLimit(1)
+                    .layoutPriority(1)
             }
-            Spacer(minLength: 4)
-            Text(verbatim: line.count)
-                .foregroundStyle(.primary.opacity(0.9))
-                .lineLimit(1)
-                .layoutPriority(1)
+            if let note = line.rowNote, !note.isEmpty {
+                Text(verbatim: note)
+                    .foregroundStyle(.primary.opacity(0.55))
+                    .lineLimit(1)
+            }
         }
         .font(.system(size: DetailCardLayout.rowFontSize, weight: .regular, design: .rounded))
         .background {
@@ -626,9 +668,10 @@ struct UsageDetailCard: View {
         .accessibilityElement(children: .contain)
     }
 
-    /// The date and the use button, inside the card. A clear inset holds the
-    /// space above it and does not take the click, so the mark and the header
-    /// stay usable. The panel does not change the card's height.
+    /// The explanation and the use button, inside the card. Zhipu's date is
+    /// here too. A clear inset holds the space above it and does not take the
+    /// click, so the mark and the header stay usable. The panel does not
+    /// change the card's height.
     @ViewBuilder
     private var couponDetailPanel: some View {
         if let slot = openCoupon,
@@ -689,6 +732,12 @@ struct UsageDetailCard: View {
     @ViewBuilder
     private func resetCouponDetail(_ line: ResetCouponLine) -> some View {
         VStack(alignment: .leading, spacing: 6) {
+            if let help = line.help, !help.isEmpty {
+                Text(verbatim: help)
+                    .font(.system(size: DetailCardLayout.footnoteFontSize, weight: .regular, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             if let expiry = line.expiry {
                 Text(verbatim: expiry)
                     .font(.system(size: DetailCardLayout.footnoteFontSize, weight: .regular, design: .rounded))
@@ -973,8 +1022,8 @@ struct UsageDetailCard: View {
         return formatter.localizedString(for: date, relativeTo: Date())
     }
 
-    /// Irregular Codex reset intel, plus banked credits when the app server
-    /// has them. Not the 5-hour or weekly `resetsAt` rows above.
+    /// Irregular Codex reset intel. Not the 5-hour or weekly `resetsAt` rows
+    /// above, and not this login's reset cards — those are the opt-in row.
     ///
     /// The title row matches Last reset: the label, the link, and the help
     /// mark on the left, the countdown on the right. Confidence stays on
@@ -983,14 +1032,12 @@ struct UsageDetailCard: View {
     /// prediction block leads with, in Last reset's rhythm. The event note
     /// is drawn over the lines under the title while the mark is held; it is
     /// not itself a line. A latest announcement is an extra row under that,
-    /// including when the prediction is empty. Account reset cards, when the
-    /// app server has them, stay underneath: they are this login's inventory,
-    /// not the public announcement.
+    /// including when the prediction is empty. Its type can say Reset card.
+    /// That is the public announcement, not the account's inventory.
     ///
     /// The lines tick on their own. A card left open used to keep "in 22
     /// minutes" after that minute had passed, because nothing else on the
-    /// card changed and the body never ran again. The same tick drops a
-    /// reset card whose only expiry has passed.
+    /// card changed and the body never ran again.
     private var codexIntel: some View {
         TimelineView(.periodic(from: .now, by: 30)) { context in
             codexIntelBody(now: context.date)
@@ -1019,10 +1066,6 @@ struct UsageDetailCard: View {
 
             if let latest = lines.latest {
                 latestAnnouncement(latest)
-            }
-
-            if let codexCredits, codexCredits.showsOnCard(at: now), usage.account.isPrimary {
-                creditLine(codexCredits, now: now)
             }
         }
         .font(.system(size: DetailCardLayout.rowFontSize, weight: .regular, design: .rounded))
@@ -1180,52 +1223,6 @@ struct UsageDetailCard: View {
                 }
             }
         }
-    }
-
-    private func creditLine(_ credits: CodexCreditSummary, now: Date) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text(localized: "Reset cards")
-                    .foregroundStyle(.primary)
-                Spacer(minLength: 8)
-                Text(creditCount(credits.available))
-                    .foregroundStyle(.primary.opacity(0.9))
-                    .lineLimit(1)
-            }
-            if let expiry = creditExpiry(credits, now: now) {
-                Text(expiry)
-                    .foregroundStyle(.primary.opacity(0.55))
-                    .lineLimit(1)
-            }
-        }
-    }
-
-    private func creditCount(_ available: Int) -> String {
-        available == 1
-            ? .localized("1 available")
-            : .localized("\("\(available)") available")
-    }
-
-    private func creditExpiry(_ credits: CodexCreditSummary, now: Date) -> String? {
-        guard
-            let expires = credits.nextExpiresAt,
-            expires > now,
-            let remaining = Self.remainingFormatter.string(from: now, to: expires)
-        else { return nil }
-        return .localized("Next expires in \(remaining)")
-    }
-
-    private static var remainingFormatter: DateComponentsFormatter {
-        let formatter = DateComponentsFormatter()
-        formatter.allowedUnits = [.day, .hour]
-        formatter.unitsStyle = .abbreviated
-        formatter.maximumUnitCount = 2
-        formatter.calendar = {
-            var calendar = Calendar.current
-            calendar.locale = LocalizationSource.locale
-            return calendar
-        }()
-        return formatter
     }
 
     private var header: some View {
@@ -2153,9 +2150,9 @@ private struct CouponRowFrameKey: PreferenceKey {
     }
 }
 
-/// The mark that opens a coupon's date and its use button. Same role as the
-/// prediction's question mark: the row stays one line. The detail is a panel
-/// inside the card, so opening it does not grow the card.
+/// The mark that opens a coupon's explanation and its use button. Same role
+/// as the prediction's question mark. The detail is a panel inside the card,
+/// so opening it does not grow the card.
 private struct ResetCouponDetailMark: View {
     var open: Bool
     let action: () -> Void

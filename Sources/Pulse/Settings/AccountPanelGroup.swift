@@ -41,8 +41,8 @@ struct AccountPanelGroup: View {
                 SettingsRowDivider()
 
                 SettingsRow(
-                    String.localized("Limit reset credits"),
-                    subtitle: String.localized("How many limit reset credits are left, and when the next one expires. Asks Codex's app server on every refresh.")
+                    String.localized("Reset cards"),
+                    subtitle: String.localized("How many reset cards are left, and when the next one expires. Asks Codex's app server on every refresh.")
                 ) {
                     Toggle("", isOn: Binding(
                         get: { settings.showsCodexResetCredits },

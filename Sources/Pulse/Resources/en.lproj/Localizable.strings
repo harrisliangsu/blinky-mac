@@ -263,7 +263,6 @@
 "Dates" = "Dates";
 "First day" = "First day";
 "Last day" = "Last day";
-"Limit reset credits" = "Limit reset credits";
 "Next expiry" = "Next expiry";
 "1 available" = "1 available";
 "%@ available" = "%@ available";
@@ -988,9 +987,8 @@
 "Enabled" = "Enabled";
 "The money left, with no ring. There is no allowance to measure against." = "The money left, with no ring. There is no allowance to measure against.";
 
-/* Codex reset credits */
-"Reset credits on the card" = "Reset credits on the card";
-"How many limit reset credits are left, and when the next one expires. Asks Codex's app server on every refresh." = "How many limit reset credits are left, and when the next one expires. Asks Codex's app server on every refresh.";
+/* Codex reset cards */
+"How many reset cards are left, and when the next one expires. Asks Codex's app server on every refresh." = "How many reset cards are left, and when the next one expires. Asks Codex's app server on every refresh.";
 "Not available" = "Not available";
 "codex not found" = "codex not found";
 "Show usage in the menu bar" = "Show usage in the menu bar";

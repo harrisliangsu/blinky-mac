@@ -54,7 +54,7 @@ Everything Blinky does, in full. The [README](../README.md) has the short versio
 <p align="center">
   <img src="images/account-claude-code.webp" height="290" alt="An account pane: every reported limit, the estimated value of what was used, and the local history">
   &nbsp;&nbsp;
-  <img src="images/account-codex.webp" height="290" alt="Another account pane, with the plan, credit balance and limit reset credits it reports">
+  <img src="images/account-codex.webp" height="290" alt="Another account pane, with the plan, credit balance and reset cards it reports">
 </p>
 
 <p align="center">

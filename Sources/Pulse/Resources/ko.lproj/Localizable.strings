@@ -263,7 +263,6 @@
 "Dates" = "날짜";
 "First day" = "시작일";
 "Last day" = "종료일";
-"Limit reset credits" = "한도 초기화 쿠폰";
 "Next expiry" = "다음 만료";
 "1 available" = "1장 사용 가능";
 "%@ available" = "%@장 사용 가능";
@@ -990,9 +989,8 @@
 "Enabled" = "사용 중";
 "The money left, with no ring. There is no allowance to measure against." = "남은 금액만 표시하고 링은 그리지 않습니다. 비교할 한도가 없기 때문입니다.";
 
-/* Codex reset credits */
-"Reset credits on the card" = "카드에 한도 초기화 쿠폰 표시";
-"How many limit reset credits are left, and when the next one expires. Asks Codex's app server on every refresh." = "남은 한도 초기화 쿠폰 수와 가장 먼저 만료되는 쿠폰의 만료 시각. 새로 고칠 때마다 Codex app server에 묻습니다.";
+/* Codex reset cards */
+"How many reset cards are left, and when the next one expires. Asks Codex's app server on every refresh." = "남은 리셋 카드 수와 가장 먼저 만료되는 카드의 만료 시각. 새로 고칠 때마다 Codex app server에 묻습니다.";
 "Not available" = "제공되지 않음";
 "codex not found" = "codex를 찾을 수 없음";
 "Show usage in the menu bar" = "메뉴 막대에 사용량 표시";
@@ -1463,14 +1461,14 @@
 "Weekly reset cards" = "주간 초기화 쿠폰";
 "Use a 5-hour reset card" = "5시간 초기화 쿠폰 사용";
 "Use a weekly reset card" = "주간 초기화 쿠폰 사용";
-"Use a Codex reset card" = "Codex 한도 초기화 쿠폰 사용";
+"Use a Codex reset card" = "Codex 리셋 카드 사용";
 "Use this card" = "이 쿠폰 사용";
 "Use one 5-hour reset card?" = "5시간 초기화 쿠폰을 사용할까요?";
 "The 5-hour quota returns to full, and its next reset is counted from now." = "5시간 한도가 가득 채워지고, 다음 초기화는 지금부터 계산됩니다.";
 "Use one weekly reset card?" = "주간 초기화 쿠폰을 사용할까요?";
 "The weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "주간 한도가 가득 채워집니다. 5시간 한도도 함께 채워지고, 두 초기화 시각은 지금부터 계산됩니다.";
-"Use one Codex reset card?" = "Codex 한도 초기화 쿠폰을 사용할까요?";
-"Codex resets the limits this card covers." = "Codex가 이 쿠폰이 적용되는 한도를 초기화합니다.";
+"Use one Codex reset card?" = "Codex 리셋 카드를 사용할까요?";
+"Codex resets the limits this card covers." = "Codex가 이 카드가 적용되는 한도를 초기화합니다.";
 "The reset card was used." = "초기화 쿠폰을 사용했습니다.";
 "No reset card is available." = "사용할 수 있는 초기화 쿠폰이 없습니다.";
 "Nothing to reset." = "초기화할 한도가 없습니다.";
