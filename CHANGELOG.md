@@ -12,7 +12,7 @@ bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
 ## 1.5.36
 
-- **Zhipu and z.ai reset cards take one row.** With Reset cards on under Settings → Providers → Zhipu or z.ai → Panel — on by default — the usage card shows how many 5-hour and weekly cards are left and when the next one expires, and the explanation and the confirmation open from that row's mark.
+- **Zhipu and z.ai reset cards take one row.** With Reset cards on under Settings → Providers → Zhipu or z.ai → Panel — on by default — the usage card shows how many 5-hour and weekly cards are left and when the next one expires, and the explanation and the confirmation open from that row's mark. [#98](https://github.com/harrisliangsu/blinky-mac/pull/98)
 
 ## 1.5.35
 
