@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.36</title>
-            <pubDate>Sun, 01 Nov 2026 04:30:04 -0000</pubDate>
-            <sparkle:version>1.5.36</sparkle:version>
-            <sparkle:shortVersionString>1.5.36</sparkle:shortVersionString>
+            <title>1.5.37</title>
+            <pubDate>Tue, 03 Nov 2026 02:08:34 -0000</pubDate>
+            <sparkle:version>1.5.37</sparkle:version>
+            <sparkle:shortVersionString>1.5.37</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.36</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.37</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.36</h2><ul><li><strong>Zhipu 和 z.ai 的重置卡只显示一行。</strong> 在「设置 → 供应商 → Zhipu」或「z.ai」的「面板」中，「重置卡」默认打开；用量卡片用这一行写出 5 小时和每周还剩几张，以及最近一张何时到期，说明与使用前的确认从这一行的标记打开。<a href="https://github.com/harrisliangsu/blinky-mac/pull/98">#98</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.36">在 GitHub 查看更新说明</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.36/Blinky-1.5.36.zip"
-                       length="23448619"
+</style><h2>Blinky 1.5.37</h2><ul><li><strong>Codex 固定的圆环在改走应用服务器后仍停在同一限额。</strong> 应用服务器与网页接口使用同一个限额名称，已固定的圆环不会在回退读取后松开。<a href="https://github.com/qunqin24/Pulse/issues/102">#102</a></li><li><strong>macOS 拒绝读取浏览器 Cookie 时会写明原因。</strong> 系统不允许读取时，设置里说明需要在「完全磁盘访问权限」中允许 Blinky，而不是要求重新登录。<a href="https://github.com/qunqin24/Pulse/issues/101">#101</a></li><li><strong>圆环里可以显示 CX ArtLab 的小机器人。</strong> 在「设置 → 供应商」打开某个账号的「外观」，打开「圆环中显示小机器人」后，圆环用这个机器人代替服务商图标，并随该账号的状态变化；原来的动画标记已去掉。</li><li><strong>Devin 的用量卡片会读入经 Oh My Pi 转发的记录。</strong> 标明走 Devin 的记录出现在这张卡片的历史里。<a href="https://github.com/qunqin24/Pulse/pull/104">#104</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.37">在 GitHub 查看更新说明</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.37/Blinky-1.5.37.zip"
+                       length="23221767"
                        type="application/octet-stream"
-                       sparkle:edSignature="I3KB4yA1km/4j10Myx6YrE4Uus66a5ysvzqTR4qoCXvRi933KRVbwJDWXkK2kmB2UcrlHuE62zIloNHWe50JAw==" />
+                       sparkle:edSignature="K7XiFFZp6VrOpyc0tghhBnvhc2ATfkpzA5BWSoG1MB1+dxnVvSEcNjO+j1Xj/IAGOzyxKHCDbHYnhBuJR2O2AA==" />
         </item>
     </channel>
 </rss>

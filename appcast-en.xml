@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.36</title>
-            <pubDate>Sun, 01 Nov 2026 04:30:04 -0000</pubDate>
-            <sparkle:version>1.5.36</sparkle:version>
-            <sparkle:shortVersionString>1.5.36</sparkle:shortVersionString>
+            <title>1.5.37</title>
+            <pubDate>Tue, 03 Nov 2026 02:08:34 -0000</pubDate>
+            <sparkle:version>1.5.37</sparkle:version>
+            <sparkle:shortVersionString>1.5.37</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.36</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.37</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.36</h2><ul><li><strong>Zhipu and z.ai reset cards take one row.</strong> With Reset cards on under Settings → Providers → Zhipu or z.ai → Panel — on by default — the usage card shows how many 5-hour and weekly cards are left and when the next one expires, and the explanation and the confirmation open from that row&#x27;s mark. <a href="https://github.com/harrisliangsu/blinky-mac/pull/98">#98</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.36">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.36/Blinky-1.5.36.zip"
-                       length="23448619"
+</style><h2>Blinky 1.5.37</h2><ul><li><strong>A pinned Codex ring stays on the same limit after a fallback to the app server.</strong> The app server names each limit the same way the web endpoint does, so a pin does not come loose when the read falls back. <a href="https://github.com/qunqin24/Pulse/issues/102">#102</a></li><li><strong>A refused browser cookie store says why.</strong> When macOS will not open the store, Settings says to allow Blinky under Full Disk Access, instead of asking you to sign in again. <a href="https://github.com/qunqin24/Pulse/issues/101">#101</a></li><li><strong>A ring can show CX ArtLab&#x27;s robot.</strong> Under Settings → Providers, open an account&#x27;s Appearance and turn on Robot in the ring: the ring draws that robot in place of the provider&#x27;s mark and follows what the account is doing. The animated mark is gone.</li><li><strong>Devin&#x27;s usage card reads records routed through Oh My Pi.</strong> Records that name Devin appear in that card&#x27;s history. <a href="https://github.com/qunqin24/Pulse/pull/104">#104</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.37">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.37/Blinky-1.5.37.zip"
+                       length="23221767"
                        type="application/octet-stream"
-                       sparkle:edSignature="I3KB4yA1km/4j10Myx6YrE4Uus66a5ysvzqTR4qoCXvRi933KRVbwJDWXkK2kmB2UcrlHuE62zIloNHWe50JAw==" />
+                       sparkle:edSignature="K7XiFFZp6VrOpyc0tghhBnvhc2ATfkpzA5BWSoG1MB1+dxnVvSEcNjO+j1Xj/IAGOzyxKHCDbHYnhBuJR2O2AA==" />
         </item>
     </channel>
 </rss>
