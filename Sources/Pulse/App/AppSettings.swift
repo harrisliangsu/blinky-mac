@@ -416,6 +416,31 @@ final class AppSettings {
         didSet { detailedCardsChanged(from: oldValue) }
     }
 
+    /// The accounts whose ring draws CX ArtLab's robot in place of the
+    /// provider's mark, by account id. Off for every account until chosen.
+    ///
+    /// Not a `PanelMetrics` entry: the robot takes the mark's place at the
+    /// mark's size, so nothing is measured differently.
+    var robotAccounts: Set<String> = [] {
+        didSet { robotAccountsChanged(from: oldValue) }
+    }
+
+    /// The robot's own colour per account, as hex; absent is Automatic.
+    var robotColours: [String: String] = [:] {
+        didSet { robotColoursChanged(from: oldValue) }
+    }
+
+    /// The robot's personality per account (`RobotPersonality`); absent is
+    /// Automatic.
+    var robotPersonalities: [String: String] = [:] {
+        didSet { robotPersonalitiesChanged(from: oldValue) }
+    }
+
+    /// The robot's head shape per account (`RobotShape`); absent is standard.
+    var robotShapes: [String: String] = [:] {
+        didSet { robotShapesChanged(from: oldValue) }
+    }
+
     /// Liquid Glass instead of flat black for the panel's surfaces.
     ///
     /// Off by default because a solid surface is legible over anything, and
@@ -524,56 +549,6 @@ final class AppSettings {
     /// which is the default and the one that means something.
     var ringTints: [String: String] {
         didSet { ringTintsChanged(from: oldValue) }
-    }
-
-    /// Which rings draw an animated mark instead of the provider's logo,
-    /// keyed by account. A missing entry means the logo, which is the default.
-    ///
-    /// **Per account, not one switch for the rail.** A logo says which of
-    /// twenty products a ring belongs to, and a mark gives that up for
-    /// motion — which is a trade worth making for the two or three rings
-    /// somebody actually watches work, and not for the rest. Per account
-    /// rather than per provider for the same reason `ringTints` is: two
-    /// accounts of one provider are two rings, and they are told apart by
-    /// exactly this kind of choice.
-    ///
-    /// **The mark takes the CLI-activity arc with it, on that ring only.** A
-    /// white travelling arc and a mark that visibly gets to work are one fact
-    /// drawn twice.
-    var botMarks: [String: Bool] {
-        didSet { botMarksChanged(from: oldValue) }
-    }
-
-    /// The persona chosen for an account's mark, keyed by account. A missing
-    /// entry means automatic, which is what almost everyone will leave it on.
-    ///
-    /// Automatic is dealt by position on the rail, so the ring beside this one
-    /// is a different character. Choosing one is for when somebody wants a
-    /// particular provider to be the sleepy one.
-    var botPersonas: [String: String] {
-        didSet { botPersonasChanged(from: oldValue) }
-    }
-
-    /// A colour chosen for an account's **mark**, keyed by account. A missing
-    /// entry means the brand colour, or one dealt across the rail.
-    ///
-    /// Separate from `ringTints` on purpose: the ring means how close the
-    /// limit is, the mark means which provider this is, and somebody who
-    /// wants a green bot in a red ring is asking for two different things.
-    var botColours: [String: String] {
-        didSet { botColoursChanged(from: oldValue) }
-    }
-
-    /// The body shape chosen for an account's mark, keyed by account. A
-    /// missing entry is round, which is what every mark is until somebody
-    /// changes it.
-    ///
-    /// **Not dealt like the colours and the personas.** Those are dealt
-    /// because two rings that look identical are unreadable, and a colour or a
-    /// rhythm says nothing by itself. A shape somebody did not choose would be
-    /// the app making a claim about that provider with a silhouette.
-    var botShapes: [String: String] {
-        didSet { botShapesChanged(from: oldValue) }
     }
 
     /// Whether the outer clock arc fills with elapsed time or empties with the
@@ -1221,10 +1196,6 @@ final class AppSettings {
         sources: [String: String] = [:],
         sessionBrowsers: [String: String] = [:],
         ringTints: [String: String] = [:],
-        botMarks: [String: Bool] = [:],
-        botPersonas: [String: String] = [:],
-        botShapes: [String: String] = [:],
-        botColours: [String: String] = [:],
         refreshInterval: RefreshInterval = .default,
         networkProxy: NetworkProxySettings = .default,
         autoCollapse: Bool = Default.autoCollapse,
@@ -1288,10 +1259,6 @@ final class AppSettings {
         self.sources = sources
         self.sessionBrowsers = sessionBrowsers
         self.ringTints = ringTints
-        self.botMarks = botMarks
-        self.botPersonas = botPersonas
-        self.botShapes = botShapes
-        self.botColours = botColours
         self.refreshInterval = refreshInterval
         self.networkProxy = networkProxy
         self.autoCollapse = autoCollapse
@@ -1401,14 +1368,10 @@ final class AppSettings {
             providerOrder: defaults.stringArray(forKey: Key.providerOrder) ?? [],
             providersListOrder: defaults.settingsChoice(Key.providersListOrder) ?? Default.providersListOrder,
             language: defaults.settingsChoice(Key.language) ?? .system,
-            pinnedWindows: defaults.dictionary(forKey: Key.pinnedWindows) as? [String: String] ?? [:],
+            pinnedWindows: codexPinsNamedLikeHTTP(defaults.dictionary(forKey: Key.pinnedWindows) as? [String: String] ?? [:]),
             sources: defaults.dictionary(forKey: Key.sources) as? [String: String] ?? [:],
             sessionBrowsers: defaults.dictionary(forKey: Key.sessionBrowsers) as? [String: String] ?? [:],
             ringTints: defaults.dictionary(forKey: Key.ringTints) as? [String: String] ?? [:],
-            botMarks: defaults.dictionary(forKey: Key.botMarks) as? [String: Bool] ?? [:],
-            botPersonas: defaults.dictionary(forKey: Key.botPersonas) as? [String: String] ?? [:],
-            botShapes: defaults.dictionary(forKey: Key.botShapes) as? [String: String] ?? [:],
-            botColours: defaults.dictionary(forKey: Key.botColours) as? [String: String] ?? [:],
             refreshInterval: defaults.settingsIntChoice(Key.refreshInterval) ?? .default,
             networkProxy: Self.storedNetworkProxy(in: defaults),
             autoCollapse: defaults.settingsFlag(Key.autoCollapse, default: Default.autoCollapse),

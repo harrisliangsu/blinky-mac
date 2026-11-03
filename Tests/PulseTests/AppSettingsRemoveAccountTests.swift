@@ -31,11 +31,11 @@ struct AppSettingsRemoveAccountTests {
             settings.lowBalanceAlerts[kept.id] = nil
             settings.balanceBases[kept.id] = nil
             settings.balanceBudgets[kept.id] = nil
-            settings.botMarks[kept.id] = nil
-            settings.botPersonas[kept.id] = nil
-            settings.botColours[kept.id] = nil
-            settings.botShapes[kept.id] = nil
             settings.detailedCards.remove(kept.id)
+            settings.robotAccounts.remove(kept.id)
+            settings.robotColours[kept.id] = nil
+            settings.robotPersonalities[kept.id] = nil
+            settings.robotShapes[kept.id] = nil
             settings.splitAccounts.remove(kept.id)
             settings.menuBarAccount = nil
         }
@@ -49,11 +49,11 @@ struct AppSettingsRemoveAccountTests {
             settings.setLowBalanceAlert(5, for: account)
             settings.setBalanceBasis(.budget, for: account)
             settings.setBalanceBudget(20, for: account)
-            settings.setShowsBotMark(true, for: account)
-            settings.setBotPersona(.calm, for: account)
-            settings.setBotColour(.blue, for: account)
-            settings.setBotBody(.pebble, for: account)
             settings.setShowsDetailedCard(true, for: account)
+            settings.setShowsRobot(true, for: account)
+            settings.setRobotColour(.blue, for: account)
+            settings.setRobotPersonality(.lively, for: account)
+            settings.setRobotShape(.round, for: account)
             settings.setSplit(true, for: account)
         }
 
@@ -75,11 +75,11 @@ struct AppSettingsRemoveAccountTests {
         #expect(settings.lowBalanceAlerts[removed.id] == nil)
         #expect(settings.balanceBases[removed.id] == nil)
         #expect(settings.balanceBudgets[removed.id] == nil)
-        #expect(settings.botMarks[removed.id] == nil)
-        #expect(settings.botPersonas[removed.id] == nil)
-        #expect(settings.botColours[removed.id] == nil)
-        #expect(settings.botShapes[removed.id] == nil)
         #expect(!settings.detailedCards.contains(removed.id))
+        #expect(!settings.robotAccounts.contains(removed.id))
+        #expect(settings.robotColours[removed.id] == nil)
+        #expect(settings.robotPersonalities[removed.id] == nil)
+        #expect(settings.robotShapes[removed.id] == nil)
         #expect(!settings.splitAccounts.contains(removed.id))
 
         // Reading them back through the account-scoped accessors agrees: every
@@ -92,11 +92,8 @@ struct AppSettingsRemoveAccountTests {
         #expect(settings.lowBalanceAlert(for: removed) == nil)
         #expect(settings.balanceBasis(for: removed) == .default)
         #expect(settings.balanceBudget(for: removed) == nil)
-        #expect(!settings.showsBotMark(for: removed))
-        #expect(settings.botPersona(for: removed) == nil)
-        #expect(settings.botColour(for: removed) == nil)
-        #expect(settings.botBody(for: removed) == .default)
         #expect(!settings.showsDetailedCard(for: removed))
+        #expect(!settings.showsRobot(for: removed))
 
         // A second account's own settings are untouched by the removal.
         #expect(settings.pinnedWindow(for: kept) == "weekly")
@@ -107,10 +104,10 @@ struct AppSettingsRemoveAccountTests {
         #expect(settings.lowBalanceAlert(for: kept) == 5)
         #expect(settings.balanceBasis(for: kept) == .budget)
         #expect(settings.balanceBudget(for: kept) == 20)
-        #expect(settings.showsBotMark(for: kept))
-        #expect(settings.botPersona(for: kept) == .calm)
-        #expect(settings.botColour(for: kept) != nil)
-        #expect(settings.botBody(for: kept) == .pebble)
         #expect(settings.splitAccounts.contains(kept.id))
+        #expect(settings.showsRobot(for: kept))
+        #expect(settings.robotColour(for: kept) != nil)
+        #expect(settings.robotPersonality(for: kept) == .lively)
+        #expect(settings.robotShape(for: kept) == .round)
     }
 }

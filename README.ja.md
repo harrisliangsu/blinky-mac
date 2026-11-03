@@ -36,7 +36,7 @@
 <p align="center">
   <img src="Docs/images/demo.gif" height="400" alt="画面の端に寄せた Blinky のフローティングレール">
   &nbsp;&nbsp;
-  <img src="Docs/images/panel.webp" height="400" alt="リングにポインタを乗せると、すべての上限とリセット時刻を並べたカードが開きます">
+  <img src="Docs/images/panel.png" height="400" alt="リングにポインタを乗せると、すべての上限とリセット時刻を並べたカードが開きます">
 </p>
 
 - **77 のサービスをひと目で**——Claude Code、Codex、Cursor、GitHub Copilot、Antigravity、Kiro、Grok、DeepSeek、Kimi Code など。それぞれに専用のリングがあります。
@@ -44,11 +44,7 @@
 - **表示するのは実際の数字だけ**——使用率はすべてサービス自身が報告した値です。数少ない推定値にはそう明記し、サービスが数字を出さないときは、推測せずにそのことを表示します。
 - **ネイティブで控えめ**——Swift と SwiftUI 製で、macOS 26 では Liquid Glass。画面の左・右・上、または下の Dock の横に寄せられ、使っていないときは細い線に畳まれます。メニューバーだけで使うこともできます。
 
-**最近の追加：** メニューバーでの使用量表示とアカウントごとのダッシュボード、リセット後に利用枠を自動で始める機能、動くボットのマーク。[更新内容](https://github.com/harrisliangsu/blinky-mac/releases/latest)。
-
-<p align="center">
-  <img src="Docs/images/bot-mark.gif" width="300" alt="Blinky のアニメーションマーク：各リングのボットがそのアカウントの状態に反応します">
-</p>
+**最近の追加：** メニューバーでの使用量表示とアカウントごとのダッシュボード、リセット後に利用枠を自動で始める機能、リングの中のロボット（CX ArtLab の Agent Robot Avatar）。[更新内容](https://github.com/harrisliangsu/blinky-mac/releases/latest)。
 
 <p align="center">
   <sub>Blinky のおかげで突然の上限を避けられたなら、⭐ をもらえると、ほかの人にも見つけてもらいやすくなります。</sub>
@@ -80,7 +76,7 @@
 ### ひと目でわかるリング
 - **使用量に合わせた色**——緑から琥珀、赤へ。アカウントごとに好きな色も選べます。
 - **使用済みか残りか**——`75% 使用` か `25% 残り`。ウィンドウがどれだけ経ったかを示す時計の弧も付けられます。
-- **動いていることがわかる**——エージェントの作業中はリング上で点が回ります。アカウントの状態に合わせて動く小さなボットも選べます。
+- **動いていることがわかる**——エージェントの作業中はリング上で点が回ります。アカウントの状態に合わせて動くロボット（CX ArtLab の Agent Robot Avatar）も表示できます。
 
 ### リングを指すと詳細
 - **すべての上限とリセット時刻**を 1 枚のカードに。バーは連続か区切りかを選べます。
@@ -89,7 +85,7 @@
 - **メニューバー**——いちばん使っているリングを数字・小さなリング・上限の並びで。ダッシュボードも開けます。
 
 <p align="center">
-  <img src="Docs/images/detailed-card.webp" width="620" alt="同じ Codex アカウントのコンパクトなカードと詳細カード">
+  <img src="Docs/images/detailed-card.png" width="620" alt="同じ Codex アカウントのコンパクトなカードと詳細カード">
 </p>
 
 ### じゃまにならない

@@ -523,8 +523,9 @@ final class AgentActivityMonitor {
     /// When each provider's turn last *ended*, which is a different fact from
     /// "is it running" and is not derivable from it after the event.
     ///
-    /// The rail's animated mark celebrates a finished turn, and it may only do
-    /// that for something witnessed: this is the witness. Kept here because
+    /// Anything on the rail that marks a finished turn may only do that for
+    /// something witnessed: this is the witness, and the robot in a ring nods
+    /// on it (`RobotCue`). Kept here because
     /// this is the one place that sees the transition — a view comparing its
     /// own previous render would celebrate whenever SwiftUI rebuilt it.
     private(set) var finishedAt: [Provider: Date] = [:]

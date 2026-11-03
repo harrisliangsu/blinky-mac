@@ -53,27 +53,6 @@ struct UsageRingView: View {
     /// mark, no refresh sweep, and the usage arc stays at full opacity while
     /// a reading is fetched instead of dimming for the turn to sit in.
     var animatesActivity: Bool = true
-    /// Whether this ring's logo is replaced by an animated mark, which is a
-    /// per-account choice — see `AppSettings.botMarks`.
-    var showsBotMark: Bool = false
-    /// The mark's body colour, dealt across the rail so no two rings next to
-    /// each other look alike. Nil falls back to this provider's own colour,
-    /// for the places that draw one ring on its own.
-    var botTint: Color?
-    /// Which character the mark is. Nil means whichever the rail dealt it.
-    var botPersona: BotMarkPersona?
-    /// The shape the mark wears. Round unless the reader picked otherwise.
-    var botBody: BotMarkBody = .default
-    /// Which way the mark looks, which the rail's edge decides.
-    var botGaze: BotMarkGaze = .ahead
-    /// A one-shot the mark plays once: a limit reset, a turn finished.
-    var botEvent: BotMarkEvent?
-    /// The pointer in panel coordinates. The mark works out where that is
-    /// relative to itself and looks at it.
-    var botPointer: CGPoint?
-    /// Whether no CLI has written for a while. Only the sleepy persona uses
-    /// this for its occasional night-time doze.
-    var botQuiet = false
     /// Whether this ring is the one being pointed at.
     var highlight: Bool = false
     /// How much of the window clock to draw, 0...1, or nil to leave it out.
@@ -102,6 +81,11 @@ struct UsageRingView: View {
     /// next person who forgets it is told.
     let secondFraction: Double?
     let secondIsSpent: Bool
+    /// CX ArtLab's robot in place of the provider's mark, or nil for the mark.
+    /// Per account, off by default (`AppSettings.robotAccounts`).
+    var robot: RobotCue?
+    /// False while the rail is collapsed, which stops the robot's timeline.
+    var isLive: Bool = true
 
     @State private var spinning = false
     @State private var refreshSpinning = false
@@ -117,28 +101,19 @@ struct UsageRingView: View {
     /// The icon's share of that dark disc. Sizing the icon from the disc
     /// rather than from the full diameter keeps the margin around it steady
     /// even if the ring's stroke gets thicker or thinner.
-    private static let iconScale: CGFloat = 0.8
-
-    /// The animated mark's share of the same disc, which is **larger than a
-    /// logo's on purpose** — and larger than the disc itself.
     ///
-    /// Two things make a mark look smaller than the glyph it replaced. It
-    /// draws into the upstream's viewBox, 259 units around a 229-unit body, so
-    /// an eleventh of its canvas is margin the character moves inside — the
-    /// idle bob, the lean, the squash. And a logo is a flat shape that reads
-    /// at any size, where a face needs room for two eyes to be two eyes.
-    ///
-    /// So the mark is sized against the **ring's inner edge** rather than the
-    /// disc: at 1.4 the canvas is the full 28pt inside a standard 36pt ring,
-    /// which puts the body at about 25pt with 1.6pt of clearance from the
-    /// stroke. That is wider than the 20pt disc behind it, deliberately — the
-    /// disc is near-black on a near-black rail and reads as a shadow, while
-    /// the ring is the edge a reader actually sees. The gap the activity mark
-    /// used to ride is free here: a ring drawing a mark does not draw that arc.
-    ///
-    /// It still scales with the disc, so the 2pt a side the disc gives up to
-    /// the second ring takes the mark with it and the two cannot collide.
-    private static let botScale: CGFloat = 1.4
+    /// The whole disc: 0.8 read small beside the robot, and 0.9 and 1.0 were
+    /// drawn side by side and 1.0 was picked. The cost, accepted: a busy
+    /// ring's activity arc and a second ring both pass close to the glyph.
+    private static let iconScale: CGFloat = 1.0
+    /// The robot's share of the same disc: **wider than the disc**. Its
+    /// drawing carries the antenna and room to move above the head, so the
+    /// head needs the extra width to read as large as a logo. It may spread
+    /// into the band between the disc and the usage ring because a ring with
+    /// a robot draws no activity arc there. With a second ring that band is
+    /// taken, and its taller outline would touch the inner ring at the
+    /// logo's size, so it is drawn smaller there.
+    private var robotScale: CGFloat { secondFraction == nil ? 1.1 : 0.8 }
 
     private var centreDiameter: CGFloat {
         // The disc gives up two points a side to the second ring, which needs
@@ -283,44 +258,20 @@ struct UsageRingView: View {
 
             if isRefreshing && animatesActivity { refreshMark }
 
-            if showsBotMark {
-                // The mark has its own unavailable expression; keep it legible
-                // instead of dimming the face into the dark disc.
-                let body = botTint ?? BotMarkTint.body(for: provider)
-                BotMarkView(
-                    mood: BotMarkMood.resolve(isBusy: isBusy, isRefreshing: isRefreshing,
-                                              isSpent: isSpent || (usedFraction ?? 0) >= 1,
-                                              hasReading: hasReading),
-                    persona: botPersona ?? .calm,
-                    bodyShape: botBody,
-                    gaze: botGaze,
-                    event: botEvent,
-                    pointer: botPointer,
-                    isPointedAt: highlight,
-                    isQuiet: botQuiet,
-                    tint: body,
-                    eyeTint: BotMarkTint.eyes(on: body),
-                    size: centreDiameter * Self.botScale
-                )
-            } else {
-                LobeIconView(
-                    provider: provider,
-                    size: centreDiameter * Self.iconScale
-                )
-                // Dimmed while there is no reading, so the rail shows at a
-                // glance which providers it actually has data for.
-                .foregroundStyle(.primary.opacity(hasReading ? 1 : 0.35))
-            }
+            // Dimmed while there is no reading, so the rail shows at a
+            // glance which providers it actually has data for. An opacity
+            // rather than a dimmer foreground, because the robot may have a
+            // colour of its own.
+            centreMark
+                .opacity(hasReading ? 1 : 0.35)
 
             if let secondFraction {
                 secondRing(secondFraction)
             }
 
-            // **Not while the mark is animated.** The travelling mark and the
-            // bot's working state are one fact drawn twice, and the white arc
-            // is the half that says nothing about which provider it belongs
-            // to. The mark keeps it; the arc goes.
-            if isBusy && !showsBotMark && animatesActivity {
+            // **Not with the robot.** It shows the CLI working itself, and
+            // the same fact is not drawn twice on one ring.
+            if isBusy && animatesActivity && robot == nil {
                 Circle()
                     .trim(from: 0, to: Self.busySweep)
                     .stroke(
@@ -355,6 +306,30 @@ struct UsageRingView: View {
         .overlay { windowClock }
         .animation(.easeOut(duration: 0.2), value: isRefreshing)
         .accessibilityHidden(true)
+    }
+
+    /// What sits in the disc: the provider's mark, or the robot, sized by
+    /// `robotScale`. Nothing around it moves either way.
+    @ViewBuilder
+    private var centreMark: some View {
+        if let robot {
+            RobotMarkView(
+                mood: RobotMood.resolve(hasReading: hasReading, isSpent: isSpent, isWorking: isBusy, isRefreshing: isRefreshing,
+                                        activity: animatesActivity),
+                gesture: robot.gesture,
+                size: centreDiameter * robotScale,
+                isLive: isLive,
+                ink: robot.ink,
+                inkIsChosen: robot.inkIsChosen,
+                personality: robot.personality,
+                shape: robot.shape
+            )
+        } else {
+            LobeIconView(
+                provider: provider,
+                size: centreDiameter * Self.iconScale
+            )
+        }
     }
 
     /// The selected side of the window clock: a hairline outside the usage

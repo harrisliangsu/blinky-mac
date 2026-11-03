@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import Testing
 @testable import Pulse
 
@@ -198,14 +199,6 @@ struct AppSettingsPersistenceTests {
         #expect(defaults.dictionary(forKey: "settings.sessionBrowsers") as? [String: String] == ["devin": "chrome"])
         settings.ringTints = ["codex": "#112233"]
         #expect(defaults.dictionary(forKey: "settings.ringTints") as? [String: String] == ["codex": "#112233"])
-        settings.botMarks = ["codex": true]
-        #expect(defaults.dictionary(forKey: "settings.botMarks") as? [String: Bool] == ["codex": true])
-        settings.botPersonas = ["codex": "sleepy"]
-        #expect(defaults.dictionary(forKey: "settings.botPersonas") as? [String: String] == ["codex": "sleepy"])
-        settings.botColours = ["codex": "#445566"]
-        #expect(defaults.dictionary(forKey: "settings.botColours") as? [String: String] == ["codex": "#445566"])
-        settings.botShapes = ["codex": "square"]
-        #expect(defaults.dictionary(forKey: "settings.botShapes") as? [String: String] == ["codex": "square"])
         settings.providerOrder = ["codex", "claudeCode"]
         #expect(defaults.stringArray(forKey: "settings.providerOrder") == ["codex", "claudeCode"])
         settings.splitAccounts = ["antigravity"]
@@ -214,6 +207,24 @@ struct AppSettingsPersistenceTests {
         #expect(defaults.stringArray(forKey: "settings.primedProviders") == ["codex"])
         settings.setShowsDetailedCard(true, for: AccountKey(.codex))
         #expect(defaults.stringArray(forKey: "settings.detailedCards") == ["codex"])
+        settings.setShowsRobot(true, for: AccountKey(.codex))
+        #expect(defaults.stringArray(forKey: "settings.robotAccounts") == ["codex"])
+        // A key of its own: the removed mark's is never read or written.
+        #expect(defaults.object(forKey: "settings.botMarks") == nil)
+        settings.setRobotColour(Color(red: 1, green: 0, blue: 0), for: AccountKey(.codex))
+        #expect(defaults.dictionary(forKey: "settings.robotColours") as? [String: String] == ["codex": "#FF0000"])
+        settings.setRobotPersonality(.calm, for: AccountKey(.codex))
+        #expect(defaults.dictionary(forKey: "settings.robotPersonalities") as? [String: String] == ["codex": "calm"])
+        settings.setRobotShape(.square, for: AccountKey(.codex))
+        #expect(defaults.dictionary(forKey: "settings.robotShapes") as? [String: String] == ["codex": "square"])
+        // Back to the defaults stores nothing.
+        settings.setRobotPersonality(nil, for: AccountKey(.codex))
+        settings.setRobotShape(.standard, for: AccountKey(.codex))
+        #expect(defaults.dictionary(forKey: "settings.robotPersonalities") as? [String: String] == [:])
+        #expect(defaults.dictionary(forKey: "settings.robotShapes") as? [String: String] == [:])
+        for old in ["settings.botPersonas", "settings.botColours", "settings.botShapes"] {
+            #expect(defaults.object(forKey: old) == nil)
+        }
         settings.enabledAccounts = ["codex"]
         #expect(defaults.stringArray(forKey: "settings.enabledProviders") == ["codex"])
 
@@ -265,10 +276,6 @@ struct AppSettingsPersistenceTests {
         first.sources = ["codex": "endpoint"]
         first.sessionBrowsers = ["devin": "chrome"]
         first.ringTints = ["codex": "#112233"]
-        first.botMarks = ["codex": true]
-        first.botPersonas = ["codex": "sleepy"]
-        first.botShapes = ["codex": "square"]
-        first.botColours = ["codex": "#445566"]
         first.refreshInterval = .fiveMinutes
         first.autoCollapse = false
         first.panelSize = .large
@@ -323,6 +330,10 @@ struct AppSettingsPersistenceTests {
         first.balanceBases = ["newAPI": "budget"]
         first.balanceBudgets = ["newAPI": 10]
         first.detailedCards = ["codex"]
+        first.robotAccounts = ["claudeCode"]
+        first.robotColours = ["claudeCode": "#4A90E2"]
+        first.robotPersonalities = ["claudeCode": "lively"]
+        first.robotShapes = ["claudeCode": "round"]
         first.primedProviders = ["codex"]
         first.primerHours = PrimerHours(start: 9, end: 17)
         first.recordPrimerRun(for: .codex, outcome: .sent, at: Date(timeIntervalSince1970: 100))
@@ -363,10 +374,6 @@ struct AppSettingsPersistenceTests {
         #expect(back.sources == ["codex": "endpoint"])
         #expect(back.sessionBrowsers == ["devin": "chrome"])
         #expect(back.ringTints == ["codex": "#112233"])
-        #expect(back.botMarks == ["codex": true])
-        #expect(back.botPersonas == ["codex": "sleepy"])
-        #expect(back.botShapes == ["codex": "square"])
-        #expect(back.botColours == ["codex": "#445566"])
         #expect(back.refreshInterval == .fiveMinutes)
         #expect(back.autoCollapse == false)
         #expect(back.panelSize == .large)
@@ -422,6 +429,10 @@ struct AppSettingsPersistenceTests {
         #expect(back.balanceBases == ["newAPI": "budget"])
         #expect(back.balanceBudgets == ["newAPI": 10])
         #expect(back.detailedCards == ["codex"])
+        #expect(back.robotAccounts == ["claudeCode"])
+        #expect(back.robotColours == ["claudeCode": "#4A90E2"])
+        #expect(back.robotPersonality(for: AccountKey(.claudeCode)) == .lively)
+        #expect(back.robotShape(for: AccountKey(.claudeCode)) == .round)
         #expect(back.primedProviders == ["codex"])
         #expect(back.primerHours == PrimerHours(start: 9, end: 17))
         #expect(back.lastPrimerRun(for: .codex)?.outcome == .sent)

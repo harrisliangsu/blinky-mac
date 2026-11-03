@@ -8,6 +8,8 @@ Toolchain and local `swift build`: [build-from-source.md](build-from-source.md).
 
 The version lives in `VERSION` and nowhere else. Tag `v$(cat VERSION)`. The update check reads GitHub’s latest release tag against `CFBundleShortVersionString`.
 
+**A note after the update is optional** and is not part of the tag. Write `Messages/x.y.z/<language>.md` on this fork's `main` before or after releasing ([../Messages/README.md](../Messages/README.md), [update-message.md](update-message.md)). Do not copy upstream Pulse's `Messages/1.12.x` notes; Blinky reads its own repository.
+
 **Pushing a tag is the whole release.** Both `CHANGELOG.md` and `CHANGELOG.zh-CN.md` need a `## x.y.z` section **before** the tag: the workflow stops without either, before it builds. GitHub Release notes are **bilingual, Chinese first**, built by `Scripts/release-notes.py`. Sparkle's update window uses **Chinese** `CHANGELOG.zh-CN.md` first (English `CHANGELOG.md` as fallback). Generating notes from commit subjects is a fallback for forgotten English entries in older tooling, not the path for a tagged release.
 
 ```bash

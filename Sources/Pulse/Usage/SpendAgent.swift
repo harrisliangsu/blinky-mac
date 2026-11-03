@@ -418,6 +418,20 @@ enum SpendAgent: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
+    /// Whether the agent's reader emits records with no provider field a
+    /// filtered view could select on.
+    ///
+    /// The seven readers that predate the catalogue keep their own store
+    /// readers, and Devin Desktop's events carry no provider either, so a
+    /// `provider:` read over any of them returns empty rather than its whole
+    /// store under another provider's name.
+    var isLegacy: Bool {
+        switch self {
+        case .claudeCode, .codex, .openCode, .kiloCLI, .grok, .kimiCLI, .devinCLI, .devinDesktop: true
+        default: false
+        }
+    }
+
     private static var home: URL { URL(fileURLWithPath: NSHomeDirectory()) }
 
     private static var environment: [String: String] { ProcessInfo.processInfo.environment }

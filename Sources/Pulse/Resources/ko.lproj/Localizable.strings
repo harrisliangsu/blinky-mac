@@ -1514,3 +1514,26 @@
 "Weekly ×%@" = "주간 ×%@";
 "You apply a reset card yourself. For a 5-hour card, the 5-hour quota returns to full, and its next reset is counted from now. For a weekly card, the weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "리셋 카드는 직접 사용합니다. 5시간 카드는 5시간 한도를 가득 채우고, 다음 초기화는 지금부터 계산합니다. 주간 카드는 주간 한도를 가득 채웁니다. 5시간 한도도 함께 채워지고, 두 초기화 시각은 지금부터 계산됩니다.";
 "The usage card shows how many 5-hour and weekly reset cards are left, and when the next one expires." = "사용량 카드에 5시간 리셋 카드와 주간 리셋 카드가 몇 장 남았는지, 그리고 가장 먼저 만료되는 시각을 표시합니다.";
+
+/* Robot in the ring, and the note after an update (upstream 2026-11-02). */
+"Robot in the ring" = "링에 로봇 표시";
+"Replaces the provider's mark and shows what this account is doing. The robot is Agent Robot Avatar by CX ArtLab." = "제공업체 마크 대신 로봇이 이 계정의 상태를 보여 줍니다. 로봇은 CX ArtLab의 Agent Robot Avatar입니다.";
+"The robot in the rings is ported from CX ArtLab's Agent Robot Avatar, an original character by CX ArtLab, under the MIT License." = "링의 로봇은 CX ArtLab의 Agent Robot Avatar를 옮겨 온 것입니다. 캐릭터는 CX ArtLab의 창작물이며 MIT 라이선스로 제공됩니다.";
+"Robot colour" = "로봇 색상";
+"The provider's own colour. Where it has none, one that differs from neighbouring robots." = "제공업체 고유의 브랜드 색상을 씁니다. 없으면 이웃한 로봇과 다른 색상을 고릅니다.";
+"A colour of your own. The ring keeps its colour." = "직접 고른 색상을 씁니다. 링 색상은 그대로입니다.";
+"Robot personality" = "로봇 성격";
+"Robot shape" = "로봇 모양";
+"The outline of the robot's head." = "로봇 머리의 윤곽입니다.";
+"Chosen so that neighbouring robots differ." = "이웃한 로봇끼리 겹치지 않도록 정해집니다.";
+"Glances and blinks slowly, and now and then looks slowly from side to side." = "시선과 눈 깜박임이 느리고, 가끔 천천히 좌우를 둘러봅니다.";
+"Glances about, and now and then narrows its eyes and looks up and down." = "이리저리 둘러보고, 가끔 눈을 가늘게 뜨고 위아래를 살핍니다.";
+"Glances quickly and often, and now and then opens its eyes wide." = "빠르고 자주 둘러보며, 가끔 눈을 크게 뜹니다.";
+"Lively" = "활발함";
+"Original" = "원본";
+"Squarer" = "더 각진 모양";
+"Rounder" = "더 둥근 모양";
+"A note from the developer" = "개발자의 한마디";
+"Don't show again" = "다시 표시 안 함";
+"Close" = "닫기";
+"macOS didn't allow Blinky to read %@'s cookies. In System Settings › Privacy & Security › Full Disk Access, turn on Blinky (if it is already on, remove it and add it again), then quit and reopen Blinky." = "macOS가 Blinky의 %@ 쿠키 읽기를 허용하지 않았습니다. 시스템 설정 › 개인정보 보호 및 보안 › 전체 디스크 접근 권한에서 Blinky를 켜십시오(이미 켜져 있으면 제거한 뒤 다시 추가하십시오). 그런 다음 Blinky를 종료하고 다시 여십시오.";

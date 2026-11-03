@@ -1514,3 +1514,26 @@
 "Weekly ×%@" = "每週 ×%@";
 "You apply a reset card yourself. For a 5-hour card, the 5-hour quota returns to full, and its next reset is counted from now. For a weekly card, the weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "重置卡需要自己使用。5 小時重置卡會把 5 小時額度恢復為全額，下次重設從現在起算。每週重置卡會把每週額度恢復為全額，5 小時額度一併恢復，兩段重設都從現在起算。";
 "The usage card shows how many 5-hour and weekly reset cards are left, and when the next one expires." = "用量卡片顯示還剩幾張 5 小時重置卡和每週重置卡，以及最近一張什麼時候到期。";
+
+/* Robot in the ring, and the note after an update (upstream 2026-11-02). */
+"Robot in the ring" = "圓環中顯示小機器人";
+"Replaces the provider's mark and shows what this account is doing. The robot is Agent Robot Avatar by CX ArtLab." = "取代服務商圖示，顯示這個帳號目前的狀態。小機器人是 CX ArtLab 的 Agent Robot Avatar。";
+"The robot in the rings is ported from CX ArtLab's Agent Robot Avatar, an original character by CX ArtLab, under the MIT License." = "圓環中的小機器人移植自 CX ArtLab 的 Agent Robot Avatar，角色由 CX ArtLab 原創，以 MIT 授權條款授權。";
+"Robot colour" = "小機器人顏色";
+"The provider's own colour. Where it has none, one that differs from neighbouring robots." = "使用服務商自己的品牌色；沒有品牌色的，選一個與相鄰小機器人不同的顏色。";
+"A colour of your own. The ring keeps its colour." = "使用你選擇的顏色，圓環的顏色不受影響。";
+"Robot personality" = "小機器人個性";
+"Robot shape" = "小機器人外形";
+"The outline of the robot's head." = "小機器人頭部的輪廓。";
+"Chosen so that neighbouring robots differ." = "自動選擇，相鄰的小機器人各不相同。";
+"Glances and blinks slowly, and now and then looks slowly from side to side." = "環顧和眨眼都較慢，偶爾緩緩地左右張望。";
+"Glances about, and now and then narrows its eyes and looks up and down." = "四處張望，偶爾瞇起眼睛上下打量。";
+"Glances quickly and often, and now and then opens its eyes wide." = "張望得又快又頻繁，偶爾睜大眼睛。";
+"Lively" = "活潑";
+"Original" = "原版";
+"Squarer" = "更方";
+"Rounder" = "更圓";
+"A note from the developer" = "來自開發者的話";
+"Don't show again" = "不再顯示";
+"Close" = "關閉";
+"macOS didn't allow Blinky to read %@'s cookies. In System Settings › Privacy & Security › Full Disk Access, turn on Blinky (if it is already on, remove it and add it again), then quit and reopen Blinky." = "macOS 不允許 Blinky 讀取 %@ 的 Cookie。請在「系統設定 › 隱私權與安全性 › 完整磁碟取用權限」中開啟 Blinky（如果已經開啟，請先移除再重新加入），然後結束並重新打開 Blinky。";

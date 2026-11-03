@@ -29,13 +29,13 @@ extension ProviderProfile {
         displayName: "Perplexity",
         billing: .api,
         iconResource: "perplexity",
+        brandColour: 0x20808D,
         credential: .sessionCookie(host: PerplexityUsageService.host, cookies: PerplexityUsageService.cookies),
         accessDescription: {
             .localized("Uses a browser session you import in Settings. Importing may ask for browser Keychain access.")
         },
         reportsSpendableBalance: true,
         spendingIsWatchedLocally: false,
-        brandColor: 0x20808D,
         setupSlug: "perplexity",
         fetch: { await PerplexityUsageService.fetch($0) }
     )

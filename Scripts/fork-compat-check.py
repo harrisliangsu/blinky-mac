@@ -30,7 +30,7 @@ HOT_FILES = [
     "Sources/Pulse/Usage/UsageRoute.swift",
     "Sources/Pulse/Usage/UsageSource.swift",
     "Sources/Pulse/Providers/ConnectionRemedy.swift",
-    "Sources/Pulse/Panel/BotMark/BotMarkTint.swift",
+    "Sources/Pulse/Panel/Robot/RobotColour.swift",
     "Sources/Pulse/Settings/SettingsView.swift",
     "Sources/Pulse/App/AppSettings.swift",
 ]

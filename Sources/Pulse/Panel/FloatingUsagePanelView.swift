@@ -18,15 +18,11 @@ struct FloatingUsagePanelView: View {
 
     /// The clock arc moves to the minute even when quota refresh backs off.
     @State private var minute = Date()
-    /// Bumped each second while a mark's event is showing; see below.
-    @State private var eventCheck = 0
 
     var body: some View {
         // Formatting reads the selected language through a plain function.
         let _ = settings.language
-        let _ = eventCheck
         let entries = entries
-        let hasEvent = entries.contains { $0.botEvent != nil }
         FloatingUsagePanelContent(
             store: store,
             settings: settings,
@@ -44,25 +40,34 @@ struct FloatingUsagePanelView: View {
                     try? await Task.sleep(for: .seconds(60))
                 }
             }
-            // `botEvent` comes from clocks — a reset in the last 20 s, a turn
-            // finished in the last 6 — and nothing observed changes when they
-            // run out. Built here, away from the pointer state that used to
-            // re-run it by accident, it would stay set: a mark remounted later
-            // replayed it, and the next real event, never preceded by nil, did
-            // not play at all. So while one shows, look again each second;
-            // once none does, this stops.
-            .task(id: hasEvent) {
-                guard hasEvent else { return }
-                while !Task.isCancelled {
-                    try? await Task.sleep(for: .seconds(1))
-                    eventCheck += 1
-                }
-            }
     }
 
     /// Only the providers switched on in settings, so the rail shrinks when
     /// one is turned off.
     private var entries: [RailEntry] {
+        Self.spreadingRobots(railEntries, settings: settings)
+    }
+
+    /// Every robot's colour and personality, decided across the rail at once:
+    /// a chosen colour, else the product's own, else a wheel colour far from
+    /// its neighbours; a chosen personality, else one that differs from them.
+    static func spreadingRobots(_ entries: [RailEntry], settings: AppSettings) -> [RailEntry] {
+        let robots = entries.indices.filter { entries[$0].robot != nil }
+        let accounts = robots.map { entries[$0].slot.account }
+        let inks = RobotAutomatic.inks(for: accounts.map(\.provider),
+                                       custom: accounts.map { RobotInk(hex: settings.robotColours[$0.id]) })
+        let personalities = RobotAutomatic.spread(accounts.map(settings.robotPersonality(for:)),
+                                                  over: RobotAutomatic.personalities)
+        var entries = entries
+        for (n, index) in robots.enumerated() {
+            entries[index].robot?.ink = inks[n].ink
+            entries[index].robot?.inkIsChosen = inks[n].chosen
+            entries[index].robot?.personality = personalities[n]
+        }
+        return entries
+    }
+
+    private var railEntries: [RailEntry] {
         RailSlot.rail(
             for: settings.shownAccounts,
             isSplit: settings.isSplit,
@@ -111,13 +116,6 @@ struct FloatingUsagePanelView: View {
             isRunning: store.isRunning(account.provider),
             isRefreshing: store.isRefreshing(account),
             tint: settings.ringTint(for: account),
-            showsBotMark: settings.showsBotMark(for: account),
-            botPersona: settings.botPersona(for: account),
-            botBody: settings.botBody(for: account),
-            // A witnessed reset outranks a finished turn.
-            botEvent: store.justReset(account) ? .limitReset
-                : store.justFinishedWorking(account.provider) ? .workFinished : nil,
-            botColour: settings.botColour(for: account),
             slot: slot,
             title: slot.group.map { "\(label) · \($0)" } ?? label,
             windowClock: settings.showsWindowClock
@@ -125,7 +123,12 @@ struct FloatingUsagePanelView: View {
                 : nil,
             figure: figure,
             second: settings.showsSecondRing ? usage.secondWindow(preferring: pinned) : nil,
-            showsRemaining: settings.showsRemaining
+            showsRemaining: settings.showsRemaining,
+            robot: settings.showsRobot(for: account)
+                ? RobotCue(justReset: store.justReset(account),
+                           justFinished: store.justFinishedWorking(account.provider),
+                           shape: settings.robotShape(for: account))
+                : nil
         )
     }
 }

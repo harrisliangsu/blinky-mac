@@ -143,17 +143,14 @@ struct AboutPane: View {
 
                 SettingsRowDivider()
 
-                // Credited for the same reason the icons above are: it is
-                // somebody else's work, shipped here. What that data is and
-                // where it came from: Docs/decisions/bot-mark-geometry.md.
+                // A port, and said to be one: the character and its motion
+                // are CX ArtLab's original design, not Pulse's.
                 SettingsRow(
-                    "Morph Bot",
-                    subtitle: String.localized("The animated marks are a port of github.com/iduu/grokbot-animation, itself a study of the bot on x.ai.")
+                    "Agent Robot Avatar",
+                    subtitle: String.localized("The robot in the rings is ported from CX ArtLab's Agent Robot Avatar, an original character by CX ArtLab, under the MIT License.")
                 ) {
                     Button(String.localized("Open")) {
-                        NSWorkspace.shared.open(
-                            URL(string: "https://github.com/iduu/grokbot-animation")!
-                        )
+                        NSWorkspace.shared.open(URL(string: "https://github.com/CX-ArtLab/agent-robot-avatar")!)
                     }
                 }
             }

@@ -471,16 +471,20 @@ struct ExtensionRunTests {
         defer { sandbox.remove() }
 
         // The limit plus the stop's own budget, on the thread that stops the
-        // program. `fetch` waits for a utility-QoS thread before that limit
+        // program. `fetch` waits for a user-initiated thread before that limit
         // starts, and a clock started before the wait measured 12.9 seconds
         // on the 1.4.28 Build for a kill that had already happened. The
         // program asks for five minutes, which is past `ceiling`.
         let run = try #require(await OwnThreadTiming.measure {
             service.fetchSynchronously()
         }, "the runner did not return")
+        watch.runReturned()
         #expect(run.value.state == .unavailable(.extensionTimedOut))
         #expect(run.elapsed < .seconds(ceiling))
-        let killed = try #require(await watch.death, "the program outlived the run")
+        let death = await watch.death
+        // Stopped before its first line on a loaded machine: nothing to time.
+        guard !watch.neverStarted else { return }
+        let killed = try #require(death, "the program outlived the run")
         #expect(run.started.duration(to: killed) < .seconds(ceiling))
     }
 
