@@ -212,8 +212,8 @@ final class AccountHistoryModel {
                 guard historyReadID == readID, key == requestKey else { return }
                 ledgers[provider] = scanned
                 historyReads[provider] = .answered(scanned)
-            case .agents(let agents):
-                let read = await UsageLedger.reading(agents)
+            case .agents(let agents, let slices):
+                let read = await UsageLedger.reading(agents, slices: slices)
                 guard historyReadID == readID, key == requestKey else { return }
                 ledgers[provider] = read
                 historyReads[provider] = .answered(read)
