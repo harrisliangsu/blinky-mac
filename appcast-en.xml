@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.37</title>
-            <pubDate>Tue, 03 Nov 2026 02:08:34 -0000</pubDate>
-            <sparkle:version>1.5.37</sparkle:version>
-            <sparkle:shortVersionString>1.5.37</sparkle:shortVersionString>
+            <title>1.5.38</title>
+            <pubDate>Tue, 03 Nov 2026 06:35:52 -0000</pubDate>
+            <sparkle:version>1.5.38</sparkle:version>
+            <sparkle:shortVersionString>1.5.38</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.37</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.38</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.37</h2><ul><li><strong>A pinned Codex ring stays on the same limit after a fallback to the app server.</strong> The app server names each limit the same way the web endpoint does, so a pin does not come loose when the read falls back. <a href="https://github.com/qunqin24/Pulse/issues/102">#102</a></li><li><strong>A refused browser cookie store says why.</strong> When macOS will not open the store, Settings says to allow Blinky under Full Disk Access, instead of asking you to sign in again. <a href="https://github.com/qunqin24/Pulse/issues/101">#101</a></li><li><strong>A ring can show CX ArtLab&#x27;s robot.</strong> Under Settings → Providers, open an account&#x27;s Appearance and turn on Robot in the ring: the ring draws that robot in place of the provider&#x27;s mark and follows what the account is doing. The animated mark is gone.</li><li><strong>Devin&#x27;s usage card reads records routed through Oh My Pi.</strong> Records that name Devin appear in that card&#x27;s history. <a href="https://github.com/qunqin24/Pulse/pull/104">#104</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.37">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.37/Blinky-1.5.37.zip"
-                       length="23221767"
+</style><h2>Blinky 1.5.38</h2><ul><li><strong>Reset ribbons play once for the same reset.</strong> With Celebrate a reset on under Settings → Notifications, the same limit reset plays the full-screen ribbons once, and the next reset still plays once. <a href="https://github.com/harrisliangsu/blinky-mac/pull/100">#100</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.38">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.38/Blinky-1.5.38.zip"
+                       length="23223273"
                        type="application/octet-stream"
-                       sparkle:edSignature="K7XiFFZp6VrOpyc0tghhBnvhc2ATfkpzA5BWSoG1MB1+dxnVvSEcNjO+j1Xj/IAGOzyxKHCDbHYnhBuJR2O2AA==" />
+                       sparkle:edSignature="/rZFRaKaV2yLd+Ds6GFrXI+8zxDuqwHGZ4epd6s97U2bN8zBV/TfkJ/VyLqqpZWRZYeQOup1TeKOxd0YU2SwAA==" />
         </item>
     </channel>
 </rss>
