@@ -796,6 +796,132 @@ struct AlertMemoryTests {
         )
     }
 
+    /// Every provider's ribbons are decided here, Grok's weekly pool included.
+    /// The window id is Grok's; the account is not, because the rule does not
+    /// read which product it is.
+    @Test("One reset clock plays ribbons once, including when the figure bounces")
+    func oneResetClockCelebratesOnce() {
+        var memory = AlertMemory()
+        let start = Date(timeIntervalSince1970: 1_800_003_600)
+        let renewed = start.addingTimeInterval(7 * 86_400)
+        let pool = { (used: Double, resetsAt: Date) in
+            Self.window(
+                "grok-pool",
+                used: used,
+                resetsAt: resetsAt,
+                kind: .weekly,
+                windowSeconds: 7 * 86_400
+            )
+        }
+
+        #expect(run(&memory, Self.live(pool(0.80, start)), threshold: .off, celebratesReset: true).isEmpty)
+        #expect(run(&memory, Self.live(pool(0.0, renewed)), threshold: .off, celebratesReset: true)
+            .map(\.kind) == [.celebration])
+        // The same period on the polls that follow, including a clock that
+        // only slid, a figure that climbed back, and the previous period
+        // reported again. Each of those used to look like another reset.
+        #expect(run(&memory, Self.live(pool(0.0, renewed)), threshold: .off, celebratesReset: true).isEmpty)
+        #expect(run(
+            &memory,
+            Self.live(pool(0.0, renewed.addingTimeInterval(11 * 60))),
+            threshold: .off,
+            celebratesReset: true
+        ).isEmpty)
+        #expect(run(&memory, Self.live(pool(0.75, renewed)), threshold: .off, celebratesReset: true).isEmpty)
+        #expect(run(&memory, Self.live(pool(0.0, renewed)), threshold: .off, celebratesReset: true).isEmpty)
+        #expect(run(&memory, Self.live(pool(0.0, renewed)), threshold: .off, celebratesReset: true).isEmpty)
+        #expect(run(&memory, Self.live(pool(0.80, start)), threshold: .off, celebratesReset: true).isEmpty)
+        #expect(run(&memory, Self.live(pool(0.0, renewed)), threshold: .off, celebratesReset: true).isEmpty)
+        #expect(run(&memory, Self.live(pool(0.0, renewed)), threshold: .off, celebratesReset: true).isEmpty)
+    }
+
+    @Test("The next period's clock plays ribbons once")
+    func laterResetClockCelebratesOnce() {
+        var memory = AlertMemory()
+        let start = Date(timeIntervalSince1970: 1_800_003_600)
+        let renewed = start.addingTimeInterval(7 * 86_400)
+        let following = renewed.addingTimeInterval(7 * 86_400)
+        let pool = { (used: Double, resetsAt: Date) in
+            Self.window(
+                "grok-pool",
+                used: used,
+                resetsAt: resetsAt,
+                kind: .weekly,
+                windowSeconds: 7 * 86_400
+            )
+        }
+
+        #expect(run(&memory, Self.live(pool(0.80, start)), threshold: .off, celebratesReset: true).isEmpty)
+        #expect(run(&memory, Self.live(pool(0.0, renewed)), threshold: .off, celebratesReset: true)
+            .map(\.kind) == [.celebration])
+        #expect(run(&memory, Self.live(pool(0.70, renewed)), threshold: .off, celebratesReset: true).isEmpty)
+        #expect(run(&memory, Self.live(pool(0.05, following)), threshold: .off, celebratesReset: true)
+            .map(\.kind) == [.celebration])
+        #expect(run(&memory, Self.live(pool(0.05, following)), threshold: .off, celebratesReset: true).isEmpty)
+        #expect(run(&memory, Self.live(pool(0.80, following)), threshold: .off, celebratesReset: true).isEmpty)
+        #expect(run(&memory, Self.live(pool(0.0, following)), threshold: .off, celebratesReset: true).isEmpty)
+        #expect(run(&memory, Self.live(pool(0.0, following)), threshold: .off, celebratesReset: true).isEmpty)
+    }
+
+    /// Zhipu states no `resetsAt`, so the identity is the time ribbons played.
+    /// A bounce inside a quarter of the five-hour window is the same turnover.
+    /// A drop after that quarter is the next one, and it plays once.
+    @Test("An unclocked reset plays ribbons once until the window has moved on")
+    func unclockedResetCelebratesOnceUntilTheNextWindow() {
+        var memory = AlertMemory()
+        let window = { (used: Double) in
+            Self.window(
+                "glmCoding.CREDIT_LIMIT.3-5.0",
+                used: used,
+                resetsAt: nil,
+                kind: .fiveHour,
+                windowSeconds: 5 * 3_600
+            )
+        }
+        let start = Self.now
+
+        #expect(run(
+            &memory, Self.live(window(0.80)),
+            threshold: .off, celebratesReset: true, celebratesHourlyReset: true, now: start
+        ).isEmpty)
+        #expect(run(
+            &memory, Self.live(window(0.0)),
+            threshold: .off, celebratesReset: true, celebratesHourlyReset: true, now: start
+        ).map(\.kind) == [.celebration])
+        #expect(run(
+            &memory, Self.live(window(0.0)),
+            threshold: .off, celebratesReset: true, celebratesHourlyReset: true,
+            now: start.addingTimeInterval(60)
+        ).isEmpty)
+        #expect(run(
+            &memory, Self.live(window(0.85)),
+            threshold: .off, celebratesReset: true, celebratesHourlyReset: true,
+            now: start.addingTimeInterval(120)
+        ).isEmpty)
+        // An unclocked forty-point drop confirms on the first sample. This
+        // one is still the turnover above.
+        #expect(run(
+            &memory, Self.live(window(0.0)),
+            threshold: .off, celebratesReset: true, celebratesHourlyReset: true,
+            now: start.addingTimeInterval(180)
+        ).isEmpty)
+
+        let later = start.addingTimeInterval(2 * 3_600)
+        #expect(run(
+            &memory, Self.live(window(0.80)),
+            threshold: .off, celebratesReset: true, celebratesHourlyReset: true, now: later
+        ).isEmpty)
+        #expect(run(
+            &memory, Self.live(window(0.0)),
+            threshold: .off, celebratesReset: true, celebratesHourlyReset: true, now: later
+        ).map(\.kind) == [.celebration])
+        #expect(run(
+            &memory, Self.live(window(0.0)),
+            threshold: .off, celebratesReset: true, celebratesHourlyReset: true,
+            now: later.addingTimeInterval(60)
+        ).isEmpty)
+    }
+
     // MARK: - Failures
 
     @Test("Three failed passes in a row, then one alert and silence")
@@ -1298,6 +1424,8 @@ struct AlertMemoryTests {
         #expect(window.announced == 90)
         #expect(window.exhaustionStages.isEmpty)
         #expect(window.exhaustionBeforeReset == false)
+        #expect(window.celebratedResetsAt == nil)
+        #expect(window.celebratedAt == nil)
     }
 
 }

@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.38
+
+- **Reset ribbons play once for the same reset.** With Celebrate a reset on under Settings → Notifications, the same limit reset plays the full-screen ribbons once, and the next reset still plays once. [#100](https://github.com/harrisliangsu/blinky-mac/pull/100)
+
 ## 1.5.37
 
 - **A pinned Codex ring stays on the same limit after a fallback to the app server.** The app server names each limit the same way the web endpoint does, so a pin does not come loose when the read falls back. [#102](https://github.com/qunqin24/Pulse/issues/102)

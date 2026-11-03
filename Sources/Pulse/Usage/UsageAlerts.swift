@@ -127,10 +127,24 @@ struct AlertMemory: Codable, Sendable, Equatable {
         var exhaustionStages: [String] = []
         /// The before-reset notice has been said for this window.
         var exhaustionBeforeReset = false
+        /// The reset clock ribbons have already played for.
+        ///
+        /// The last fraction is not this record. A later poll can report the
+        /// pre-reset figure again — Grok's period reply can, and so can any
+        /// other provider on this path — and that rewinds the baseline, so
+        /// the same turnover looks new. A clock that has not moved on by a
+        /// real window is the one already played. Nil until ribbons play,
+        /// and absent from a file written before this was recorded.
+        var celebratedResetsAt: Date?
+        /// When ribbons last played. The identity when the provider states
+        /// no reset clock, so a bounce cannot be told from a later turnover
+        /// by a date. Nil until ribbons play.
+        var celebratedAt: Date?
 
         enum CodingKeys: String, CodingKey {
             case announced, fraction, resetsAt, cycleID, pendingReset
             case exhaustionStages, exhaustionBeforeReset
+            case celebratedResetsAt, celebratedAt
         }
 
         init(
@@ -140,7 +154,9 @@ struct AlertMemory: Codable, Sendable, Equatable {
             cycleID: String? = nil,
             pendingReset: Bool = false,
             exhaustionStages: [String] = [],
-            exhaustionBeforeReset: Bool = false
+            exhaustionBeforeReset: Bool = false,
+            celebratedResetsAt: Date? = nil,
+            celebratedAt: Date? = nil
         ) {
             self.announced = announced
             self.fraction = fraction
@@ -149,6 +165,8 @@ struct AlertMemory: Codable, Sendable, Equatable {
             self.pendingReset = pendingReset
             self.exhaustionStages = exhaustionStages
             self.exhaustionBeforeReset = exhaustionBeforeReset
+            self.celebratedResetsAt = celebratedResetsAt
+            self.celebratedAt = celebratedAt
         }
 
         init(from decoder: Decoder) throws {
@@ -160,6 +178,8 @@ struct AlertMemory: Codable, Sendable, Equatable {
             pendingReset = try container.decodeIfPresent(Bool.self, forKey: .pendingReset) ?? false
             exhaustionStages = try container.decodeIfPresent([String].self, forKey: .exhaustionStages) ?? []
             exhaustionBeforeReset = try container.decodeIfPresent(Bool.self, forKey: .exhaustionBeforeReset) ?? false
+            celebratedResetsAt = try container.decodeIfPresent(Date.self, forKey: .celebratedResetsAt)
+            celebratedAt = try container.decodeIfPresent(Date.self, forKey: .celebratedAt)
         }
 
         func encode(to encoder: Encoder) throws {
@@ -171,6 +191,8 @@ struct AlertMemory: Codable, Sendable, Equatable {
             try container.encode(pendingReset, forKey: .pendingReset)
             try container.encode(exhaustionStages, forKey: .exhaustionStages)
             try container.encode(exhaustionBeforeReset, forKey: .exhaustionBeforeReset)
+            try container.encodeIfPresent(celebratedResetsAt, forKey: .celebratedResetsAt)
+            try container.encodeIfPresent(celebratedAt, forKey: .celebratedAt)
         }
     }
 
@@ -412,10 +434,7 @@ struct AlertMemory: Codable, Sendable, Equatable {
                 // lighter "something changed" signal; ribbons and reset
                 // notifications keep this stricter two-sighting rule so a
                 // Codex glitch does not throw confetti.
-                let significantJump = jump > max(
-                    30 * 60,
-                    TimeInterval(max(window.windowSeconds, 0)) * 0.25
-                )
+                let significantJump = Self.isNewResetClock(jump, windowSeconds: window.windowSeconds)
                 let emptied = seen.fraction - window.usedFraction >= 0.4
                 // Said only when the evidence is unambiguous. A few points of
                 // drift is not a reset: a rolling window — Kimi's week, which
@@ -455,10 +474,21 @@ struct AlertMemory: Codable, Sendable, Equatable {
                     // they roll several times a day. Zhipu and Kimi's short
                     // quota is that switch. Codex's sliding session clock is
                     // still refused above, not by dropping the kind.
-                    if celebratesReset, window.kind.celebratesReset(
-                        includingFiveHour: celebratesHourlyReset
-                    ) {
+                    //
+                    // One turnover, one play. Recording the new fraction is
+                    // not enough: the next poll can put the old figure back,
+                    // and the one after that is then a fresh drop on the same
+                    // clock. Grok's weekly pool did this; every provider is
+                    // judged here, so the record is the clock, not the product.
+                    if celebratesReset,
+                       window.kind.celebratesReset(includingFiveHour: celebratesHourlyReset),
+                       !Self.alreadyCelebrated(window, memory: memory, now: now) {
                         produced.append(UsageAlert(account: account, kind: .celebration, window: window))
+                        memory.celebratedAt = now
+                        if let clock = window.resetsAt,
+                           memory.celebratedResetsAt.map({ clock > $0 }) ?? true {
+                            memory.celebratedResetsAt = clock
+                        }
                     }
                     memory.announced = 0
                     memory.pendingReset = false
@@ -514,6 +544,38 @@ struct AlertMemory: Codable, Sendable, Equatable {
 
         accounts[account.id] = record
         return produced
+    }
+
+    /// Whether `jump` is a later turnover rather than the same clock sliding.
+    ///
+    /// More than half an hour, and more than a quarter of the window. A
+    /// session clock that moves by the poll interval is not a new period; a
+    /// week that moves on by a week is.
+    private static func isNewResetClock(_ jump: TimeInterval, windowSeconds: Int) -> Bool {
+        jump > resetHorizon(windowSeconds)
+    }
+
+    /// How far a reset clock has to move before it is a different turnover.
+    private static func resetHorizon(_ windowSeconds: Int) -> TimeInterval {
+        max(30 * 60, TimeInterval(max(windowSeconds, 0)) * 0.25)
+    }
+
+    /// Whether ribbons have already played for this turnover.
+    ///
+    /// A stated reset clock is the identity. The same instant, a slide
+    /// inside `resetHorizon`, or an earlier period reported again are the
+    /// one already played. A clock that has moved on by a real window is
+    /// the next one. When the provider states no clock, the identity is the
+    /// time ribbons played, and it holds for that same quarter-window so a
+    /// figure that bounces back up and down does not play again before a
+    /// later turnover can be told apart.
+    private static func alreadyCelebrated(_ window: UsageWindow, memory: Window, now: Date) -> Bool {
+        let horizon = resetHorizon(window.windowSeconds)
+        if let clock = window.resetsAt, let celebrated = memory.celebratedResetsAt {
+            return clock.timeIntervalSince(celebrated) <= horizon
+        }
+        guard let celebratedAt = memory.celebratedAt else { return false }
+        return now.timeIntervalSince(celebratedAt) <= horizon
     }
 
     /// One notice per stage the pace has already reached, and one for the

@@ -6,6 +6,10 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.38
+
+- **重置彩带同一次重置只播放一次。** 在「设置 → 通知」打开「限额重置时播放彩带」后，同一轮限额重置只播放一次全屏彩带；下一轮重置仍会播放一次。[#100](https://github.com/harrisliangsu/blinky-mac/pull/100)
+
 ## 1.5.37
 
 - **Codex 固定的圆环在改走应用服务器后仍停在同一限额。** 应用服务器与网页接口使用同一个限额名称，已固定的圆环不会在回退读取后松开。[#102](https://github.com/qunqin24/Pulse/issues/102)
