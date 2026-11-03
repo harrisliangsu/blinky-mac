@@ -47,6 +47,8 @@ The English file uses the same bullets, in the same order.
 - Grammar is limited to bullets, `**bold**`, `` `code` `` and links (`Scripts/changelog.py`).
 - Validate: `python3 Scripts/changelog.py x.y.z > /dev/null` and `python3 Scripts/changelog.py x.y.z --zh > /dev/null` must both exit cleanly.
 
+**The note after the update** is separate from the CHANGELOG: ask the user whether they want one for this version. If they do, they dictate it; write it to `Messages/x.y.z/<language>.md` on this fork (six files, or at least `en.md`, which every other language falls back to) and commit it to `main`. It is read from `harrisliangsu/blinky-mac`, so it can also go up after the tag. Do not ship upstream Pulse's `Messages/1.12.x` notes. See `Messages/README.md`.
+
 If a new feature is user-visible, add it to the feature list in **all six** READMEs (`README.md`, `README.zh-CN.md`, `README.zh-Hant.md`, `README.ja.md`, `README.ko.md`, `README.ru.md`), in its own commit before the release commit.
 
 ## 4. Commit, tag, push

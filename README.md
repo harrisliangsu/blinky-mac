@@ -40,7 +40,7 @@
 <p align="center">
   <img src="Docs/images/demo.gif" height="400" alt="Blinky floating rail docked against the screen edge">
   &nbsp;&nbsp;
-  <img src="Docs/images/panel.webp" height="400" alt="Hovering a ring opens a card with every limit and its reset">
+  <img src="Docs/images/panel.png" height="400" alt="Hovering a ring opens a card with every limit and its reset">
 </p>
 
 - **Seventy-seven services at a glance** — Claude Code, Codex, Cursor, GitHub Copilot, Antigravity, Kiro, Grok, DeepSeek, Kimi Code and many more, each as its own ring.
@@ -80,11 +80,7 @@ A scheduled check notifies you first. Click the notification to open the update 
 ### Rings at a glance
 - **Colours that follow usage** — Red alert, Gradient, or Quiet. Each account can also have a colour of its own.
 - **Used or left** — `75% used` or `25% left`, with an optional clock arc for how much of the window has passed.
-- **Live activity** — a turning dot while an agent is working, and optional animated bots that react to each account.
-
-<p align="center">
-  <img src="Docs/images/bot-mark.gif" width="300" alt="Blinky animated marks: a bot in each ring reacting to what that account is doing">
-</p>
+- **Live activity** — a turning dot while an agent is working, and an optional robot (Agent Robot Avatar by CX ArtLab) that reacts to each account.
 
 ### Details when you point at a ring
 - **Every limit and its reset** on one card, in continuous or segmented bars.
@@ -94,7 +90,7 @@ A scheduled check notifies you first. Click the notification to open the update 
 - **In the menu bar** — the fullest ring as a figure, a small ring or split limits, with an optional dashboard.
 
 <p align="center">
-  <img src="Docs/images/detailed-card.webp" width="620" alt="The same Codex card, compact and detailed">
+  <img src="Docs/images/detailed-card.png" width="620" alt="The same Codex card, compact and detailed">
 </p>
 
 ### Stays out of the way

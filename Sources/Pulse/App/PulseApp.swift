@@ -52,6 +52,10 @@ enum PulseMain {
         // `Blinky.app`. `--json` and the status line have already returned.
         InstalledAppName.adoptLegacyFileNameIfNeeded()
 
+        // After the migration, so it reads the bundle's domain; before the
+        // settings are restored, which marks even a fresh install as run.
+        UpdateMessage.noteLaunch()
+
         PulseApp.main()
     }
 }

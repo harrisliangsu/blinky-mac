@@ -127,7 +127,7 @@ struct AccountPanelGroup: View {
         }
     }
 
-    /// Ring, colour, and the animated mark. Global colour stays on Appearance.
+    /// Ring, colour, and the robot in the ring. Global colour stays on Appearance.
     private var appearanceGroup: some View {
         SettingsGroup(String.localized("Appearance")) {
             ringWindowRow(for: account)
@@ -139,111 +139,6 @@ struct AccountPanelGroup: View {
                 SettingsRowDivider()
 
                 splitRow(for: account)
-            }
-
-            SettingsRowDivider()
-
-            SettingsRow(
-                String.localized("Animated mark"),
-                subtitle: String.localized("Draw a bot that reacts to this account instead of the provider's logo.")
-            ) {
-                Toggle("", isOn: Binding(
-                    get: { settings.showsBotMark(for: account) },
-                    set: { settings.setShowsBotMark($0, for: account) }
-                ))
-                .labelsHidden()
-                .toggleStyle(.switch)
-            }
-
-            // Only when there is a mark to give a character to. Shown
-            // otherwise it is a control over something invisible.
-            if settings.showsBotMark(for: account) {
-                SettingsRowDivider()
-
-                SettingsRow(
-                    String.localized("Bot personality"),
-                    subtitle: settings.botPersona(for: account) == nil
-                        ? String.localized("The character it plays: which motions it uses and how fast. Automatic keeps it different from the rings beside it.")
-                        : String.localized("The character you picked for this bot, wherever this ring sits.")
-                ) {
-                    Picker("", selection: Binding(
-                        get: { settings.botPersona(for: account) },
-                        set: { settings.setBotPersona($0, for: account) }
-                    )) {
-                        Text(localized: "Automatic").tag(BotMarkPersona?.none)
-                        ForEach(BotMarkPersona.allCases) { persona in
-                            Text(persona.title).tag(BotMarkPersona?.some(persona))
-                        }
-                    }
-                    .labelsHidden()
-                    .frame(width: SettingsLayout.controlWidth, alignment: .trailing)
-                }
-
-                SettingsRowDivider()
-
-                SettingsRow(
-                    String.localized("Bot colour"),
-                    subtitle: settings.botColour(for: account) == nil
-                        ? String.localized("Its brand colour, or one dealt to stand apart from its neighbours.")
-                        : String.localized("A colour of your own for this bot.")
-                ) {
-                    Picker("", selection: Binding(
-                        get: { settings.botColour(for: account) != nil },
-                        set: { custom in
-                            // Landing on the colour it already draws, so
-                            // switching to Custom changes nothing until
-                            // something is picked.
-                            settings.setBotColour(
-                                custom ? BotMarkTint.body(for: account.provider) : nil,
-                                for: account)
-                        }
-                    )) {
-                        Text(localized: "Automatic").tag(false)
-                        Text(localized: "Custom").tag(true)
-                    }
-                    .labelsHidden()
-                    .pickerStyle(.menu)
-                    .frame(width: SettingsLayout.controlWidth, alignment: .trailing)
-                }
-
-                if let chosen = settings.botColour(for: account) {
-                    SettingsRowDivider()
-
-                    SettingsRow(
-                        String.localized("Colour"),
-                        subtitle: chosen.hexString
-                    ) {
-                        ColorPicker(
-                            "",
-                            selection: Binding(
-                                get: { chosen },
-                                set: { settings.setBotColour($0, for: account) }
-                            ),
-                            // A translucent body reads as a dim one, and
-                            // dim is what "no reading" looks like.
-                            supportsOpacity: false
-                        )
-                        .labelsHidden()
-                    }
-                }
-
-                SettingsRowDivider()
-
-                SettingsRow(
-                    String.localized("Bot shape"),
-                    subtitle: String.localized("Which body this bot wears. Round unless you change it.")
-                ) {
-                    Picker("", selection: Binding(
-                        get: { settings.botBody(for: account) },
-                        set: { settings.setBotBody($0, for: account) }
-                    )) {
-                        ForEach(BotMarkBody.allCases) { body in
-                            Text(body.title).tag(body)
-                        }
-                    }
-                    .labelsHidden()
-                    .frame(width: SettingsLayout.controlWidth, alignment: .trailing)
-                }
             }
 
             SettingsRowDivider()
@@ -297,6 +192,126 @@ struct AccountPanelGroup: View {
                     .labelsHidden()
                 }
             }
+
+            SettingsRowDivider()
+
+            // Credited in the subtitle as well as in About: the character is
+            // CX ArtLab's, and the switch is where somebody first meets it.
+            SettingsRow(
+                String.localized("Robot in the ring"),
+                subtitle: String.localized("Replaces the provider's mark and shows what this account is doing. The robot is Agent Robot Avatar by CX ArtLab.")
+            ) {
+                Toggle("", isOn: Binding(
+                    get: { settings.showsRobot(for: account) },
+                    set: { settings.setShowsRobot($0, for: account) }
+                ))
+                .labelsHidden()
+                .toggleStyle(.switch)
+            }
+
+            // Only while the robot is on: choices about something that is
+            // not drawn read as settings that do nothing.
+            if settings.showsRobot(for: account) {
+                robotRows
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var robotRows: some View {
+        SettingsRowDivider()
+
+        SettingsRow(
+            String.localized("Robot colour"),
+            subtitle: settings.robotColour(for: account) == nil
+                ? String.localized("The provider's own colour. Where it has none, one that differs from neighbouring robots.")
+                : String.localized("A colour of your own. The ring keeps its colour.")
+        ) {
+            Picker("", selection: Binding(
+                get: { settings.robotColour(for: account) != nil },
+                set: { custom in
+                    // Starts from the colour Automatic would give a lone robot,
+                    // so switching to Custom changes nothing until a colour is
+                    // picked.
+                    let start = RobotAutomatic.inks(for: [provider], custom: [nil])[0].ink
+                    settings.setRobotColour(custom ? start.color : nil, for: account)
+                }
+            )) {
+                Text(localized: "Automatic").tag(false)
+                Text(localized: "Custom").tag(true)
+            }
+            .labelsHidden()
+            .pickerStyle(.menu)
+            .frame(width: SettingsLayout.controlWidth, alignment: .trailing)
+        }
+
+        if let chosen = settings.robotColour(for: account) {
+            SettingsRowDivider()
+
+            SettingsRow(String.localized("Colour"), subtitle: chosen.hexString) {
+                ColorPicker(
+                    "",
+                    selection: Binding(
+                        get: { chosen },
+                        set: { settings.setRobotColour($0, for: account) }
+                    ),
+                    supportsOpacity: false
+                )
+                .labelsHidden()
+            }
+        }
+
+        SettingsRowDivider()
+
+        SettingsRow(
+            String.localized("Robot personality"),
+            subtitle: Self.personalitySubtitle(settings.robotPersonality(for: account))
+        ) {
+            Picker("", selection: Binding(
+                get: { settings.robotPersonality(for: account) },
+                set: { settings.setRobotPersonality($0, for: account) }
+            )) {
+                Text(localized: "Automatic").tag(RobotPersonality?.none)
+                ForEach(RobotPersonality.allCases) { personality in
+                    Text(personality.title).tag(RobotPersonality?.some(personality))
+                }
+            }
+            .labelsHidden()
+            .pickerStyle(.menu)
+            .frame(width: SettingsLayout.controlWidth, alignment: .trailing)
+        }
+
+        SettingsRowDivider()
+
+        SettingsRow(
+            String.localized("Robot shape"),
+            subtitle: String.localized("The outline of the robot's head.")
+        ) {
+            Picker("", selection: Binding(
+                get: { settings.robotShape(for: account) },
+                set: { settings.setRobotShape($0, for: account) }
+            )) {
+                ForEach(RobotShape.allCases) { shape in
+                    Text(shape.title).tag(shape)
+                }
+            }
+            .labelsHidden()
+            .pickerStyle(.menu)
+            .frame(width: SettingsLayout.controlWidth, alignment: .trailing)
+        }
+    }
+
+    /// What the personality does while idle, said for the one chosen.
+    static func personalitySubtitle(_ personality: RobotPersonality?) -> String {
+        switch personality {
+        case nil:
+            String.localized("Chosen so that neighbouring robots differ.")
+        case .calm:
+            String.localized("Glances and blinks slowly, and now and then looks slowly from side to side.")
+        case .curious:
+            String.localized("Glances about, and now and then narrows its eyes and looks up and down.")
+        case .lively:
+            String.localized("Glances quickly and often, and now and then opens its eyes wide.")
         }
     }
 

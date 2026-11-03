@@ -313,8 +313,13 @@ struct CodexUsageService: Sendable {
                 let seconds = minutes.map { $0 * 60 }
                 let resets = resetDate(node["resetsAt"], after: node["resetAfterSeconds"], now: now)
 
+                // **Named as the HTTP route names it** (`primary_window`), so a
+                // limit keeps its id when the read falls back here: the pinned
+                // ring, the alert memory and the reset watch all key on it, and
+                // under two spellings a fallback silently unpinned the ring
+                // (issue #102).
                 return UsageWindow(
-                    id: "\(key).\(slot)",
+                    id: "\(key).\(slot)_window",
                     kind: seconds.map { kind(seconds: $0) } ?? .other(seconds: 0),
                     scope: scope,
                     usedFraction: percent / 100,

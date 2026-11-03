@@ -6,6 +6,13 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.37
+
+- **Codex 固定的圆环在改走应用服务器后仍停在同一限额。** 应用服务器与网页接口使用同一个限额名称，已固定的圆环不会在回退读取后松开。[#102](https://github.com/qunqin24/Pulse/issues/102)
+- **macOS 拒绝读取浏览器 Cookie 时会写明原因。** 系统不允许读取时，设置里说明需要在「完全磁盘访问权限」中允许 Blinky，而不是要求重新登录。[#101](https://github.com/qunqin24/Pulse/issues/101)
+- **圆环里可以显示 CX ArtLab 的小机器人。** 在「设置 → 供应商」打开某个账号的「外观」，打开「圆环中显示小机器人」后，圆环用这个机器人代替服务商图标，并随该账号的状态变化；原来的动画标记已去掉。
+- **Devin 的用量卡片会读入经 Oh My Pi 转发的记录。** 标明走 Devin 的记录出现在这张卡片的历史里。[#104](https://github.com/qunqin24/Pulse/pull/104)
+
 ## 1.5.36
 
 - **Zhipu 和 z.ai 的重置卡只显示一行。** 在「设置 → 供应商 → Zhipu」或「z.ai」的「面板」中，「重置卡」默认打开；用量卡片用这一行写出 5 小时和每周还剩几张，以及最近一张何时到期，说明与使用前的确认从这一行的标记打开。[#98](https://github.com/harrisliangsu/blinky-mac/pull/98)

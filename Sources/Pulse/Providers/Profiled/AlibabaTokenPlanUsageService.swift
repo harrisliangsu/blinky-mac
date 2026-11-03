@@ -23,6 +23,7 @@ extension ProviderProfile {
     static let alibabaTokenPlan = ProviderProfile(
         displayName: "Alibaba Token Plan",
         iconResource: "alibabacloud",
+        brandColour: 0xFF6A00,
         credential: .localLogin,
         accessDescription: {
             .localized("Runs the Bailian CLI (bl) with its saved login. Blinky does not read or store its credentials.")
@@ -30,7 +31,6 @@ extension ProviderProfile {
         soleRoute: {
             (.localized("Bailian CLI"), .localized("Uses the login the Bailian CLI already saved."))
         },
-        brandColor: 0xFF6A00,
         setupSlug: "alibaba-token-plan",
         fetch: { await AlibabaTokenPlanUsageService.fetch($0) }
     )

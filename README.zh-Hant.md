@@ -36,7 +36,7 @@
 <p align="center">
   <img src="Docs/images/demo.gif" height="400" alt="貼在螢幕邊緣的 Blinky 懸浮膠囊">
   &nbsp;&nbsp;
-  <img src="Docs/images/panel.webp" height="400" alt="指標移到圓環上，會打開一張卡片，列出每項額度與重置時間">
+  <img src="Docs/images/panel.png" height="400" alt="指標移到圓環上，會打開一張卡片，列出每項額度與重置時間">
 </p>
 
 - **77 個服務，一眼看完**——Claude Code、Codex、Cursor、GitHub Copilot、Antigravity、Kiro、Grok、DeepSeek、Kimi Code 等等，每個都有自己的圓環。
@@ -44,11 +44,7 @@
 - **只顯示真實數字**——每個用量百分比都是服務商自己回報的。少數估算會明確標示；服務商沒有提供數字時，Blinky 會直接說明，不去猜測。
 - **原生、安靜**——以 Swift 與 SwiftUI 撰寫，macOS 26 上是 Liquid Glass。可以停靠在左側、右側、頂端，或底部 Dock 旁邊，閒置時收成一條細線，也可以只待在選單列裡。
 
-**最近新增：** 在選單列顯示用量，並附上每個帳號的面板；額度重置後自動開始新視窗；會動的小機器人標記。[更新說明](https://github.com/harrisliangsu/blinky-mac/releases/latest)。
-
-<p align="center">
-  <img src="Docs/images/bot-mark.gif" width="300" alt="Blinky 動畫標記：每個環裡的小機器人會隨該帳號的狀態反應">
-</p>
+**最近新增：** 在選單列顯示用量，並附上每個帳號的面板；額度重置後自動開始新視窗；圓環裡的機器人（CX ArtLab 的 Agent Robot Avatar）。[更新說明](https://github.com/harrisliangsu/blinky-mac/releases/latest)。
 
 <p align="center">
   <sub>如果 Blinky 幫你躲過了一次突如其來的限額，按個 ⭐ 能讓更多人發現它。</sub>
@@ -80,7 +76,7 @@
 ### 一眼看清的圓環
 - **顏色隨用量變化**——從綠到琥珀再到紅，也可以為每個帳號設一種自己的顏色。
 - **已用或剩餘**——顯示 `75% 已用` 或 `25% 剩餘`，可加一圈時鐘弧，表示目前視窗已經過去多少。
-- **即時動態**——agent 工作時圓環上有轉動的小點；可選的小機器人會隨每個帳號的狀態做動作。
+- **即時動態**——agent 工作時圓環上有轉動的小點；還可以在圓環中顯示隨帳號狀態變化的小機器人（CX ArtLab 的 Agent Robot Avatar）。
 
 ### 指向圓環就能看細節
 - **每條額度與它的重設時間**，都在一張卡片上，進度條可選連續或分段。
@@ -89,7 +85,7 @@
 - **選單列**——把用得最多的圓環顯示成數字、小圓環或並排的額度，可選開啟用量面板。
 
 <p align="center">
-  <img src="Docs/images/detailed-card.webp" width="620" alt="同一個 Codex 帳號的精簡卡片與詳細卡片">
+  <img src="Docs/images/detailed-card.png" width="620" alt="同一個 Codex 帳號的精簡卡片與詳細卡片">
 </p>
 
 ### 不打擾你

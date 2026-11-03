@@ -408,8 +408,8 @@ struct AlertMemory: Codable, Sendable, Equatable {
                 // poll — CodexBar treats that as the same window, not a new
                 // one. A minute of slack was how the ribbons played twice.
                 //
-                // The rail's animated mark asks `UsageWindow.hasTurnedOver` for
-                // a lighter "something changed" signal; ribbons and reset
+                // The reset watch asks `UsageWindow.hasTurnedOver` for a
+                // lighter "something changed" signal; ribbons and reset
                 // notifications keep this stricter two-sighting rule so a
                 // Codex glitch does not throw confetti.
                 let significantJump = jump > max(
@@ -840,7 +840,7 @@ final class UsageAlerts {
     /// What sending a test notification came to.
     enum TestOutcome: Equatable {
         case sent
-        /// macOS will not show Pulse's notifications: refused at the prompt,
+        /// macOS will not show Blinky's notifications: refused at the prompt,
         /// or turned off in System Settings since.
         case denied
         /// The permission prompt was closed without an answer; pressing

@@ -1512,3 +1512,26 @@
 "Weekly ×%@" = "Weekly ×%@";
 "You apply a reset card yourself. For a 5-hour card, the 5-hour quota returns to full, and its next reset is counted from now. For a weekly card, the weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "You apply a reset card yourself. For a 5-hour card, the 5-hour quota returns to full, and its next reset is counted from now. For a weekly card, the weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now.";
 "The usage card shows how many 5-hour and weekly reset cards are left, and when the next one expires." = "The usage card shows how many 5-hour and weekly reset cards are left, and when the next one expires.";
+
+/* Robot in the ring, and the note after an update (upstream 2026-11-02). */
+"Robot in the ring" = "Robot in the ring";
+"Replaces the provider's mark and shows what this account is doing. The robot is Agent Robot Avatar by CX ArtLab." = "Replaces the provider's mark and shows what this account is doing. The robot is Agent Robot Avatar by CX ArtLab.";
+"The robot in the rings is ported from CX ArtLab's Agent Robot Avatar, an original character by CX ArtLab, under the MIT License." = "The robot in the rings is ported from CX ArtLab's Agent Robot Avatar, an original character by CX ArtLab, under the MIT License.";
+"Robot colour" = "Robot colour";
+"The provider's own colour. Where it has none, one that differs from neighbouring robots." = "The provider's own colour. Where it has none, one that differs from neighbouring robots.";
+"A colour of your own. The ring keeps its colour." = "A colour of your own. The ring keeps its colour.";
+"Robot personality" = "Robot personality";
+"Robot shape" = "Robot shape";
+"The outline of the robot's head." = "The outline of the robot's head.";
+"Chosen so that neighbouring robots differ." = "Chosen so that neighbouring robots differ.";
+"Glances and blinks slowly, and now and then looks slowly from side to side." = "Glances and blinks slowly, and now and then looks slowly from side to side.";
+"Glances about, and now and then narrows its eyes and looks up and down." = "Glances about, and now and then narrows its eyes and looks up and down.";
+"Glances quickly and often, and now and then opens its eyes wide." = "Glances quickly and often, and now and then opens its eyes wide.";
+"Lively" = "Lively";
+"Original" = "Original";
+"Squarer" = "Squarer";
+"Rounder" = "Rounder";
+"A note from the developer" = "A note from the developer";
+"Don't show again" = "Don't show again";
+"Close" = "Close";
+"macOS didn't allow Blinky to read %@'s cookies. In System Settings › Privacy & Security › Full Disk Access, turn on Blinky (if it is already on, remove it and add it again), then quit and reopen Blinky." = "macOS didn't allow Blinky to read %@'s cookies. In System Settings › Privacy & Security › Full Disk Access, turn on Blinky (if it is already on, remove it and add it again), then quit and reopen Blinky.";
