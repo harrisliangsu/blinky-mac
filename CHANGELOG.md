@@ -10,6 +10,13 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.37
+
+- **A pinned Codex ring stays on the same limit after a fallback to the app server.** The app server names each limit the same way the web endpoint does, so a pin does not come loose when the read falls back. [#102](https://github.com/qunqin24/Pulse/issues/102)
+- **A refused browser cookie store says why.** When macOS will not open the store, Settings says to allow Blinky under Full Disk Access, instead of asking you to sign in again. [#101](https://github.com/qunqin24/Pulse/issues/101)
+- **A ring can show CX ArtLab's robot.** Under Settings → Providers, open an account's Appearance and turn on Robot in the ring: the ring draws that robot in place of the provider's mark and follows what the account is doing. The animated mark is gone.
+- **Devin's usage card reads records routed through Oh My Pi.** Records that name Devin appear in that card's history. [#104](https://github.com/qunqin24/Pulse/pull/104)
+
 ## 1.5.36
 
 - **Zhipu and z.ai reset cards take one row.** With Reset cards on under Settings → Providers → Zhipu or z.ai → Panel — on by default — the usage card shows how many 5-hour and weekly cards are left and when the next one expires, and the explanation and the confirmation open from that row's mark. [#98](https://github.com/harrisliangsu/blinky-mac/pull/98)
