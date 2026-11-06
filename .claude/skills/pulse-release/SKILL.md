@@ -69,10 +69,10 @@ git push origin main && git push origin vx.y.z
 gh run list --workflow release.yml --limit 1 --json databaseId,status,headBranch
 gh run watch <id> --exit-status        # run in the background; you are told when it ends
 gh release view vx.y.z --json assets --jq '.assets[].name'   # Blinky-x.y.z.dmg and .zip
-git pull --ff-only                     # brings in the workflow's "Offer x.y.z to Sparkle" commit
+gh pr list --head offer-sparkle-x.y.z --base main --state open
 ```
 
-Report to the user only once the assets are there: that it is published, and that installed copies will be offered it.
+The Release job does not push `main`. When it finishes, pull request `Offer x.y.z to Sparkle` (branch `offer-sparkle-x.y.z`) carries `appcast.xml`, `appcast-zh.xml`, and `appcast-en.xml`. Installed copies read the feed on `main`, so they are offered the update after that pull request is merged. `git pull` does not bring the offer in while the pull request is still open. Report the assets once they are on the GitHub Release, and say whether the offer pull request is merged or still open.
 
 ## 6. Issues the release answers
 
