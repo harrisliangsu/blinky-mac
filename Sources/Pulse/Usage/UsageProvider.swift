@@ -370,10 +370,10 @@ enum Provider: String, CaseIterable, Identifiable, Codable, Sendable {
     var supportsLocalActivity: Bool {
         guard let written = handWritten else { return false }
         return switch written {
-        case .claudeCode, .codex, .kiro, .zai, .glmCoding: true
+        case .claudeCode, .codex, .kiro, .zai, .glmCoding, .commandCode: true
         case .antigravity, .cursor, .openCodeGo, .kimiCode, .ollamaCloud,
              .minimax, .copilot, .grok, .grokBot, .volcengine,
-             .commandCode, .deepSeek, .devin, .xiaomiMiMo,
+             .deepSeek, .devin, .xiaomiMiMo,
              .sub2api, .newAPI, .v2ex, .qoder, .stepFun, .pulseExtension: false
         }
     }
@@ -391,8 +391,12 @@ enum Provider: String, CaseIterable, Identifiable, Codable, Sendable {
 
     /// How many rings a split account can produce. Fixed rather than counted
     /// from a reading, so the rail's own budget does not move when a provider
-    /// answers with one group short.
-    var modelGroupCount: Int { splitsByModelGroup ? 2 : 1 }
+    /// answers with one group short. Three since Antigravity added a weekly
+    /// allowance of its own for Gemini 4 Argon beside the Gemini and the
+    /// Claude-and-GPT ones (issue #106); at two, the third group left a split
+    /// account whole. The budget an account actually reserves is the groups
+    /// chosen to show (`AppSettings.shownModelGroups`), or this.
+    var modelGroupCount: Int { splitsByModelGroup ? 3 : 1 }
 
     /// Whether a spending history can be shown for this provider at all.
     ///
