@@ -6,34 +6,34 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.38</title>
-            <pubDate>Tue, 03 Nov 2026 06:35:52 -0000</pubDate>
-            <sparkle:version>1.5.38</sparkle:version>
-            <sparkle:shortVersionString>1.5.38</sparkle:shortVersionString>
+            <title>1.5.39</title>
+            <pubDate>Fri, 06 Nov 2026 04:20:33 -0000</pubDate>
+            <sparkle:version>1.5.39</sparkle:version>
+            <sparkle:shortVersionString>1.5.39</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.38</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.39</link>
             <description xml:lang="zh-Hans"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.38</h2><ul><li><strong>重置彩带同一次重置只播放一次。</strong> 在「设置 → 通知」打开「限额重置时播放彩带」后，同一轮限额重置只播放一次全屏彩带；下一轮重置仍会播放一次。<a href="https://github.com/harrisliangsu/blinky-mac/pull/100">#100</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.38">在 GitHub 查看更新说明</a></p>]]></description>
+</style><h2>Blinky 1.5.39</h2><ul><li><strong>Antigravity 最多显示三个分组圆环，并可逐组关闭。</strong> 在「设置 → 供应商」打开 Antigravity 账号的「外观」，打开「按模型分组拆成多个圆环」后，Gemini 4 Argon 的每周额度单独显示为一个圆环，不需要的分组可以单独关闭。<a href="https://github.com/qunqin24/Pulse/issues/106">#106</a></li><li><strong>只安装了 Gemini.app 时也能读取 Antigravity。</strong> Blinky 使用 Gemini.app 自带的 <code>agy</code> 读取额度。<a href="https://github.com/qunqin24/Pulse/issues/106">#106</a></li><li><strong>没有 Coding Plan 的小米账号显示预存余额。</strong> 圆环显示余额，可在该账号的设置里选择圆环的计算方式，并设置低余额提醒。<a href="https://github.com/qunqin24/Pulse/issues/82">#82</a></li><li><strong>Command Code 工作时圆环会显示活动标记。</strong> Command Code 正在工作时，圆环上显示转动的标记，与 Claude Code 和 Codex 相同。</li><li><strong>带登录信息的请求不再跟随跨站跳转。</strong> 读取 Qoder、StepFun、小米、OpenCode Go 和 Claude Desktop 时，登录 Cookie 不会再随跳转发到其他网站。</li><li><strong>切换站点后不再写回旧站点的登录信息。</strong> 从浏览器读取登录信息期间切换 Qoder 或 StepFun 的站点，这次读取的结果会被丢弃。</li><li><strong>更换 Z.ai 或智谱的密钥后，卡片会重新读取用量记录。</strong> 卡片不再继续显示上一个账号的历史。</li><li><strong>额外账号续期失败时不再误报已退出登录。</strong> 网络中断、限流或服务端错误时保留上次的读数；只有登录被拒绝时才提示重新登录。</li><li><strong>Command Code 的 deepseek-v4.1-flash 可以估算金额。</strong> 按 models.dev 上 Command Code 公布的价格计算。</li><li><strong>用量记录从第一天起就显示每日柱状图。</strong> 「设置」中的用量记录与面板卡片一样，从有记录的第一天起画出每日柱状图。</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.39">在 GitHub 查看更新说明</a></p>]]></description>
             <description xml:lang="zh-Hant"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.38</h2><ul><li><strong>重置彩带同一次重置只播放一次。</strong> 在「设置 → 通知」打开「限额重置时播放彩带」后，同一轮限额重置只播放一次全屏彩带；下一轮重置仍会播放一次。<a href="https://github.com/harrisliangsu/blinky-mac/pull/100">#100</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.38">在 GitHub 查看更新说明</a></p>]]></description>
+</style><h2>Blinky 1.5.39</h2><ul><li><strong>Antigravity 最多显示三个分组圆环，并可逐组关闭。</strong> 在「设置 → 供应商」打开 Antigravity 账号的「外观」，打开「按模型分组拆成多个圆环」后，Gemini 4 Argon 的每周额度单独显示为一个圆环，不需要的分组可以单独关闭。<a href="https://github.com/qunqin24/Pulse/issues/106">#106</a></li><li><strong>只安装了 Gemini.app 时也能读取 Antigravity。</strong> Blinky 使用 Gemini.app 自带的 <code>agy</code> 读取额度。<a href="https://github.com/qunqin24/Pulse/issues/106">#106</a></li><li><strong>没有 Coding Plan 的小米账号显示预存余额。</strong> 圆环显示余额，可在该账号的设置里选择圆环的计算方式，并设置低余额提醒。<a href="https://github.com/qunqin24/Pulse/issues/82">#82</a></li><li><strong>Command Code 工作时圆环会显示活动标记。</strong> Command Code 正在工作时，圆环上显示转动的标记，与 Claude Code 和 Codex 相同。</li><li><strong>带登录信息的请求不再跟随跨站跳转。</strong> 读取 Qoder、StepFun、小米、OpenCode Go 和 Claude Desktop 时，登录 Cookie 不会再随跳转发到其他网站。</li><li><strong>切换站点后不再写回旧站点的登录信息。</strong> 从浏览器读取登录信息期间切换 Qoder 或 StepFun 的站点，这次读取的结果会被丢弃。</li><li><strong>更换 Z.ai 或智谱的密钥后，卡片会重新读取用量记录。</strong> 卡片不再继续显示上一个账号的历史。</li><li><strong>额外账号续期失败时不再误报已退出登录。</strong> 网络中断、限流或服务端错误时保留上次的读数；只有登录被拒绝时才提示重新登录。</li><li><strong>Command Code 的 deepseek-v4.1-flash 可以估算金额。</strong> 按 models.dev 上 Command Code 公布的价格计算。</li><li><strong>用量记录从第一天起就显示每日柱状图。</strong> 「设置」中的用量记录与面板卡片一样，从有记录的第一天起画出每日柱状图。</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.39">在 GitHub 查看更新说明</a></p>]]></description>
             <description xml:lang="en"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.38</h2><ul><li><strong>Reset ribbons play once for the same reset.</strong> With Celebrate a reset on under Settings → Notifications, the same limit reset plays the full-screen ribbons once, and the next reset still plays once. <a href="https://github.com/harrisliangsu/blinky-mac/pull/100">#100</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.38">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.38/Blinky-1.5.38.zip"
-                       length="23223273"
+</style><h2>Blinky 1.5.39</h2><ul><li><strong>Antigravity shows up to three group rings, and each can be switched off.</strong> Under Settings → Providers, open an Antigravity account&#x27;s Appearance and turn on A ring for each model group: Gemini 4 Argon&#x27;s weekly allowance gets a ring of its own, and any group can be left off the panel. <a href="https://github.com/qunqin24/Pulse/issues/106">#106</a></li><li><strong>Gemini.app&#x27;s own agy is read.</strong> With only Gemini.app installed, Blinky reads Antigravity&#x27;s allowances through the <code>agy</code> it ships. <a href="https://github.com/qunqin24/Pulse/issues/106">#106</a></li><li><strong>A Xiaomi account with no Coding Plan shows its prepaid balance.</strong> The ring shows the balance, and that account&#x27;s settings choose how the ring is counted and when the low-balance line appears. <a href="https://github.com/qunqin24/Pulse/issues/82">#82</a></li><li><strong>Command Code shows when it is working.</strong> While Command Code is working, its ring shows the turning mark, as Claude Code&#x27;s and Codex&#x27;s do.</li><li><strong>A request that carries a sign-in no longer follows a redirect to another site.</strong> When Qoder, StepFun, Xiaomi, OpenCode Go and Claude Desktop are read, the sign-in cookie is not sent on to another site by a redirect.</li><li><strong>Switching sites no longer saves the previous site&#x27;s sign-in.</strong> A browser read still in progress when Qoder&#x27;s or StepFun&#x27;s site is switched is discarded.</li><li><strong>Changing Z.ai&#x27;s or Zhipu&#x27;s key reads the card&#x27;s history again.</strong> The card no longer shows the previous account&#x27;s history.</li><li><strong>A failed renewal of an added account no longer reads as signed out.</strong> A dropped network, rate limiting or a server error keeps the last reading; only a refused sign-in asks to sign in again.</li><li><strong>Command Code&#x27;s deepseek-v4.1-flash is priced.</strong> It is estimated at the rates models.dev lists for Command Code.</li><li><strong>Usage history shows its chart from the first day.</strong> The usage history in Settings draws its daily bars from the first day of records, as the panel card does.</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.39">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.39/Blinky-1.5.39.zip"
+                       length="23263398"
                        type="application/octet-stream"
-                       sparkle:edSignature="/rZFRaKaV2yLd+Ds6GFrXI+8zxDuqwHGZ4epd6s97U2bN8zBV/TfkJ/VyLqqpZWRZYeQOup1TeKOxd0YU2SwAA==" />
+                       sparkle:edSignature="PnukDldkPfBtybRLNXaM0YWiJfrNCixRdJFMq3pD43cie+ovcQCLwyeGcOC1tFtEBSc4MUIunzxMAsKAsr0ZDA==" />
         </item>
     </channel>
 </rss>
