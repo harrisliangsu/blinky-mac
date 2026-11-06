@@ -10,6 +10,19 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.39
+
+- **Antigravity shows up to three group rings, and each can be switched off.** Under Settings → Providers, open an Antigravity account's Appearance and turn on A ring for each model group: Gemini 4 Argon's weekly allowance gets a ring of its own, and any group can be left off the panel. [#106](https://github.com/qunqin24/Pulse/issues/106)
+- **Gemini.app's own agy is read.** With only Gemini.app installed, Blinky reads Antigravity's allowances through the `agy` it ships. [#106](https://github.com/qunqin24/Pulse/issues/106)
+- **A Xiaomi account with no Coding Plan shows its prepaid balance.** The ring shows the balance, and that account's settings choose how the ring is counted and when the low-balance line appears. [#82](https://github.com/qunqin24/Pulse/issues/82)
+- **Command Code shows when it is working.** While Command Code is working, its ring shows the turning mark, as Claude Code's and Codex's do.
+- **A request that carries a sign-in no longer follows a redirect to another site.** When Qoder, StepFun, Xiaomi, OpenCode Go and Claude Desktop are read, the sign-in cookie is not sent on to another site by a redirect.
+- **Switching sites no longer saves the previous site's sign-in.** A browser read still in progress when Qoder's or StepFun's site is switched is discarded.
+- **Changing Z.ai's or Zhipu's key reads the card's history again.** The card no longer shows the previous account's history.
+- **A failed renewal of an added account no longer reads as signed out.** A dropped network, rate limiting or a server error keeps the last reading; only a refused sign-in asks to sign in again.
+- **Command Code's deepseek-v4.1-flash is priced.** It is estimated at the rates models.dev lists for Command Code.
+- **Usage history shows its chart from the first day.** The usage history in Settings draws its daily bars from the first day of records, as the panel card does.
+
 ## 1.5.38
 
 - **Reset ribbons play once for the same reset.** With Celebrate a reset on under Settings → Notifications, the same limit reset plays the full-screen ribbons once, and the next reset still plays once. [#100](https://github.com/harrisliangsu/blinky-mac/pull/100)

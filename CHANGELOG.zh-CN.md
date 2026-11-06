@@ -6,6 +6,19 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.39
+
+- **Antigravity 最多显示三个分组圆环，并可逐组关闭。** 在「设置 → 供应商」打开 Antigravity 账号的「外观」，打开「按模型分组拆成多个圆环」后，Gemini 4 Argon 的每周额度单独显示为一个圆环，不需要的分组可以单独关闭。[#106](https://github.com/qunqin24/Pulse/issues/106)
+- **只安装了 Gemini.app 时也能读取 Antigravity。** Blinky 使用 Gemini.app 自带的 `agy` 读取额度。[#106](https://github.com/qunqin24/Pulse/issues/106)
+- **没有 Coding Plan 的小米账号显示预存余额。** 圆环显示余额，可在该账号的设置里选择圆环的计算方式，并设置低余额提醒。[#82](https://github.com/qunqin24/Pulse/issues/82)
+- **Command Code 工作时圆环会显示活动标记。** Command Code 正在工作时，圆环上显示转动的标记，与 Claude Code 和 Codex 相同。
+- **带登录信息的请求不再跟随跨站跳转。** 读取 Qoder、StepFun、小米、OpenCode Go 和 Claude Desktop 时，登录 Cookie 不会再随跳转发到其他网站。
+- **切换站点后不再写回旧站点的登录信息。** 从浏览器读取登录信息期间切换 Qoder 或 StepFun 的站点，这次读取的结果会被丢弃。
+- **更换 Z.ai 或智谱的密钥后，卡片会重新读取用量记录。** 卡片不再继续显示上一个账号的历史。
+- **额外账号续期失败时不再误报已退出登录。** 网络中断、限流或服务端错误时保留上次的读数；只有登录被拒绝时才提示重新登录。
+- **Command Code 的 deepseek-v4.1-flash 可以估算金额。** 按 models.dev 上 Command Code 公布的价格计算。
+- **用量记录从第一天起就显示每日柱状图。** 「设置」中的用量记录与面板卡片一样，从有记录的第一天起画出每日柱状图。
+
 ## 1.5.38
 
 - **重置彩带同一次重置只播放一次。** 在「设置 → 通知」打开「限额重置时播放彩带」后，同一轮限额重置只播放一次全屏彩带；下一轮重置仍会播放一次。[#100](https://github.com/harrisliangsu/blinky-mac/pull/100)
