@@ -139,6 +139,18 @@ struct AccountPanelGroup: View {
                 SettingsRowDivider()
 
                 splitRow(for: account)
+
+                // One switch per group the reading carries, while split: a
+                // group somebody never uses need not cost a ring (#106).
+                // Nothing to list before the first reading.
+                if settings.isSplit(account) {
+                    let groups = RailSlot.modelGroups(of: store.usage(for: account))
+                    ForEach(groups, id: \.self) { group in
+                        SettingsRowDivider()
+
+                        groupRow(group, of: groups)
+                    }
+                }
             }
 
             SettingsRowDivider()
@@ -356,7 +368,7 @@ struct AccountPanelGroup: View {
     private func splitRow(for account: AccountKey) -> some View {
         SettingsRow(
             String.localized("A ring for each model group"),
-            subtitle: String.localized("Gemini and the third-party models draw on separate allowances. One ring can only follow the busier of the two.")
+            subtitle: String.localized("Antigravity's model groups draw on separate allowances. One ring can only follow the busiest of them.")
         ) {
             Toggle("", isOn: Binding(
                 get: { settings.isSplit(account) },
@@ -376,6 +388,27 @@ struct AccountPanelGroup: View {
             Toggle("", isOn: isOn)
                 .labelsHidden()
                 .toggleStyle(.switch)
+        }
+    }
+
+    /// The last group shown cannot be switched off: with no ring the account
+    /// would be gone from the rail. Turning the split off is the way to one.
+    private func groupRow(_ group: String, of groups: [String]) -> some View {
+        let shows = settings.showsModelGroup(group, for: account)
+        let shownCount = groups.filter { settings.showsModelGroup($0, for: account) }.count
+        return SettingsRow(
+            String.localized("Ring for \(group)"),
+            subtitle: shows
+                ? String.localized("Shown on the panel.")
+                : String.localized("Not shown on the panel.")
+        ) {
+            Toggle("", isOn: Binding(
+                get: { shows },
+                set: { settings.setShowsModelGroup($0, group, known: groups, for: account) }
+            ))
+            .labelsHidden()
+            .toggleStyle(.switch)
+            .disabled(shows && shownCount <= 1)
         }
     }
 

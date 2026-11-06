@@ -209,7 +209,7 @@ What the card adds, and how that account is drawn, are two groups on the account
 **Appearance**, on the same page, is how this account's ring and mark are drawn ([rings-and-surface.md](rings-and-surface.md)):
 
 - **Ring shows**, **Ring colour**.
-- **A ring for each model group**, only where `Provider.splitsByModelGroup` is true — a switch promising a second ring it can never draw is worse than none. Off by default: it costs a slot, and docked, the rail is the whole panel.
+- **A ring for each model group**, only where `Provider.splitsByModelGroup` is true — a switch promising a second ring it can never draw is worse than none. Off by default: it costs a slot, and docked, the rail is the whole panel. While on, a **Ring for <group>** switch per group the reading carries ("Shown on the panel." / "Not shown on the panel."), the last shown one disabled (#106; [rings-and-surface.md](rings-and-surface.md#one-ring-per-model-group)).
 - **Robot in the ring** on every account (`AppSettings.robotAccounts`, off by default): CX ArtLab's robot in place of the provider's mark ([rings-and-surface.md](rings-and-surface.md#robot)). While it is on, **Robot colour**, **Robot personality** and **Robot shape** follow. The four stores (`robotAccounts`, `robotColours`, `robotPersonalities`, `robotShapes`) are cleared with the account; the defaults are stored as nothing.
 
 ### Provider-specific groups

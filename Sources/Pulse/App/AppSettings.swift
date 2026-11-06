@@ -525,6 +525,14 @@ final class AppSettings {
         didSet { splitAccountsChanged(from: oldValue) }
     }
 
+    /// Which model groups get a ring on a split account, by account id, in
+    /// no particular order. A missing entry is every group. Stored as a
+    /// choice rather than read off a reading, so the rail's budget moves only
+    /// when a setting does (#106).
+    var shownModelGroups: [String: [String]] {
+        didSet { shownModelGroupsChanged(from: oldValue) }
+    }
+
     /// Whether this is the settings the running app is drawn from, and so the
     /// one allowed to move `PanelMetrics` — and `Money`, by the same rule.
     ///
@@ -1219,6 +1227,7 @@ final class AppSettings {
         showsSecondRing: Bool = Default.showsSecondRing,
         animatesRingActivity: Bool = Default.animatesRingActivity,
         splitAccounts: Set<String> = [],
+        shownModelGroups: [String: [String]] = [:],
         spendSpan: SpendSpan = .default,
         spendCustomDays: ClosedRange<Date>? = nil,
         spendActivityView: ActivityView = .default,
@@ -1281,6 +1290,7 @@ final class AppSettings {
         self.showsSecondRing = showsSecondRing
         self.animatesRingActivity = animatesRingActivity
         self.splitAccounts = splitAccounts
+        self.shownModelGroups = shownModelGroups
         self.spendSpan = spendSpan
         self.spendCustomDays = spendCustomDays ?? Self.defaultSpendCustomDays()
         self.spendActivityView = spendActivityView
@@ -1402,6 +1412,7 @@ final class AppSettings {
                 Key.animatesRingActivity, default: Default.animatesRingActivity
             ),
             splitAccounts: Set(defaults.stringArray(forKey: Key.splitAccounts) ?? []),
+            shownModelGroups: defaults.dictionary(forKey: Key.shownModelGroups) as? [String: [String]] ?? [:],
             spendSpan: Self.storedSpendSpan(in: defaults),
             spendCustomDays: Self.storedSpendCustomDays(in: defaults),
             spendActivityView: Self.storedSpendActivityView(in: defaults),
