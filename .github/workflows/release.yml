@@ -18,8 +18,11 @@ on:
 
 permissions:
   contents: write
-  # Listing Build runs needs this. contents: write is what Publish and the
-  # feed push already use; setting any permission drops the rest.
+  # The Sparkle offer opens a pull request. The feed branch is pushed;
+  # main is not.
+  pull-requests: write
+  # Listing Build runs needs this. Setting any permission drops the rest,
+  # so each of these has to be named.
   actions: read
 
 # One Release at a time. A second run waits; it is not cancelled mid-upload.
@@ -201,10 +204,24 @@ jobs:
       # half is baked into the app, so the signature written here is the whole
       # trust story: it holds even though the app carries only an ad-hoc
       # signature and Apple has vouched for nothing.
+      #
+      # main only accepts pull requests, so this step never pushes it. The
+      # feed is committed on offer-sparkle-$VERSION, that branch is pushed,
+      # and a pull request is opened against main. Installed copies read the
+      # feed on main, so they see the version after the pull request merges.
+      # Opening the pull request needs Settings → Actions → General →
+      # Workflow permissions → "Allow GitHub Actions to create and approve
+      # pull requests". Without that, the branch push still stands and a
+      # person opens the pull request. Auto-merge is requested only when the
+      # repository allows it. A failure to open the pull request or to turn
+      # on auto-merge leaves the Release assets in place.
       - name: Offer it to Sparkle
         env:
           SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+          GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
+
           # **A pre-release is not offered to Sparkle.** Publishing it with
           # --prerelease kept it off GitHub's "latest", but the feed has no
           # beta channel, so an item here reached every installed copy as an
@@ -214,16 +231,25 @@ jobs:
             exit 0;;
           esac
 
-          if [ -z "$SPARKLE_PRIVATE_KEY" ]; then
+          if [ -z "${SPARKLE_PRIVATE_KEY}" ]; then
             echo "::error::SPARKLE_PRIVATE_KEY is not set — installed copies would never see this release."
             exit 1
           fi
 
           URL="https://github.com/${{ github.repository }}/releases/download/v$VERSION/Blinky-$VERSION.zip"
+          branch="offer-sparkle-$VERSION"
+          case "$branch" in
+            offer-sparkle-*) ;;
+            *)
+              echo "::error::Refusing to push ${branch}. The Sparkle offer branch must be offer-sparkle-<version>, and main is never pushed."
+              exit 1
+              ;;
+          esac
 
-          # The tag was checked out detached; the feed lives on main.
+          # The tag was checked out detached. The feed to update is the one
+          # on main; the commit goes on the offer branch, not onto main.
           git fetch origin main
-          git checkout -B main origin/main
+          git checkout -B "$branch" origin/main
 
           # When this version is already in the feed, appcast.py rewrites that
           # item's enclosure from the zip this run just published (Publish
@@ -244,41 +270,46 @@ jobs:
           # change, the step exited green, and nothing was ever committed. A
           # step that succeeds without doing its job is the worst kind.
           if git diff --cached --quiet -- appcast.xml appcast-zh.xml appcast-en.xml; then
-            echo "Feed already offers $VERSION."
-          else
-            git commit -m "Offer $VERSION to Sparkle"
-            # main can advance while this job packages — another pull request
-            # merging between the fetch above and this push. Rebase onto the
-            # main we are about to update, and try a few times when the push
-            # is rejected. A conflict stops the step. The feed is not force-pushed.
-            pushed=0
-            for attempt in 1 2 3 4 5; do
-              git fetch origin main
-              if ! git rebase origin/main; then
-                echo "::error::Could not rebase the Sparkle feed onto origin/main."
-                git rebase --abort || true
-                exit 1
-              fi
-              if git push origin main; then
-                pushed=1
-                break
-              fi
-              echo "Push to main was rejected (attempt ${attempt} of 5)."
-              if [ "$attempt" -lt 5 ]; then
-                sleep $((attempt * 2))
-              fi
-            done
-            if [ "$pushed" -ne 1 ]; then
-              echo "::error::Could not push the Sparkle feed to main."
+            if ! git show "HEAD:appcast.xml" | grep -q "<sparkle:shortVersionString>$VERSION<"; then
+              echo "::error::appcast.xml on origin/main does not offer $VERSION, and appcast.py left the feed unchanged."
               exit 1
             fi
+            echo "Feed on origin/main already offers $VERSION."
+            exit 0
           fi
 
-          # Read the feed from origin/main after the push. A commit that
-          # exists only on the runner does not offer the update.
-          git fetch origin main
-          if ! git show origin/main:appcast.xml | grep -q "<sparkle:shortVersionString>$VERSION<"; then
-            echo "::error::appcast.xml on main does not offer $VERSION — installed copies would never see it."
+          git commit -m "Offer $VERSION to Sparkle"
+          # Force is limited to this offer branch. A re-run replaces the feed
+          # commit with the signature of the zip just published. main is not
+          # a target of this push.
+          git push --force origin "HEAD:refs/heads/${branch}"
+
+          # Read the feed from the branch that was pushed. A commit that
+          # exists only on the runner does not offer the update, and main is
+          # not required to carry it yet.
+          git fetch origin "$branch"
+          if ! git show "origin/${branch}:appcast.xml" | grep -q "<sparkle:shortVersionString>$VERSION<"; then
+            echo "::error::appcast.xml on ${branch} does not offer $VERSION — installed copies would never see it."
             exit 1
           fi
-          echo "Feed on main offers $VERSION."
+
+          existing="$(gh pr list --head "$branch" --base main --state open --json number --jq '.[0].number // empty' || true)"
+          if [ -z "$existing" ]; then
+            if ! gh pr create --base main --head "$branch" \
+              --title "Offer $VERSION to Sparkle" \
+              --body "Release v$VERSION is already published. Merge this pull request to put appcast.xml, appcast-zh.xml, and appcast-en.xml on main. The release workflow does not push to main."; then
+              echo "::warning::Could not open a pull request for ${branch}. The branch was pushed. Open the pull request by hand and merge it. Settings → Actions → General → Workflow permissions must include \"Allow GitHub Actions to create and approve pull requests\" if Actions should open it. The Release assets already stand."
+              exit 0
+            fi
+          fi
+          number="$(gh pr list --head "$branch" --base main --state open --json number --jq '.[0].number // empty' || true)"
+          if [ -z "$number" ]; then
+            echo "::warning::Branch ${branch} was pushed, and no open pull request was found. Open it by hand and merge it. The Release assets already stand."
+            exit 0
+          fi
+          if gh pr merge "$number" --squash --auto; then
+            echo "Auto-merge is enabled for Sparkle offer pull request #${number}." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::warning::Sparkle offer pull request #${number} is open. Auto-merge was not enabled, so merge it after CI. The workflow does not push to main. The Release assets already stand."
+          fi
+          echo "Offer branch ${branch} offers $VERSION in pull request #${number}."
