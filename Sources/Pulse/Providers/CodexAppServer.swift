@@ -391,7 +391,7 @@ actor CodexAppServer {
         try await ensureRunning()
         do {
             return try await send(method: method, params: params)
-        } catch let Failure.server(let message) where Self.refusesCredentials(message) {
+        } catch Failure.server(let message) where Self.refusesCredentials(message) {
             shutDown()
             try await ensureRunning()
             return try await send(method: method, params: params)
