@@ -166,7 +166,11 @@ extension PanelGlobalsSuite {
         @Test("A long hosted card fits on every edge even without a restrictive screen limit",
                arguments: [PanelEdge.left, .right, .top, .bottom])
         func hosted(edge: PanelEdge) async throws {
-            let usage = reading()
+            // Forty limits, not twenty. This fork's card budget is the six-limit
+            // card plus the reset-card row and Codex's reset-intel block, so
+            // twenty short rows fit inside twice that budget and the card stops
+            // scrolling. The fixture has to stay taller than that.
+            let usage = reading(count: 40)
             for room: CGFloat? in [nil, DetailCardLayout.maximumHeight, DetailCardLayout.maximumHeight * 2] {
                 let card = UsageDetailCard(usage: usage,
                     edge: edge, pointerCenter: 60, maxHeight: room)
