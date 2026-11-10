@@ -6,6 +6,10 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.41
+
+- **更换 Codex 账号后，重置卡显示新账号还剩几张。** 在「设置 → 供应商 → Codex」的「面板」中打开「重置卡」后，更换 Codex 所用的 ChatGPT 账号时，这一行显示新账号还剩几张，读取失败时显示「未能读取」，一张都没有时仍显示「无」。[#106](https://github.com/harrisliangsu/blinky-mac/pull/106)
+
 ## 1.5.40
 
 - **详情卡片过长时可以滚动。** 额度很多的账号，卡片保持原有高度，标题固定在顶部，其余内容在卡片内滚动；切换账号时仍是同一个滚动区域，并回到顶部。感谢 [@Jiar](https://github.com/qunqin24/Pulse/pull/107) 贡献。
