@@ -6,34 +6,34 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.40</title>
-            <pubDate>Tue, 10 Nov 2026 02:06:18 -0000</pubDate>
-            <sparkle:version>1.5.40</sparkle:version>
-            <sparkle:shortVersionString>1.5.40</sparkle:shortVersionString>
+            <title>1.5.41</title>
+            <pubDate>Tue, 10 Nov 2026 05:02:43 -0000</pubDate>
+            <sparkle:version>1.5.41</sparkle:version>
+            <sparkle:shortVersionString>1.5.41</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.40</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.41</link>
             <description xml:lang="zh-Hans"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.40</h2><ul><li><strong>详情卡片过长时可以滚动。</strong> 额度很多的账号，卡片保持原有高度，标题固定在顶部，其余内容在卡片内滚动；切换账号时仍是同一个滚动区域，并回到顶部。感谢 <a href="https://github.com/qunqin24/Pulse/pull/107">@Jiar</a> 贡献。</li><li><strong>使用两周后，设置窗口顶部会请求一次 GitHub Star。</strong> 从开始计数起满 14 天且至少有 7 天打开过 Blinky 时，打开「设置」会在窗口顶部显示一次，关闭窗口、点 Star 或关掉这行之后不再出现，关于页面始终保留「在 GitHub 上点 Star」。</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.40">在 GitHub 查看更新说明</a></p>]]></description>
+</style><h2>Blinky 1.5.41</h2><ul><li><strong>更换 Codex 账号后，重置卡显示新账号还剩几张。</strong> 在「设置 → 供应商 → Codex」的「面板」中打开「重置卡」后，更换 Codex 所用的 ChatGPT 账号时，这一行显示新账号还剩几张，读取失败时显示「未能读取」，一张都没有时仍显示「无」。<a href="https://github.com/harrisliangsu/blinky-mac/pull/106">#106</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.41">在 GitHub 查看更新说明</a></p>]]></description>
             <description xml:lang="zh-Hant"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.40</h2><ul><li><strong>详情卡片过长时可以滚动。</strong> 额度很多的账号，卡片保持原有高度，标题固定在顶部，其余内容在卡片内滚动；切换账号时仍是同一个滚动区域，并回到顶部。感谢 <a href="https://github.com/qunqin24/Pulse/pull/107">@Jiar</a> 贡献。</li><li><strong>使用两周后，设置窗口顶部会请求一次 GitHub Star。</strong> 从开始计数起满 14 天且至少有 7 天打开过 Blinky 时，打开「设置」会在窗口顶部显示一次，关闭窗口、点 Star 或关掉这行之后不再出现，关于页面始终保留「在 GitHub 上点 Star」。</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.40">在 GitHub 查看更新说明</a></p>]]></description>
+</style><h2>Blinky 1.5.41</h2><ul><li><strong>更换 Codex 账号后，重置卡显示新账号还剩几张。</strong> 在「设置 → 供应商 → Codex」的「面板」中打开「重置卡」后，更换 Codex 所用的 ChatGPT 账号时，这一行显示新账号还剩几张，读取失败时显示「未能读取」，一张都没有时仍显示「无」。<a href="https://github.com/harrisliangsu/blinky-mac/pull/106">#106</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.41">在 GitHub 查看更新说明</a></p>]]></description>
             <description xml:lang="en"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.40</h2><ul><li><strong>Long detail cards scroll.</strong> An account with many limits keeps its card at the usual height, with the title fixed at the top and the rest scrolling inside the card, and switching accounts keeps that one scroll view and returns it to the top. Thanks to <a href="https://github.com/qunqin24/Pulse/pull/107">@Jiar</a> for the contribution.</li><li><strong>After two weeks of use, Settings asks once for a GitHub star.</strong> When 14 days have passed since counting began and Blinky has been open on at least 7 days, opening Settings shows the request once at the top of the window, and closing the window, starring, or dismissing the row spends it, while About keeps Star on GitHub.</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.40">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.40/Blinky-1.5.40.zip"
-                       length="23409954"
+</style><h2>Blinky 1.5.41</h2><ul><li><strong>After a Codex account switch, reset cards show the new account&#x27;s count.</strong> With Reset cards on under Settings → Providers → Codex → Panel, switching the ChatGPT account Codex is signed in with shows how many that account has, a failed read says Couldn&#x27;t read, and a count of zero still says None. <a href="https://github.com/harrisliangsu/blinky-mac/pull/106">#106</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.41">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.41/Blinky-1.5.41.zip"
+                       length="23412062"
                        type="application/octet-stream"
-                       sparkle:edSignature="DzriNxe8iRI149I4EvjYamvF93bIMV2l1gNAOU7aBz9mALhQSX/AuzfZZ3V9UDxq9OG9OXVqDPm2ZC4gQ2zxBg==" />
+                       sparkle:edSignature="n6hkYn/SW5Z7bzWd2Tr5a6xsu6UCYxwDPUiMHUPaZCBvaFnB8vlEnudzfk+xMbkJ1k0LLYmPOksP2b1gkTHEBg==" />
         </item>
     </channel>
 </rss>
