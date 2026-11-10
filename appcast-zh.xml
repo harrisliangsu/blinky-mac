@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.39</title>
-            <pubDate>Fri, 06 Nov 2026 04:20:33 -0000</pubDate>
-            <sparkle:version>1.5.39</sparkle:version>
-            <sparkle:shortVersionString>1.5.39</sparkle:shortVersionString>
+            <title>1.5.40</title>
+            <pubDate>Tue, 10 Nov 2026 02:06:18 -0000</pubDate>
+            <sparkle:version>1.5.40</sparkle:version>
+            <sparkle:shortVersionString>1.5.40</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.39</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.40</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.39</h2><ul><li><strong>Antigravity 最多显示三个分组圆环，并可逐组关闭。</strong> 在「设置 → 供应商」打开 Antigravity 账号的「外观」，打开「按模型分组拆成多个圆环」后，Gemini 4 Argon 的每周额度单独显示为一个圆环，不需要的分组可以单独关闭。<a href="https://github.com/qunqin24/Pulse/issues/106">#106</a></li><li><strong>只安装了 Gemini.app 时也能读取 Antigravity。</strong> Blinky 使用 Gemini.app 自带的 <code>agy</code> 读取额度。<a href="https://github.com/qunqin24/Pulse/issues/106">#106</a></li><li><strong>没有 Coding Plan 的小米账号显示预存余额。</strong> 圆环显示余额，可在该账号的设置里选择圆环的计算方式，并设置低余额提醒。<a href="https://github.com/qunqin24/Pulse/issues/82">#82</a></li><li><strong>Command Code 工作时圆环会显示活动标记。</strong> Command Code 正在工作时，圆环上显示转动的标记，与 Claude Code 和 Codex 相同。</li><li><strong>带登录信息的请求不再跟随跨站跳转。</strong> 读取 Qoder、StepFun、小米、OpenCode Go 和 Claude Desktop 时，登录 Cookie 不会再随跳转发到其他网站。</li><li><strong>切换站点后不再写回旧站点的登录信息。</strong> 从浏览器读取登录信息期间切换 Qoder 或 StepFun 的站点，这次读取的结果会被丢弃。</li><li><strong>更换 Z.ai 或智谱的密钥后，卡片会重新读取用量记录。</strong> 卡片不再继续显示上一个账号的历史。</li><li><strong>额外账号续期失败时不再误报已退出登录。</strong> 网络中断、限流或服务端错误时保留上次的读数；只有登录被拒绝时才提示重新登录。</li><li><strong>Command Code 的 deepseek-v4.1-flash 可以估算金额。</strong> 按 models.dev 上 Command Code 公布的价格计算。</li><li><strong>用量记录从第一天起就显示每日柱状图。</strong> 「设置」中的用量记录与面板卡片一样，从有记录的第一天起画出每日柱状图。</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.39">在 GitHub 查看更新说明</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.39/Blinky-1.5.39.zip"
-                       length="23263398"
+</style><h2>Blinky 1.5.40</h2><ul><li><strong>详情卡片过长时可以滚动。</strong> 额度很多的账号，卡片保持原有高度，标题固定在顶部，其余内容在卡片内滚动；切换账号时仍是同一个滚动区域，并回到顶部。感谢 <a href="https://github.com/qunqin24/Pulse/pull/107">@Jiar</a> 贡献。</li><li><strong>使用两周后，设置窗口顶部会请求一次 GitHub Star。</strong> 从开始计数起满 14 天且至少有 7 天打开过 Blinky 时，打开「设置」会在窗口顶部显示一次，关闭窗口、点 Star 或关掉这行之后不再出现，关于页面始终保留「在 GitHub 上点 Star」。</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.40">在 GitHub 查看更新说明</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.40/Blinky-1.5.40.zip"
+                       length="23409954"
                        type="application/octet-stream"
-                       sparkle:edSignature="PnukDldkPfBtybRLNXaM0YWiJfrNCixRdJFMq3pD43cie+ovcQCLwyeGcOC1tFtEBSc4MUIunzxMAsKAsr0ZDA==" />
+                       sparkle:edSignature="DzriNxe8iRI149I4EvjYamvF93bIMV2l1gNAOU7aBz9mALhQSX/AuzfZZ3V9UDxq9OG9OXVqDPm2ZC4gQ2zxBg==" />
         </item>
     </channel>
 </rss>
