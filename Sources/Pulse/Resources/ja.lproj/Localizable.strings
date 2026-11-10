@@ -996,6 +996,7 @@
 "How many reset cards are left, and when the next one expires. Asks Codex's app server on every refresh." = "残っているリセットカードの枚数と、次のカードの有効期限。更新のたびに Codex の app server に問い合わせます。";
 "Not available" = "取得できません";
 "codex not found" = "codex が見つかりません";
+"Couldn't read" = "読み取れませんでした";
 "Show usage in the menu bar" = "メニューバーに使用量を表示";
 "A ring's mark and figure beside the icon, red past the warning line." = "リングのサービスマークと使用量をアイコンの横に表示します。警告ラインを超えると赤になります。";
 "Usage" = "使用量";

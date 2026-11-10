@@ -707,10 +707,9 @@ struct UsageDetailCard: View {
         case .available(let count, _):
             availableCountText(count)
         case .unreported:
-            // A missing block is not a count of zero. The row still says
-            // None, the same word as a reported zero, so it does not read
-            // as a failure.
-            .localized("None")
+            // A missing block, or a helper that did not answer, is not a
+            // count of zero. None is reserved for a reported zero.
+            .localized("Couldn't read")
         case .codexMissing:
             .localized("codex not found")
         }

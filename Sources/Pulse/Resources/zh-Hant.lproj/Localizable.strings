@@ -996,6 +996,7 @@
 "How many reset cards are left, and when the next one expires. Asks Codex's app server on every refresh." = "還剩幾張重置卡，以及最近一張什麼時候到期。每次更新都會詢問 Codex 的 app server。";
 "Not available" = "無法取得";
 "codex not found" = "找不到 codex";
+"Couldn't read" = "未能讀取";
 "Show usage in the menu bar" = "在選單列顯示用量";
 "A ring's mark and figure beside the icon, red past the warning line." = "在圖示旁顯示一個圓環的標誌和數字，超過警示線就變紅。";
 "Usage" = "用量";
