@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.41
+
+- **After a Codex account switch, reset cards show the new account's count.** With Reset cards on under Settings → Providers → Codex → Panel, switching the ChatGPT account Codex is signed in with shows how many that account has, a failed read says Couldn't read, and a count of zero still says None. [#106](https://github.com/harrisliangsu/blinky-mac/pull/106)
+
 ## 1.5.40
 
 - **Long detail cards scroll.** An account with many limits keeps its card at the usual height, with the title fixed at the top and the rest scrolling inside the card, and switching accounts keeps that one scroll view and returns it to the top. Thanks to [@Jiar](https://github.com/qunqin24/Pulse/pull/107) for the contribution.
