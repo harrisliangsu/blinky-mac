@@ -1538,3 +1538,8 @@
 "Don't show again" = "Don't show again";
 "Close" = "Close";
 "macOS didn't allow Blinky to read %@'s cookies. In System Settings › Privacy & Security › Full Disk Access, turn on Blinky (if it is already on, remove it and add it again), then quit and reopen Blinky." = "macOS didn't allow Blinky to read %@'s cookies. In System Settings › Privacy & Security › Full Disk Access, turn on Blinky (if it is already on, remove it and add it again), then quit and reopen Blinky.";
+
+/* Star request: StarRequestBanner, AboutPane */
+"You have used Blinky for two weeks. If Blinky has been useful, a star on GitHub helps other people find it." = "You have used Blinky for two weeks. If Blinky has been useful, a star on GitHub helps other people find it.";
+"Star on GitHub" = "Star on GitHub";
+"Stars help other people find Blinky." = "Stars help other people find Blinky.";

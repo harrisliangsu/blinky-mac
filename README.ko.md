@@ -162,6 +162,16 @@ open build.noindex/Blinky.app
 
 ---
 
+## 기여자
+
+Pulse에 기여해 주신 모든 분께 감사드립니다.
+
+<a href="https://github.com/qunqin24/Pulse/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=qunqin24/Pulse" alt="Pulse 기여자" />
+</a>
+
+---
+
 ## 업스트림 작성자 후원
 
 <p align="center">

@@ -6,6 +6,11 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.40
+
+- **详情卡片过长时可以滚动。** 额度很多的账号，卡片保持原有高度，标题固定在顶部，其余内容在卡片内滚动；切换账号时仍是同一个滚动区域，并回到顶部。感谢 [@Jiar](https://github.com/qunqin24/Pulse/pull/107) 贡献。
+- **使用两周后，设置窗口顶部会请求一次 GitHub Star。** 从开始计数起满 14 天且至少有 7 天打开过 Blinky 时，打开「设置」会在窗口顶部显示一次，关闭窗口、点 Star 或关掉这行之后不再出现，关于页面始终保留「在 GitHub 上点 Star」。
+
 ## 1.5.39
 
 - **Antigravity 最多显示三个分组圆环，并可逐组关闭。** 在「设置 → 供应商」打开 Antigravity 账号的「外观」，打开「按模型分组拆成多个圆环」后，Gemini 4 Argon 的每周额度单独显示为一个圆环，不需要的分组可以单独关闭。[#106](https://github.com/qunqin24/Pulse/issues/106)

@@ -87,6 +87,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /// A login launch held the chooser and the other first-run prompts.
     /// Cleared on a manual open or a reopen, which is when they are shown.
     private var holdFirstRunPrompts = false
+    /// Midnight and waking, which count a day of use for `StarRequest`.
+    private var dayObservers: [NSObjectProtocol] = []
 
     func applicationWillFinishLaunching(_ notification: Notification) {
         // Installed before the open event is delivered when that delivery
@@ -204,6 +206,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         updateMenuBarItem()
 
         showUpdateMessageIfDue()
+        countDaysOfUse()
 
         let decision = LaunchPlanner.onLaunch(
             kind: LaunchClassification.kind(launchSignals),
@@ -246,6 +249,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         guard DockQuit.isFromDock(NSAppleEventManager.shared().currentAppleEvent) else { return .terminateNow }
         dock.closeWindows()
         return .terminateCancel
+    }
+
+    /// A day Pulse runs is a day of use (`StarRequest`): today, and each day
+    /// a Mac left running reaches midnight or wakes into.
+    private func countDaysOfUse() {
+        StarRequest.noteActive()
+        dayObservers = [
+            NotificationCenter.default.addObserver(
+                forName: .NSCalendarDayChanged, object: nil, queue: .main
+            ) { _ in StarRequest.noteActive() },
+            NSWorkspace.shared.notificationCenter.addObserver(
+                forName: NSWorkspace.didWakeNotification, object: nil, queue: .main
+            ) { _ in StarRequest.noteActive() },
+        ]
     }
 
     /// The maintainer's note for this version, if it is due and there is one

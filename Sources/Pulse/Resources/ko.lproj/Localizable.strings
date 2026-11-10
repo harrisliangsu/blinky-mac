@@ -1540,3 +1540,8 @@
 "Don't show again" = "다시 표시 안 함";
 "Close" = "닫기";
 "macOS didn't allow Blinky to read %@'s cookies. In System Settings › Privacy & Security › Full Disk Access, turn on Blinky (if it is already on, remove it and add it again), then quit and reopen Blinky." = "macOS가 Blinky의 %@ 쿠키 읽기를 허용하지 않았습니다. 시스템 설정 › 개인정보 보호 및 보안 › 전체 디스크 접근 권한에서 Blinky를 켜십시오(이미 켜져 있으면 제거한 뒤 다시 추가하십시오). 그런 다음 Blinky를 종료하고 다시 여십시오.";
+
+/* Star request: StarRequestBanner, AboutPane */
+"You have used Blinky for two weeks. If Blinky has been useful, a star on GitHub helps other people find it." = "Blinky를 사용하신 지 2주가 되었습니다. Blinky가 도움이 되었다면 GitHub에서 Star를 눌러 주세요. 더 많은 사람이 Blinky를 알게 됩니다.";
+"Star on GitHub" = "GitHub에서 Star 누르기";
+"Stars help other people find Blinky." = "Star는 더 많은 사람이 Blinky를 알게 되는 데 도움이 됩니다.";

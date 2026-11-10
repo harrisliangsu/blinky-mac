@@ -10,6 +10,11 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.40
+
+- **Long detail cards scroll.** An account with many limits keeps its card at the usual height, with the title fixed at the top and the rest scrolling inside the card, and switching accounts keeps that one scroll view and returns it to the top. Thanks to [@Jiar](https://github.com/qunqin24/Pulse/pull/107) for the contribution.
+- **After two weeks of use, Settings asks once for a GitHub star.** When 14 days have passed since counting began and Blinky has been open on at least 7 days, opening Settings shows the request once at the top of the window, and closing the window, starring, or dismissing the row spends it, while About keeps Star on GitHub.
+
 ## 1.5.39
 
 - **Antigravity shows up to three group rings, and each can be switched off.** Under Settings → Providers, open an Antigravity account's Appearance and turn on A ring for each model group: Gemini 4 Argon's weekly allowance gets a ring of its own, and any group can be left off the panel. [#106](https://github.com/qunqin24/Pulse/issues/106)

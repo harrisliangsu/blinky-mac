@@ -83,7 +83,8 @@ enum DetailCardLayout {
     /// count and, when a card expires, a second line. Codex, Zhipu and z.ai
     /// each draw at most one. The explanation and the use controls open in a
     /// panel that stays inside the card, so they do not add a row and the
-    /// button is not clipped.
+    /// button is not clipped. A card taller than this keeps the height and
+    /// scrolls under its header.
     static var maximumHeight: CGFloat {
         height(forWindows: 6, footnote: true) + codexResetCardHeight + codexIntelHeight
     }
@@ -118,6 +119,16 @@ enum DetailCardLayout {
             + rowInternalSpacing + rowTextLineHeight * 2
             + rowInternalSpacing + rowTextLineHeight
             + rowInternalSpacing + rowTextLineHeight * 2
+    }
+
+    /// How far a long card's scrolled rows fade under its header. Taken out
+    /// of `contentSpacing`, so it must stay smaller than that.
+    static var topFade: CGFloat { 8 * PanelMetrics.scale }
+
+    /// The card budget on a display: `maximumHeight`, or less on a screen too
+    /// short to leave a quarter of it clear around the card.
+    static func screenHeightLimit(in visible: CGRect) -> CGFloat {
+        min(max(visible.height, 0) * 0.75, maximumHeight)
     }
 
     static func height(forWindows count: Int, footnote: Bool = false) -> CGFloat {
@@ -302,19 +313,19 @@ struct UsageDetailCard: View {
     /// The colour language, so the bars agree with the rings.
     @Environment(\.ringColourScheme) private var ringColourScheme
 
-    /// The tallest the card may be, pointer included, or nil for no limit —
-    /// the room between the rail and the screen's edge on the side it opens
-    /// to, for a rail lying across (`PanelPlacement.cardRoom`).
+    /// Available screen height, pointer included. Even without a placement
+    /// limit the body must fit the fixed panel's card budget.
     var maxHeight: CGFloat?
-    /// The card's contents at their own height, measured inside the scroll
-    /// view so a limited card knows whether it has to scroll at all.
-    @State private var naturalHeight: CGFloat?
+    /// The header's and the details' measured heights, for the account they
+    /// were measured on. The card is one view across every account, so a
+    /// height measured on the last one must not lay out the next.
+    @State private var measured = MeasuredHeights()
 
     var body: some View {
         bounded
         // Room for the pointer on the side facing the rail. The shape below
         // covers the whole frame, body and pointer together.
-        .padding(Self.pointerSide(for: edge), DetailCardLayout.pointerWidth)
+        .padding(Self.pointerSide(for: edge), pointerLength)
         // **Inside the card, never ahead of it.** Switching between two cards
         // of different heights keeps this one view and swaps its rows: the
         // outline grows on the panel's spring, but a row the new card adds is
@@ -370,34 +381,106 @@ struct UsageDetailCard: View {
         openCoupon = nil
     }
 
-    /// The contents, scrolling **only when the screen cannot hold them**.
+    private struct MeasuredHeights {
+        var account = ""
+        var summary: CGFloat?
+        var details: CGFloat?
+    }
+
+    /// What a height is reported against: the same height on another account
+    /// is a new measurement, not an unchanged one.
+    private struct Measurement: Equatable {
+        let account: String
+        let height: CGFloat
+    }
+
+    private func record(_ measurement: Measurement, summary: Bool) {
+        if measured.account != measurement.account {
+            measured = MeasuredHeights(account: measurement.account)
+        }
+        if summary { measured.summary = measurement.height } else { measured.details = measurement.height }
+    }
+
+    private var current: MeasuredHeights {
+        measured.account == usage.account.id ? measured : MeasuredHeights(account: usage.account.id)
+    }
+
+    private var viewport: DetailCardViewport {
+        // Until this account's rows are measured, estimate them from its own
+        // limits rather than the last account's height.
+        let summary = current.summary ?? (DetailCardLayout.headerHeight
+            + (isDetailed ? DetailCardLayout.headerLineSpacing + DetailCardLayout.footnoteHeight : 0))
+        let rows = CGFloat(max(usage.windows.count, 1))
+        let details = current.details
+            ?? rows * DetailCardLayout.rowHeight + (rows - 1) * DetailCardLayout.contentSpacing
+        return DetailCardViewport(
+            limit: DetailCardViewport.bodyLimit(
+                maxHeight: maxHeight, fallbackHeight: DetailCardLayout.maximumHeight,
+                pointerHeight: edge.isVertical ? 0 : DetailCardLayout.pointerWidth),
+            summary: summary,
+            details: details,
+            spacing: DetailCardLayout.contentSpacing, padding: DetailCardLayout.padding,
+            minimumDetailHeight: DetailCardLayout.rowHeight,
+            fade: DetailCardLayout.topFade
+        )
+    }
+
+    /// The top of the scrolled content, which a new account scrolls back to.
+    private static let scrollTop = "detail-card-top"
+
+    /// Always bounded by the fixed window, on every edge. Short cards keep
+    /// their natural height. A long card keeps its header and scrolls the
+    /// rest, with no scroller: the rows fade into the card's foot instead, so
+    /// every row keeps the card's full width. Only an unusually small
+    /// placement scrolls the header too.
     ///
-    /// A rail lying across opens its card into one half of the screen, and
-    /// near the middle that half can be shorter than a tall card — a detailed
-    /// card with a forecast and many limits on a 13" display was 95pt taller
-    /// than the room below the rail, and its foot was cut off by the screen.
-    /// Turning the card the other way does not help there: the rail already
-    /// opens it to the roomier half. So it scrolls, inside the same outline.
-    /// The window keeps its size; only the card is shorter.
-    @ViewBuilder
+    /// **One scroll view across accounts, scrolled back to the top on a new
+    /// one.** Giving it the account as its identity replaced the whole view
+    /// inside the card's spring, and the two accounts' rows cross-faded over
+    /// each other.
     private var bounded: some View {
-        if let limit = maxHeight.map({ $0 - DetailCardLayout.pointerWidth }),
-           limit < DetailCardLayout.maximumHeight {
-            let natural = naturalHeight ?? min(DetailCardLayout.estimatedHeight, limit)
-            ScrollView(.vertical) {
-                content.background(
-                    GeometryReader { proxy in
-                        Color.clear.onChange(of: proxy.size.height, initial: true) { _, height in
-                            naturalHeight = height
+        let layout = viewport
+        return ScrollViewReader { proxy in
+            Group {
+                if layout.fixesSummary {
+                    VStack(alignment: .leading, spacing: layout.stackSpacing) {
+                        measuredSummary
+                        ScrollView(.vertical) {
+                            measuredDetails
+                                .padding(.top, layout.topFade)
+                                .padding(.bottom, layout.bottomFade)
+                                .id(Self.scrollTop)
                         }
+                        .scrollIndicators(.never)
+                        .defaultScrollAnchor(.top)
+                        .scrollBounceBehavior(.basedOnSize)
+                        .scrollDisabled(!layout.scrolls)
+                        .mask { Self.fadeMask(top: layout.topFade, bottom: layout.bottomFade) }
+                        .frame(height: layout.scrollHeight)
                     }
-                )
+                    .padding([.horizontal, .top], DetailCardLayout.padding)
+                    .padding(.bottom, layout.bottomPadding)
+                    .frame(width: DetailCardLayout.width, height: layout.height, alignment: .topLeading)
+                } else {
+                    ScrollView(.vertical) {
+                        VStack(alignment: .leading, spacing: DetailCardLayout.contentSpacing) {
+                            measuredSummary
+                            measuredDetails
+                        }
+                        .padding(DetailCardLayout.padding)
+                        .id(Self.scrollTop)
+                    }
+                    .scrollIndicators(.never)
+                    .defaultScrollAnchor(.top)
+                    .scrollBounceBehavior(.basedOnSize)
+                    .frame(width: DetailCardLayout.width, height: layout.height)
+                }
             }
-            .scrollBounceBehavior(.basedOnSize)
-            .scrollDisabled(natural <= limit)
-            .frame(width: DetailCardLayout.width, height: max(min(natural, limit), 0))
-        } else {
-            content
+            .onChange(of: usage.account.id) {
+                var transaction = Transaction()
+                transaction.disablesAnimations = true
+                withTransaction(transaction) { proxy.scrollTo(Self.scrollTop, anchor: .top) }
+            }
         }
     }
 
@@ -414,36 +497,65 @@ struct UsageDetailCard: View {
         )
     }
 
-    private var content: some View {
-        VStack(alignment: .leading, spacing: DetailCardLayout.contentSpacing) {
-            header
+    private static func fadeMask(top: CGFloat, bottom: CGFloat) -> some View {
+        VStack(spacing: 0) {
+            LinearGradient(colors: [.clear, .black], startPoint: .top, endPoint: .bottom).frame(height: top)
+            Color.black
+            LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom).frame(height: bottom)
+        }
+    }
 
-            // However many limits the provider reports — one account-wide
-            // window for some plans, several once per-model limits apply.
+    private var measuredSummary: some View {
+        header
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .fixedSize(horizontal: false, vertical: true)
+            .background(GeometryReader { proxy in
+                Color.clear.onChange(of: Measurement(account: usage.account.id, height: proxy.size.height),
+                                     initial: true) { _, measurement in
+                    record(measurement, summary: true)
+                }
+            })
+    }
+
+    private var measuredDetails: some View {
+        details
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .fixedSize(horizontal: false, vertical: true)
+            .background(GeometryReader { proxy in
+                Color.clear.onChange(of: Measurement(account: usage.account.id, height: proxy.size.height),
+                                     initial: true) { _, measurement in
+                    record(measurement, summary: false)
+                }
+            })
+    }
+
+    private func quotaRow(_ window: UsageWindow) -> some View {
+        ProgressMetricRow(
+            title: window.name,
+            resetDescription: Self.resetText(window),
+            progress: showsRemaining ? window.remainingFraction : window.usedFraction,
+            accent: window.tint(warningAt: warningThreshold, scheme: ringColourScheme),
+            percentageText: window.percentText(remaining: showsRemaining),
+            isSpent: UsageTint.isSpent(window),
+            showsRemaining: showsRemaining,
+            // The weekly limit, or the longest other limit, including the
+            // sentence that a light window is expected to last when the
+            // service did not state a length. A shorter window that states a
+            // length writes a time under its own row when that pace runs out
+            // before its reset, and stays quiet when it will last.
+            forecast: forecastLine(for: window),
+            value: valueText(window),
+            amount: showsAmounts || window.amounts?.currency != nil
+                ? Self.amountText(window, remaining: showsRemaining) : nil
+        )
+        .transition(Self.rowTransition)
+    }
+
+    private var details: some View {
+        VStack(alignment: .leading, spacing: DetailCardLayout.contentSpacing) {
+            // However many limits the provider reports, in its own order.
             ForEach(usage.windows) { window in
-                ProgressMetricRow(
-                    title: window.name,
-                    resetDescription: Self.resetText(window),
-                    progress: showsRemaining ? window.remainingFraction : window.usedFraction,
-                    accent: window.tint(warningAt: warningThreshold, scheme: ringColourScheme),
-                    percentageText: window.percentText(remaining: showsRemaining),
-                    isSpent: UsageTint.isSpent(window),
-                    showsRemaining: showsRemaining,
-                    // The weekly limit, or the longest other limit, including
-                    // the sentence that a light window is expected to last
-                    // when the service did not state a length. A shorter
-                    // window that states a length — the five-hour limit —
-                    // writes a time under its own row when that pace runs
-                    // out before its reset, and stays quiet when it will
-                    // last. Use already high while a window has barely
-                    // opened still shows the estimate, with a note that the
-                    // early pace is only a guide.
-                    forecast: forecastLine(for: window),
-                    value: valueText(window),
-                    amount: showsAmounts || window.amounts?.currency != nil
-                        ? Self.amountText(window, remaining: showsRemaining) : nil
-                )
-                .transition(Self.rowTransition)
+                quotaRow(window)
             }
 
             // **A card with only a title in it reads as a card that failed to
@@ -557,8 +669,6 @@ struct UsageDetailCard: View {
             }
         }
         .overlay(alignment: .topLeading) { couponDetailPanel }
-        .padding(DetailCardLayout.padding)
-        .frame(width: DetailCardLayout.width, alignment: .leading)
     }
 
     /// The soonest available credit's expiry, with the year: a credit can
@@ -891,12 +1001,17 @@ struct UsageDetailCard: View {
         )
     }
 
+    private var pointerLength: CGFloat {
+        edge.isVertical ? DetailCardLayout.pointerWidth
+            : min(DetailCardLayout.pointerWidth, max(maxHeight ?? DetailCardLayout.pointerWidth, 0))
+    }
+
     private var bubble: UsageBubbleShape {
         UsageBubbleShape(
             edge: edge,
             pointerCenter: pointerCenter,
             cornerRadius: DetailCardLayout.cornerRadius,
-            pointerWidth: DetailCardLayout.pointerWidth,
+            pointerWidth: pointerLength,
             pointerHeight: DetailCardLayout.pointerHeight
         )
     }
