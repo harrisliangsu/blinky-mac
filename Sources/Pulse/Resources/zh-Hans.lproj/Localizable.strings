@@ -1538,3 +1538,8 @@
 "Don't show again" = "不再显示";
 "Close" = "关闭";
 "macOS didn't allow Blinky to read %@'s cookies. In System Settings › Privacy & Security › Full Disk Access, turn on Blinky (if it is already on, remove it and add it again), then quit and reopen Blinky." = "macOS 不允许 Blinky 读取 %@ 的 Cookie。请在「系统设置 › 隐私与安全性 › 完全磁盘访问权限」中打开 Blinky（如果已经打开，先移除再重新添加），然后退出并重新打开 Blinky。";
+
+/* Star request: StarRequestBanner, AboutPane */
+"You have used Blinky for two weeks. If Blinky has been useful, a star on GitHub helps other people find it." = "你已经使用 Blinky 两周了。如果 Blinky 对你有帮助，欢迎在 GitHub 上点一个 Star，让更多人发现它。";
+"Star on GitHub" = "在 GitHub 上点 Star";
+"Stars help other people find Blinky." = "Star 能让更多人发现 Blinky。";

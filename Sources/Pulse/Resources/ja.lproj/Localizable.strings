@@ -1540,3 +1540,8 @@
 "Don't show again" = "今後表示しない";
 "Close" = "閉じる";
 "macOS didn't allow Blinky to read %@'s cookies. In System Settings › Privacy & Security › Full Disk Access, turn on Blinky (if it is already on, remove it and add it again), then quit and reopen Blinky." = "macOS が Blinky による %@ の Cookie の読み取りを許可していません。「システム設定 › プライバシーとセキュリティ › フルディスクアクセス」で Blinky をオンにし（すでにオンの場合は、いったん削除してから追加し直してください）、Blinky を終了してから開き直してください。";
+
+/* Star request: StarRequestBanner, AboutPane */
+"You have used Blinky for two weeks. If Blinky has been useful, a star on GitHub helps other people find it." = "Blinky をお使いいただいて 2 週間になります。お役に立っていれば、GitHub で Star を付けていただけると、より多くの人に Blinky を知ってもらえます。";
+"Star on GitHub" = "GitHub で Star を付ける";
+"Stars help other people find Blinky." = "Star は、より多くの人が Blinky を知るきっかけになります。";

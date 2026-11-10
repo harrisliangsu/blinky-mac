@@ -165,6 +165,16 @@ The interface comes from [Pulse](https://github.com/qunqin24/Pulse), which was i
 
 ---
 
+## Contributors
+
+Thanks to everyone who has contributed to Pulse.
+
+<a href="https://github.com/qunqin24/Pulse/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=qunqin24/Pulse" alt="Pulse contributors" />
+</a>
+
+---
+
 ## Support the upstream author
 
 <p align="center">

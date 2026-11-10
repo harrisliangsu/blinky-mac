@@ -163,6 +163,16 @@ open build.noindex/Blinky.app
 
 ---
 
+## Участники
+
+Спасибо всем, кто внёс вклад в Pulse.
+
+<a href="https://github.com/qunqin24/Pulse/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=qunqin24/Pulse" alt="Участники Pulse" />
+</a>
+
+---
+
 ## Поддержать автора upstream
 
 <p align="center">

@@ -118,6 +118,19 @@ struct AboutPane: View {
                         NSWorkspace.shared.open(URL(string: "https://github.com/harrisliangsu/blinky-mac")!)
                     }
                 }
+
+                SettingsRowDivider()
+
+                // Always here, whether or not the one-time banner was shown
+                // (`StarRequest`).
+                SettingsRow(
+                    String.localized("Star on GitHub"),
+                    subtitle: String.localized("Stars help other people find Blinky.")
+                ) {
+                    Button(String.localized("Open")) {
+                        NSWorkspace.shared.open(StarRequest.repository)
+                    }
+                }
             }
 
             SettingsGroup(String.localized("Credits")) {

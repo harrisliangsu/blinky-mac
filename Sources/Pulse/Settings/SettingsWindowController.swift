@@ -78,6 +78,10 @@ final class SettingsWindowController {
         // forward. Ordering front before that policy change left the window
         // behind other apps.
         let wasVisible = window.isVisible
+        // Only as the window opens, never on a window already in front.
+        // Ordering front stays with `dock.apply`: doing it first left the
+        // window behind other apps when the Dock policy changed.
+        if !wasVisible, StarRequest.claimIfDue() { navigation.showsStarRequest = true }
         if !wasVisible { window.center() }
         dock.apply(showingWindow: window)
     }
@@ -118,6 +122,7 @@ final class SettingsWindowController {
         dock.track(window)
         window.onClose = { [weak self, weak window] in
             self?.navigation.isWindowVisible = false
+            self?.navigation.showsStarRequest = false
             // `close()` runs this before the window is off screen, so the
             // window is named rather than read from `isVisible`.
             self?.dock.apply(closing: window)
