@@ -924,6 +924,7 @@
 "How many reset cards are left, and when the next one expires. Asks Codex's app server on every refresh." = "Сколько осталось карт сброса и когда сгорает ближайшая. Запрашивается у app server Codex при каждом обновлении.";
 "Not available" = "Недоступно";
 "codex not found" = "codex не найден";
+"Couldn't read" = "Не удалось прочитать";
 "Show usage in the menu bar" = "Показывать расход в строке меню";
 "A ring's mark and figure beside the icon, red past the warning line." = "Логотип сервиса и число из кольца рядом со значком; за порогом предупреждения — красным.";
 "Usage" = "Использование";

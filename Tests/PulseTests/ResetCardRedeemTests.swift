@@ -307,19 +307,28 @@ struct ResetCardRedeemTests {
     }
 
     @MainActor
-    @Test("A reported zero and a missing count both say None")
+    @Test("A reported zero says None; a failed read does not")
     func noneIsTheWord() {
         let held = LocalizationSource.hold(.english)
         defer { held.end() }
         #expect(UsageDetailCard.availableCountText(0) == "None")
-        #expect(UsageDetailCard.resetCreditsText(.unreported) == "None")
+        #expect(UsageDetailCard.resetCreditsText(.available(count: 0, nextExpiry: nil)) == "None")
+        #expect(UsageDetailCard.resetCreditsText(.available(count: 1, nextExpiry: nil)) == "1 available")
+        #expect(UsageDetailCard.resetCreditsText(.available(count: 2, nextExpiry: nil)) == "2 available")
+        #expect(UsageDetailCard.resetCreditsText(.unreported) == "Couldn't read")
         #expect(UsageDetailCard.resetCreditsText(.codexMissing) != "None")
+        #expect(UsageDetailCard.resetCreditsText(.codexMissing) != "Couldn't read")
         LocalizationSource.use(.chineseSimplified)
         let zero = UsageDetailCard.availableCountText(0)
+        let reportedZero = UsageDetailCard.resetCreditsText(.available(count: 0, nextExpiry: nil))
+        let one = UsageDetailCard.resetCreditsText(.available(count: 1, nextExpiry: nil))
+        let two = UsageDetailCard.resetCreditsText(.available(count: 2, nextExpiry: nil))
         let missing = UsageDetailCard.resetCreditsText(.unreported)
         #expect(zero == "无")
-        #expect(missing == "无")
-        #expect(!zero.contains("不可用"))
-        #expect(!missing.contains("不可用"))
+        #expect(reportedZero == "无")
+        #expect(one == "可用 1 张")
+        #expect(two == "可用 2 张")
+        #expect(missing == "未能读取")
+        #expect(missing != "无")
     }
 }

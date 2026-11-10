@@ -1,5 +1,6 @@
 // Copyright (c) 2026 qunqin24. Licensed under the Apache License, Version 2.0.
 import AppKit
+import CryptoKit
 
 /// A JSON-RPC client for `codex app-server`.
 ///
@@ -11,7 +12,8 @@ import AppKit
 /// a fallback rather than the main path.
 ///
 /// The cost is a resident child process, started lazily on the first request
-/// and restarted if it dies.
+/// and restarted if it dies, or when the CLI login in `~/.codex/auth.json`
+/// is no longer the one this process started with.
 actor CodexAppServer {
     /// Called when the server reports that limits changed.
     private var onRateLimitsChanged: (@Sendable () -> Void)?
@@ -36,11 +38,23 @@ actor CodexAppServer {
     private var buffer = Data()
     private let executable: URL?
     private let requestTimeout: Duration
+    /// Codex's saved login, the same file the usage bar reads. A test points
+    /// this at a temporary file so the real `~/.codex/auth.json` stays unread.
+    private let authFile: URL
+    /// Hash of the login this helper was started with. Nil when that file
+    /// could not be read. Not the token.
+    private var startedLogin: String?
 
     // Tests use an isolated helper without changing PATH or touching a login.
-    init(executable: URL? = nil, requestTimeout: Duration = .seconds(20)) {
+    init(
+        executable: URL? = nil,
+        requestTimeout: Duration = .seconds(20),
+        authFile: URL? = nil
+    ) {
         self.executable = executable
         self.requestTimeout = requestTimeout
+        self.authFile = authFile
+            ?? URL(fileURLWithPath: NSHomeDirectory()).appending(path: ".codex/auth.json")
     }
 
     enum Failure: Error {
@@ -58,8 +72,7 @@ actor CodexAppServer {
     /// The account's limits, as `account/rateLimits/read` reports them, still
     /// encoded as JSON.
     func rateLimits() async throws -> Data {
-        try await ensureRunning()
-        return try await send(method: "account/rateLimits/read")
+        try await invoke(method: "account/rateLimits/read")
     }
 
     /// Spends one limit reset credit. The dictionary is built here: a
@@ -68,26 +81,23 @@ actor CodexAppServer {
     /// `creditID` empty leaves the choice to the app server. A non-empty id
     /// is sent as `creditId`, which is the field that route documents.
     func consumeResetCredit(idempotencyKey: String, creditID: String?) async throws -> Data {
-        try await ensureRunning()
         var params: [String: Any] = ["idempotencyKey": idempotencyKey]
         if let creditID, !creditID.isEmpty {
             params["creditId"] = creditID
         }
-        return try await send(method: CodexAccountUsageService.ConsumeRequest.method, params: params)
+        return try await invoke(method: CodexAccountUsageService.ConsumeRequest.method, params: params)
     }
 
     /// The models the account may use, as `model/list` reports them, still
     /// encoded as JSON.
     func models() async throws -> Data {
-        try await ensureRunning()
-        return try await send(method: "model/list")
+        try await invoke(method: "model/list")
     }
 
     /// The account's token history, as `account/usage/read` reports it, still
     /// encoded as JSON.
     func accountUsage() async throws -> Data {
-        try await ensureRunning()
-        return try await send(method: "account/usage/read")
+        try await invoke(method: "account/usage/read")
     }
 
     func shutDown() {
@@ -95,6 +105,7 @@ actor CodexAppServer {
         process?.terminate()
         process = nil
         stdin = nil
+        startedLogin = nil
         failAllPending()
     }
 
@@ -115,10 +126,21 @@ actor CodexAppServer {
     // MARK: - Process
 
     private func ensureRunning() async throws {
-        if let process, process.isRunning { return }
+        // The helper reads `auth.json` when it starts and then keeps that
+        // login. Switching ChatGPT accounts rewrites the file and revokes the
+        // token this process still holds, so the usage bar — which reads the
+        // file on every request — follows the new account while reset cards
+        // keep asking the old one. A different login shuts it down first.
+        // An unreadable file is not a new login: a transient read must not
+        // kill a helper that is already answering.
+        let login = Self.loginStamp(at: authFile)
+        if let process, process.isRunning {
+            if login == nil || login == startedLogin { return }
+        }
 
         // **Before starting another one.** Getting here with a process set
-        // means the last one died, and its pipe is still wired to a handler.
+        // means the last one died, or its login was replaced, and its pipe
+        // is still wired to a handler.
         // Without this, every restart left one more spinning thread behind:
         // three of them was 290% of a CPU for eleven hours, with no child
         // process left to blame (issue #25).
@@ -148,6 +170,7 @@ actor CodexAppServer {
 
         self.process = process
         self.stdin = input.fileHandleForWriting
+        self.startedLogin = login
 
         // The protocol opens with a handshake before anything else is accepted.
         _ = try await send(
@@ -292,7 +315,88 @@ actor CodexAppServer {
         return candidates + CommandLocator.managed("codex", home: home, versions: versions)
     }
 
+    // MARK: - Login
+
+    /// A hash of `tokens.account_id` and `tokens.access_token`, or nil when
+    /// the file has no access token. The token is not retained and not logged.
+    ///
+    /// Internal so a test can show that a new token or a new account is a
+    /// different login, and that the stamp is not the token itself.
+    static func loginStamp(in data: Data) -> String? {
+        guard
+            let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+            let tokens = root["tokens"] as? [String: Any],
+            let token = tokens["access_token"] as? String
+        else { return nil }
+        let access = token.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !access.isEmpty else { return nil }
+        let account = (tokens["account_id"] as? String)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let material = Data("\(account)\n\(access)".utf8)
+        return SHA256.hash(data: material).map { String(format: "%02x", $0) }.joined()
+    }
+
+    /// Nil when the file is missing or has no access token.
+    static func loginStamp(at file: URL) -> String? {
+        guard let data = try? Data(contentsOf: file) else { return nil }
+        return loginStamp(in: data)
+    }
+
+    /// Whether this JSON-RPC error is the revoked login the helper kept
+    /// after the CLI wrote a new one. Anything else is left to fail as it
+    /// did: a refusal that is not this login must not restart the helper.
+    static func refusesCredentials(_ text: String) -> Bool {
+        text.range(of: "token_revoked", options: .caseInsensitive) != nil
+    }
+
+    /// The error's message, plus its `data` when that carries the code the
+    /// message left out. A message-only error stays the message, so an
+    /// existing refusal still compares equal to the text the helper sent.
+    static func serverErrorText(_ error: [String: Any]) -> String {
+        var parts: [String] = []
+        if let message = error["message"] as? String {
+            let trimmed = message.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmed.isEmpty { parts.append(trimmed) }
+        }
+        if let code = error["code"] as? String {
+            let trimmed = code.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmed.isEmpty { parts.append(trimmed) }
+        }
+        if let data = error["data"] {
+            if let text = data as? String {
+                let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !trimmed.isEmpty { parts.append(trimmed) }
+            } else if JSONSerialization.isValidJSONObject(data),
+                      let encoded = try? JSONSerialization.data(withJSONObject: data),
+                      let text = String(data: encoded, encoding: .utf8),
+                      !text.isEmpty {
+                parts.append(text)
+            }
+        }
+        return parts.isEmpty ? "unknown" : parts.joined(separator: " ")
+    }
+
     // MARK: - Messaging
+
+    /// One authenticated call. The handshake stays on `send`: it does not
+    /// ask the account, and retrying it here would start a second helper
+    /// before the first had failed an account call.
+    ///
+    /// A `token_revoked` reply means this helper is still signed in as a
+    /// login the server has already refused. Shut it down and ask once more,
+    /// so the new process reads whatever `auth.json` says now. A second
+    /// refusal propagates: restarting forever would hide a login that is
+    /// actually dead.
+    private func invoke(method: String, params: [String: Any] = [:]) async throws -> Data {
+        try await ensureRunning()
+        do {
+            return try await send(method: method, params: params)
+        } catch let Failure.server(let message) where Self.refusesCredentials(message) {
+            shutDown()
+            try await ensureRunning()
+            return try await send(method: method, params: params)
+        }
+    }
 
     private func send(method: String, params: [String: Any] = [:]) async throws -> Data {
         let id = nextID
@@ -385,8 +489,7 @@ actor CodexAppServer {
     private func handle(_ message: [String: Any]) {
         if let id = message["id"] as? Int, pending[id] != nil {
             if let error = message["error"] as? [String: Any] {
-                let text = error["message"] as? String ?? "unknown"
-                finish(id, with: .failure(Failure.server(text)))
+                finish(id, with: .failure(Failure.server(Self.serverErrorText(error))))
             } else {
                 let result = message["result"] as? [String: Any] ?? [:]
                 let data = (try? JSONSerialization.data(withJSONObject: result)) ?? Data("{}".utf8)

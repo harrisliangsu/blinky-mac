@@ -161,11 +161,18 @@ struct CodexResetCreditsTests {
         #expect(CodexAccountUsageService.resetCredits(in: none) == .available(count: 0, nextExpiry: nil))
     }
 
-    @Test("No reset-credit block is not zero: it is not reported")
+    @Test("No reset-credit block is not zero: it is not reported, and the row does not say None")
     func unreported() {
         #expect(CodexAccountUsageService.resetCredits(in: [:]) == .unreported)
         #expect(CodexAccountUsageService.resetCredits(in: ["rateLimitResetCredits": [String: Any]()]) == .unreported)
-        #expect(UsageDetailCard.resetCreditsText(.unreported) == String.localized("None"))
+        let failed = UsageDetailCard.resetCreditsText(.unreported)
+        let zero = UsageDetailCard.resetCreditsText(.available(count: 0, nextExpiry: nil))
+        let one = UsageDetailCard.resetCreditsText(.available(count: 1, nextExpiry: nil))
+        #expect(failed == String.localized("Couldn't read"))
+        #expect(zero == String.localized("None"))
+        #expect(one == String.localized("1 available"))
+        #expect(failed != zero)
+        #expect(one != zero)
     }
 
     @Test("Unknown, missing, and differently cased statuses still count until they expire")

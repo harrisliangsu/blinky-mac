@@ -994,6 +994,7 @@
 "How many reset cards are left, and when the next one expires. Asks Codex's app server on every refresh." = "How many reset cards are left, and when the next one expires. Asks Codex's app server on every refresh.";
 "Not available" = "Not available";
 "codex not found" = "codex not found";
+"Couldn't read" = "Couldn't read";
 "Show usage in the menu bar" = "Show usage in the menu bar";
 "A ring's mark and figure beside the icon, red past the warning line." = "A ring's mark and figure beside the icon, red past the warning line.";
 "Usage" = "Usage";

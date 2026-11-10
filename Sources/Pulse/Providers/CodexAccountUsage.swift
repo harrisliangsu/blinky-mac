@@ -130,8 +130,10 @@ extension CodexCreditSummary {
 /// The reset credits alone, as the card shows them when the switch is on.
 ///
 /// **What Codex said, or that it said nothing.** `unreported` is a reply with
-/// no reset-credit block in it, or no app server to ask. The row says None,
-/// the same word as a reported zero, rather than a count Pulse worked out.
+/// no reset-credit block in it, or an app server that did not answer. The row
+/// says the inventory could not be read. A reported zero is
+/// `.available(count: 0)` and is the only case that says None: a revoked
+/// login used to share that word, so an account with cards looked empty.
 enum CodexResetCredits: Equatable, Sendable {
     case available(count: Int, nextExpiry: Date?)
     case unreported
