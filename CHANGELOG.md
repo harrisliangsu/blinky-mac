@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.43
+
+- **About's Afdian link goes to this repository's funding page.** Settings → About, Support the author on Afdian, opens this fork's funding page `https://afdian.com/a/sharkchiligaga`, the same page as `.github/FUNDING.yml` and the README header Sponsor link, in place of the upstream Pulse author's `afdian.com/a/qunqin`. The README footer coffee badges that still credit the upstream author are unchanged. [#111](https://github.com/harrisliangsu/blinky-mac/pull/111)
+
 ## 1.5.42
 
 - **An extension can use its own PNG icon.** Name a PNG in the extension's folder with `icon` in its `pulse-extension.json`, and the ring, the card, Settings and the menu bar show it in its own colours. Thanks to [@Jiar](https://github.com/qunqin24/Pulse/pull/109) for the contribution.
