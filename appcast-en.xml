@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.41</title>
-            <pubDate>Tue, 10 Nov 2026 05:02:43 -0000</pubDate>
-            <sparkle:version>1.5.41</sparkle:version>
-            <sparkle:shortVersionString>1.5.41</sparkle:shortVersionString>
+            <title>1.5.42</title>
+            <pubDate>Thu, 12 Nov 2026 02:12:04 -0000</pubDate>
+            <sparkle:version>1.5.42</sparkle:version>
+            <sparkle:shortVersionString>1.5.42</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.41</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.42</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.41</h2><ul><li><strong>After a Codex account switch, reset cards show the new account&#x27;s count.</strong> With Reset cards on under Settings → Providers → Codex → Panel, switching the ChatGPT account Codex is signed in with shows how many that account has, a failed read says Couldn&#x27;t read, and a count of zero still says None. <a href="https://github.com/harrisliangsu/blinky-mac/pull/106">#106</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.41">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.41/Blinky-1.5.41.zip"
-                       length="23412062"
+</style><h2>Blinky 1.5.42</h2><ul><li><strong>An extension can use its own PNG icon.</strong> Name a PNG in the extension&#x27;s folder with <code>icon</code> in its <code>pulse-extension.json</code>, and the ring, the card, Settings and the menu bar show it in its own colours. Thanks to <a href="https://github.com/qunqin24/Pulse/pull/109">@Jiar</a> for the contribution.</li><li><strong>Blinky can read sign-in sessions from ego lite.</strong> Choose ego lite under Read from browser in a provider&#x27;s settings, for Devin and for every provider that signs in through a browser. Thanks to <a href="https://github.com/qunqin24/Pulse/pull/108">@RoacherM</a> for the contribution.</li><li><strong>Every settings row and action row has a small mark.</strong> Settings shows a small icon before each of those rows.</li><li><strong>About links to the author&#x27;s Afdian page.</strong> Settings → About opens that page, and Star on GitHub stays on the same pane.</li><li><strong>Open Design shows its plan limits, including OpenDesign Go.</strong> Turn it on under Settings → Providers: the ring uses Open Design&#x27;s own mark, the plan windows match the console, OpenDesign Go is read from the browser, and a refused billing route does not end the read.</li><li><strong>Codex&#x27;s pane no longer shows Signs of a weaker model.</strong> Reset cards, Predicted reset and Last reset stay on that pane.</li><li><strong>The browser menu&#x27;s first choice reads only the default browser.</strong> Read from browser names that browser and reads only it, so leaving the menu there does not ask for the keychain once per Chromium browser, and a default browser Blinky cannot read says so and asks for a choice from the list.</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.42">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.42/Blinky-1.5.42.zip"
+                       length="23394832"
                        type="application/octet-stream"
-                       sparkle:edSignature="n6hkYn/SW5Z7bzWd2Tr5a6xsu6UCYxwDPUiMHUPaZCBvaFnB8vlEnudzfk+xMbkJ1k0LLYmPOksP2b1gkTHEBg==" />
+                       sparkle:edSignature="0XgSHTN+PDOP445PDUOx4oOBXABXcB+G/+ufdtmbghkjyrFpBwjcpzt7Y3Cw4hrkVg4mux/wQaAbQlCL6mtvBg==" />
         </item>
     </channel>
 </rss>
