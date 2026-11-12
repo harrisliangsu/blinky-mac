@@ -121,8 +121,8 @@ struct AppearancePane: View {
                     SettingsRow(
                         String.localized("Transparency"),
                         subtitle: String.localized("Clearer to the right, and the text turns from white to black. Black text is hard to read over dark windows."),
-                        nested: true,
-                        symbol: "circle.lefthalf.filled"
+                        symbol: "circle.lefthalf.filled",
+                        nested: true
                     ) {
                         HStack(spacing: 8) {
                             Text(verbatim: GlassTransparencyLabel.percent(settings.glassTransparency))
@@ -187,8 +187,8 @@ struct AppearancePane: View {
                         subtitle: settings.ringColourScheme == .quiet
                             ? String.localized("Where a ring turns from green to muted grey.")
                             : String.localized("Where a ring turns from green to red."),
-                        nested: true,
-                        symbol: "exclamationmark.triangle"
+                        symbol: "exclamationmark.triangle",
+                        nested: true
                     ) {
                         Picker(String.localized("Turn red at"), selection: Binding(
                             get: { settings.warningThreshold },

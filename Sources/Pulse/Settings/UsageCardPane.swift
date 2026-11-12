@@ -46,8 +46,8 @@ struct UsageCardPane: View {
                     SettingsRow(
                         String.localized("Figures beside the rings"),
                         subtitle: String.localized("Only when the panel lies free across. A thinner, longer panel."),
-                        nested: true,
-                        symbol: "textformat.123"
+                        symbol: "textformat.123",
+                        nested: true
                     ) {
                         Toggle("", isOn: Binding(
                             get: { settings.freeAcrossFiguresBeside },
@@ -68,8 +68,8 @@ struct UsageCardPane: View {
                     SettingsRow(
                         String.localized("Figure above the ring"),
                         subtitle: String.localized("Swaps the two, wherever the panel is."),
-                        nested: true,
-                        symbol: "arrow.up.arrow.down"
+                        symbol: "arrow.up.arrow.down",
+                        nested: true
                     ) {
                         Toggle("", isOn: Binding(
                             get: { settings.labelAboveRing },
@@ -135,8 +135,8 @@ struct UsageCardPane: View {
                     SettingsRow(
                         String.localized("Time ring direction"),
                         subtitle: String.localized("Choose whether the outer arc fills with elapsed time or empties with time remaining."),
-                        nested: true,
-                        symbol: "arrow.left.arrow.right"
+                        symbol: "arrow.left.arrow.right",
+                        nested: true
                     ) {
                         Picker("", selection: Binding(
                             get: { settings.windowClockDirection },
@@ -182,8 +182,8 @@ struct UsageCardPane: View {
                 SettingsRow(
                     String.localized("Countdown up to"),
                     subtitle: String.localized("The furthest time, in hours, at which a countdown is written."),
-                    nested: true,
-                    symbol: "timer"
+                    symbol: "timer",
+                    nested: true
                 ) {
                     ExhaustionHoursStepper(
                         hours: settings.exhaustionCardHours,
@@ -200,8 +200,8 @@ struct UsageCardPane: View {
                 SettingsRow(
                     String.localized("May run out before reset"),
                     subtitle: String.localized("Further out, it says the pace may not last until the reset, and does not write a time."),
-                    nested: true,
-                    symbol: "hourglass.bottomhalf"
+                    symbol: "hourglass.bottomhalf",
+                    nested: true
                 ) {
                     Toggle("", isOn: Binding(
                         get: { settings.exhaustionSoftHint },
@@ -217,8 +217,8 @@ struct UsageCardPane: View {
                 SettingsRow(
                     String.localized("Say roughly when"),
                     subtitle: String.localized("When the pace will not last until the reset, it writes roughly how long is left."),
-                    nested: true,
-                    symbol: "text.alignleft"
+                    symbol: "text.alignleft",
+                    nested: true
                 ) {
                     Toggle("", isOn: Binding(
                         get: { settings.exhaustionBeforeReset },
@@ -255,7 +255,7 @@ struct UsageCardPane: View {
             if SettingsChildRows.showsExhaustionAccountList(allAccounts: settings.exhaustionAllAccounts) {
                 ForEach(settings.shownAccounts, id: \.id) { account in
                     SettingsRowDivider()
-                    SettingsRow(settings.label(for: account), nested: true, account: account) {
+                    SettingsRow(settings.label(for: account), account: account, nested: true) {
                         Toggle("", isOn: Binding(
                             get: { settings.forecastsExhaustion(for: account) },
                             set: { settings.setForecastsExhaustion($0, for: account) }

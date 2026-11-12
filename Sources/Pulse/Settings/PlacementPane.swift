@@ -55,8 +55,8 @@ struct PlacementPane: View {
                     SettingsRow(
                         String.localized("Hide in full screen"),
                         subtitle: String.localized("Keep the floating panel out of full-screen apps."),
-                        nested: true,
-                        symbol: "arrow.up.left.and.arrow.down.right"
+                        symbol: "arrow.up.left.and.arrow.down.right",
+                        nested: true
                     ) {
                         Toggle("", isOn: Binding(
                             get: { settings.hidesInFullScreen },
@@ -71,8 +71,8 @@ struct PlacementPane: View {
                     SettingsRow(
                         String.localized("Hide from screenshots"),
                         subtitle: String.localized("Screenshot tools that support it leave the floating panel out. Recordings and screen sharing may still show it."),
-                        nested: true,
-                        symbol: "camera.viewfinder"
+                        symbol: "camera.viewfinder",
+                        nested: true
                     ) {
                         Toggle("", isOn: Binding(
                             get: { settings.hidesFromScreenCapture },
@@ -87,8 +87,8 @@ struct PlacementPane: View {
                     SettingsRow(
                         String.localized("Hide until pointed at"),
                         subtitle: String.localized("Against a screen edge, the rail shrinks to a sliver until you point at it."),
-                        nested: true,
-                        symbol: "cursorarrow.rays"
+                        symbol: "cursorarrow.rays",
+                        nested: true
                     ) {
                         Toggle("", isOn: Binding(
                             get: { settings.autoCollapse },
@@ -109,8 +109,8 @@ struct PlacementPane: View {
                     SettingsRow(
                         String.localized("Snap to screen edges"),
                         subtitle: String.localized("Dragged near an edge, the rail docks to it and turns to run along it. When this is off, dragging only moves the rail and keeps its direction."),
-                        nested: true,
-                        symbol: "arrow.right.to.line"
+                        symbol: "arrow.right.to.line",
+                        nested: true
                     ) {
                         Toggle("", isOn: Binding(
                             get: { settings.snapsToEdges },
@@ -125,8 +125,8 @@ struct PlacementPane: View {
                     SettingsRow(
                         String.localized("Follow the active display"),
                         subtitle: String.localized("With more than one display, the rail moves to the one the pointer is on."),
-                        nested: true,
-                        symbol: "display.2"
+                        symbol: "display.2",
+                        nested: true
                     ) {
                         Toggle("", isOn: Binding(
                             get: { settings.followsActiveDisplay },

@@ -40,7 +40,7 @@ struct CurrencySettingsGroup: View {
             if SettingsChildRows.showsExchangeRate(currency) {
                 SettingsRowDivider()
 
-                SettingsRow(String.localized("Exchange rate"), subtitle: rateSubtitle, nested: true, symbol: "banknote") {
+                SettingsRow(String.localized("Exchange rate"), subtitle: rateSubtitle, symbol: "banknote", nested: true) {
                     HStack(spacing: 6) {
                         Text(verbatim: "1 USD =")
                             .foregroundStyle(.secondary)
@@ -56,7 +56,7 @@ struct CurrencySettingsGroup: View {
 
                 SettingsRowDivider()
 
-                SettingsRow(String.localized("Rate source"), nested: true, symbol: "link") {
+                SettingsRow(String.localized("Rate source"), symbol: "link", nested: true) {
                     Link(destination: ExchangeRates.attribution) {
                         Text(verbatim: "Rates By Exchange Rate API")
                     }

@@ -47,8 +47,8 @@ struct NotificationsPane: View {
                     SettingsRow(
                         String.localized("When a limit comes back"),
                         subtitle: String.localized("Only for one you were warned about."),
-                        nested: true,
-                        symbol: "checkmark.circle"
+                        symbol: "checkmark.circle",
+                        nested: true
                     ) {
                         Toggle("", isOn: Binding(
                             get: { settings.alertsOnReset },
@@ -165,8 +165,8 @@ struct NotificationsPane: View {
                     SettingsRow(
                         String.localized("How early"),
                         subtitle: String.localized("Hours before the predicted time."),
-                        nested: true,
-                        symbol: "hourglass"
+                        symbol: "hourglass",
+                        nested: true
                     ) {
                         Picker("", selection: Binding(
                             get: { settings.predictedResetLead },
@@ -210,8 +210,8 @@ struct NotificationsPane: View {
                     SettingsRow(
                         String.localized("How early"),
                         subtitle: String.localized("Hours before that reset."),
-                        nested: true,
-                        symbol: "hourglass"
+                        symbol: "hourglass",
+                        nested: true
                     ) {
                         Picker("", selection: Binding(
                             get: { settings.regularResetLead },
@@ -251,8 +251,8 @@ struct NotificationsPane: View {
                     SettingsRow(
                         String.localized("Also celebrate hourly quota resets"),
                         subtitle: String.localized("Five-hour windows, not only the week or month."),
-                        nested: true,
-                        symbol: "clock.badge"
+                        symbol: "clock.badge",
+                        nested: true
                     ) {
                         Toggle("", isOn: Binding(
                             get: { settings.celebratesHourlyReset },
@@ -322,8 +322,8 @@ struct NotificationsPane: View {
                     SettingsRow(
                         String.localized("Remaining hours"),
                         subtitle: String.localized("Each stage notifies once, at its own hours left, on that same limit. A new install starts with 24 hours."),
-                        nested: true,
-                        symbol: "clock"
+                        symbol: "clock",
+                        nested: true
                     ) {
                     Button(String.localized("Add a stage")) {
                         settings.addExhaustionStage()
@@ -334,7 +334,7 @@ struct NotificationsPane: View {
 
                 ForEach(settings.exhaustionStages) { stage in
                     SettingsRowDivider()
-                    SettingsRow(String.localized("\("\(liveStageHours(stage))") hours"), nested: true, symbol: "clock") {
+                    SettingsRow(String.localized("\("\(liveStageHours(stage))") hours"), symbol: "clock", nested: true) {
                         HStack(spacing: 10) {
                             ExhaustionHoursStepper(
                                 hours: liveStageHours(stage),

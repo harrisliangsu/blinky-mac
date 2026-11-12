@@ -42,8 +42,8 @@ struct GeneralPane: View {
                     SettingsRow(
                         String.localized("Show main window when opened at login"),
                         subtitle: String.localized("The main window opens when Blinky starts at login."),
-                        nested: true,
-                        symbol: "macwindow"
+                        symbol: "macwindow",
+                        nested: true
                     ) {
                         Toggle("", isOn: Binding(
                             get: { settings.showMainWindowAtLogin },
@@ -75,8 +75,8 @@ struct GeneralPane: View {
                     SettingsRow(
                         String.localized("Show Dock icon while a window is open"),
                         subtitle: String.localized("The icon is there while the main window, a recap, or the service chooser is open, and it goes when they close."),
-                        nested: true,
-                        symbol: "macwindow"
+                        symbol: "macwindow",
+                        nested: true
                     ) {
                         Toggle("", isOn: Binding(
                             get: { settings.showsDockIconInSettings },
@@ -161,8 +161,8 @@ struct GeneralPane: View {
                     SettingsRow(
                         String.localized("Menu bar shows"),
                         subtitle: String.localized("An account switched off falls back to the fullest ring."),
-                        nested: true,
-                        symbol: "scope"
+                        symbol: "scope",
+                        nested: true
                     ) {
                         Picker("", selection: Binding(
                             // An account taken off the rail reads as the
@@ -185,7 +185,7 @@ struct GeneralPane: View {
 
                     SettingsRowDivider()
 
-                    SettingsRow(String.localized("Menu bar style"), nested: true, symbol: "paintbrush") {
+                    SettingsRow(String.localized("Menu bar style"), symbol: "paintbrush", nested: true) {
                         Picker("", selection: Binding(
                             get: { settings.menuBarStyle },
                             set: { settings.menuBarStyle = $0 }

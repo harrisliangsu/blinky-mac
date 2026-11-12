@@ -28,7 +28,7 @@ struct TokenSpendPane: View {
                 if SettingsChildRows.showsTokenSpendDetails(reading: settings.readsTokenSpend),
                    model.isScanningSpend, let progress = model.spendProgress {
                     SettingsRowDivider()
-                    SettingsRow(String.localized("Reading \(progress.agent.displayName)…"), nested: true, symbol: "hourglass") {
+                    SettingsRow(String.localized("Reading \(progress.agent.displayName)…"), symbol: "hourglass", nested: true) {
                         Text(verbatim: "\(progress.index + 1)/\(progress.total)")
                             .monospacedDigit()
                     }
@@ -38,8 +38,8 @@ struct TokenSpendPane: View {
                     SettingsRow(
                         String.localized("Usage recaps"),
                         subtitle: String.localized("Shareable cards for a day, a week, a month or a year, from this Mac's records."),
-                        nested: true,
-                        symbol: "rectangle.stack"
+                        symbol: "rectangle.stack",
+                        nested: true
                     ) {
                         // One way in. The window switches between day, week,
                         // month and year itself; a button for each period
