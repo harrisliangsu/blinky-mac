@@ -12,7 +12,8 @@ struct UsageCardPane: View {
             SettingsGroup(String.localized("Figures")) {
                 SettingsRow(
                     String.localized("Percentages at the side"),
-                    subtitle: String.localized("The figure under each ring, docked left or right.")
+                    subtitle: String.localized("The figure under each ring, docked left or right."),
+                    symbol: "sidebar.left"
                 ) {
                     Toggle("", isOn: Binding(
                         get: { settings.sideRailShowsPercentages },
@@ -27,7 +28,8 @@ struct UsageCardPane: View {
 
                 SettingsRow(
                     String.localized("Percentages across"),
-                    subtitle: String.localized("When the panel lies across: docked to the top or bottom, or free.")
+                    subtitle: String.localized("When the panel lies across: docked to the top or bottom, or free."),
+                    symbol: "rectangle.split.3x1"
                 ) {
                     Toggle("", isOn: Binding(
                         get: { settings.topRailShowsPercentages },
@@ -44,6 +46,7 @@ struct UsageCardPane: View {
                     SettingsRow(
                         String.localized("Figures beside the rings"),
                         subtitle: String.localized("Only when the panel lies free across. A thinner, longer panel."),
+                        symbol: "textformat.123",
                         nested: true
                     ) {
                         Toggle("", isOn: Binding(
@@ -65,6 +68,7 @@ struct UsageCardPane: View {
                     SettingsRow(
                         String.localized("Figure above the ring"),
                         subtitle: String.localized("Swaps the two, wherever the panel is."),
+                        symbol: "arrow.up.arrow.down",
                         nested: true
                     ) {
                         Toggle("", isOn: Binding(
@@ -81,7 +85,8 @@ struct UsageCardPane: View {
 
                 SettingsRow(
                     String.localized("Show what's left"),
-                    subtitle: String.localized("Counts down instead of up, figure and ring together.")
+                    subtitle: String.localized("Counts down instead of up, figure and ring together."),
+                    symbol: "hourglass"
                 ) {
                     Toggle("", isOn: Binding(
                         get: { settings.showsRemaining },
@@ -96,7 +101,8 @@ struct UsageCardPane: View {
 
                 SettingsRow(
                     String.localized("Second limit inside the ring"),
-                    subtitle: String.localized("A thinner ring for the next-fullest limit, where a provider has one.")
+                    subtitle: String.localized("A thinner ring for the next-fullest limit, where a provider has one."),
+                    symbol: "circle.circle"
                 ) {
                     Toggle("", isOn: Binding(
                         get: { settings.showsSecondRing },
@@ -111,7 +117,8 @@ struct UsageCardPane: View {
 
                 SettingsRow(
                     String.localized("Time until reset"),
-                    subtitle: String.localized("A second arc outside each ring, showing progress through the current window.")
+                    subtitle: String.localized("A second arc outside each ring, showing progress through the current window."),
+                    symbol: "clock"
                 ) {
                     Toggle("", isOn: Binding(
                         get: { settings.showsWindowClock },
@@ -128,6 +135,7 @@ struct UsageCardPane: View {
                     SettingsRow(
                         String.localized("Time ring direction"),
                         subtitle: String.localized("Choose whether the outer arc fills with elapsed time or empties with time remaining."),
+                        symbol: "arrow.left.arrow.right",
                         nested: true
                     ) {
                         Picker("", selection: Binding(
@@ -156,7 +164,8 @@ struct UsageCardPane: View {
         SettingsGroup(ExhaustionSettingsSections.card) {
             SettingsRow(
                 String.localized("Show the estimate"),
-                subtitle: String.localized("Writes a line under the weekly limit, or under the longest other limit when there is no weekly one, about how long it may last. A shorter limit that states its length, including the five-hour limit, is written under that row when the current pace runs out before its reset.")
+                subtitle: String.localized("Writes a line under the weekly limit, or under the longest other limit when there is no weekly one, about how long it may last. A shorter limit that states its length, including the five-hour limit, is written under that row when the current pace runs out before its reset."),
+                symbol: "chart.line.uptrend.xyaxis"
             ) {
                 Toggle("", isOn: Binding(
                     get: { settings.showsForecast },
@@ -173,6 +182,7 @@ struct UsageCardPane: View {
                 SettingsRow(
                     String.localized("Countdown up to"),
                     subtitle: String.localized("The furthest time, in hours, at which a countdown is written."),
+                    symbol: "timer",
                     nested: true
                 ) {
                     ExhaustionHoursStepper(
@@ -190,6 +200,7 @@ struct UsageCardPane: View {
                 SettingsRow(
                     String.localized("May run out before reset"),
                     subtitle: String.localized("Further out, it says the pace may not last until the reset, and does not write a time."),
+                    symbol: "hourglass.bottomhalf",
                     nested: true
                 ) {
                     Toggle("", isOn: Binding(
@@ -206,6 +217,7 @@ struct UsageCardPane: View {
                 SettingsRow(
                     String.localized("Say roughly when"),
                     subtitle: String.localized("When the pace will not last until the reset, it writes roughly how long is left."),
+                    symbol: "text.alignleft",
                     nested: true
                 ) {
                     Toggle("", isOn: Binding(
@@ -225,7 +237,8 @@ struct UsageCardPane: View {
         SettingsGroup(ExhaustionSettingsSections.accounts) {
             SettingsRow(
                 String.localized("Accounts"),
-                subtitle: String.localized("The estimate and the running-out notices both use this list.")
+                subtitle: String.localized("The estimate and the running-out notices both use this list."),
+                symbol: "person.2"
             ) {
                 Picker("", selection: Binding(
                     get: { settings.exhaustionAllAccounts },
@@ -242,7 +255,7 @@ struct UsageCardPane: View {
             if SettingsChildRows.showsExhaustionAccountList(allAccounts: settings.exhaustionAllAccounts) {
                 ForEach(settings.shownAccounts, id: \.id) { account in
                     SettingsRowDivider()
-                    SettingsRow(settings.label(for: account), nested: true) {
+                    SettingsRow(settings.label(for: account), account: account, nested: true) {
                         Toggle("", isOn: Binding(
                             get: { settings.forecastsExhaustion(for: account) },
                             set: { settings.setForecastsExhaustion($0, for: account) }

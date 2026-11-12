@@ -1406,7 +1406,7 @@ struct UsageDetailCard: View {
         ZStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: DetailCardLayout.headerLineSpacing) {
                 HStack(spacing: 6) {
-                    LobeIconView(provider: usage.provider, size: DetailCardLayout.headerIconSize)
+                    LobeIconView(account: usage.account, size: DetailCardLayout.headerIconSize)
                         .foregroundStyle(.primary)
 
                     HeaderTitleText(text: String.localized("\(title ?? usage.provider.displayName) Usage"))

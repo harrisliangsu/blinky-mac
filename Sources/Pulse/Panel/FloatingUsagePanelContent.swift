@@ -261,6 +261,7 @@ struct FloatingUsagePanelContent: View {
             // at once. Read off `settings` in one place so they cannot disagree.
             .environment(\.usageWarningThreshold, settings.warningThreshold.fraction)
             .environment(\.ringColourScheme, settings.ringColourScheme)
+            .environment(\.extensionIcons, settings.extensionIcons)
             .accessibilityElement(children: .contain)
             .accessibilityLabel(String.localized("Blinky floating usage panel"))
             // Strings and layout constants are both read through plain

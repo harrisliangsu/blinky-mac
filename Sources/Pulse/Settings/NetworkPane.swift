@@ -23,7 +23,8 @@ struct NetworkPane: View {
             SettingsGroup(String.localized("Refresh")) {
                 SettingsRow(
                     String.localized("Check every"),
-                    subtitle: refreshSubtitle
+                    subtitle: refreshSubtitle,
+                    symbol: "arrow.clockwise"
                 ) {
                     Picker("", selection: Binding(
                         get: { settings.refreshInterval },
@@ -41,7 +42,8 @@ struct NetworkPane: View {
             SettingsGroup(String.localized("Network")) {
                 SettingsRow(
                     String.localized("Proxy"),
-                    subtitle: proxySubtitle
+                    subtitle: proxySubtitle,
+                    symbol: "network"
                 ) {
                     Picker("", selection: Binding(
                         get: { settings.networkProxy.mode },
@@ -66,7 +68,7 @@ struct NetworkPane: View {
                 if SettingsChildRows.showsManualProxy(settings.networkProxy.mode) {
                     SettingsRowDivider()
 
-                    SettingsRow(String.localized("Type"), nested: true) {
+                    SettingsRow(String.localized("Type"), symbol: "tag", nested: true) {
                         Picker("", selection: Binding(
                             get: { settings.networkProxy.kind },
                             set: { kind in
@@ -91,6 +93,7 @@ struct NetworkPane: View {
                         subtitle: proxyHostInvalid
                             ? String.localized("Enter a host.")
                             : String.localized("The proxy server's name or address."),
+                        symbol: "server.rack",
                         nested: true
                     ) {
                         TextField("", text: $proxyHost, prompt: Text(verbatim: "127.0.0.1"))
@@ -107,6 +110,7 @@ struct NetworkPane: View {
                         subtitle: proxyPortInvalid
                             ? String.localized("Enter a whole number from 1 to 65535.")
                             : String.localized("A number from 1 to 65535."),
+                        symbol: "number",
                         nested: true
                     ) {
                         TextField("", text: $proxyPort, prompt: Text(verbatim: "7897"))

@@ -11,8 +11,8 @@ A Step Plan subscription, signed in to a browser at platform.stepfun.com (or pla
 1. Sign in at https://platform.stepfun.com (or https://platform.stepfun.ai) in your browser, and open the Step Plan usage page once to check it shows your plan.
 2. In Blinky, go to Settings → StepFun and turn on "Show in panel".
 3. Under "Site", pick the site you signed in to. Switching it later clears the saved session, so you read the new site's.
-4. Under "Read from browser", pick the browser you signed in with (or leave it on Automatic) and click "Read".
-   - Chrome, Edge, Brave, Arc, and Vivaldi: macOS asks once for keychain permission.
+4. Under "Read from browser", pick the browser you signed in with (or leave it on Default browser) and click "Read".
+   - Chrome, Edge, Brave, Arc, Vivaldi, and ego lite: macOS asks once for keychain permission.
    - Safari: give Blinky Full Disk Access first, in System Settings → Privacy & Security.
    - Firefox: nothing extra.
 5. Success looks like a StepFun ring on the Blinky panel. Its card shows "Credit allowance" (Token Plan) or the 5-hour and weekly limits (Coding Plan).

@@ -10,8 +10,8 @@ A Manus account, signed in to a browser at manus.im.
 
 1. Sign in at [manus.im](https://manus.im) in your browser.
 2. In Blinky: **Settings → Manus**. Turn on **Show in panel**.
-3. Under **Read from browser**, pick the browser you signed in with (or leave it on Automatic) and click **Read**.
-   - Chrome, Edge, Brave, Arc and Vivaldi: macOS asks once for keychain permission.
+3. Under **Read from browser**, pick the browser you signed in with (or leave it on Default browser) and click **Read**.
+   - Chrome, Edge, Brave, Arc, Vivaldi and ego lite: macOS asks once for keychain permission.
    - Safari: give Blinky Full Disk Access first, in System Settings → Privacy & Security.
    - Firefox: nothing extra.
 4. Within a few seconds the ring appears, and the pane lists the daily limit, the monthly limit and the balance.

@@ -13,7 +13,8 @@ struct PlacementPane: View {
     private var positionRow: some View {
         SettingsRow(
             String.localized("Position"),
-            subtitle: String.localized("Drag it anywhere; near an edge it snaps on.")
+            subtitle: String.localized("Drag it anywhere; near an edge it snaps on."),
+            symbol: "arrow.up.and.down.and.arrow.left.and.right"
         ) {
             Picker("", selection: Binding(
                 get: { placement.dock },
@@ -37,7 +38,8 @@ struct PlacementPane: View {
             SettingsGroup(String.localized("Panel")) {
                 SettingsRow(
                     String.localized("Show floating panel"),
-                    subtitle: String.localized("The usage rail at the edge of the screen.")
+                    subtitle: String.localized("The usage rail at the edge of the screen."),
+                    symbol: "eye"
                 ) {
                     Toggle("", isOn: Binding(
                         get: { settings.isPanelVisible },
@@ -53,6 +55,7 @@ struct PlacementPane: View {
                     SettingsRow(
                         String.localized("Hide in full screen"),
                         subtitle: String.localized("Keep the floating panel out of full-screen apps."),
+                        symbol: "arrow.up.left.and.arrow.down.right",
                         nested: true
                     ) {
                         Toggle("", isOn: Binding(
@@ -68,6 +71,7 @@ struct PlacementPane: View {
                     SettingsRow(
                         String.localized("Hide from screenshots"),
                         subtitle: String.localized("Screenshot tools that support it leave the floating panel out. Recordings and screen sharing may still show it."),
+                        symbol: "camera.viewfinder",
                         nested: true
                     ) {
                         Toggle("", isOn: Binding(
@@ -83,6 +87,7 @@ struct PlacementPane: View {
                     SettingsRow(
                         String.localized("Hide until pointed at"),
                         subtitle: String.localized("Against a screen edge, the rail shrinks to a sliver until you point at it."),
+                        symbol: "cursorarrow.rays",
                         nested: true
                     ) {
                         Toggle("", isOn: Binding(
@@ -104,6 +109,7 @@ struct PlacementPane: View {
                     SettingsRow(
                         String.localized("Snap to screen edges"),
                         subtitle: String.localized("Dragged near an edge, the rail docks to it and turns to run along it. When this is off, dragging only moves the rail and keeps its direction."),
+                        symbol: "arrow.right.to.line",
                         nested: true
                     ) {
                         Toggle("", isOn: Binding(
@@ -119,6 +125,7 @@ struct PlacementPane: View {
                     SettingsRow(
                         String.localized("Follow the active display"),
                         subtitle: String.localized("With more than one display, the rail moves to the one the pointer is on."),
+                        symbol: "display.2",
                         nested: true
                     ) {
                         Toggle("", isOn: Binding(
@@ -154,7 +161,7 @@ struct PlacementPane: View {
 
                     SettingsRow(
                         settings.label(for: account),
-                        icon: account.provider.iconResource
+                        account: account
                     ) {
                         HStack(spacing: 4) {
                             Button {
@@ -185,7 +192,7 @@ struct PlacementPane: View {
                         // width, which at 900pt is a slab. This is the two
                         // things being moved: the mark and the name.
                         HStack(spacing: 8) {
-                            LobeIconView(provider: account.provider, size: 15)
+                            LobeIconView(account: account, size: 15)
                             Text(settings.label(for: account))
                                 .font(.system(size: 13))
                         }
@@ -220,7 +227,8 @@ struct PlacementPane: View {
 
                 SettingsRow(
                     String.localized("Reset order"),
-                    subtitle: String.localized("Back to the order Blinky ships with.")
+                    subtitle: String.localized("Back to the order Blinky ships with."),
+                    symbol: "arrow.counterclockwise"
                 ) {
                     Button(String.localized("Reset")) { settings.resetOrder() }
                         .disabled(!settings.hasCustomOrder)

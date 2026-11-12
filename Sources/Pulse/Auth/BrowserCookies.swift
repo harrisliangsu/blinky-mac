@@ -42,6 +42,7 @@ enum BrowserCookies {
         case brave
         case vivaldi
         case arc
+        case egoLite
 
         var name: String {
             switch self {
@@ -53,6 +54,7 @@ enum BrowserCookies {
             case .brave: "Brave"
             case .vivaldi: "Vivaldi"
             case .arc: "Arc"
+            case .egoLite: "ego lite"
             }
         }
 
@@ -72,6 +74,7 @@ enum BrowserCookies {
             case .brave: "Brave Safe Storage"
             case .vivaldi: "Vivaldi Safe Storage"
             case .arc: "Arc Safe Storage"
+            case .egoLite: "ego safe storage"
             }
         }
 
@@ -81,7 +84,7 @@ enum BrowserCookies {
         var promptsForKeychain: Bool {
             switch self {
             case .firefox, .zen, .safari: false
-            case .chrome, .edge, .brave, .vivaldi, .arc: true
+            case .chrome, .edge, .brave, .vivaldi, .arc, .egoLite: true
             }
         }
     }
@@ -136,6 +139,15 @@ enum BrowserCookies {
         // return anything at all.
         guard let preferred = preferred(), installed.contains(preferred) else { return installed }
         return [preferred] + installed.filter { $0 != preferred }
+    }
+
+    /// What **Default browser** reads: this Mac's default browser, when it is
+    /// one of `candidates`, and nothing else. Not the default and then the
+    /// rest: each Chromium browser asks for the keychain on its own, and a
+    /// session found in a browser the reader did not mean is no help.
+    static func defaultOnly(among candidates: [Browser]) -> [Browser] {
+        guard let preferred = preferred(), candidates.contains(preferred) else { return [] }
+        return [preferred]
     }
 
     /// The browsers whose cookies are on disk but macOS would not let Pulse
@@ -210,6 +222,7 @@ enum BrowserCookies {
         case "com.brave.Browser", "com.brave.Browser.beta": .brave
         case "com.vivaldi.Vivaldi": .vivaldi
         case "company.thebrowser.Browser": .arc
+        case "com.citrolabs.ego.lite": .egoLite
         default: nil
         }
     }
@@ -267,6 +280,7 @@ enum BrowserCookies {
         case .brave: support.appending(path: "BraveSoftware/Brave-Browser")
         case .vivaldi: support.appending(path: "Vivaldi")
         case .arc: support.appending(path: "Arc/User Data")
+        case .egoLite: support.appending(path: "Citro Labs/ego lite")
         case .firefox, .zen, .safari: nil
         }
     }

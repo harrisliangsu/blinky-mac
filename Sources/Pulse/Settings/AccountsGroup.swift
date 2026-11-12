@@ -40,7 +40,8 @@ struct AccountsGroup: View {
                         account.isPrimary ? String.localized("Add another account") : String.localized("Sign in again…"),
                         // The one thing someone should know before they start:
                         // whose name is on the page that opens.
-                        subtitle: String.localized("Opens the provider's own sign-in page.")
+                        subtitle: String.localized("Opens the provider's own sign-in page."),
+                        symbol: account.isPrimary ? "plus.circle" : "person.crop.circle"
                     ) {
                         // One sign-in at a time, and its Cancel, code and
                         // error belong to the provider it was started for:
@@ -78,7 +79,8 @@ struct AccountsGroup: View {
                             // filled itself in is an instruction to undo.
                             subtitle: devicePrompt.prefilled
                                 ? String.localized("Already on the page. Sign in there first if asked, then approve it.")
-                                : String.localized("Copied. Sign in there first if asked, then paste it.")
+                                : String.localized("Copied. Sign in there first if asked, then paste it."),
+                            symbol: "number"
                         ) {
                             HStack(spacing: 10) {
                                 Text(devicePrompt.userCode)
@@ -99,12 +101,12 @@ struct AccountsGroup: View {
                         // subtitle; skip the duplicate Sign-in row there.
                         if !(account.isPrimary && (account.provider == .kimiCode || account.provider == .grok)) {
                             SettingsRowDivider()
-                            SettingsRow(String.localized("Sign-in"), subtitle: signInError.message) { EmptyView() }
+                            SettingsRow(String.localized("Sign-in"), subtitle: signInError.message, symbol: "exclamationmark.triangle") { EmptyView() }
                         }
                     }
                 if !account.isPrimary {
                     SettingsRowDivider()
-                    SettingsRow(String.localized("Name")) {
+                    SettingsRow(String.localized("Name"), symbol: "tag") {
                         TextField("", text: Binding(
                             get: { settings.label(for: account) },
                             set: { settings.rename(account, to: $0) }
@@ -117,7 +119,8 @@ struct AccountsGroup: View {
 
                     SettingsRow(
                         String.localized("Remove account"),
-                        subtitle: String.localized("Forgets its login and takes it off the rail.")
+                        subtitle: String.localized("Forgets its login and takes it off the rail."),
+                        symbol: "trash"
                     ) {
                         Button(String.localized("Remove"), role: .destructive) {
                             AccountCredentialStore.set(nil, for: account)
@@ -173,7 +176,8 @@ struct AccountsGroup: View {
             subtitle: (signIn.signInError?.provider == .grok ? signIn.signInError?.message : nil)
                 ?? (grokSignedIn
                     ? grokSignedInSubtitle(settings.source(for: account))
-                    : String.localized("Opens xAI's sign-in page. Blinky keeps this login and renews it, and does not change the CLI's."))
+                    : String.localized("Opens xAI's sign-in page. Blinky keeps this login and renews it, and does not change the CLI's.")),
+            symbol: "person.crop.circle"
         ) {
             if signIn.signingInTarget == AccountKey(.grok) {
                 Button(String.localized("Cancel")) { signIn.cancelSignIn() }
@@ -200,7 +204,8 @@ struct AccountsGroup: View {
                     ? (settings.source(for: account) == .endpoint
                         ? String.localized("Signed in. The API key in Connection is used instead.")
                         : String.localized("Signed in. Blinky holds a login for this Mac."))
-                    : String.localized("Opens Kimi Code's own page. Blinky only reads usage."))
+                    : String.localized("Opens Kimi Code's own page. Blinky only reads usage.")),
+            symbol: "person.crop.circle"
         ) {
             if signIn.signingIn == .kimiCode, !kimiSignedIn {
                 Button(String.localized("Cancel")) { signIn.cancelSignIn() }

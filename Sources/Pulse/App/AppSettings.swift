@@ -729,6 +729,8 @@ final class AppSettings {
     var extensions: [PulseExtension] = [] {
         didSet { extensionsChanged(from: oldValue) }
     }
+    /// Each extension's own icon, decoded from `extensions` when they change.
+    let extensionIcons = ExtensionIcons()
     /// Written only by `AppSettings+Accounts`, like `extensions`.
     var extensionProblems: [ExtensionCatalog.Problem] = []
 

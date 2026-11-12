@@ -6,6 +6,16 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.42
+
+- **扩展可以使用自己的 PNG 图标。** 在扩展的 `pulse-extension.json` 里用 `icon` 指定文件夹内的 PNG 后，圆环、卡片、设置和菜单栏会按原色显示它。感谢 [@Jiar](https://github.com/qunqin24/Pulse/pull/109) 贡献。
+- **Blinky 可以从 ego lite 读取登录会话。** 在服务商设置的「从浏览器读取」中选择 ego lite 后，Devin 以及通过浏览器登录的服务商都可以使用。感谢 [@RoacherM](https://github.com/qunqin24/Pulse/pull/108) 贡献。
+- **每一行设置和操作前面都有一个小标记。** 设置窗口在这些行的标题前显示一个小图标。
+- **关于页面可以打开作者的爱发电。** 在「设置 → 关于」中打开这一页，「在 GitHub 上点 Star」仍留在同一页。
+- **Open Design 显示套餐限额，包括 OpenDesign Go。** 在「设置 → 供应商」打开 Open Design 后，圆环使用它自己的标记，计划窗口与控制台一致，OpenDesign Go 从浏览器读取，某一条账单请求被拒绝时也不会因此结束整次读取。
+- **Codex 的面板不再显示「较弱模型的迹象」。** 重置卡、预测重置和最近一次重置仍留在这一页。
+- **浏览器菜单的第一项只读取默认浏览器。** 「从浏览器读取」的第一项写出默认浏览器的名字并且只读取那一个，因此停在这一项时不会对每个 Chromium 浏览器各弹出一次钥匙串提示，Blinky 读不了的默认浏览器会说明原因，并请你从列表里另选。
+
 ## 1.5.41
 
 - **更换 Codex 账号后，重置卡显示新账号还剩几张。** 在「设置 → 供应商 → Codex」的「面板」中打开「重置卡」后，更换 Codex 所用的 ChatGPT 账号时，这一行显示新账号还剩几张，读取失败时显示「未能读取」，一张都没有时仍显示「无」。[#106](https://github.com/harrisliangsu/blinky-mac/pull/106)

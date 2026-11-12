@@ -10,6 +10,16 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.42
+
+- **An extension can use its own PNG icon.** Name a PNG in the extension's folder with `icon` in its `pulse-extension.json`, and the ring, the card, Settings and the menu bar show it in its own colours. Thanks to [@Jiar](https://github.com/qunqin24/Pulse/pull/109) for the contribution.
+- **Blinky can read sign-in sessions from ego lite.** Choose ego lite under Read from browser in a provider's settings, for Devin and for every provider that signs in through a browser. Thanks to [@RoacherM](https://github.com/qunqin24/Pulse/pull/108) for the contribution.
+- **Every settings row and action row has a small mark.** Settings shows a small icon before each of those rows.
+- **About links to the author's Afdian page.** Settings → About opens that page, and Star on GitHub stays on the same pane.
+- **Open Design shows its plan limits, including OpenDesign Go.** Turn it on under Settings → Providers: the ring uses Open Design's own mark, the plan windows match the console, OpenDesign Go is read from the browser, and a refused billing route does not end the read.
+- **Codex's pane no longer shows Signs of a weaker model.** Reset cards, Predicted reset and Last reset stay on that pane.
+- **The browser menu's first choice reads only the default browser.** Read from browser names that browser and reads only it, so leaving the menu there does not ask for the keychain once per Chromium browser, and a default browser Blinky cannot read says so and asks for a choice from the list.
+
 ## 1.5.41
 
 - **After a Codex account switch, reset cards show the new account's count.** With Reset cards on under Settings → Providers → Codex → Panel, switching the ChatGPT account Codex is signed in with shows how many that account has, a failed read says Couldn't read, and a count of zero still says None. [#106](https://github.com/harrisliangsu/blinky-mac/pull/106)
