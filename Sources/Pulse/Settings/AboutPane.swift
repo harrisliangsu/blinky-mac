@@ -143,7 +143,7 @@ struct AboutPane: View {
                 // where the button goes, and some will rather type it.
                 SettingsRow(
                     String.localized("Support the author on Afdian"),
-                    subtitle: "afdian.com/a/qunqin",
+                    subtitle: "afdian.com/a/sharkchiligaga",
                     symbol: "heart"
                 ) {
                     Button(String.localized("Open")) {
@@ -225,8 +225,8 @@ struct AboutPane: View {
         return .localized("\(Self.version) · up to date")
     }
 
-    /// The author's Afdian page, the same one the README links to.
-    static let afdian = URL(string: "https://afdian.com/a/qunqin")!
+    /// This fork's Afdian page, the one in .github/FUNDING.yml and the README header Sponsor link.
+    static let afdian = URL(string: "https://afdian.com/a/sharkchiligaga")!
 
     private static var version: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.1 (prototype)"
