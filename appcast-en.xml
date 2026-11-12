@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.42</title>
-            <pubDate>Thu, 12 Nov 2026 02:12:04 -0000</pubDate>
-            <sparkle:version>1.5.42</sparkle:version>
-            <sparkle:shortVersionString>1.5.42</sparkle:shortVersionString>
+            <title>1.5.43</title>
+            <pubDate>Thu, 12 Nov 2026 05:56:10 -0000</pubDate>
+            <sparkle:version>1.5.43</sparkle:version>
+            <sparkle:shortVersionString>1.5.43</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.42</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.43</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.42</h2><ul><li><strong>An extension can use its own PNG icon.</strong> Name a PNG in the extension&#x27;s folder with <code>icon</code> in its <code>pulse-extension.json</code>, and the ring, the card, Settings and the menu bar show it in its own colours. Thanks to <a href="https://github.com/qunqin24/Pulse/pull/109">@Jiar</a> for the contribution.</li><li><strong>Blinky can read sign-in sessions from ego lite.</strong> Choose ego lite under Read from browser in a provider&#x27;s settings, for Devin and for every provider that signs in through a browser. Thanks to <a href="https://github.com/qunqin24/Pulse/pull/108">@RoacherM</a> for the contribution.</li><li><strong>Every settings row and action row has a small mark.</strong> Settings shows a small icon before each of those rows.</li><li><strong>About links to the author&#x27;s Afdian page.</strong> Settings → About opens that page, and Star on GitHub stays on the same pane.</li><li><strong>Open Design shows its plan limits, including OpenDesign Go.</strong> Turn it on under Settings → Providers: the ring uses Open Design&#x27;s own mark, the plan windows match the console, OpenDesign Go is read from the browser, and a refused billing route does not end the read.</li><li><strong>Codex&#x27;s pane no longer shows Signs of a weaker model.</strong> Reset cards, Predicted reset and Last reset stay on that pane.</li><li><strong>The browser menu&#x27;s first choice reads only the default browser.</strong> Read from browser names that browser and reads only it, so leaving the menu there does not ask for the keychain once per Chromium browser, and a default browser Blinky cannot read says so and asks for a choice from the list.</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.42">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.42/Blinky-1.5.42.zip"
-                       length="23394832"
+</style><h2>Blinky 1.5.43</h2><ul><li><strong>About&#x27;s Afdian link goes to this repository&#x27;s funding page.</strong> Settings → About, Support the author on Afdian, opens this fork&#x27;s funding page <code>https://afdian.com/a/sharkchiligaga</code>, the same page as <code>.github/FUNDING.yml</code> and the README header Sponsor link, in place of the upstream Pulse author&#x27;s <code>afdian.com/a/qunqin</code>. The README footer coffee badges that still credit the upstream author are unchanged. <a href="https://github.com/harrisliangsu/blinky-mac/pull/111">#111</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.43">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.43/Blinky-1.5.43.zip"
+                       length="23394991"
                        type="application/octet-stream"
-                       sparkle:edSignature="0XgSHTN+PDOP445PDUOx4oOBXABXcB+G/+ufdtmbghkjyrFpBwjcpzt7Y3Cw4hrkVg4mux/wQaAbQlCL6mtvBg==" />
+                       sparkle:edSignature="lkJ5PqZV6EhmnRixlGwaBw9DISMdLLX4OU7zRcsP7Se9WVgMJS9fm6FzDOf4wtYZvYgxIOhiznyjNgaL0PcWCw==" />
         </item>
     </channel>
 </rss>
