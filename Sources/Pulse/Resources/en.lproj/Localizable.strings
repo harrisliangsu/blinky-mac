@@ -233,6 +233,9 @@
 "Which limit the rail's ring tracks." = "Which limit the rail's ring tracks.";
 "Highest usage" = "Highest usage";
 "Automatic" = "Automatic";
+"Default browser" = "Default browser";
+"Default browser (%@)" = "Default browser (%@)";
+"Blinky can't read your default browser. Choose a browser from the list." = "Blinky can't read your default browser. Choose a browser from the list.";
 "Usage endpoint" = "Usage endpoint";
 "Provider tooling" = "Provider tooling";
 "Use the endpoint when possible, the other route when not." = "Use the endpoint when possible, the other route when not.";
@@ -958,6 +961,8 @@
 "Bailian CLI" = "Bailian CLI";
 "Runs the Bailian CLI (bl) with its saved login. Blinky does not read or store its credentials." = "Runs the Bailian CLI (bl) with its saved login. Blinky does not read or store its credentials.";
 "Uses the login the Bailian CLI already saved." = "Uses the login the Bailian CLI already saved.";
+/* Open Design */
+"Reads your open-design.ai sign-in from a browser when you press Read, or else the login the Open Design app saved in ~/.amr. Either is sent only to open-design.ai." = "Reads your open-design.ai sign-in from a browser when you press Read, or else the login the Open Design app saved in ~/.amr. Either is sent only to open-design.ai.";
 /* Nous Portal */
 "Reads the Nous Portal login Hermes Agent saved in ~/.hermes. No Keychain prompt." = "Reads the Nous Portal login Hermes Agent saved in ~/.hermes. No Keychain prompt.";
 "Hermes Agent's login" = "Hermes Agent's login";
@@ -1109,28 +1114,7 @@
 "No DeepSeek console sign-in found. Sign in at platform.deepseek.com first." = "No DeepSeek console sign-in found. Sign in at platform.deepseek.com first.";
 "The console turned this sign-in away. Sign in again at platform.deepseek.com, then read it again." = "The console turned this sign-in away. Sign in again at platform.deepseek.com, then read it again.";
 
-"Last 30 days" = "Last 30 days";
-"Last 90 days" = "Last 90 days";
-"All sessions" = "All sessions";
-"Signs of a weaker model" = "Signs of a weaker model";
 "Period" = "Period";
-"No Codex replies with reasoning in this period" = "No Codex replies with reasoning in this period";
-"%@ of %@ long replies stopped at a fixed point" = "%@ of %@ long replies stopped at a fixed point";
-"Too few to tell" = "Too few to tell";
-"None found" = "None found";
-"%@ more" = "%@ more";
-"Checked %@ sessions." = "Checked %@ sessions.";
-"Read from this Mac's Codex records; nothing is sent." = "Read from this Mac's Codex records; nothing is sent.";
-"Reasoning stopped at fixed points: the reasoning ended at exactly 516, 1,034, 1,552… tokens. The cause has not been published, and each model has its own usual share, so the share alone does not show that a model was weakened." = "Reasoning stopped at fixed points: the reasoning ended at exactly 516, 1,034, 1,552… tokens. The cause has not been published, and each model has its own usual share, so the share alone does not show that a model was weakened.";
-"Settings quietly lowered: a turn ran on a worse model or lower reasoning than you chose, without you changing anything." = "Settings quietly lowered: a turn ran on a worse model or lower reasoning than you chose, without you changing anything.";
-"These are signs, not proof: Codex doesn't record which model the server actually used." = "These are signs, not proof: Codex doesn't record which model the server actually used.";
-"Reasoning stopped at fixed points" = "Reasoning stopped at fixed points";
-"%@ replies in all" = "%@ replies in all";
-"Settings quietly lowered" = "Settings quietly lowered";
-"Model: %@ swapped for %@" = "Model: %@ swapped for %@";
-"Reasoning: %@ lowered to %@" = "Reasoning: %@ lowered to %@";
-"Checked %@ sessions: the model and reasoning you chose were never changed." = "Checked %@ sessions: the model and reasoning you chose were never changed.";
-"%@ other sessions can't be checked: older than Codex 0.144, or run by Codex itself." = "%@ other sessions can't be checked: older than Codex 0.144, or run by Codex itself.";
 "Service status" = "Service status";
 "Operational" = "Operational";
 "Degraded performance" = "Degraded performance";
@@ -1543,4 +1527,5 @@
 /* Star request: StarRequestBanner, AboutPane */
 "You have used Blinky for two weeks. If Blinky has been useful, a star on GitHub helps other people find it." = "You have used Blinky for two weeks. If Blinky has been useful, a star on GitHub helps other people find it.";
 "Star on GitHub" = "Star on GitHub";
+"Support the author on Afdian" = "Support the author on Afdian";
 "Stars help other people find Blinky." = "Stars help other people find Blinky.";

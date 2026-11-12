@@ -9,8 +9,8 @@ A Raycast account with AI credits (a Pro plan or higher), signed in at raycast.c
 ## Steps
 
 1. Sign in at [www.raycast.com](https://www.raycast.com) in your browser.
-2. In Blinky: **Settings → Raycast AI**. Turn on **Show in panel**. Under **Read from browser**, pick your browser (or leave it on Automatic) and click **Read**.
-   - Chrome, Edge, Brave, Arc and Vivaldi keep their cookies in the login keychain, so macOS asks once for permission.
+2. In Blinky: **Settings → Raycast AI**. Turn on **Show in panel**. Under **Read from browser**, pick your browser (or leave it on Default browser) and click **Read**.
+   - Chrome, Edge, Brave, Arc, Vivaldi and ego lite keep their cookies in the login keychain, so macOS asks once for permission.
    - Safari needs Full Disk Access for Blinky in System Settings → Privacy & Security.
    - Firefox needs nothing extra.
 3. Within a few seconds the ring appears, and the account's pane shows the credit allowance and when it renews.

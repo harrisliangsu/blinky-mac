@@ -181,6 +181,7 @@ Geometry checks, not real input; see [ui/panel-geometry.md](ui/panel-geometry.md
 | `RailMoneyTests` | Money on a ring: abbreviated past a thousand, truncated not rounded up, no early rollover at 999,999, narrow currency symbol — every form measured against the rail's real room. [providers/deepseek.md](providers/deepseek.md) |
 | `ProviderMarkTests` | Every mark **puts ink down** at rail size, not merely loads: `LobeIconStore.image(named:)` accepts a blank-rendering SVG. Floor 8% coverage; the bundled set runs 22.4–52.7%. Verified by blanking a mark. [ui/rings-and-surface.md](ui/rings-and-surface.md) |
 | `IconPathTests` | Bundled marks spell arc flags out: CoreSVG (used by `NSImage`) stops at a flag run into the next number and draws part of the mark (Gemini's star was a sliver). Marks from Lobe Icons need re-spacing. |
+| `ExtensionIconCatalogTests`, `ExtensionIconRenderingTests` | A fresh folder's optional local PNG; old manifests and malformed optional fields; paths outside the folder, symlinks, missing and invalid files, byte and pixel ceilings; same-path replacement/removal on rescan; one image per account found by `LobeIconView(account:)` through the environment, kept across an unchanged rescan and decoded again when the bytes change; original-colour interiors under a foreground tint, menu artwork compared through AppKit in an explicit sRGB context at 1× and 2× (the SwiftUI `ImageRenderer` bridge for drawing-handler images can use the display profile), aspect fitting without mutating the stored image, and settings keeping the store in step with each scan. Synthetic files and hosted components only; no live extension execution or installed-app capture. [extensions.md](extensions.md#optional-icon) |
 
 ### App, settings and output
 
@@ -332,7 +333,6 @@ Synthetic stores, fixed clocks and UTC calendars; not live-client validation. [t
 | `PromptCacheLapseTests` | Claude Code's cache lapses a tier after the last request (a tool result counts), not the answer's end; subagent lines are not the session. |
 | `CodexPromptCacheTests` | Codex's thirty-minute floor on GPT-5.6 and later, from the last request touching the cache; earlier models untimed. |
 | `ReplyTimingTests` | Speed and first-token wait: a reply copied into a resumed session counts once; the account card requires five timed replies per model within a day, and the Token window's span average does not; implausible values not timed. Claude Code's in-progress line (`stop_reason` null) is not timed. Grok and Kimi pair a request or tool result with the last model line, and leave the turn untimed when that pair is missing; `apiDurationMs` and `llmStreamDurationMs` alone are not a speed. `ReplyTimingWatch` re-reads only when a changed log's tail is a closed reply. |
-| `CodexSignalsTests` | Signs of a weaker model: reasoning on the 516, 1034, 1552 … lattice; model or effort changes mid-turn; Codex before 0.144 not judged; fork copies skipped. |
 
 ### Recap
 

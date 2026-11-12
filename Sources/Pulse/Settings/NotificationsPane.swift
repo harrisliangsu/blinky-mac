@@ -15,7 +15,8 @@ struct NotificationsPane: View {
             SettingsGroup(String.localized("Limit reminders")) {
                 SettingsRow(
                     String.localized("Warn at"),
-                    subtitle: alertsSubtitle
+                    subtitle: alertsSubtitle,
+                    symbol: "exclamationmark.triangle"
                 ) {
                     Picker("", selection: Binding(
                         get: { settings.alertThreshold },
@@ -46,7 +47,8 @@ struct NotificationsPane: View {
                     SettingsRow(
                         String.localized("When a limit comes back"),
                         subtitle: String.localized("Only for one you were warned about."),
-                        nested: true
+                        nested: true,
+                        symbol: "checkmark.circle"
                     ) {
                         Toggle("", isOn: Binding(
                             get: { settings.alertsOnReset },
@@ -72,7 +74,8 @@ struct NotificationsPane: View {
             SettingsGroup(String.localized("Service status")) {
                 SettingsRow(
                     String.localized("When a reading stops arriving"),
-                    subtitle: String.localized("After several failed checks in a row, once per outage.")
+                    subtitle: String.localized("After several failed checks in a row, once per outage."),
+                    symbol: "wifi.exclamationmark"
                 ) {
                     Toggle("", isOn: Binding(
                         get: { settings.alertsOnFailure },
@@ -94,7 +97,8 @@ struct NotificationsPane: View {
 
                 SettingsRow(
                     String.localized("When it is down"),
-                    subtitle: String.localized("From each provider's own status page, for the providers you have switched on and only about what their accounts run on.")
+                    subtitle: String.localized("From each provider's own status page, for the providers you have switched on and only about what their accounts run on."),
+                    symbol: "exclamationmark.icloud"
                 ) {
                     Toggle("", isOn: Binding(
                         get: { settings.alertsOnOutage },
@@ -119,7 +123,8 @@ struct NotificationsPane: View {
             SettingsGroup(String.localized("Monthly recap")) {
                 SettingsRow(
                     String.localized("When it is ready"),
-                    subtitle: String.localized("Last month's recap, at the start of the month. Needs Token spend reading.")
+                    subtitle: String.localized("Last month's recap, at the start of the month. Needs Token spend reading."),
+                    symbol: "calendar"
                 ) {
                     // The request and the first check follow from the setting
                     // itself (`AppSettings.onRecapAlertChange`).
@@ -139,7 +144,8 @@ struct NotificationsPane: View {
             SettingsGroup(String.localized("Reset reminders")) {
                 SettingsRow(
                     String.localized("Predicted reset"),
-                    subtitle: predictedReminderSubtitle
+                    subtitle: predictedReminderSubtitle,
+                    symbol: "clock.arrow.circlepath"
                 ) {
                     Toggle("", isOn: Binding(
                         get: { settings.remindsBeforePredictedReset },
@@ -159,7 +165,8 @@ struct NotificationsPane: View {
                     SettingsRow(
                         String.localized("How early"),
                         subtitle: String.localized("Hours before the predicted time."),
-                        nested: true
+                        nested: true,
+                        symbol: "hourglass"
                     ) {
                         Picker("", selection: Binding(
                             get: { settings.predictedResetLead },
@@ -182,7 +189,8 @@ struct NotificationsPane: View {
 
                 SettingsRow(
                     String.localized("Regular resets"),
-                    subtitle: String.localized("Before each window's own reset, skipping any window shorter than the lead.")
+                    subtitle: String.localized("Before each window's own reset, skipping any window shorter than the lead."),
+                    symbol: "arrow.clockwise"
                 ) {
                     Toggle("", isOn: Binding(
                         get: { settings.remindsBeforeRegularReset },
@@ -202,7 +210,8 @@ struct NotificationsPane: View {
                     SettingsRow(
                         String.localized("How early"),
                         subtitle: String.localized("Hours before that reset."),
-                        nested: true
+                        nested: true,
+                        symbol: "hourglass"
                     ) {
                         Picker("", selection: Binding(
                             get: { settings.regularResetLead },
@@ -225,7 +234,8 @@ struct NotificationsPane: View {
             SettingsGroup(String.localized("Celebrations")) {
                 SettingsRow(
                     String.localized("Celebrate a reset"),
-                    subtitle: String.localized("After a limit turns over: ribbons and a sound, named for the provider.")
+                    subtitle: String.localized("After a limit turns over: ribbons and a sound, named for the provider."),
+                    symbol: "sparkles"
                 ) {
                     Toggle("", isOn: Binding(
                         get: { settings.celebratesReset },
@@ -241,7 +251,8 @@ struct NotificationsPane: View {
                     SettingsRow(
                         String.localized("Also celebrate hourly quota resets"),
                         subtitle: String.localized("Five-hour windows, not only the week or month."),
-                        nested: true
+                        nested: true,
+                        symbol: "clock.badge"
                     ) {
                         Toggle("", isOn: Binding(
                             get: { settings.celebratesHourlyReset },
@@ -256,7 +267,8 @@ struct NotificationsPane: View {
             SettingsGroup {
                 SettingsRow(
                     String.localized("Test notification"),
-                    subtitle: testSubtitle
+                    subtitle: testSubtitle,
+                    symbol: "bell"
                 ) {
                     Button(String.localized("Send")) {
                         isSendingTest = true
@@ -289,7 +301,8 @@ struct NotificationsPane: View {
         SettingsGroup(ExhaustionSettingsSections.notices) {
             SettingsRow(
                 String.localized("When it is running out"),
-                subtitle: exhaustionAlertsSubtitle
+                subtitle: exhaustionAlertsSubtitle,
+                symbol: "gauge.with.needle"
             ) {
                 Toggle("", isOn: Binding(
                     get: { settings.exhaustionAlerts },
@@ -309,7 +322,8 @@ struct NotificationsPane: View {
                     SettingsRow(
                         String.localized("Remaining hours"),
                         subtitle: String.localized("Each stage notifies once, at its own hours left, on that same limit. A new install starts with 24 hours."),
-                        nested: true
+                        nested: true,
+                        symbol: "clock"
                     ) {
                     Button(String.localized("Add a stage")) {
                         settings.addExhaustionStage()
@@ -320,7 +334,7 @@ struct NotificationsPane: View {
 
                 ForEach(settings.exhaustionStages) { stage in
                     SettingsRowDivider()
-                    SettingsRow(String.localized("\("\(liveStageHours(stage))") hours"), nested: true) {
+                    SettingsRow(String.localized("\("\(liveStageHours(stage))") hours"), nested: true, symbol: "clock") {
                         HStack(spacing: 10) {
                             ExhaustionHoursStepper(
                                 hours: liveStageHours(stage),
@@ -350,7 +364,8 @@ struct NotificationsPane: View {
 
             SettingsRow(
                 String.localized("Will not last until the reset"),
-                subtitle: String.localized("Sends a separate notice when the current pace will not last until the reset, on that same limit.")
+                subtitle: String.localized("Sends a separate notice when the current pace will not last until the reset, on that same limit."),
+                symbol: "exclamationmark.triangle"
             ) {
                 // The switch is `exhaustionNotifyBeforeReset` itself. On sends
                 // the notice. The shipped default is off; a stored true stays on.

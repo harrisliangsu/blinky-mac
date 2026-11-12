@@ -756,7 +756,8 @@ private struct UsageDockItem: View {
             secondFraction: entry.second?.usedFraction,
             secondIsSpent: UsageTint.isSpent(entry.second),
             robot: entry.robot,
-            isLive: isInteractive
+            isLive: isInteractive,
+            account: usage.account
         )
         .scaleEffect(isSelected ? 1.06 : 1)
     }

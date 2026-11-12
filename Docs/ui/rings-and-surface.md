@@ -113,4 +113,8 @@ Two one-off gestures play over the mood when their fact becomes true (`RobotCue`
 
 ## Icons
 
-`LobeIconView` is a template image with **no colour of its own**. Do not hardcode white there: the settings sidebar needs the ordinary label colour.
+`LobeIconView` draws **bundled marks as template images with no colour of their own**. Do not hardcode white there: the settings sidebar needs the ordinary label colour. An extension's optional PNG is drawn in its **original colours**, so an opaque background does not erase an interior glyph; see [../extensions.md](../extensions.md#optional-icon).
+
+**Draw an account's mark with `LobeIconView(account:)`**, never `LobeIconView(provider: account.provider)`: given the account, the view finds an extension's icon by itself, so no call site passes icon data along. The icons live in `ExtensionIcons`, one per `AppSettings`, decoded once per scan and only when an icon's bytes change; a rescan with new bytes at the same path gets a new image. The panel, the settings window and the menu set it at their root as `\.extensionIcons`; without it, as in a preview, every account draws its provider's mark. The menu bar's status item, drawn by AppKit, is handed the same store. `LobeIconStore` caches only the bundled SVGs, by resource name. Menu-sized copies preserve aspect ratio without resizing the stored image.
+
+**On a ring it fills the icon disc** (`UsageRingView.iconScale` 1.0, 20pt at standard size, 16pt with the second ring on). 0.8 read small beside the robot; 0.9 and 1.0 were drawn side by side and 1.0 was picked, accepting that a busy ring's activity arc and the second ring pass close to the glyph.

@@ -28,15 +28,16 @@ you** rather than asking you to copy a cookie out of the developer tools —
 which was the original flow, and is a step nobody performs correctly at two in
 the morning. What that costs you is stated on the row before you press it:
 
-- **Your default browser is tried first**, whichever it is, and the row names
-  it. That is deliberate over trying the cheapest browsers first: the browser
-  you open links with is where you are actually signed in, and a session pulled
-  from some other browser may be months out of date. Pick a specific one under
-  **Browser** if you would rather — naming one means *only* that one is opened.
+- **Default browser reads your default browser and no other**, whichever it
+  is, and the menu and the row name it. The browser you open links with is
+  where you are actually signed in; a session pulled from some other browser
+  may be months out of date, and every Chromium browser tried on the way asks
+  for the keychain again. Pick another browser in the menu if you signed in
+  there — naming one means *only* that one is opened.
 - **Safari needs Full Disk Access**, because its cookie file lives inside its
   container. Only the installed `Blinky.app` can be granted it; a `swift run`
   build cannot.
-- **Chrome, Edge, Brave and Arc keep their key in the login keychain**, so
+- **Chrome, Edge, Brave, Arc and ego lite keep their key in the login keychain**, so
   macOS will ask once — "Pulse wants to use your confidential information".
   The row says so before you press it.
 - **Firefox and Zen** are plain SQLite and ask for nothing.

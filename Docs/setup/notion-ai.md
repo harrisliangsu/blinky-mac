@@ -12,8 +12,8 @@ If you belong to several workspaces, Blinky reads the first one on a Business or
 
 1. Sign in to Notion in your browser.
 2. In Blinky: **Settings → Notion AI**. Turn on **Show in panel**.
-3. Under **Read from browser**, pick the browser you signed in with (or leave it on Automatic) and click **Read**.
-   - Chrome, Edge, Brave, Arc and Vivaldi: macOS asks once for keychain permission.
+3. Under **Read from browser**, pick the browser you signed in with (or leave it on Default browser) and click **Read**.
+   - Chrome, Edge, Brave, Arc, Vivaldi and ego lite: macOS asks once for keychain permission.
    - Safari: give Blinky Full Disk Access first, in System Settings → Privacy & Security.
    - Firefox: nothing extra.
 4. Within a few seconds the ring appears, and the account's pane lists both windows and when each resets.

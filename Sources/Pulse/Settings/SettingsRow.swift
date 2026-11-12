@@ -112,6 +112,13 @@ struct SettingsRow<Control: View>: View {
     /// A resource name rather than a `Provider` because the spend pane draws
     /// clients that are not providers at all; see `SpendAgent.iconResource`.
     let icon: String?
+    /// The account the row stands for, drawn with its own mark — an
+    /// extension's icon included. Takes the place of `icon`.
+    let account: AccountKey?
+    /// An SF Symbol before the title, for a row that stands for no product:
+    /// About's version, updates and links. Drawn in the same 15pt column as
+    /// a mark, so titles line up whichever a row has.
+    let symbol: String?
     let controlBelow: Bool
     /// A row that belongs to the switch or menu above it. The extra inset is
     /// the only difference: the control is the same one, editing the same
@@ -124,6 +131,8 @@ struct SettingsRow<Control: View>: View {
         _ title: String,
         subtitle: String? = nil,
         icon: String? = nil,
+        account: AccountKey? = nil,
+        symbol: String? = nil,
         controlBelow: Bool = false,
         nested: Bool = false,
         density: SettingsRowDensity = .regular,
@@ -132,6 +141,8 @@ struct SettingsRow<Control: View>: View {
         self.title = title
         self.subtitle = subtitle
         self.icon = icon
+        self.account = account
+        self.symbol = symbol
         self.controlBelow = controlBelow
         self.nested = nested
         self.density = density
@@ -162,8 +173,18 @@ struct SettingsRow<Control: View>: View {
 
     private var label: some View {
         HStack(alignment: .center, spacing: 16) {
-            if let icon {
+            if let account {
+                LobeIconView(account: account, size: 15)
+            } else if let icon {
                 LobeIconView(resource: icon, size: 15)
+            } else if let symbol {
+                // Outline, always: a dark appearance otherwise picked the
+                // filled variant for some symbols and not others.
+                Image(systemName: symbol)
+                    .symbolVariant(.none)
+                    .font(.system(size: 13))
+                    .frame(width: 15, height: 15)
+                    .accessibilityHidden(true)
             }
 
             VStack(alignment: .leading, spacing: density.labelSpacing) {

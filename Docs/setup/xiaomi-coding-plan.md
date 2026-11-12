@@ -9,8 +9,8 @@ A Xiaomi MiMo open-platform account with a Coding Plan, signed in to a browser a
 ## Steps
 
 1. Sign in at https://platform.xiaomimimo.com in your browser.
-2. In Blinky, go to Settings → Xiaomi Coding Plan and turn on "Show in panel". Under "Read from browser", pick the browser you signed in with (or leave it on Automatic) and click "Read".
-   - Chrome, Edge, Brave, Arc, and Vivaldi: macOS asks once for keychain permission.
+2. In Blinky, go to Settings → Xiaomi Coding Plan and turn on "Show in panel". Under "Read from browser", pick the browser you signed in with (or leave it on Default browser) and click "Read".
+   - Chrome, Edge, Brave, Arc, Vivaldi, and ego lite: macOS asks once for keychain permission.
    - Safari: give Blinky Full Disk Access first, in System Settings → Privacy & Security.
    - Firefox: nothing extra.
 3. Success looks like a ring for Xiaomi Coding Plan on the Blinky panel, showing tokens used this month, plus your account balance.
