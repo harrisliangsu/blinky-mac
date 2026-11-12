@@ -6,6 +6,10 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.43
+
+- **关于页的爱发电链接改为本仓库的赞助页。** 在「设置 → 关于」中，「在爱发电支持作者」打开本仓库的赞助页 `https://afdian.com/a/sharkchiligaga`（与 `.github/FUNDING.yml` 和 README 页眉的 Sponsor 链接相同），不再打开上游 Pulse 作者的 `afdian.com/a/qunqin`。README 页脚仍署名上游作者的咖啡徽章保持不变。[#111](https://github.com/harrisliangsu/blinky-mac/pull/111)
+
 ## 1.5.42
 
 - **扩展可以使用自己的 PNG 图标。** 在扩展的 `pulse-extension.json` 里用 `icon` 指定文件夹内的 PNG 后，圆环、卡片、设置和菜单栏会按原色显示它。感谢 [@Jiar](https://github.com/qunqin24/Pulse/pull/109) 贡献。
