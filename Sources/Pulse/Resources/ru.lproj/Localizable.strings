@@ -198,6 +198,8 @@
 "Waiting for the next Claude Code response." = "Ожидание следующего ответа Claude Code.";
 "Loading…" = "Загрузка…";
 "No reading" = "Нет данных";
+"Share of this week's usage" = "Доли продуктов в использовании за неделю";
+"As Anthropic reports it. Together the shares make up the whole week; they are not shares of the limit." = "Так сообщает Anthropic. Вместе доли составляют всё использование за неделю; это не доли лимита.";
 "Refreshing…" = "Обновление…";
 "Refresh usage" = "Обновить данные";
 "Activate to refresh usage." = "Активируйте, чтобы обновить данные.";
@@ -531,7 +533,7 @@
 
 /* The second usage ring */
 "Second limit inside the ring" = "Второй лимит внутри кольца";
-"A thinner ring for the next-fullest limit, where a provider has one." = "Тонкое внутреннее кольцо для второго по расходу лимита, если у сервиса он есть.";
+"A ring just inside the first, as thick as it, for the next-fullest limit, where a provider has one." = "Внутреннее кольцо той же толщины вплотную к первому — для второго по расходу лимита, если у сервиса он есть.";
 "That key works. The account has no Coding Plan running on it." = "Ключ действителен, но у аккаунта нет активного Coding Plan.";
 
 /* Usage history read from a provider's own statistics */
@@ -1012,12 +1014,6 @@
 "Last used %@" = "последний запрос: %@";
 "The latest one's cache lapsed at %@." = "Кэш последнего чата истёк в %@.";
 "Read from Claude Code's own records: each reply says whether it cached for an hour or five minutes, and a cache lasts that long from the last request that used it. That is the time if nothing before it has changed — switching model, changing tools or compacting starts a new cache. Subagents keep caches of their own and are not listed." = "Берётся из записей самого Claude Code: в каждом ответе указано, кэширован он на час или на пять минут, и кэш живёт столько же с момента последнего запроса, который его использовал. Это время верно, если предшествующая часть диалога не менялась: смена модели, изменение набора инструментов или сжатие контекста создают новый кэш. У субагентов свои кэши, здесь они не показаны.";
-"At least %@ left" = "осталось не менее %@";
-"May have lapsed" = "возможно, истёк";
-"Read from Codex's own records: the model each request used, and when it was sent. On GPT-5.6 and later, OpenAI keeps a cache available for at least 30 minutes after it was last used, and may keep it longer — so this is the time it is guaranteed, not when it ends. Earlier models have no stated lifetime and are not listed. Under heavy traffic a request can still miss within this time." = "Берётся из записей самого Codex: какая модель использовалась в каждом запросе и когда он был отправлен. Для GPT-5.6 и новее OpenAI хранит кэш не менее 30 минут после последнего использования и может хранить дольше, поэтому здесь показано гарантированное время, а не момент окончания. Для более ранних моделей срок хранения не объявлен, и они не показаны. При высокой нагрузке запрос может не попасть в кэш даже в это время.";
-"No conversation is within its guaranteed cache time" = "Нет чатов в пределах гарантированного срока кэша";
-"Kept at least %@" = "хранится не менее %@";
-"The latest one's guaranteed time ended at %@." = "Гарантированный срок последнего чата истёк в %@.";
 "Usage panel in the menu" = "Панель расхода в меню";
 "Opens the menu bar menu on an overview of every account, with a tab for each one's limits, plan and spend." = "Меню в строке меню открывается с обзора всех аккаунтов, а у каждого аккаунта есть вкладка с лимитами, тарифом и расходами.";
 "OpenCode console" = "Консоль OpenCode";

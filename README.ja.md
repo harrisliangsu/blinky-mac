@@ -34,9 +34,11 @@
 </p>
 
 <p align="center">
-  <img src="Docs/images/demo.gif" height="400" alt="画面の端に寄せた Blinky のフローティングレール">
+  <img src="Docs/images/demo.gif" height="360" alt="画面の端に寄せた Blinky のフローティングレール">
   &nbsp;&nbsp;
-  <img src="Docs/images/panel.png" height="400" alt="リングにポインタを乗せると、すべての上限とリセット時刻を並べたカードが開きます">
+  <img src="Docs/images/panel.png" height="360" alt="リングにポインタを乗せると、すべての上限とリセット時刻を並べたカードが開きます">
+  &nbsp;&nbsp;
+  <img src="Docs/images/glass.webp" height="360" alt="Liquid Glass で表示した同じパネル">
 </p>
 
 - **78 のサービスをひと目で**——Claude Code、Codex、Cursor、GitHub Copilot、Antigravity、Kiro、Grok、DeepSeek、Kimi Code など。それぞれに専用のリングがあります。

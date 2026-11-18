@@ -126,7 +126,8 @@ struct GrokBotUsageService: Sendable {
     /// fixtures into it directly. Do not tidy it back.
     struct Reply: Decodable {
         let currentPeriodStart: String?
-        /// Absent on every account measured here — see `window(from:)`.
+        /// Absent on the account measured at implementation; some accounts
+        /// carry it now — see `window(from:)`.
         let nextResetTimestampUtc: String?
         /// How much is **gone**, 0...100.
         let usagePercent: Double?
@@ -141,15 +142,16 @@ struct GrokBotUsageService: Sendable {
 
     /// The weekly window, when the account actually has an allowance.
     ///
-    /// **The reply states no reset and no length**, which was checked rather
+    /// **The reply often states no reset and no length**, which was checked rather
     /// than assumed: Cursor's dashboard REST call and the Connect RPC behind
     /// it (`api2.cursor.sh/aiserver.v1.DashboardService/GetSandUsageStatus`)
     /// answer byte for byte, and neither carries the `nextResetTimestampUtc` a
     /// reference implementation decodes. So the field is read where a reply
     /// offers one, the row simply has no reset line where it does not, and the
     /// seven days are a **sort key, never a length to divide by**
-    /// (`reportsLength: false`) — as Kimi's rolling week and Cursor's own
-    /// billing cycle are.
+    /// (`reportsLength: false`) — as Kimi's rolling week is. Only a reply
+    /// that states both `currentPeriodStart` and the reset gives a length,
+    /// their difference (`measuredSeconds`).
     ///
     /// That it is *weekly* is xAI's own word (docs.x.ai/grok-bot/faq), not an
     /// inference from a start stamp.
@@ -180,16 +182,41 @@ struct GrokBotUsageService: Sendable {
             let percent = reply.usagePercent
         else { return nil }
 
+        let start = reply.currentPeriodStart.flatMap(Self.date(from:))
+        let end = reply.nextResetTimestampUtc.flatMap(Self.date(from:))
+        let span = Self.measuredSeconds(from: start, to: end)
+
         return UsageWindow(
             id: "grokBot",
             kind: .weekly,
             scope: nil,
             usedFraction: min(max(percent / 100, 0), 1),
-            windowSeconds: 7 * 86_400,
-            resetsAt: reply.nextResetTimestampUtc.flatMap(Self.date(from:)),
-            reportsLength: false,
+            windowSeconds: span ?? 7 * 86_400,
+            resetsAt: end,
+            reportsLength: span != nil,
             isExhausted: percent >= 100
         )
+    }
+
+    /// The period's length when the reply states **both** ends, and nil
+    /// otherwise (#111).
+    ///
+    /// Two stamps the reply carries are a measured length, the same evidence
+    /// `GrokUsageService.window` accepts, so the window clock and the forecast
+    /// may divide by it. With either end missing the seven days stay a sort
+    /// key: a reset is never `start + 7 days`, and a start is never inferred
+    /// from a reset.
+    ///
+    /// **Only a span of about a week.** xAI calls the allowance weekly, and
+    /// what `currentPeriodStart` marks has only been seen beside no reset at
+    /// all. A span far from seven days means the two stamps do not bound the
+    /// same week — a billing month's start beside a weekly reset, say — and a
+    /// clock divided by it would be wrong, so it is not a length.
+    static func measuredSeconds(from start: Date?, to end: Date?) -> Int? {
+        guard let start, let end else { return nil }
+        let seconds = end.timeIntervalSince(start)
+        guard seconds.isFinite, (6 * 86_400...8 * 86_400).contains(seconds) else { return nil }
+        return Int(seconds.rounded())
     }
 
     /// Why there is no window — and the two reasons are different advice.
