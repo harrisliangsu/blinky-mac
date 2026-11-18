@@ -6,34 +6,34 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.43</title>
-            <pubDate>Thu, 12 Nov 2026 05:56:10 -0000</pubDate>
-            <sparkle:version>1.5.43</sparkle:version>
-            <sparkle:shortVersionString>1.5.43</sparkle:shortVersionString>
+            <title>1.5.44</title>
+            <pubDate>Wed, 18 Nov 2026 02:05:48 -0000</pubDate>
+            <sparkle:version>1.5.44</sparkle:version>
+            <sparkle:shortVersionString>1.5.44</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.43</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.44</link>
             <description xml:lang="zh-Hans"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.43</h2><ul><li><strong>关于页的爱发电链接改为本仓库的赞助页。</strong> 在「设置 → 关于」中，「在爱发电支持作者」打开本仓库的赞助页 <code>https://afdian.com/a/sharkchiligaga</code>（与 <code>.github/FUNDING.yml</code> 和 README 页眉的 Sponsor 链接相同），不再打开上游 Pulse 作者的 <code>afdian.com/a/qunqin</code>。README 页脚仍署名上游作者的咖啡徽章保持不变。<a href="https://github.com/harrisliangsu/blinky-mac/pull/111">#111</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.43">在 GitHub 查看更新说明</a></p>]]></description>
+</style><h2>Blinky 1.5.44</h2><ul><li><strong>Cursor 的月度额度和 Grok Bot 显示时间外圈。</strong> 服务商同时报告了周期的起止时间时，在「设置 → 用量」打开「距离重置的时间」会画出时间外圈，Grok Bot 的周期只在跨度大约一周时才采用。感谢 <a href="https://github.com/qunqin24/Pulse/issues/111">@tyler4400</a> 提议。</li><li><strong>Antigravity 工作时圆环会显示活动标记。</strong> <code>agy</code> 或 Antigravity.app 正在处理任务时，圆环里会出现转动的白色弧线，并读取这两个程序保存的对话数据库，读不到时再试一次。</li><li><strong>Codex 不再倒计时提示缓存。</strong> OpenAI 表示登录后的 Codex 会一直保留提示缓存，详细卡片和 Codex 设置页不再显示倒计时，重置卡、预测重置和最近一次重置仍留在这一页。</li><li><strong>Kimi Code 会读取每月额度。</strong> 报告了每月额度的账号，会在较短的限额之后显示 Kimi Code 本月和合计本月。<a href="https://github.com/qunqin24/Pulse/issues/112">#112</a></li><li><strong>Claude Code 的设置按产品显示本周用量占比。</strong> 在「设置 → 供应商 → Claude Code」的「当前用量」里，按 Anthropic 的报告列出各产品占本周用量的比例。<a href="https://github.com/qunqin24/Pulse/issues/113">#113</a></li><li><strong>内侧的第二条圆环与第一条一样粗。</strong> 在「设置 → 用量」打开「圆环内显示第二条限额」后，内侧圆环与外侧同样粗，并紧贴在内侧，相距 1 点。</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.44">在 GitHub 查看更新说明</a></p>]]></description>
             <description xml:lang="zh-Hant"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.43</h2><ul><li><strong>关于页的爱发电链接改为本仓库的赞助页。</strong> 在「设置 → 关于」中，「在爱发电支持作者」打开本仓库的赞助页 <code>https://afdian.com/a/sharkchiligaga</code>（与 <code>.github/FUNDING.yml</code> 和 README 页眉的 Sponsor 链接相同），不再打开上游 Pulse 作者的 <code>afdian.com/a/qunqin</code>。README 页脚仍署名上游作者的咖啡徽章保持不变。<a href="https://github.com/harrisliangsu/blinky-mac/pull/111">#111</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.43">在 GitHub 查看更新说明</a></p>]]></description>
+</style><h2>Blinky 1.5.44</h2><ul><li><strong>Cursor 的月度额度和 Grok Bot 显示时间外圈。</strong> 服务商同时报告了周期的起止时间时，在「设置 → 用量」打开「距离重置的时间」会画出时间外圈，Grok Bot 的周期只在跨度大约一周时才采用。感谢 <a href="https://github.com/qunqin24/Pulse/issues/111">@tyler4400</a> 提议。</li><li><strong>Antigravity 工作时圆环会显示活动标记。</strong> <code>agy</code> 或 Antigravity.app 正在处理任务时，圆环里会出现转动的白色弧线，并读取这两个程序保存的对话数据库，读不到时再试一次。</li><li><strong>Codex 不再倒计时提示缓存。</strong> OpenAI 表示登录后的 Codex 会一直保留提示缓存，详细卡片和 Codex 设置页不再显示倒计时，重置卡、预测重置和最近一次重置仍留在这一页。</li><li><strong>Kimi Code 会读取每月额度。</strong> 报告了每月额度的账号，会在较短的限额之后显示 Kimi Code 本月和合计本月。<a href="https://github.com/qunqin24/Pulse/issues/112">#112</a></li><li><strong>Claude Code 的设置按产品显示本周用量占比。</strong> 在「设置 → 供应商 → Claude Code」的「当前用量」里，按 Anthropic 的报告列出各产品占本周用量的比例。<a href="https://github.com/qunqin24/Pulse/issues/113">#113</a></li><li><strong>内侧的第二条圆环与第一条一样粗。</strong> 在「设置 → 用量」打开「圆环内显示第二条限额」后，内侧圆环与外侧同样粗，并紧贴在内侧，相距 1 点。</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.44">在 GitHub 查看更新说明</a></p>]]></description>
             <description xml:lang="en"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.43</h2><ul><li><strong>About&#x27;s Afdian link goes to this repository&#x27;s funding page.</strong> Settings → About, Support the author on Afdian, opens this fork&#x27;s funding page <code>https://afdian.com/a/sharkchiligaga</code>, the same page as <code>.github/FUNDING.yml</code> and the README header Sponsor link, in place of the upstream Pulse author&#x27;s <code>afdian.com/a/qunqin</code>. The README footer coffee badges that still credit the upstream author are unchanged. <a href="https://github.com/harrisliangsu/blinky-mac/pull/111">#111</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.43">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.43/Blinky-1.5.43.zip"
-                       length="23394991"
+</style><h2>Blinky 1.5.44</h2><ul><li><strong>Cursor&#x27;s monthly pools and Grok Bot get the time arc.</strong> When the provider reports both ends of the period, Time until reset under Settings → Usage draws the arc, and Grok Bot&#x27;s period is used only when it spans about a week. Thanks to <a href="https://github.com/qunqin24/Pulse/issues/111">@tyler4400</a> for the suggestion.</li><li><strong>Antigravity&#x27;s ring shows when it is working.</strong> While <code>agy</code> or Antigravity.app is working, a white arc turns inside Antigravity&#x27;s ring, reading the conversation databases each of them keeps and trying again when one cannot be read.</li><li><strong>Codex&#x27;s prompt cache countdown is gone.</strong> OpenAI says a signed-in Codex keeps its prompt cache, so the detailed card and Codex&#x27;s settings pane no longer count it down, and Reset cards, Predicted reset and Last reset stay on that pane.</li><li><strong>Kimi Code reads monthly allowances.</strong> An account that reports a monthly allowance shows Kimi Code&#x27;s month and the combined month after the shorter limits. <a href="https://github.com/qunqin24/Pulse/issues/112">#112</a></li><li><strong>Claude Code&#x27;s settings show the week&#x27;s split by product.</strong> Under Settings → Providers → Claude Code, Current usage lists each product&#x27;s share of the week, as Anthropic reports it. <a href="https://github.com/qunqin24/Pulse/issues/113">#113</a></li><li><strong>The second ring is as thick as the first.</strong> With Second limit inside the ring on under Settings → Usage, the inner ring is drawn at the same weight, 1pt inside the first.</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.44">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.44/Blinky-1.5.44.zip"
+                       length="23449901"
                        type="application/octet-stream"
-                       sparkle:edSignature="lkJ5PqZV6EhmnRixlGwaBw9DISMdLLX4OU7zRcsP7Se9WVgMJS9fm6FzDOf4wtYZvYgxIOhiznyjNgaL0PcWCw==" />
+                       sparkle:edSignature="Z+Hil/07iw3oWsbz4XgwpIhl4ZZaze5vschxWNXnZ820jGbDQhbHRRX3PZAIo6pY4ViVDAO89l9tx6PLVkFXAw==" />
         </item>
     </channel>
 </rss>
