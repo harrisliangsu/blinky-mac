@@ -10,6 +10,15 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.44
+
+- **Cursor's monthly pools and Grok Bot get the time arc.** When the provider reports both ends of the period, Time until reset under Settings → Usage draws the arc, and Grok Bot's period is used only when it spans about a week. Thanks to [@tyler4400](https://github.com/qunqin24/Pulse/issues/111) for the suggestion.
+- **Antigravity's ring shows when it is working.** While `agy` or Antigravity.app is working, a white arc turns inside Antigravity's ring, reading the conversation databases each of them keeps and trying again when one cannot be read.
+- **Codex's prompt cache countdown is gone.** OpenAI says a signed-in Codex keeps its prompt cache, so the detailed card and Codex's settings pane no longer count it down, and Reset cards, Predicted reset and Last reset stay on that pane.
+- **Kimi Code reads monthly allowances.** An account that reports a monthly allowance shows Kimi Code's month and the combined month after the shorter limits. [#112](https://github.com/qunqin24/Pulse/issues/112)
+- **Claude Code's settings show the week's split by product.** Under Settings → Providers → Claude Code, Current usage lists each product's share of the week, as Anthropic reports it. [#113](https://github.com/qunqin24/Pulse/issues/113)
+- **The second ring is as thick as the first.** With Second limit inside the ring on under Settings → Usage, the inner ring is drawn at the same weight, 1pt inside the first.
+
 ## 1.5.43
 
 - **About's Afdian link goes to this repository's funding page.** Settings → About, Support the author on Afdian, opens this fork's funding page `https://afdian.com/a/sharkchiligaga`, the same page as `.github/FUNDING.yml` and the README header Sponsor link, in place of the upstream Pulse author's `afdian.com/a/qunqin`. The README footer coffee badges that still credit the upstream author are unchanged. [#111](https://github.com/harrisliangsu/blinky-mac/pull/111)

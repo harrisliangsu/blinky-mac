@@ -2188,8 +2188,8 @@ private struct ActivitySection: View {
 }
 
 /// The prompt cache that lapses soonest: "Prompt cache (1 hr) · 38 min left"
-/// for one conversation — "At least 18 min left" for Codex, whose thirty
-/// minutes are OpenAI's guaranteed floor rather than a known end. For several, "Prompt cache · 3 chats · Soonest in
+/// for one Claude Code conversation. Codex is not timed: a signed-in Codex
+/// keeps its cache, and the log does not state a lifetime. For several, "Prompt cache · 3 chats · Soonest in
 /// 10 min" with **the name of that conversation under it** — a countdown
 /// without a name is one the reader cannot act on, and the rest are listed in
 /// Settings. "Expired" once none is alive: the next message then writes its
@@ -2229,10 +2229,8 @@ private struct PromptCacheRow: View {
                     }
                 }
             } else if let lapsed, now.timeIntervalSince(lapsed.expiresAt) < PromptCacheLapse.staleAfter {
-                // A guaranteed floor that has run out is not a cache known to
-                // be gone — OpenAI may still hold it.
                 row(String.localized("Prompt cache (\(Self.duration(lapsed.lifetime)))"),
-                    lapsed.isMinimum ? String.localized("May have lapsed") : String.localized("Expired"),
+                    String.localized("Expired"),
                     lapsed: true)
             }
         }
@@ -2254,14 +2252,9 @@ private struct PromptCacheRow: View {
 
     private static func duration(_ seconds: TimeInterval) -> String { PromptCacheLapse.duration(seconds) }
 
-    /// "38 min left", or for Codex's guaranteed floor "At least 18 min left".
-    ///
-    /// With several conversations the floor is said the same way: the line
-    /// under it names the conversation it belongs to, and "soonest" on top of
-    /// "at least" did not fit the row — both halves were cut to "…".
+    /// "38 min left", or with several conversations "Soonest in 10 min".
     private static func timeLeft(_ lapse: PromptCacheLapse, now: Date, several: Bool) -> String {
         let left = duration(lapse.expiresAt.timeIntervalSince(now))
-        if lapse.isMinimum { return .localized("At least \(left) left") }
         return several ? .localized("Soonest in \(left)") : .localized("\(left) left")
     }
 }

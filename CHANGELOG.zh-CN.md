@@ -6,6 +6,15 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.44
+
+- **Cursor 的月度额度和 Grok Bot 显示时间外圈。** 服务商同时报告了周期的起止时间时，在「设置 → 用量」打开「距离重置的时间」会画出时间外圈，Grok Bot 的周期只在跨度大约一周时才采用。感谢 [@tyler4400](https://github.com/qunqin24/Pulse/issues/111) 提议。
+- **Antigravity 工作时圆环会显示活动标记。** `agy` 或 Antigravity.app 正在处理任务时，圆环里会出现转动的白色弧线，并读取这两个程序保存的对话数据库，读不到时再试一次。
+- **Codex 不再倒计时提示缓存。** OpenAI 表示登录后的 Codex 会一直保留提示缓存，详细卡片和 Codex 设置页不再显示倒计时，重置卡、预测重置和最近一次重置仍留在这一页。
+- **Kimi Code 会读取每月额度。** 报告了每月额度的账号，会在较短的限额之后显示 Kimi Code 本月和合计本月。[#112](https://github.com/qunqin24/Pulse/issues/112)
+- **Claude Code 的设置按产品显示本周用量占比。** 在「设置 → 供应商 → Claude Code」的「当前用量」里，按 Anthropic 的报告列出各产品占本周用量的比例。[#113](https://github.com/qunqin24/Pulse/issues/113)
+- **内侧的第二条圆环与第一条一样粗。** 在「设置 → 用量」打开「圆环内显示第二条限额」后，内侧圆环与外侧同样粗，并紧贴在内侧，相距 1 点。
+
 ## 1.5.43
 
 - **关于页的爱发电链接改为本仓库的赞助页。** 在「设置 → 关于」中，「在爱发电支持作者」打开本仓库的赞助页 `https://afdian.com/a/sharkchiligaga`（与 `.github/FUNDING.yml` 和 README 页眉的 Sponsor 链接相同），不再打开上游 Pulse 作者的 `afdian.com/a/qunqin`。README 页脚仍署名上游作者的咖啡徽章保持不变。[#111](https://github.com/harrisliangsu/blinky-mac/pull/111)
