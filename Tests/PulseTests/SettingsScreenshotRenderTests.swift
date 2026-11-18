@@ -58,7 +58,7 @@ struct SettingsScreenshotRenderTests {
         window.appearance = NSAppearance(named: .aqua)
         let content = NSHostingView(
             rootView: SettingsView(
-                store: store, settings: settings, placement: PanelPlacement(), update: AppUpdate(), alerts: alerts,
+                store: store, settings: settings, placement: PanelPlacement(), update: AppUpdate(settings: settings), alerts: alerts,
                 shortcuts: GlobalShortcutMonitor(), navigation: navigation, openRecap: { _ in }
             )
             .environment(\.extensionIcons, settings.extensionIcons)
