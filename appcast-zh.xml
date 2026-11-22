@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.44</title>
-            <pubDate>Wed, 18 Nov 2026 02:05:48 -0000</pubDate>
-            <sparkle:version>1.5.44</sparkle:version>
-            <sparkle:shortVersionString>1.5.44</sparkle:shortVersionString>
+            <title>1.5.45</title>
+            <pubDate>Sun, 22 Nov 2026 17:45:38 -0000</pubDate>
+            <sparkle:version>1.5.45</sparkle:version>
+            <sparkle:shortVersionString>1.5.45</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.44</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.45</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.44</h2><ul><li><strong>Cursor 的月度额度和 Grok Bot 显示时间外圈。</strong> 服务商同时报告了周期的起止时间时，在「设置 → 用量」打开「距离重置的时间」会画出时间外圈，Grok Bot 的周期只在跨度大约一周时才采用。感谢 <a href="https://github.com/qunqin24/Pulse/issues/111">@tyler4400</a> 提议。</li><li><strong>Antigravity 工作时圆环会显示活动标记。</strong> <code>agy</code> 或 Antigravity.app 正在处理任务时，圆环里会出现转动的白色弧线，并读取这两个程序保存的对话数据库，读不到时再试一次。</li><li><strong>Codex 不再倒计时提示缓存。</strong> OpenAI 表示登录后的 Codex 会一直保留提示缓存，详细卡片和 Codex 设置页不再显示倒计时，重置卡、预测重置和最近一次重置仍留在这一页。</li><li><strong>Kimi Code 会读取每月额度。</strong> 报告了每月额度的账号，会在较短的限额之后显示 Kimi Code 本月和合计本月。<a href="https://github.com/qunqin24/Pulse/issues/112">#112</a></li><li><strong>Claude Code 的设置按产品显示本周用量占比。</strong> 在「设置 → 供应商 → Claude Code」的「当前用量」里，按 Anthropic 的报告列出各产品占本周用量的比例。<a href="https://github.com/qunqin24/Pulse/issues/113">#113</a></li><li><strong>内侧的第二条圆环与第一条一样粗。</strong> 在「设置 → 用量」打开「圆环内显示第二条限额」后，内侧圆环与外侧同样粗，并紧贴在内侧，相距 1 点。</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.44">在 GitHub 查看更新说明</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.44/Blinky-1.5.44.zip"
-                       length="23449901"
+</style><h2>Blinky 1.5.45</h2><ul><li><strong>Antigravity 登录只打开一个页面。</strong> 在「设置 → 供应商 → Antigravity」点「登录…」后只打开一个页面，把页面显示的验证码粘贴到同一处；登录失败、取消，或账号所在地区无法使用时，不会立刻再打开页面。<a href="https://github.com/harrisliangsu/blinky-mac/pull/116">#116</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.45">在 GitHub 查看更新说明</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.45/Blinky-1.5.45.zip"
+                       length="23563234"
                        type="application/octet-stream"
-                       sparkle:edSignature="Z+Hil/07iw3oWsbz4XgwpIhl4ZZaze5vschxWNXnZ820jGbDQhbHRRX3PZAIo6pY4ViVDAO89l9tx6PLVkFXAw==" />
+                       sparkle:edSignature="maAvLM5636I8akzMh+hgZa6f8mHVXphK3Ye9kGK1P6Vh1Ml1XJcd/luFXXtbMxiiuTRF/kMUlFS4C01bnVWtCw==" />
         </item>
     </channel>
 </rss>

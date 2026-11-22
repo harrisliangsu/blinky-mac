@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.44</title>
-            <pubDate>Wed, 18 Nov 2026 02:05:48 -0000</pubDate>
-            <sparkle:version>1.5.44</sparkle:version>
-            <sparkle:shortVersionString>1.5.44</sparkle:shortVersionString>
+            <title>1.5.45</title>
+            <pubDate>Sun, 22 Nov 2026 17:45:38 -0000</pubDate>
+            <sparkle:version>1.5.45</sparkle:version>
+            <sparkle:shortVersionString>1.5.45</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.44</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.45</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.44</h2><ul><li><strong>Cursor&#x27;s monthly pools and Grok Bot get the time arc.</strong> When the provider reports both ends of the period, Time until reset under Settings → Usage draws the arc, and Grok Bot&#x27;s period is used only when it spans about a week. Thanks to <a href="https://github.com/qunqin24/Pulse/issues/111">@tyler4400</a> for the suggestion.</li><li><strong>Antigravity&#x27;s ring shows when it is working.</strong> While <code>agy</code> or Antigravity.app is working, a white arc turns inside Antigravity&#x27;s ring, reading the conversation databases each of them keeps and trying again when one cannot be read.</li><li><strong>Codex&#x27;s prompt cache countdown is gone.</strong> OpenAI says a signed-in Codex keeps its prompt cache, so the detailed card and Codex&#x27;s settings pane no longer count it down, and Reset cards, Predicted reset and Last reset stay on that pane.</li><li><strong>Kimi Code reads monthly allowances.</strong> An account that reports a monthly allowance shows Kimi Code&#x27;s month and the combined month after the shorter limits. <a href="https://github.com/qunqin24/Pulse/issues/112">#112</a></li><li><strong>Claude Code&#x27;s settings show the week&#x27;s split by product.</strong> Under Settings → Providers → Claude Code, Current usage lists each product&#x27;s share of the week, as Anthropic reports it. <a href="https://github.com/qunqin24/Pulse/issues/113">#113</a></li><li><strong>The second ring is as thick as the first.</strong> With Second limit inside the ring on under Settings → Usage, the inner ring is drawn at the same weight, 1pt inside the first.</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.44">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.44/Blinky-1.5.44.zip"
-                       length="23449901"
+</style><h2>Blinky 1.5.45</h2><ul><li><strong>Antigravity opens one sign-in page.</strong> Under Settings → Providers → Antigravity, Sign in opens one Google page and the code that page shows is pasted there; a failed, cancelled, or unsupported-region sign-in does not open another page immediately. <a href="https://github.com/harrisliangsu/blinky-mac/pull/116">#116</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.45">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.45/Blinky-1.5.45.zip"
+                       length="23563234"
                        type="application/octet-stream"
-                       sparkle:edSignature="Z+Hil/07iw3oWsbz4XgwpIhl4ZZaze5vschxWNXnZ820jGbDQhbHRRX3PZAIo6pY4ViVDAO89l9tx6PLVkFXAw==" />
+                       sparkle:edSignature="maAvLM5636I8akzMh+hgZa6f8mHVXphK3Ye9kGK1P6Vh1Ml1XJcd/luFXXtbMxiiuTRF/kMUlFS4C01bnVWtCw==" />
         </item>
     </channel>
 </rss>
