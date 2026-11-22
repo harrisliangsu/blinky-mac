@@ -1527,3 +1527,20 @@
 "Star on GitHub" = "GitHub에서 Star 누르기";
 "Support the author on Afdian" = "Afdian에서 제작자 후원하기";
 "Stars help other people find Blinky." = "Star는 더 많은 사람이 Blinky를 알게 되는 데 도움이 됩니다.";
+
+/* Antigravity sign-in */
+"Sign in to Antigravity in Settings. The page shows a code; paste it there." = "설정에서 Antigravity에 로그인합니다. 페이지에 표시된 코드를 거기에 붙여 넣으세요.";
+"Antigravity isn't available for this Google account's region." = "이 Google 계정의 지역에서는 Antigravity를 사용할 수 없습니다.";
+"Antigravity sign-in" = "Antigravity 로그인";
+"Opens one Google page. When it shows a code, paste it here." = "Google 페이지를 하나만 엽니다. 페이지에 코드가 보이면 여기에 붙여 넣으세요.";
+"Waiting for the code the page shows." = "페이지에 표시되는 코드를 기다리는 중입니다.";
+"Paste the code" = "코드 붙여 넣기";
+"Continue" = "계속";
+"A sign-in page is already open. Finish it, or cancel it, before starting another." = "로그인 페이지가 이미 열려 있습니다. 마치거나 취소한 다음 다시 시작하세요.";
+"That sign-in didn't finish. Blinky will not open another page yet." = "로그인이 끝나지 않았습니다. Blinky는 잠시 페이지를 열지 않습니다.";
+"Antigravity isn't available for this account's region, so Blinky will not open another page." = "이 계정의 지역에서는 Antigravity를 사용할 수 없어 Blinky가 페이지를 열지 않습니다.";
+"Paste the code the page shows." = "페이지에 표시된 코드를 붙여 넣으세요.";
+"Couldn't start Antigravity's sign-in." = "Antigravity 로그인을 시작하지 못했습니다.";
+"This version of the agy CLI can't sign in from Blinky. Update it, or run agy in Terminal once." = "이 버전의 agy는 Blinky에서 로그인할 수 없습니다. 업데이트하거나 터미널에서 agy를 한 번 실행하세요.";
+"Install the agy CLI, or run agy in Terminal once, to sign in." = "로그인하려면 agy를 설치하거나 터미널에서 agy를 한 번 실행하세요.";
+"Signed in. Blinky reads Antigravity on the next refresh." = "로그인했습니다. 다음 새로 고침 때 Blinky가 Antigravity를 읽습니다.";

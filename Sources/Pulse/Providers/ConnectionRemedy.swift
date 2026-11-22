@@ -37,6 +37,10 @@ enum ConnectionRemedy: Equatable {
         case .claudeDesktopNotSignedIn, .claudeDesktopSessionExpired: return .openApp("Claude")
         case .cursorSignInRequired, .cursorLoginExpired: return .openApp("Cursor")
         case .antigravityNotRunning, .antigravityNotAnswering: return .openApp("Antigravity")
+        case .antigravitySignInRequired: return .signIn
+        // A region refusal is not a step that opens anything. The sentence
+        // on the card is the whole remedy.
+        case .antigravityUnsupportedRegion: return nil
         // The remedy for both is the same thing: start it. A plan it has never
         // recorded is one sign-in away, and opening the app is the step before
         // that either way.

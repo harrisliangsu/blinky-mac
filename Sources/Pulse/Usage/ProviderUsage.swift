@@ -700,6 +700,13 @@ struct ProviderUsage: Identifiable, Equatable, Sendable {
         /// `agy` is older than 1.1.11, where `/usage` would be sent to the
         /// model as a prompt, so it is not asked (`cliMinimumVersion`).
         case antigravityCLIOutdated
+        /// `agy` has no usable login. The page it would open shows a code
+        /// that has to be pasted back; Settings does that once, and a probe
+        /// must not open the page on its own.
+        case antigravitySignInRequired
+        /// The Google account's region is one Antigravity does not serve.
+        /// Opening the sign-in page again does not change that.
+        case antigravityUnsupportedRegion
         /// It is installed and has never been signed in, or the session went.
         case volcengineSignInRequired
         /// The key works and the account has no Coding Plan running on it.
@@ -845,6 +852,8 @@ struct ProviderUsage: Identifiable, Equatable, Sendable {
             case .volcengineCLIMissing: .localized("Install arkcli and run `arkcli auth login`, or add access keys in Settings.")
             case .antigravityCLIMissing: .localized("The agy CLI isn't installed. Install it, or choose another source in Settings.")
             case .antigravityCLIOutdated: .localized("This version of the agy CLI can't report usage. Update it to 1.1.11 or later.")
+            case .antigravitySignInRequired: .localized("Sign in to Antigravity in Settings. The page shows a code; paste it there.")
+            case .antigravityUnsupportedRegion: .localized("Antigravity isn't available for this Google account's region.")
             case .volcengineSignInRequired: .localized("arkcli isn't signed in. Run `arkcli auth login`.")
             case .zaiNoCodingPlan: .localized("That key works. The account has no Coding Plan running on it.")
             case .devinAppMissing: .localized("Devin isn't installed.")

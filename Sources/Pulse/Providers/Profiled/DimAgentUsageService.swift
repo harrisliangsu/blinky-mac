@@ -33,8 +33,8 @@ enum DimAgentUsageService {
         ) {
         case .success(let data): return reading(from: data, context: context)
         case .failure(.couldNotStart): return context.unavailable(.localAppMissing)
-        case .failure(.timedOut): return context.unavailable(.unreachable)
-        case .failure(.exited(_, let error)): return context.unavailable(exitReason(error))
+        case .failure(.timedOut(_, _)): return context.unavailable(.unreachable)
+        case .failure(.exited(_, let error, _)): return context.unavailable(exitReason(error))
         }
     }
 

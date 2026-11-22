@@ -43,7 +43,8 @@ final class ConnectionRepairModel {
         messages[account.id] = nil
         switch remedy {
         case .signIn:
-            if account.provider == .copilot { signIn.startGitHubSignIn() }
+            if account.provider == .antigravity { signIn.startAntigravityLogin() }
+            else if account.provider == .copilot { signIn.startGitHubSignIn() }
             else if account.isPrimary, account.provider == .grok {
                 // The primary fallback is a device-code login Blinky holds,
                 // the same flow an added account uses, written onto the

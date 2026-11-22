@@ -67,8 +67,28 @@ extension AntigravityUsageService {
         return isExecutable(path) ? URL(fileURLWithPath: path) : nil
     }
 
+    /// The environment a usage probe gives `agy`.
+    ///
+    /// The quiet variables are the whole point. Without them a signed-out
+    /// CLI on this Mac opens the system browser and waits for a code, and
+    /// the probe's standard input is closed, so the code cannot be typed
+    /// and the next refresh opens another window. See `AntigravityLogin`.
+    static func cliEnvironment(binary: URL) -> [String: String] {
+        var environment = BoundedProcess.environment(leading: binary, over: BoundedProcess.inheritedEnvironment)
+        for (key, value) in AntigravityLoginTranscript.quietEnvironment {
+            environment[key] = value
+        }
+        return environment
+    }
+
     static func askCLI(_ binary: URL) async -> CLIAnswer {
-        let environment = BoundedProcess.environment(leading: binary, over: BoundedProcess.inheritedEnvironment)
+        await AntigravitySession.shared.probe { await askCLINow(binary) }
+    }
+
+    /// One probe, with no opinion about whether it should have been started.
+    /// `askCLI` is the gate in front of this.
+    static func askCLINow(_ binary: URL) async -> CLIAnswer {
+        let environment = cliEnvironment(binary: binary)
 
         switch await BoundedProcess.run(
             binary, ["--version"],
@@ -93,13 +113,41 @@ extension AntigravityUsageService {
             deadline: cliDeadline,
             outputCeiling: cliOutputCeiling
         ) {
-        case .success(let data): return cliAnswer(from: data)
+        case .success(let data):
+            let text = String(decoding: data, as: UTF8.self)
+            if AntigravityLoginTranscript.unsupportedRegion(text) || AntigravityLoginTranscript.asksToSignIn(text) {
+                return cliFailure(text: text)
+            }
+            return cliAnswer(from: data)
         case .failure(.couldNotStart): return .notAsked(.antigravityCLIMissing)
-        case .failure(.timedOut): return .failed(.unreachable)
+        case .failure(.timedOut(let error, let output)):
+            // A sign-in that opened a page and then waited out the deadline
+            // still printed why. A slow eligibility check did not, and stays
+            // a timeout.
+            let failure = cliFailure(text: combined(error, output))
+            if case .failed(.unreadableReply) = failure { return .failed(.unreachable) }
+            return failure
         // A failed run exits 1 with `status: "ERROR"` and a message, which
-        // does not say reliably whether the cause is the network or the login.
-        case .failure(.exited): return .failed(.unreadableReply)
+        // does not say reliably whether the cause is the network or the login
+        // — except when the message is the sign-in prompt itself.
+        case .failure(.exited(_, let error, let output)):
+            return cliFailure(text: combined(error, output))
         }
+    }
+
+    /// What a probe that did not produce usage figures actually said.
+    static func cliFailure(text: String) -> CLIAnswer {
+        if AntigravityLoginTranscript.unsupportedRegion(text) {
+            return .failed(.antigravityUnsupportedRegion)
+        }
+        if AntigravityLoginTranscript.asksToSignIn(text) {
+            return .failed(.antigravitySignInRequired)
+        }
+        return .failed(.unreadableReply)
+    }
+
+    private static func combined(_ error: String, _ output: Data) -> String {
+        error + "\n" + (String(data: output, encoding: .utf8) ?? "")
     }
 
     /// Whether `agy --version` names a version at or past `cliMinimumVersion`.
@@ -162,6 +210,14 @@ extension AntigravityUsageService {
                 .recording(.antigravityCLI, after: server.attempts)
 
         case .failed(let reason):
+            // The editor is not open, and the CLI asked for a sign-in or
+            // refused the region. "Open Antigravity" would launch the app,
+            // which is another way to open the same page. Say which it was.
+            if server.state == .unavailable(.antigravityNotRunning),
+               reason == .antigravitySignInRequired || reason == .antigravityUnsupportedRegion {
+                return ProviderUsage.unavailable(.antigravity, reason: reason)
+                    .recording(.antigravityCLI, after: server.attempts)
+            }
             var result = server
             result.attempts.append(.init(route: .antigravityCLI, state: .unavailable(reason)))
             return result

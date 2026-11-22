@@ -121,8 +121,8 @@ enum AlibabaTokenPlanUsageService {
         ) {
         case .success(let data): .success(data)
         case .failure(.couldNotStart): .failure(.localLoginMissing)
-        case .failure(.timedOut): .failure(.unreachable)
-        case .failure(.exited(_, let problem)): .failure(reason(forExitOf: problem))
+        case .failure(.timedOut(_, _)): .failure(.unreachable)
+        case .failure(.exited(_, let problem, _)): .failure(reason(forExitOf: problem))
         }
     }
 

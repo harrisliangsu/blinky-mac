@@ -148,6 +148,29 @@ struct AntigravityCLITests {
         #expect(AntigravityUsageService.cliArguments == ["--log-file", "/dev/null", "-p", "/usage", "--output-format", "json"])
     }
 
+    @Test("A usage probe tells agy not to open a browser")
+    func quietEnvironment() {
+        let environment = AntigravityUsageService.cliEnvironment(binary: URL(fileURLWithPath: "/tmp/agy"))
+        #expect(environment["AGY_CLI_NONINTERACTIVE_HEADLESS"] == "1")
+        #expect(environment["AGY_CLI_INTERACTIVE_HEADLESS"] == "1")
+        #expect(environment["BROWSER"] == "none")
+        #expect(environment["CI"] == "1")
+        let login = AntigravityLoginTranscript.loginEnvironment
+        #expect(login["AGY_CLI_INTERACTIVE_HEADLESS"] == "1")
+        #expect(login["BROWSER"] == "none")
+        #expect(login["CI"] == nil)
+        #expect(login["AGY_CLI_NONINTERACTIVE_HEADLESS"] == nil)
+    }
+
+    @Test("A sign-in prompt is not read as a broken usage reply")
+    func signInPrompt() {
+        let prompt = "Authentication required. Please visit the URL to log in:\nhttps://accounts.google.com/o/oauth2/auth?client_id=example"
+        #expect(AntigravityUsageService.cliFailure(text: prompt) == .failed(.antigravitySignInRequired))
+        let region = "Antigravity is not available in your region."
+        #expect(AntigravityUsageService.cliFailure(text: region) == .failed(.antigravityUnsupportedRegion))
+        #expect(AntigravityUsageService.cliFailure(text: "Eligibility check failed") == .failed(.unreadableReply))
+    }
+
     // MARK: - Weighing it against the language server
 
     private static let closed = ProviderUsage.unavailable(.antigravity, reason: .antigravityNotRunning)
@@ -165,6 +188,25 @@ struct AntigravityCLITests {
         #expect(result.origin == .antigravityCLI)
         #expect(result.attempts.map(\.route) == [.languageServer, .antigravityCLI])
         #expect(result.attempts.first?.state == .unavailable(.antigravityNotRunning))
+    }
+
+    @Test("A signed-out CLI, with the editor closed, asks for one sign-in instead of opening the app")
+    func signedOutReplacesClosedApp() {
+        let signIn = AntigravityUsageService.weigh(
+            server: Self.closed, cli: .failed(.antigravitySignInRequired)
+        )
+        #expect(signIn.state == .unavailable(.antigravitySignInRequired))
+        #expect(signIn.attempts.map(\.route) == [.languageServer, .antigravityCLI])
+
+        let region = AntigravityUsageService.weigh(
+            server: Self.closed, cli: .failed(.antigravityUnsupportedRegion)
+        )
+        #expect(region.state == .unavailable(.antigravityUnsupportedRegion))
+
+        let open = ProviderUsage.unavailable(.antigravity, reason: .antigravityNotAnswering)
+            .recording(.languageServer)
+        let kept = AntigravityUsageService.weigh(server: open, cli: .failed(.antigravitySignInRequired))
+        #expect(kept.state == .unavailable(.antigravityNotAnswering))
     }
 
     @Test("A CLI that fails leaves the language server's reason standing, and is recorded")

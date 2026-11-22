@@ -1527,3 +1527,20 @@
 "Star on GitHub" = "在 GitHub 上按 Star";
 "Support the author on Afdian" = "在愛發電支持作者";
 "Stars help other people find Blinky." = "Star 能讓更多人發現 Blinky。";
+
+/* Antigravity sign-in */
+"Sign in to Antigravity in Settings. The page shows a code; paste it there." = "在「設定」裡登入 Antigravity。頁面上會顯示一組驗證碼，把它貼到那裡。";
+"Antigravity isn't available for this Google account's region." = "這個 Google 帳號所在的地區無法使用 Antigravity。";
+"Antigravity sign-in" = "Antigravity 登入";
+"Opens one Google page. When it shows a code, paste it here." = "只開啟一個 Google 頁面。頁面顯示驗證碼後，貼到這裡。";
+"Waiting for the code the page shows." = "正在等待頁面上的驗證碼。";
+"Paste the code" = "貼上驗證碼";
+"Continue" = "繼續";
+"A sign-in page is already open. Finish it, or cancel it, before starting another." = "已經開啟了一個登入頁面。請先完成或取消它，再開始下一次。";
+"That sign-in didn't finish. Blinky will not open another page yet." = "這次登入沒有完成。Blinky 暫時不會再開啟頁面。";
+"Antigravity isn't available for this account's region, so Blinky will not open another page." = "這個帳號所在的地區無法使用 Antigravity，Blinky 不會再開啟登入頁面。";
+"Paste the code the page shows." = "請貼上頁面顯示的驗證碼。";
+"Couldn't start Antigravity's sign-in." = "無法開始 Antigravity 的登入。";
+"This version of the agy CLI can't sign in from Blinky. Update it, or run agy in Terminal once." = "這個版本的 agy 無法在 Blinky 裡登入。請更新它，或在終端機裡執行一次 agy。";
+"Install the agy CLI, or run agy in Terminal once, to sign in." = "請先安裝 agy，或在終端機裡執行一次 agy，再登入。";
+"Signed in. Blinky reads Antigravity on the next refresh." = "已登入。下次重新整理時 Blinky 會讀取 Antigravity。";
