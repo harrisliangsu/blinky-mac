@@ -350,7 +350,7 @@ actor AntigravitySession {
 
     /// Runs `body` if a probe is allowed, and never two at once. A second
     /// caller waits for the first instead of starting another `agy`.
-    func probe(_ body: @Sendable () async -> AntigravityUsageService.CLIAnswer) async -> AntigravityUsageService.CLIAnswer {
+    func probe(_ body: @escaping @Sendable () async -> AntigravityUsageService.CLIAnswer) async -> AntigravityUsageService.CLIAnswer {
         if let probeTask { return await probeTask.value }
         let now = clock()
         guard machine.mayProbe(now: now) else {
