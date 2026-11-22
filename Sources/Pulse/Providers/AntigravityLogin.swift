@@ -535,8 +535,8 @@ actor AntigravitySession {
 final class AntigravityLoginChild: AntigravityLoginRunning, @unchecked Sendable {
     private let process = Process()
     private let input = Pipe()
-    private let output = Pipe()
-    private let error = Pipe()
+    private let standardOutputPipe = Pipe()
+    private let standardErrorPipe = Pipe()
     private let lock = NSLock()
     private var buffer = Data()
     private var statusCode: Int32?
@@ -566,7 +566,7 @@ final class AntigravityLoginChild: AntigravityLoginRunning, @unchecked Sendable 
         let closed = inputClosed
         lock.unlock()
         guard !closed else { return }
-        try? input.fileHandleForWriting.write(data)
+        input.fileHandleForWriting.write(data)
     }
 
     func stop() {
@@ -596,8 +596,8 @@ final class AntigravityLoginChild: AntigravityLoginRunning, @unchecked Sendable 
         process.environment = environment
         process.currentDirectoryURL = FileManager.default.temporaryDirectory
         process.standardInput = input
-        process.standardOutput = output
-        process.standardError = error
+        process.standardOutput = standardOutputPipe
+        process.standardError = standardErrorPipe
         process.terminationHandler = { [weak self] process in
             guard let self else { return }
             self.lock.lock()
@@ -616,7 +616,7 @@ final class AntigravityLoginChild: AntigravityLoginRunning, @unchecked Sendable 
             group = pid
             lock.unlock()
         }
-        for pipe in [output, error] {
+        for pipe in [standardOutputPipe, standardErrorPipe] {
             pipe.fileHandleForReading.readabilityHandler = { [weak self] handle in
                 let chunk = handle.availableData
                 guard !chunk.isEmpty else {
