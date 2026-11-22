@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.45
+
+- **Antigravity opens one sign-in page.** Under Settings → Providers → Antigravity, Sign in opens one Google page and the code that page shows is pasted there; a failed, cancelled, or unsupported-region sign-in does not open another page immediately. [#116](https://github.com/harrisliangsu/blinky-mac/pull/116)
+
 ## 1.5.44
 
 - **Cursor's monthly pools and Grok Bot get the time arc.** When the provider reports both ends of the period, Time until reset under Settings → Usage draws the arc, and Grok Bot's period is used only when it spans about a week. Thanks to [@tyler4400](https://github.com/qunqin24/Pulse/issues/111) for the suggestion.

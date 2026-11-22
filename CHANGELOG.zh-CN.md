@@ -6,6 +6,10 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.45
+
+- **Antigravity 登录只打开一个页面。** 在「设置 → 供应商 → Antigravity」点「登录…」后只打开一个页面，把页面显示的验证码粘贴到同一处；登录失败、取消，或账号所在地区无法使用时，不会立刻再打开页面。[#116](https://github.com/harrisliangsu/blinky-mac/pull/116)
+
 ## 1.5.44
 
 - **Cursor 的月度额度和 Grok Bot 显示时间外圈。** 服务商同时报告了周期的起止时间时，在「设置 → 用量」打开「距离重置的时间」会画出时间外圈，Grok Bot 的周期只在跨度大约一周时才采用。感谢 [@tyler4400](https://github.com/qunqin24/Pulse/issues/111) 提议。
