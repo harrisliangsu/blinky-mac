@@ -19,8 +19,11 @@ struct AntigravityLoginTests {
         #expect(!AntigravityLoginTranscript.asksToSignIn(#"{"status":"SUCCESS","command":{"name":"usage"}}"#))
         #expect(AntigravityLoginTranscript.unsupportedRegion("Antigravity is not available in your region."))
         #expect(AntigravityLoginTranscript.unsupportedRegion("这个账号所在的地区无法使用"))
-        #expect(AntigravityLoginTranscript.submission(from: "  abcd-1234 \n") == nil)
+        // A copy from the page often carries a trailing line break. A paste
+        // of several lines is a different thing and is not a code.
+        #expect(AntigravityLoginTranscript.submission(from: "  abcd-1234 \n") == "abcd-1234")
         #expect(AntigravityLoginTranscript.submission(from: " abcd-1234 ") == "abcd-1234")
+        #expect(AntigravityLoginTranscript.submission(from: "abcd\n1234") == nil)
         #expect(AntigravityLoginTranscript.submission(from: " ") == nil)
     }
 
