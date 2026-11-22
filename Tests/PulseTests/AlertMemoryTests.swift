@@ -1057,7 +1057,10 @@ struct AlertMemoryTests {
     @Test("Antigravity open but refusing is not a failure; nothing running is not either")
     func antigravityReasonsAreSpared() {
         var memory = AlertMemory()
-        for reason: ProviderUsage.Unavailability in [.antigravityNotAnswering, .antigravityNotRunning] {
+        for reason: ProviderUsage.Unavailability in [
+            .antigravityNotAnswering, .antigravityNotRunning,
+            .antigravitySignInRequired, .antigravityUnsupportedRegion
+        ] {
             memory = AlertMemory()
             for _ in 1...5 {
                 #expect(run(&memory, Self.unavailable(reason)).isEmpty, "\(reason) alerted")

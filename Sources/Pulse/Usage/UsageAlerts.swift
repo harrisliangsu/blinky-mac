@@ -717,6 +717,7 @@ struct AlertMemory: Codable, Sendable, Equatable {
              .signInRequired, .claudeSignInRequired, .claudeDesktopNotSignedIn,
              .codexNotInstalled, .kiroNotInstalled, .kiroVersionUnsupported,
              .kiroSignInRequired, .antigravityNotRunning, .antigravityNotAnswering,
+             .antigravitySignInRequired, .antigravityUnsupportedRegion,
              .cursorSignInRequired, .grokSignInRequired, .grokAccountSignInRequired,
              .kimiSignInRequired, .notSignedIn,
              .ollamaSessionMissing, .qoderSessionMissing, .xiaomiSessionMissing, .stepFunSessionMissing,

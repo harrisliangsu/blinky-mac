@@ -145,8 +145,8 @@ enum WindowStarter {
         switch result {
         case .success: return .sent
         case .failure(.couldNotStart): return .toolMissing
-        case .failure(.timedOut): return .timedOut
-        case .failure(.exited): return .failed
+        case .failure(.timedOut(_, _)): return .timedOut
+        case .failure(.exited(_, _, _)): return .failed
         }
     }
 }

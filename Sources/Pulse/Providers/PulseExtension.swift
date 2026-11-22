@@ -311,9 +311,9 @@ struct ExtensionUsageService: Sendable {
             return ExtensionReport.reading(from: data, for: account)
         case .failure(.couldNotStart):
             return .unavailable(account, reason: .extensionMissing)
-        case .failure(.timedOut):
+        case .failure(.timedOut(_, _)):
             return .unavailable(account, reason: .extensionTimedOut)
-        case .failure(.exited):
+        case .failure(.exited(_, _, _)):
             return .unavailable(account, reason: .extensionFailed)
         }
     }

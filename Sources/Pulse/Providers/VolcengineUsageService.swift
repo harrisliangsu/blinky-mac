@@ -212,8 +212,8 @@ struct VolcengineUsageService: Sendable {
         switch result {
         case .success(let data): .success(data)
         case .failure(.couldNotStart): .failure(Refusal(reason: .volcengineCLIMissing))
-        case .failure(.timedOut): .failure(Refusal(reason: .unreachable))
-        case .failure(.exited(_, let problem)): .failure(Refusal(reason: Self.reason(forExitOf: problem)))
+        case .failure(.timedOut(_, _)): .failure(Refusal(reason: .unreachable))
+        case .failure(.exited(_, let problem, _)): .failure(Refusal(reason: Self.reason(forExitOf: problem)))
         }
     }
 

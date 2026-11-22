@@ -122,6 +122,11 @@ struct AccountConnectionGroup: View {
                 }
             }
 
+            if account.provider == .antigravity {
+                SettingsRowDivider()
+                antigravitySignIn
+            }
+
             // **Its own `if`, not the tail of that chain.** A provider can want
             // both a route picker *and* a credential — Volcengine does: the
             // `arkcli` route needs nothing pasted and the signed-endpoint route
@@ -297,6 +302,75 @@ struct AccountConnectionGroup: View {
                 SettingsRowDivider()
                 ClaudeCodeStatusLineRow(store: store, repairs: repairs)
             }
+        }
+    }
+
+    /// Antigravity's sign-in. The CLI prints a page address and then reads
+    /// one code from its input; this row is that input. A second Sign in
+    /// while the page is up is Cancel, not another page.
+    @ViewBuilder
+    private var antigravitySignIn: some View {
+        SettingsRow(
+            String.localized("Antigravity sign-in"),
+            subtitle: antigravitySubtitle,
+            symbol: "person.crop.circle"
+        ) {
+            if signIn.antigravity.mode == .idle {
+                Button(String.localized("Sign in…")) { signIn.startAntigravityLogin() }
+            } else {
+                Button(String.localized("Cancel")) { signIn.cancelAntigravityLogin() }
+            }
+        }
+        if signIn.antigravity.mode == .waiting {
+            SettingsRowDivider()
+            SettingsRow(String.localized("Paste the code"), symbol: "number") {
+                HStack(spacing: 8) {
+                    TextField(
+                        "",
+                        text: Binding(
+                            get: { signIn.antigravityCode },
+                            set: { signIn.antigravityCode = $0 }
+                        ),
+                        prompt: Text(localized: "Paste the code the page shows.")
+                    )
+                    .textFieldStyle(.roundedBorder)
+                    .frame(width: SettingsLayout.controlWidth)
+                    Button(String.localized("Continue")) { signIn.submitAntigravityCode() }
+                }
+            }
+        }
+    }
+
+    private var antigravitySubtitle: String {
+        if let notice = signIn.antigravity.notice {
+            return Self.antigravityNotice(notice)
+        }
+        switch signIn.antigravity.mode {
+        case .waiting, .submitting:
+            return String.localized("Waiting for the code the page shows.")
+        case .idle, .starting:
+            return String.localized("Opens one Google page. When it shows a code, paste it here.")
+        }
+    }
+
+    private static func antigravityNotice(_ notice: AntigravityLoginSnapshot.Notice) -> String {
+        switch notice {
+        case .alreadyOpen:
+            String.localized("A sign-in page is already open. Finish it, or cancel it, before starting another.")
+        case .paused:
+            String.localized("That sign-in didn't finish. Blinky will not open another page yet.")
+        case .unsupportedRegion:
+            String.localized("Antigravity isn't available for this account's region, so Blinky will not open another page.")
+        case .pasteTheCode:
+            String.localized("Paste the code the page shows.")
+        case .couldNotStart:
+            String.localized("Couldn't start Antigravity's sign-in.")
+        case .cliTooOld:
+            String.localized("This version of the agy CLI can't sign in from Blinky. Update it, or run agy in Terminal once.")
+        case .missingCLI:
+            String.localized("Install the agy CLI, or run agy in Terminal once, to sign in.")
+        case .signedIn:
+            String.localized("Signed in. Blinky reads Antigravity on the next refresh.")
         }
     }
 

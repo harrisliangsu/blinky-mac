@@ -62,10 +62,13 @@ enum BoundedProcess {
         /// The program could not be started at all: missing, not executable.
         case couldNotStart
         /// It ran past the deadline, or closed its pipes and kept running.
-        case timedOut
-        /// It finished, unsuccessfully. What it wrote to stderr, which is the
-        /// only account of why there is.
-        case exited(status: Int32, standardError: String)
+        /// What it had already written is kept: a CLI that opens a browser
+        /// and then waits still prints why, and throwing that away makes
+        /// the next run look like a plain timeout.
+        case timedOut(standardError: String, standardOutput: Data)
+        /// It finished, unsuccessfully. Stderr is the usual account; stdout
+        /// is kept as well because some CLIs print the reason there.
+        case exited(status: Int32, standardError: String, standardOutput: Data)
     }
 
     /// How long a process group gets to honour SIGTERM before SIGKILL.
@@ -248,7 +251,8 @@ enum BoundedProcess {
             // A moment for the readers to see the pipes close, and no more.
             _ = readers.wait(timeout: .now() + pipeGrace)
             releasePipes()
-            return .failure(.timedOut)
+            let (data, problem) = collected.taken()
+            return .failure(.timedOut(standardError: problem, standardOutput: data))
         }
 
         // The pipes are closed, which is not the same as the process being
@@ -257,14 +261,15 @@ enum BoundedProcess {
         if exited.wait(timeout: .now() + terminationGrace) == .timedOut {
             stop()
             releasePipes()
-            return .failure(.timedOut)
+            let (data, problem) = collected.taken()
+            return .failure(.timedOut(standardError: problem, standardOutput: data))
         }
 
         releasePipes()
         let (data, problem) = collected.taken()
 
         guard process.terminationStatus == 0 else {
-            return .failure(.exited(status: process.terminationStatus, standardError: problem))
+            return .failure(.exited(status: process.terminationStatus, standardError: problem, standardOutput: data))
         }
 
         return .success(data)

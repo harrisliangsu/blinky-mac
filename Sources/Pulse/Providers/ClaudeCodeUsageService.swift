@@ -235,7 +235,7 @@ struct ClaudeCodeUsageService: Sendable {
             deadline: Self.keychainDeadline,
             outputCeiling: 1 << 20
         )
-        if case .failure(.timedOut) = result { Self.pauseKeychain() }
+        if case .failure(.timedOut(_, _)) = result { Self.pauseKeychain() }
         guard case .success(let data) = result else { return nil }
         return try? JSONSerialization.jsonObject(with: data) as? [String: Any]
     }

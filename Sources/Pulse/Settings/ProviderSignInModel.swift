@@ -53,7 +53,14 @@ final class ProviderSignInModel {
 
     /// Whether a sign-in of either kind is running, which holds the
     /// diagnostics' own sign-in remedy back.
-    var isBusy: Bool { signingIn != nil || githubTask != nil }
+    var isBusy: Bool { signingIn != nil || githubTask != nil || antigravityTask != nil }
+
+    /// Antigravity's sign-in. The page shows a code that has to be pasted
+    /// here; the field is the row under this while `antigravity.mode` is
+    /// `.waiting`.
+    var antigravity = AntigravityLoginSnapshot.idle
+    var antigravityCode = ""
+    private var antigravityTask: Task<Void, Never>?
 
     /// The Cancel on an added account's sign-in.
     /// Drops Kimi Code's primary subscription login and asks for a fresh reading.
@@ -134,8 +141,69 @@ final class ProviderSignInModel {
         githubError = nil
     }
 
+    /// One Antigravity sign-in. A second press while one is open does nothing
+    /// here; the session also refuses to start another process.
+    func startAntigravityLogin() {
+        guard antigravityTask == nil else { return }
+        antigravityCode = ""
+        antigravity.notice = nil
+        antigravityTask = Task { [self] in
+            defer { antigravityTask = nil }
+            let outcome = await AntigravitySession.shared.signIn(
+                binary: AntigravityUsageService.locateCLI()
+            ) { [self] snapshot in
+                guard self.antigravityTask != nil else { return }
+                let keepPaste = self.antigravity.notice == .pasteTheCode && snapshot.mode == .waiting
+                self.antigravity = snapshot
+                if keepPaste { self.antigravity.notice = .pasteTheCode }
+            }
+            if let notice = Self.notice(for: outcome) {
+                antigravity.notice = notice
+            }
+            if outcome != .alreadyRunning {
+                antigravity.mode = .idle
+            }
+            if outcome == .signedIn {
+                antigravityCode = ""
+                store.refresh(AccountKey(.antigravity))
+            }
+        }
+    }
+
+    func submitAntigravityCode() {
+        guard AntigravityLoginTranscript.submission(from: antigravityCode) != nil else {
+            antigravity.notice = .pasteTheCode
+            return
+        }
+        antigravity.notice = nil
+        let code = antigravityCode
+        Task { await AntigravitySession.shared.submit(code) }
+    }
+
+    func cancelAntigravityLogin() {
+        antigravityCode = ""
+        Task { await AntigravitySession.shared.cancel() }
+    }
+
+    private static func notice(for outcome: AntigravityLoginMachine.Outcome) -> AntigravityLoginSnapshot.Notice? {
+        switch outcome {
+        case .signedIn: .signedIn
+        case .alreadyRunning: .alreadyOpen
+        case .paused: .paused
+        case .unsupportedRegion: .unsupportedRegion
+        case .failed, .cancelled: .paused
+        case .missingCLI: .missingCLI
+        case .couldNotStart: .couldNotStart
+        case .cliTooOld: .cliTooOld
+        }
+    }
+
     /// Runs the browser sign-in, then keeps whatever came back.
     func signIn(to provider: Provider, replacing existing: AccountKey? = nil) {
+        if provider == .antigravity {
+            startAntigravityLogin()
+            return
+        }
         signingIn = provider
         signingInTarget = existing
         signInError = nil
