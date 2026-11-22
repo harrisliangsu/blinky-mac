@@ -433,12 +433,17 @@ actor AntigravitySession {
             try? await Task.sleep(for: .milliseconds(40))
         }
 
-        guard machine.mode == .waiting else {
+        // Waiting, or the code was already pasted while the page was being
+        // shown. That paste happens on this actor during `publish`, before
+        // this function resumes, so `.submitting` is still this sign-in.
+        // Idle means it was cancelled in that same gap: `finish` would
+        // replace the cancel with a failure and the next press would be
+        // allowed to open another page.
+        guard machine.mode == .waiting || machine.mode == .submitting else {
             child.stop()
             running = nil
-            let outcome = machine.finish(status: 1, output: child.output(), now: clock())
             await publish(onUpdate)
-            return outcome
+            return .cancelled
         }
 
         let codeDeadline = ContinuousClock.now + .seconds(15 * 60)
