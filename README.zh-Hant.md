@@ -46,7 +46,7 @@
 - **只顯示真實數字**——每個用量百分比都是服務商自己回報的。少數估算會明確標示；服務商沒有提供數字時，Blinky 會直接說明，不去猜測。
 - **原生、安靜**——以 Swift 與 SwiftUI 撰寫，macOS 26 上是 Liquid Glass。可以停靠在左側、右側、頂端，或底部 Dock 旁邊，閒置時收成一條細線，也可以只待在選單列裡。
 
-**最近新增：** 在選單列顯示用量，並附上每個帳號的面板；額度重置後自動開始新視窗；圓環裡的機器人（CX ArtLab 的 Agent Robot Avatar）。[更新說明](https://github.com/harrisliangsu/blinky-mac/releases/latest)。
+**最近新增：** 在選單列顯示用量，並附上每個帳號的面板；額度重置後自動開始新視窗；圓環裡的機器人（Dominik Scholz 的 Open Bot Avatar）。[更新說明](https://github.com/harrisliangsu/blinky-mac/releases/latest)。
 
 <p align="center">
   <sub>如果 Blinky 幫你躲過了一次突如其來的限額，按個 ⭐ 能讓更多人發現它。</sub>
@@ -78,7 +78,7 @@
 ### 一眼看清的圓環
 - **顏色隨用量變化**——從綠到琥珀再到紅，也可以為每個帳號設一種自己的顏色。
 - **已用或剩餘**——顯示 `75% 已用` 或 `25% 剩餘`，可加一圈時鐘弧，表示目前視窗已經過去多少。
-- **即時動態**——agent 工作時圓環上有轉動的小點；還可以在圓環中顯示隨帳號狀態變化的小機器人（CX ArtLab 的 Agent Robot Avatar）。
+- **即時動態**——agent 工作時圓環上有轉動的小點；還可以在圓環中顯示隨帳號狀態變化的小機器人，有 23 種形象可選，來自 Dominik Scholz 的 Open Bot Avatar。
 
 ### 指向圓環就能看細節
 - **每條額度與它的重設時間**，都在一張卡片上，進度條可選連續或分段。

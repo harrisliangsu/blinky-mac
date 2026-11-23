@@ -317,8 +317,7 @@ extension AppSettings {
         detailedCards.remove(account.id)
         robotAccounts.remove(account.id)
         robotColours[account.id] = nil
-        robotPersonalities[account.id] = nil
-        robotShapes[account.id] = nil
+        robotFigures[account.id] = nil
         splitAccounts.remove(account.id)
         shownModelGroups[account.id] = nil
         if menuBarAccount == account.id { menuBarAccount = nil }

@@ -1499,24 +1499,38 @@
 "You apply a reset card yourself. For a 5-hour card, the 5-hour quota returns to full, and its next reset is counted from now. For a weekly card, the weekly quota returns to full. The 5-hour quota returns with it, and both reset times are counted from now." = "リセットカードは自分で使います。5時間のカードは、5時間の利用枠を全額に戻し、次のリセットは今から数えます。週間のカードは、週間の利用枠を全額に戻します。5時間の利用枠も戻り、どちらも次のリセットは今から数えます。";
 "The usage card shows how many 5-hour and weekly reset cards are left, and when the next one expires." = "使用量カードに、残っている 5 時間と週間のリセットカードの枚数と、次に期限を迎えるカードを表示します。";
 
-/* Robot in the ring, and the note after an update (upstream 2026-11-02). */
+/* Robot in the ring (Open Bot Avatar figures) */
 "Robot in the ring" = "リングにロボットを表示";
-"Replaces the provider's mark and shows what this account is doing. The robot is Agent Robot Avatar by CX ArtLab." = "プロバイダのマークの代わりに、このアカウントの状態をロボットで表示します。ロボットは CX ArtLab の Agent Robot Avatar です。";
-"The robot in the rings is ported from CX ArtLab's Agent Robot Avatar, an original character by CX ArtLab, under the MIT License." = "リングのロボットは CX ArtLab の Agent Robot Avatar を移植したものです。キャラクターは CX ArtLab のオリジナルで、MIT ライセンスで提供されています。";
+
+/* Robot colour, personality and shape */
 "Robot colour" = "ロボットの色";
-"The provider's own colour. Where it has none, one that differs from neighbouring robots." = "プロバイダ自身のブランドカラーを使います。ない場合は、隣り合うロボットと異なる色を選びます。";
-"A colour of your own. The ring keeps its colour." = "選んだ色を使います。リングの色は変わりません。";
-"Robot personality" = "ロボットの性格";
-"Robot shape" = "ロボットの形";
-"The outline of the robot's head." = "ロボットの頭の輪郭です。";
+"Robot figure" = "ロボットの姿";
+"The object the robot is drawn as. It shows the same states whichever it is." = "ロボットの姿を選びます。どの姿でも、表す状態は同じです。";
+"Replaces the provider's mark and shows what this account is doing. The figures are Open Bot Avatar by Dominik Scholz." = "プロバイダのマークの代わりに、このアカウントの状態をロボットで表示します。ロボットの姿は Dominik Scholz の Open Bot Avatar です。";
+"The robot figures in the rings and their motion are Open Bot Avatar by Dominik Scholz, run as it is, under the MIT License." = "リングのロボットの姿と動きは Dominik Scholz の Open Bot Avatar を、元のコードのまま動かしています。MIT ライセンスで提供されています。";
+"Controller" = "ゲームコントローラー";
+"Barbell" = "バーベル";
+"Mug" = "マグカップ";
+"Lightbulb" = "電球";
+"Speech bubble" = "吹き出し";
+"Sprout" = "新芽";
+"Watering can" = "じょうろ";
+"Book" = "本";
+"Brain" = "脳";
+"Bull" = "雄牛";
+"Bunny" = "ウサギ";
+"Camera" = "カメラ";
+"Cat" = "ネコ";
+"Ghost" = "おばけ";
+"Magnifying glass" = "虫めがね";
+"Paintbrush" = "絵筆";
+"Palette" = "パレット";
+"Rocket" = "ロケット";
+"Star" = "星";
+"Witch's hat" = "魔女の帽子";
 "Chosen so that neighbouring robots differ." = "隣り合うロボットが同じにならないように選ばれます。";
-"Glances and blinks slowly, and now and then looks slowly from side to side." = "視線の動きもまばたきもゆっくりで、ときどきゆっくりと左右を見回します。";
-"Glances about, and now and then narrows its eyes and looks up and down." = "あちこちを見回し、ときどき目を細めて上下を見ます。";
-"Glances quickly and often, and now and then opens its eyes wide." = "すばやく頻繁に見回し、ときどき目を大きく見開きます。";
-"Lively" = "元気";
-"Original" = "オリジナル";
-"Squarer" = "角ばった形";
-"Rounder" = "丸みのある形";
+"A colour of your own. The ring keeps its colour." = "選んだ色を使います。リングの色は変わりません。";
+"The provider's own colour. Where it has none, one that differs from neighbouring robots." = "プロバイダ自身のブランドカラーを使います。ない場合は、隣り合うロボットと異なる色を選びます。";
 "A note from the developer" = "開発者からのひとこと";
 "Don't show again" = "今後表示しない";
 "Close" = "閉じる";
