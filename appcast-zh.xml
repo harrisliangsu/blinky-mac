@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.45</title>
-            <pubDate>Sun, 22 Nov 2026 17:45:38 -0000</pubDate>
-            <sparkle:version>1.5.45</sparkle:version>
-            <sparkle:shortVersionString>1.5.45</sparkle:shortVersionString>
+            <title>1.5.46</title>
+            <pubDate>Mon, 23 Nov 2026 02:02:28 -0000</pubDate>
+            <sparkle:version>1.5.46</sparkle:version>
+            <sparkle:shortVersionString>1.5.46</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.45</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.46</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.45</h2><ul><li><strong>Antigravity 登录只打开一个页面。</strong> 在「设置 → 供应商 → Antigravity」点「登录…」后只打开一个页面，把页面显示的验证码粘贴到同一处；登录失败、取消，或账号所在地区无法使用时，不会立刻再打开页面。<a href="https://github.com/harrisliangsu/blinky-mac/pull/116">#116</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.45">在 GitHub 查看更新说明</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.45/Blinky-1.5.45.zip"
-                       length="23563234"
+</style><h2>Blinky 1.5.46</h2><ul><li><strong>圆环中的小机器人改为 Open Bot Avatar 的形象。</strong> 在「设置 → 供应商」中打开某个账号的「外观」，将「小机器人形象」设为 23 种形象之一或「自动」；原来的「小机器人性格」和「小机器人外形」已经去掉。</li><li><strong>按 token 计费的 Copilot 席位会保留已发放的高级请求额度。</strong> Business 席位把已经发放的额度标成没有额度时，这份额度仍会显示。感谢 <a href="https://github.com/qunqin24/Pulse/pull/114">@lexleizou</a> 贡献。</li><li><strong>已经关闭的 WAL 对话数据库仍会被读取。</strong> 「Token 消耗」和活动标记会以不可变方式打开这种数据库，因此进程关闭后的对话仍然计入。<a href="https://github.com/qunqin24/Pulse/issues/117">#117</a></li><li><strong>Antigravity 2.34 不会让圆环停在上一次的读数。</strong> 语言服务器的命令行没有 <code>--csrf_token</code> 时，Blinky 改为读取该进程环境中的 <code>ANTIGRAVITY_SERVER_CSRF_TOKEN</code>。<a href="https://github.com/qunqin24/Pulse/issues/116">#116</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.46">在 GitHub 查看更新说明</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.46/Blinky-1.5.46.zip"
+                       length="23589992"
                        type="application/octet-stream"
-                       sparkle:edSignature="maAvLM5636I8akzMh+hgZa6f8mHVXphK3Ye9kGK1P6Vh1Ml1XJcd/luFXXtbMxiiuTRF/kMUlFS4C01bnVWtCw==" />
+                       sparkle:edSignature="eKVXF/n7o/2e4TEzDhN6Ot0oSQup36PNkGO0+DZOl7khtIZAldSa16wSqJ5aCLz61oIAMaEH6WmX6+68ssL0Dg==" />
         </item>
     </channel>
 </rss>
