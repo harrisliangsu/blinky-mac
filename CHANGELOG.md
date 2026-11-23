@@ -10,6 +10,13 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.46
+
+- **The robot in the ring is drawn from Open Bot Avatar.** Under Settings → Providers, open an account's Appearance and set Robot figure to one of 23 figures or to Automatic; Robot personality and Robot shape are gone.
+- **A token-billed Copilot seat keeps its issued premium allowance.** A Business seat that reports an allowance it did issue as no quota now shows that allowance. Thanks to [@lexleizou](https://github.com/qunqin24/Pulse/pull/114) for the contribution.
+- **A closed WAL conversation database is still read.** Token spend and the activity mark open that database as immutable, so a conversation still counts after its process has closed it. [#117](https://github.com/qunqin24/Pulse/issues/117)
+- **Antigravity 2.34 does not leave the ring on its last reading.** When the language server's command line has no `--csrf_token`, Blinky reads `ANTIGRAVITY_SERVER_CSRF_TOKEN` from that process. [#116](https://github.com/qunqin24/Pulse/issues/116)
+
 ## 1.5.45
 
 - **Antigravity opens one sign-in page.** Under Settings → Providers → Antigravity, Sign in opens one Google page and the code that page shows is pasted there; a failed, cancelled, or unsupported-region sign-in does not open another page immediately. [#116](https://github.com/harrisliangsu/blinky-mac/pull/116)

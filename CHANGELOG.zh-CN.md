@@ -6,6 +6,13 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.46
+
+- **圆环中的小机器人改为 Open Bot Avatar 的形象。** 在「设置 → 供应商」中打开某个账号的「外观」，将「小机器人形象」设为 23 种形象之一或「自动」；原来的「小机器人性格」和「小机器人外形」已经去掉。
+- **按 token 计费的 Copilot 席位会保留已发放的高级请求额度。** Business 席位把已经发放的额度标成没有额度时，这份额度仍会显示。感谢 [@lexleizou](https://github.com/qunqin24/Pulse/pull/114) 贡献。
+- **已经关闭的 WAL 对话数据库仍会被读取。** 「Token 消耗」和活动标记会以不可变方式打开这种数据库，因此进程关闭后的对话仍然计入。[#117](https://github.com/qunqin24/Pulse/issues/117)
+- **Antigravity 2.34 不会让圆环停在上一次的读数。** 语言服务器的命令行没有 `--csrf_token` 时，Blinky 改为读取该进程环境中的 `ANTIGRAVITY_SERVER_CSRF_TOKEN`。[#116](https://github.com/qunqin24/Pulse/issues/116)
+
 ## 1.5.45
 
 - **Antigravity 登录只打开一个页面。** 在「设置 → 供应商 → Antigravity」点「登录…」后只打开一个页面，把页面显示的验证码粘贴到同一处；登录失败、取消，或账号所在地区无法使用时，不会立刻再打开页面。[#116](https://github.com/harrisliangsu/blinky-mac/pull/116)
