@@ -10,6 +10,10 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.47
+
+- **Copilot's usage card can show quota amounts.** Turn on Show quota amounts under Settings → Providers → Copilot and each row on the card also shows the amount, such as 176 / 300; it is off by default. Thanks to [@lexleizou](https://github.com/qunqin24/Pulse/pull/118) for the contribution.
+
 ## 1.5.46
 
 - **The robot in the ring is drawn from Open Bot Avatar.** Under Settings → Providers, open an account's Appearance and set Robot figure to one of 23 figures or to Automatic; Robot personality and Robot shape are gone.
