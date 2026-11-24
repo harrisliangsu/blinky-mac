@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.46</title>
-            <pubDate>Mon, 23 Nov 2026 02:02:28 -0000</pubDate>
-            <sparkle:version>1.5.46</sparkle:version>
-            <sparkle:shortVersionString>1.5.46</sparkle:shortVersionString>
+            <title>1.5.47</title>
+            <pubDate>Tue, 24 Nov 2026 02:00:53 -0000</pubDate>
+            <sparkle:version>1.5.47</sparkle:version>
+            <sparkle:shortVersionString>1.5.47</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.46</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.47</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.46</h2><ul><li><strong>The robot in the ring is drawn from Open Bot Avatar.</strong> Under Settings → Providers, open an account&#x27;s Appearance and set Robot figure to one of 23 figures or to Automatic; Robot personality and Robot shape are gone.</li><li><strong>A token-billed Copilot seat keeps its issued premium allowance.</strong> A Business seat that reports an allowance it did issue as no quota now shows that allowance. Thanks to <a href="https://github.com/qunqin24/Pulse/pull/114">@lexleizou</a> for the contribution.</li><li><strong>A closed WAL conversation database is still read.</strong> Token spend and the activity mark open that database as immutable, so a conversation still counts after its process has closed it. <a href="https://github.com/qunqin24/Pulse/issues/117">#117</a></li><li><strong>Antigravity 2.34 does not leave the ring on its last reading.</strong> When the language server&#x27;s command line has no <code>--csrf_token</code>, Blinky reads <code>ANTIGRAVITY_SERVER_CSRF_TOKEN</code> from that process. <a href="https://github.com/qunqin24/Pulse/issues/116">#116</a></li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.46">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.46/Blinky-1.5.46.zip"
-                       length="23589992"
+</style><h2>Blinky 1.5.47</h2><ul><li><strong>Copilot&#x27;s usage card can show quota amounts.</strong> Turn on Show quota amounts under Settings → Providers → Copilot and each row on the card also shows the amount, such as 176 / 300; it is off by default. Thanks to <a href="https://github.com/qunqin24/Pulse/pull/118">@lexleizou</a> for the contribution.</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.47">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.47/Blinky-1.5.47.zip"
+                       length="23591940"
                        type="application/octet-stream"
-                       sparkle:edSignature="eKVXF/n7o/2e4TEzDhN6Ot0oSQup36PNkGO0+DZOl7khtIZAldSa16wSqJ5aCLz61oIAMaEH6WmX6+68ssL0Dg==" />
+                       sparkle:edSignature="V0Hi+cW5I76loFKOS/O5BXjNGElNZ4bRXzBRDxNaCao3psHYCNM1FT098js7lkASXTwwU7W8F6Okq+qXKIw+BQ==" />
         </item>
     </channel>
 </rss>
