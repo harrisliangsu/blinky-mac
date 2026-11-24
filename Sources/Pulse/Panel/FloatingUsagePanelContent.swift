@@ -128,7 +128,8 @@ struct FloatingUsagePanelContent: View {
                             exhaustionHorizon: settings.exhaustionCardHorizon,
                             exhaustionSoftHint: settings.exhaustionSoftHint,
                             exhaustionBeforeReset: settings.exhaustionBeforeReset,
-                            showsAmounts: selected.account.provider == .qoder && settings.qoderShowsAmounts,
+                            showsAmounts: (selected.account.provider == .copilot && settings.copilotShowsAmounts)
+                                || (selected.account.provider == .qoder && settings.qoderShowsAmounts),
                             resetCredits: selected.account == AccountKey(.codex) ? store.codexResetCredits : nil,
                             zhipuResetCards: zhipuCards(of: selected),
                             redeemCodex: selected.account == AccountKey(.codex)

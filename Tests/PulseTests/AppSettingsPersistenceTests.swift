@@ -52,6 +52,7 @@ struct AppSettingsPersistenceTests {
             ("settings.showsZaiResetCards", \.showsZaiResetCards, false),
             ("settings.showsZhipuResetCards", \.showsZhipuResetCards, false),
             ("settings.qoderShowsAmounts", \.qoderShowsAmounts, true),
+            ("settings.copilotShowsAmounts", \.copilotShowsAmounts, true),
             ("settings.usesGlass", \.usesGlass, true),
             ("settings.autoCollapse", \.autoCollapse, false),
             ("settings.topRailShowsPercentages", \.topRailShowsPercentages, true),
