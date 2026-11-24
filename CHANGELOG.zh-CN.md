@@ -6,6 +6,10 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.47
+
+- **Copilot 的用量卡片可以显示额度数值。** 在「设置 → 供应商 → Copilot」中打开「显示额度数值」后，卡片上的每一行同时显示数值，例如 176 / 300，默认关闭。感谢 [@lexleizou](https://github.com/qunqin24/Pulse/pull/118) 贡献。
+
 ## 1.5.46
 
 - **圆环中的小机器人改为 Open Bot Avatar 的形象。** 在「设置 → 供应商」中打开某个账号的「外观」，将「小机器人形象」设为 23 种形象之一或「自动」；原来的「小机器人性格」和「小机器人外形」已经去掉。
