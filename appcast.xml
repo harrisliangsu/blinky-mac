@@ -6,34 +6,34 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.47</title>
-            <pubDate>Tue, 24 Nov 2026 02:00:53 -0000</pubDate>
-            <sparkle:version>1.5.47</sparkle:version>
-            <sparkle:shortVersionString>1.5.47</sparkle:shortVersionString>
+            <title>1.5.48</title>
+            <pubDate>Thu, 26 Nov 2026 02:08:05 -0000</pubDate>
+            <sparkle:version>1.5.48</sparkle:version>
+            <sparkle:shortVersionString>1.5.48</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.47</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.48</link>
             <description xml:lang="zh-Hans"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.47</h2><ul><li><strong>Copilot 的用量卡片可以显示额度数值。</strong> 在「设置 → 供应商 → Copilot」中打开「显示额度数值」后，卡片上的每一行同时显示数值，例如 176 / 300，默认关闭。感谢 <a href="https://github.com/qunqin24/Pulse/pull/118">@lexleizou</a> 贡献。</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.47">在 GitHub 查看更新说明</a></p>]]></description>
+</style><h2>Blinky 1.5.48</h2><ul><li><strong>Grok Bot 不装 Cursor 也能登录。</strong> 在「设置 → 供应商 → Grok Bot → 连接」中通过 Cursor 网页登录即可；保存的登录过期或被拒绝时，同一行可以重新登录，读不到登录信息时不会改用别的来源。感谢 <a href="https://github.com/qunqin24/Pulse/pull/121">@sunny0826</a> 贡献。</li><li><strong>JetBrains AI 可以登录 JetBrains 账号读取额度。</strong> 从 2026.3 起 IDE 不再把额度保存在本机时，在「设置 → 供应商 → JetBrains AI → 连接」登录后，Blinky 会向 JetBrains 查询；「本机没有保存额度」和「没有限额」会分开说明。感谢 <a href="https://github.com/qunqin24/Pulse/issues/122">@tyler4400</a> 报告。</li><li><strong>sub2api 和 New API 可以添加多个账号。</strong> 在「设置 → 供应商」中打开该服务商的「账号」，点「添加另一个账号」，每个账号各有地址、API key 和名称。感谢 <a href="https://github.com/qunqin24/Pulse/issues/125">@iblueer</a> 提议。</li><li><strong>空着的用量窗口会开始一次。</strong> 在 Claude Code 或 Codex 的设置中打开「开始新窗口」后，还没有倒计时的窗口会发送一次「hi」；发送失败会通知一次，倒计时还在走时不会再发。感谢 <a href="https://github.com/qunqin24/Pulse/pull/128">@tyler4400</a> 贡献。</li><li><strong>圆环里的小机器人可以是毛绒的。</strong> 形象更新为 Open Bot Avatar 0.4.0。在账号的「外观」中把「材质」选为「毛绒」后，绒毛用 Metal 绘制，默认仍是纯色。</li><li><strong>Antigravity 的 Gemini 4 Argon 试用模型计入金额。</strong> 「Token 消耗」中的 <code>gemini-4-argon-trial</code> 按 Gemini 4 Argon 的价格估算。</li><li><strong>Antigravity 不提供额外账号。</strong> 再添加一个账号会走其条款不允许的 OAuth，因此设置里没有这一项。</li><li><strong>设置和状态里的说明更短。</strong> 六种语言的说明都缩短了。</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.48">在 GitHub 查看更新说明</a></p>]]></description>
             <description xml:lang="zh-Hant"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.47</h2><ul><li><strong>Copilot 的用量卡片可以显示额度数值。</strong> 在「设置 → 供应商 → Copilot」中打开「显示额度数值」后，卡片上的每一行同时显示数值，例如 176 / 300，默认关闭。感谢 <a href="https://github.com/qunqin24/Pulse/pull/118">@lexleizou</a> 贡献。</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.47">在 GitHub 查看更新说明</a></p>]]></description>
+</style><h2>Blinky 1.5.48</h2><ul><li><strong>Grok Bot 不装 Cursor 也能登录。</strong> 在「设置 → 供应商 → Grok Bot → 连接」中通过 Cursor 网页登录即可；保存的登录过期或被拒绝时，同一行可以重新登录，读不到登录信息时不会改用别的来源。感谢 <a href="https://github.com/qunqin24/Pulse/pull/121">@sunny0826</a> 贡献。</li><li><strong>JetBrains AI 可以登录 JetBrains 账号读取额度。</strong> 从 2026.3 起 IDE 不再把额度保存在本机时，在「设置 → 供应商 → JetBrains AI → 连接」登录后，Blinky 会向 JetBrains 查询；「本机没有保存额度」和「没有限额」会分开说明。感谢 <a href="https://github.com/qunqin24/Pulse/issues/122">@tyler4400</a> 报告。</li><li><strong>sub2api 和 New API 可以添加多个账号。</strong> 在「设置 → 供应商」中打开该服务商的「账号」，点「添加另一个账号」，每个账号各有地址、API key 和名称。感谢 <a href="https://github.com/qunqin24/Pulse/issues/125">@iblueer</a> 提议。</li><li><strong>空着的用量窗口会开始一次。</strong> 在 Claude Code 或 Codex 的设置中打开「开始新窗口」后，还没有倒计时的窗口会发送一次「hi」；发送失败会通知一次，倒计时还在走时不会再发。感谢 <a href="https://github.com/qunqin24/Pulse/pull/128">@tyler4400</a> 贡献。</li><li><strong>圆环里的小机器人可以是毛绒的。</strong> 形象更新为 Open Bot Avatar 0.4.0。在账号的「外观」中把「材质」选为「毛绒」后，绒毛用 Metal 绘制，默认仍是纯色。</li><li><strong>Antigravity 的 Gemini 4 Argon 试用模型计入金额。</strong> 「Token 消耗」中的 <code>gemini-4-argon-trial</code> 按 Gemini 4 Argon 的价格估算。</li><li><strong>Antigravity 不提供额外账号。</strong> 再添加一个账号会走其条款不允许的 OAuth，因此设置里没有这一项。</li><li><strong>设置和状态里的说明更短。</strong> 六种语言的说明都缩短了。</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.48">在 GitHub 查看更新说明</a></p>]]></description>
             <description xml:lang="en"><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.47</h2><ul><li><strong>Copilot&#x27;s usage card can show quota amounts.</strong> Turn on Show quota amounts under Settings → Providers → Copilot and each row on the card also shows the amount, such as 176 / 300; it is off by default. Thanks to <a href="https://github.com/qunqin24/Pulse/pull/118">@lexleizou</a> for the contribution.</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.47">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.47/Blinky-1.5.47.zip"
-                       length="23591940"
+</style><h2>Blinky 1.5.48</h2><ul><li><strong>Grok Bot can sign in without Cursor installed.</strong> Under Settings → Providers → Grok Bot → Connection, sign in through Cursor&#x27;s page; when a saved login has expired or been refused, Sign in again is on that row, and an unreadable store is not replaced by another login. Thanks to <a href="https://github.com/qunqin24/Pulse/pull/121">@sunny0826</a> for the contribution.</li><li><strong>JetBrains AI can sign in to a JetBrains account.</strong> From IDE 2026.3, which no longer saves the quota on this Mac, sign in under Settings → Providers → JetBrains AI → Connection and Blinky asks JetBrains; “the IDE saved no quota” and “no limits” stay different. Thanks to <a href="https://github.com/qunqin24/Pulse/issues/122">@tyler4400</a> for reporting it.</li><li><strong>sub2api and New API can add more accounts.</strong> Under Settings → Providers, open that provider&#x27;s Accounts and choose Add another account; each account has its own address, API key and name. Thanks to <a href="https://github.com/qunqin24/Pulse/issues/125">@iblueer</a> for the suggestion.</li><li><strong>An idle usage window starts once.</strong> With Start a new window on for Claude Code or Codex, a window that is not already counting down gets one “hi”; a failed send is notified once, and nothing is sent again while a countdown is running. Thanks to <a href="https://github.com/qunqin24/Pulse/pull/128">@tyler4400</a> for the contribution.</li><li><strong>The robot in the ring can be fluffy.</strong> The figures are Open Bot Avatar 0.4.0. Under an account&#x27;s Appearance, set Material to Fluffy and the coat is drawn with Metal; Flat stays the default.</li><li><strong>Antigravity&#x27;s Gemini 4 Argon trial is priced.</strong> <code>gemini-4-argon-trial</code> in Token spend is estimated at Gemini 4 Argon&#x27;s rates.</li><li><strong>Antigravity does not offer another account.</strong> Adding one would use an OAuth route that breaks Antigravity&#x27;s terms, so Settings has no such row.</li><li><strong>Settings and status text is shorter.</strong> The same shortening is in all six languages.</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.48">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.48/Blinky-1.5.48.zip"
+                       length="23963127"
                        type="application/octet-stream"
-                       sparkle:edSignature="V0Hi+cW5I76loFKOS/O5BXjNGElNZ4bRXzBRDxNaCao3psHYCNM1FT098js7lkASXTwwU7W8F6Okq+qXKIw+BQ==" />
+                       sparkle:edSignature="DKe44ePyDK0DdEZ6uPePo0h+VcDzeJndjobvkmAvBF8IoRysYteWfsYvvh/+WWIHtCm8mTcTAqBhvkfvn3zkCA==" />
         </item>
     </channel>
 </rss>
