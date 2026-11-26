@@ -6,6 +6,17 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.48
+
+- **Grok Bot 不装 Cursor 也能登录。** 在「设置 → 供应商 → Grok Bot → 连接」中通过 Cursor 网页登录即可；保存的登录过期或被拒绝时，同一行可以重新登录，读不到登录信息时不会改用别的来源。感谢 [@sunny0826](https://github.com/qunqin24/Pulse/pull/121) 贡献。
+- **JetBrains AI 可以登录 JetBrains 账号读取额度。** 从 2026.3 起 IDE 不再把额度保存在本机时，在「设置 → 供应商 → JetBrains AI → 连接」登录后，Blinky 会向 JetBrains 查询；「本机没有保存额度」和「没有限额」会分开说明。感谢 [@tyler4400](https://github.com/qunqin24/Pulse/issues/122) 报告。
+- **sub2api 和 New API 可以添加多个账号。** 在「设置 → 供应商」中打开该服务商的「账号」，点「添加另一个账号」，每个账号各有地址、API key 和名称。感谢 [@iblueer](https://github.com/qunqin24/Pulse/issues/125) 提议。
+- **空着的用量窗口会开始一次。** 在 Claude Code 或 Codex 的设置中打开「开始新窗口」后，还没有倒计时的窗口会发送一次「hi」；发送失败会通知一次，倒计时还在走时不会再发。感谢 [@tyler4400](https://github.com/qunqin24/Pulse/pull/128) 贡献。
+- **圆环里的小机器人可以是毛绒的。** 形象更新为 Open Bot Avatar 0.4.0。在账号的「外观」中把「材质」选为「毛绒」后，绒毛用 Metal 绘制，默认仍是纯色。
+- **Antigravity 的 Gemini 4 Argon 试用模型计入金额。** 「Token 消耗」中的 `gemini-4-argon-trial` 按 Gemini 4 Argon 的价格估算。
+- **Antigravity 不提供额外账号。** 再添加一个账号会走其条款不允许的 OAuth，因此设置里没有这一项。
+- **设置和状态里的说明更短。** 六种语言的说明都缩短了。
+
 ## 1.5.47
 
 - **Copilot 的用量卡片可以显示额度数值。** 在「设置 → 供应商 → Copilot」中打开「显示额度数值」后，卡片上的每一行同时显示数值，例如 176 / 300，默认关闭。感谢 [@lexleizou](https://github.com/qunqin24/Pulse/pull/118) 贡献。

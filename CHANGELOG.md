@@ -10,6 +10,17 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.48
+
+- **Grok Bot can sign in without Cursor installed.** Under Settings → Providers → Grok Bot → Connection, sign in through Cursor's page; when a saved login has expired or been refused, Sign in again is on that row, and an unreadable store is not replaced by another login. Thanks to [@sunny0826](https://github.com/qunqin24/Pulse/pull/121) for the contribution.
+- **JetBrains AI can sign in to a JetBrains account.** From IDE 2026.3, which no longer saves the quota on this Mac, sign in under Settings → Providers → JetBrains AI → Connection and Blinky asks JetBrains; “the IDE saved no quota” and “no limits” stay different. Thanks to [@tyler4400](https://github.com/qunqin24/Pulse/issues/122) for reporting it.
+- **sub2api and New API can add more accounts.** Under Settings → Providers, open that provider's Accounts and choose Add another account; each account has its own address, API key and name. Thanks to [@iblueer](https://github.com/qunqin24/Pulse/issues/125) for the suggestion.
+- **An idle usage window starts once.** With Start a new window on for Claude Code or Codex, a window that is not already counting down gets one “hi”; a failed send is notified once, and nothing is sent again while a countdown is running. Thanks to [@tyler4400](https://github.com/qunqin24/Pulse/pull/128) for the contribution.
+- **The robot in the ring can be fluffy.** The figures are Open Bot Avatar 0.4.0. Under an account's Appearance, set Material to Fluffy and the coat is drawn with Metal; Flat stays the default.
+- **Antigravity's Gemini 4 Argon trial is priced.** `gemini-4-argon-trial` in Token spend is estimated at Gemini 4 Argon's rates.
+- **Antigravity does not offer another account.** Adding one would use an OAuth route that breaks Antigravity's terms, so Settings has no such row.
+- **Settings and status text is shorter.** The same shortening is in all six languages.
+
 ## 1.5.47
 
 - **Copilot's usage card can show quota amounts.** Turn on Show quota amounts under Settings → Providers → Copilot and each row on the card also shows the amount, such as 176 / 300; it is off by default. Thanks to [@lexleizou](https://github.com/qunqin24/Pulse/pull/118) for the contribution.
