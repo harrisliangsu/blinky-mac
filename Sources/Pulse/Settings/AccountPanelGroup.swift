@@ -307,7 +307,7 @@ struct AccountPanelGroup: View {
             String.localized("Robot figure"),
             subtitle: settings.robotFigure(for: account) == nil
                 ? String.localized("Chosen so that neighbouring robots differ.")
-                : String.localized("The object the robot is drawn as. It shows the same states whichever it is."),
+                : String.localized("Every figure shows the same states."),
             symbol: "face.smiling"
         ) {
             Picker("", selection: Binding(
@@ -318,6 +318,25 @@ struct AccountPanelGroup: View {
                 Divider()
                 ForEach(RobotFigures.automatic, id: \.self) { figure in
                     Text(RobotFigures.title(figure)).tag(String?.some(figure))
+                }
+            }
+            .labelsHidden()
+            .pickerStyle(.menu)
+            .frame(width: SettingsLayout.controlWidth, alignment: .trailing)
+        }
+
+        SettingsRowDivider()
+
+        SettingsRow(
+            String.localized("Material"),
+            symbol: "circle.hexagongrid"
+        ) {
+            Picker("", selection: Binding(
+                get: { settings.robotMaterial(for: account) },
+                set: { settings.setRobotMaterial($0, for: account) }
+            )) {
+                ForEach(RobotMaterial.allCases, id: \.self) { material in
+                    Text(material.title).tag(material)
                 }
             }
             .labelsHidden()
@@ -368,7 +387,7 @@ struct AccountPanelGroup: View {
     private func splitRow(for account: AccountKey) -> some View {
         SettingsRow(
             String.localized("A ring for each model group"),
-            subtitle: String.localized("Antigravity's model groups draw on separate allowances. One ring can only follow the busiest of them."),
+            subtitle: String.localized("One ring per model group."),
             symbol: "circle.grid.2x1"
         ) {
             Toggle("", isOn: Binding(

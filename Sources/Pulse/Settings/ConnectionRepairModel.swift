@@ -42,7 +42,7 @@ final class ConnectionRepairModel {
     func repair(_ remedy: ConnectionRemedy, for account: AccountKey) {
         messages[account.id] = nil
         switch remedy {
-        case .signIn:
+        case .signIn, .firstSignIn:
             if account.provider == .antigravity { signIn.startAntigravityLogin() }
             else if account.provider == .copilot { signIn.startGitHubSignIn() }
             else if account.isPrimary, account.provider == .grok {
@@ -50,7 +50,9 @@ final class ConnectionRepairModel {
                 // the same flow an added account uses, written onto the
                 // primary key rather than a new ring.
                 signIn.signIn(to: .grok, replacing: AccountKey(.grok))
-            } else if !account.isPrimary { signIn.signIn(to: account.provider, replacing: account) }
+            } else if !account.isPrimary || ProviderSignInModel.primarySignIns.contains(account.provider) {
+                signIn.signIn(to: account.provider, replacing: account)
+            }
         case .editCredential:
             connectionFocusRequest += 1
         case .editAddress:

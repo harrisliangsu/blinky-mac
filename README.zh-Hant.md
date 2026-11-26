@@ -46,7 +46,7 @@
 - **只顯示真實數字**——每個用量百分比都是服務商自己回報的。少數估算會明確標示；服務商沒有提供數字時，Blinky 會直接說明，不去猜測。
 - **原生、安靜**——以 Swift 與 SwiftUI 撰寫，macOS 26 上是 Liquid Glass。可以停靠在左側、右側、頂端，或底部 Dock 旁邊，閒置時收成一條細線，也可以只待在選單列裡。
 
-**最近新增：** 在選單列顯示用量，並附上每個帳號的面板；額度重置後自動開始新視窗；圓環裡的機器人（Dominik Scholz 的 Open Bot Avatar）。[更新說明](https://github.com/harrisliangsu/blinky-mac/releases/latest)。
+**最近新增：** 在選單列顯示用量，並附上每個帳號的面板；還沒有倒計時的用量視窗會自動開始；圓環裡的機器人（Dominik Scholz 的 Open Bot Avatar）。[更新說明](https://github.com/harrisliangsu/blinky-mac/releases/latest)。
 
 <p align="center">
   <sub>如果 Blinky 幫你躲過了一次突如其來的限額，按個 ⭐ 能讓更多人發現它。</sub>

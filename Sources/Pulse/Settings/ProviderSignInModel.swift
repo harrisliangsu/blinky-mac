@@ -25,14 +25,23 @@ final class ProviderSignInModel {
         self.credentialModel = credentials
     }
 
-    /// The provider a browser sign-in is currently open for, and what went
-    /// wrong with the last one.
+    /// The provider a browser sign-in is currently open for, which account row
+    /// started it (`nil` for "Add another account"), and what went wrong with
+    /// the last one.
     var signingIn: Provider?
     /// The account this sign-in writes to. Nil means a new account. The
     /// primary Grok row and "Add another account" each cancel only their own
     /// attempt, so one button does not take the other's code off the pane.
     var signingInTarget: AccountKey?
-    var signInError: (provider: Provider, message: String)?
+    var signInError: (provider: Provider, target: AccountKey?, message: String)?
+    /// The providers whose **first** account Blinky can sign in to itself, from
+    /// a row in its Connection card: Grok Bot (a Cursor web login, in place of
+    /// the editor's) and JetBrains AI (a JetBrains account, for the quota the
+    /// IDE no longer saves). Kept under `AccountKey(provider)`. Grok's and
+    /// Kimi Code's primary logins are separate rows and are not in this set.
+    nonisolated static let primarySignIns: Set<Provider> = [.grokBot, .jetBrainsAI]
+    /// Which of those hold a login Blinky signed in to.
+    private(set) var primaryLogins: Set<Provider> = []
     /// Shown while a device-code sign-in is waiting: the code the provider
     /// gave, and where to type it.
     var devicePrompt: OAuthLogin.DevicePrompt?
@@ -61,6 +70,55 @@ final class ProviderSignInModel {
     var antigravity = AntigravityLoginSnapshot.idle
     var antigravityCode = ""
     private var antigravityTask: Task<Void, Never>?
+
+    func hasPrimaryLogin(_ provider: Provider) -> Bool { primaryLogins.contains(provider) }
+
+    func isSigningInPrimary(_ provider: Provider) -> Bool {
+        signingIn == provider && signingInTarget == AccountKey(provider)
+    }
+
+    func primaryError(_ provider: Provider) -> String? {
+        guard let signInError,
+              signInError.provider == provider,
+              signInError.target == AccountKey(provider)
+        else { return nil }
+        return signInError.message
+    }
+
+    func isSigningInAccountsRow(for account: AccountKey) -> Bool {
+        guard signingIn == account.provider else { return false }
+        return account.isPrimary ? signingInTarget == nil : signingInTarget == account
+    }
+
+    func accountsRowError(for account: AccountKey) -> String? {
+        guard let signInError, signInError.provider == account.provider else { return nil }
+        let matches = account.isPrimary ? signInError.target == nil : signInError.target == account
+        return matches ? signInError.message : nil
+    }
+
+    /// Reads whether a primary account holds a Pulse-managed login, skipping
+    /// storage altogether while the account is switched off.
+    func seed(for account: AccountKey) {
+        let provider = account.provider
+        guard Self.primarySignIns.contains(provider), account == AccountKey(provider) else { return }
+        guard settings.isEnabled(account), AccountCredentialStore.credentials(for: account) != nil else {
+            primaryLogins.remove(provider)
+            return
+        }
+        primaryLogins.insert(provider)
+    }
+
+    /// Forgets a primary account's login: Grok Bot falls back to Cursor's
+    /// local database, JetBrains AI to the IDE's file.
+    func signOutOfPrimary(_ provider: Provider) {
+        let primary = AccountKey(provider)
+        guard AccountCredentialStore.set(nil, for: primary) else { return }
+        primaryLogins.remove(provider)
+        if signInError?.provider == provider, signInError?.target == primary {
+            signInError = nil
+        }
+        store.resetReading(for: primary)
+    }
 
     /// The Cancel on an added account's sign-in.
     /// Drops Kimi Code's primary subscription login and asks for a fresh reading.
@@ -231,6 +289,9 @@ final class ProviderSignInModel {
                     // for afterwards. Nothing comes back to this Mac and there
                     // is no code to type, so this branch shows neither.
                     credentials = try await CursorWebLogin.signIn()
+                } else if provider == .jetBrainsAI {
+                    // The Junie CLI's browser sign-in, back to a loopback port.
+                    credentials = try await JetBrainsLogin.signIn()
                 } else if OAuthLogin.usesDeviceCode(provider) {
                     // A code shown on the provider's own page. No local
                     // port to collide with the CLI's sign-in, and nothing
@@ -258,7 +319,7 @@ final class ProviderSignInModel {
                 // still goes through the branch below.
                 if let existing, existing == AccountKey(provider), provider == .kimiCode || provider == .grok {
                     guard AccountCredentialStore.set(credentials, for: existing) else {
-                        signInError = (provider, String.localized("Couldn't save the login on this Mac."))
+                        signInError = (provider, existing, String.localized("Couldn't save the login on this Mac."))
                         return
                     }
                     loginRevision += 1
@@ -269,18 +330,23 @@ final class ProviderSignInModel {
                 let added = existing ?? settings.addAccount(provider, label: Self.label(for: credentials, provider: provider, in: settings))
                 guard AccountCredentialStore.set(credentials, for: added) else {
                     if existing == nil { settings.removeAccount(added) }
-                    signInError = (provider, String.localized("Couldn't save the login on this Mac."))
+                    signInError = (provider, existing, String.localized("Couldn't save the login on this Mac."))
                     return
                 }
-                store.refresh(added)
+                if Self.primarySignIns.contains(provider), added == AccountKey(provider) {
+                    primaryLogins.insert(provider)
+                    store.resetReading(for: added)
+                } else {
+                    store.refresh(added)
+                }
                 navigation.pane = .account(added)
             } catch let failure as OAuthLogin.Failure {
-                if !Task.isCancelled { signInError = (provider, failure.message) }
+                if !Task.isCancelled { signInError = (provider, existing, failure.message) }
             } catch is CancellationError {
                 // Cancelling is not a failure, and nothing about it belongs in
                 // a pane that may already be showing the next attempt.
             } catch {
-                if !Task.isCancelled { signInError = (provider, String.localized("Sign-in was cancelled.")) }
+                if !Task.isCancelled { signInError = (provider, existing, String.localized("Sign-in was cancelled.")) }
             }
         }
     }

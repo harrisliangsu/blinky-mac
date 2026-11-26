@@ -101,7 +101,7 @@ struct UsageCardPane: View {
 
                 SettingsRow(
                     String.localized("Second limit inside the ring"),
-                    subtitle: String.localized("A ring just inside the first, as thick as it, for the next-fullest limit, where a provider has one."),
+                    subtitle: String.localized("An inner ring for the next-fullest limit."),
                     symbol: "circle.circle"
                 ) {
                     Toggle("", isOn: Binding(
@@ -134,7 +134,7 @@ struct UsageCardPane: View {
 
                     SettingsRow(
                         String.localized("Time ring direction"),
-                        subtitle: String.localized("Choose whether the outer arc fills with elapsed time or empties with time remaining."),
+                        subtitle: String.localized("The outer arc fills with time elapsed or empties with time left."),
                         symbol: "arrow.left.arrow.right",
                         nested: true
                     ) {

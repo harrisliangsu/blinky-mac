@@ -439,7 +439,10 @@ struct CodexUsageService: Sendable {
     /// `after` is the delay Codex also sends (`reset_after_seconds`); it is
     /// the reset when the stamp itself is missing.
     private static func resetDate(_ stamp: Any?, after: Any?, now: Date) -> Date? {
-        if let raw = number(stamp), raw.isFinite, raw > 0 {
+        // Zero is a real stamp: Codex uses Unix epoch for a window that is
+        // already waiting, and the window starter treats that as idle. A
+        // negative stamp is still not a time.
+        if let raw = number(stamp), raw.isFinite, raw >= 0 {
             let seconds = raw >= 10_000_000_000 ? raw / 1000 : raw
             return Date(timeIntervalSince1970: seconds)
         }

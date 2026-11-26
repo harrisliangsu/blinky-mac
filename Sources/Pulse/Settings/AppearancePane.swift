@@ -120,7 +120,7 @@ struct AppearancePane: View {
 
                     SettingsRow(
                         String.localized("Transparency"),
-                        subtitle: String.localized("Clearer to the right, and the text turns from white to black. Black text is hard to read over dark windows."),
+                        subtitle: String.localized("Clearer to the right; the text turns black, which is hard to read over dark windows."),
                         symbol: "circle.lefthalf.filled",
                         nested: true
                     ) {
@@ -209,7 +209,7 @@ struct AppearancePane: View {
 
                 SettingsRow(
                     String.localized("Alert colour when docked"),
-                    subtitle: String.localized("Off keeps the collapsed rail neutral even when a limit needs attention."),
+                    subtitle: String.localized("When off, the collapsed rail shows no alert colour."),
                     symbol: "paintpalette"
                 ) {
                     Toggle("", isOn: Binding(

@@ -70,7 +70,7 @@
 "Skipped: the desktop account does not match." = "已跳过：桌面端登录的账号与此账号不一致。";
 "Reading received" = "已收到读数";
 "Older reading received" = "收到的是旧读数";
-"Desktop app session" = "桌面应用的登录状态";
+"Desktop app session" = "桌面应用的登录信息";
 "Codex app server" = "Codex 应用服务器";
 "Local language server" = "本地语言服务器";
 "Signed-in web page" = "已登录的网页";
@@ -80,7 +80,7 @@
 "Show floating panel" = "显示悬浮面板";
 "The usage rail at the edge of the screen." = "在屏幕边缘显示用量胶囊。";
 "Hide in full screen" = "全屏时隐藏";
-"Keep the floating panel out of full-screen apps." = "其他应用进入全屏时自动隐藏，避免遮挡。";
+"Keep the floating panel out of full-screen apps." = "其他应用全屏时隐藏悬浮面板。";
 "Hide from screenshots" = "截图时隐藏";
 "Screenshot tools that support it leave the floating panel out. Recordings and screen sharing may still show it." = "支持此设置的截图工具不会截到悬浮面板；录屏和共享屏幕时仍可能显示。";
 "Follow the active display" = "跟随活动显示器";
@@ -463,7 +463,7 @@
 /* Accounts */
 "Accounts" = "账号";
 "Add another account" = "添加另一个账号";
-"Opens the provider's own sign-in page." = "会打开该服务自己的登录页面。";
+"Opens the provider's own sign-in page." = "打开服务商的登录页面。";
 "Sign in…" = "登录…";
 "Sign out" = "退出登录";
 "GitHub account" = "GitHub 账号";
@@ -512,11 +512,11 @@
 
 /* The Claude desktop app as a usage route */
 "Desktop app" = "桌面端";
-"Uses the session the Claude desktop app is signed in with." = "用 Claude 桌面端已登录的会话读取。";
+"Uses the session the Claude desktop app is signed in with." = "用 Claude 桌面端的登录信息读取。";
 "Sign in to the Claude desktop app to see usage." = "登录 Claude 桌面端后即可看到用量。";
 "Blinky needs your keychain to read the Claude desktop app's session. Refresh to be asked again." = "Blinky 需要钥匙串权限才能读取 Claude 桌面端的会话。点刷新可再问一次。";
 "Blinky needs your keychain to read Cursor's saved login. Refresh to be asked again." = "Blinky 需要钥匙串权限才能读取 Cursor 保存的登录。点刷新可再问一次。";
-"The Claude desktop app's session was refused. Open it and sign in again." = "Claude 桌面端的会话被拒绝。请打开它重新登录。";
+"The Claude desktop app's session was refused. Open it and sign in again." = "Claude 桌面端的登录信息被拒，请打开它重新登录。";
 
 /* 通知 */
 "Notifications" = "通知";
@@ -695,7 +695,7 @@
 "Sign in to Xiaomi's platform in a browser to see usage." = "在浏览器里登录小米开放平台后才能看到用量。";
 "Xiaomi's saved session expired. Sign in again in your browser." = "小米的登录信息已过期，请在浏览器里重新登录。";
 "No Coding Plan on this Xiaomi account." = "这个小米账号上没有 Coding Plan。";
-"Reads the console with your signed-in browser session." = "用你在浏览器里的登录状态读取控制台。";
+"Reads the console with your signed-in browser session." = "用浏览器里的登录信息读取控制台。";
 
 /* 网络代理 */
 "Network" = "网络";
@@ -721,15 +721,15 @@
 "Enter a whole number from 1 to 65535." = "请输入 1 到 65535 之间的整数。";
 
 /* 服务选择向导 */
-"Choose services to monitor" = "选择要监控的服务";
-"Choose services to start monitoring…" = "选择服务，开始监控…";
-"New services detected" = "发现新支持的服务";
+"Choose services to monitor" = "选择要监控的服务商";
+"Choose services to start monitoring…" = "选择服务商开始监控…";
+"New services detected" = "发现新支持的服务商";
 "Choose at least one service. Blinky reads its login and checks usage only after you finish. You can change this later in Settings." = "请至少勾选一个服务。点「完成」后，Blinky 才会读取所选服务的登录信息并查询用量。之后可以在设置里更改。";
 "This version supports more services found on your Mac. Choose any you want to add; your existing choices stay in place." = "此版本新增支持了本机检测到的更多服务。勾选想添加的即可，已有选择保持不变。";
 "Detected on this Mac" = "本机已检测到";
-"Select detected services" = "选择已检测到的服务";
+"Select detected services" = "选择检测到的服务商";
 "Done" = "完成";
-"Enable a service in its settings to start monitoring." = "在服务的设置页中开启，即可开始监控。";
+"Enable a service in its settings to start monitoring." = "在服务商的设置页中开启即可监控。";
 "Reads Claude Code's saved login from Keychain or its credentials file. May ask for Keychain access, including Claude Desktop's cookie storage." = "读取 Claude Code 保存在钥匙串或凭据文件里的登录信息。可能弹出钥匙串授权，其中包括 Claude 桌面版的 cookie 存储。";
 "Reads ~/.codex/auth.json and may run codex app-server with its saved login. Blinky does not request Keychain access." = "读取 ~/.codex/auth.json，也可能启动 codex app-server 使用它保存的登录。Blinky 不请求钥匙串授权。";
 "Reads the running editor's local language server and connection token, or runs the agy CLI with its saved login. Blinky does not request Keychain access." = "连接运行中的编辑器，读取本机语言服务器的用量及连接令牌；或启动 agy CLI，使用它保存的登录。Blinky 不请求钥匙串授权。";
@@ -817,7 +817,7 @@
 "Sign in to Qoder in a browser to see usage." = "在浏览器里登录 Qoder 后才能看到用量。";
 "Qoder's saved session expired. Sign in again in your browser." = "Qoder 的登录信息已过期，请在浏览器里重新登录。";
 "This Qoder account has no credits." = "这个 Qoder 账号上没有积分。";
-"Reads your credits with your signed-in browser session." = "用你在浏览器里的登录状态读取积分。";
+"Reads your credits with your signed-in browser session." = "用浏览器里的登录信息读取积分。";
 "No Qoder session found. Sign in at %@ first." = "未找到 Qoder 的登录信息。请先在 %@ 登录。";
 "Site" = "站点";
 "Where you signed in. Changing it clears the saved session." = "即你登录时使用的站点。更改后会清除已保存的会话。";
@@ -825,7 +825,7 @@
 "Sign in to StepFun's platform in a browser to see usage." = "在浏览器里登录阶跃星辰开放平台后才能看到用量。";
 "StepFun's saved session expired. Sign in again in your browser." = "阶跃星辰的登录信息已过期，请在浏览器里重新登录。";
 "No Step Plan on this StepFun account." = "这个阶跃星辰账号没有订阅 Step Plan。";
-"Reads your Step Plan with your signed-in browser session." = "用你在浏览器里的登录状态读取 Step Plan。";
+"Reads your Step Plan with your signed-in browser session." = "用浏览器里的登录信息读取 Step Plan。";
 "No StepFun session found. Sign in at %@ first." = "未找到阶跃星辰的登录信息。请先在 %@ 登录。";
 
 /* Extensions */
@@ -868,11 +868,11 @@
 
 /* Profiled providers: shared wording */
 "No session found. Sign in at %@ first." = "没有找到登录信息。请先在 %@ 登录。";
-"Nothing saved on this Mac yet. Open the service's app once, then retry." = "这台 Mac 上还没有保存任何数据。先打开一次这个服务的应用，再重试。";
+"Nothing saved on this Mac yet. Open the service's app once, then retry." = "本机还没有保存任何数据。请先打开一次该服务商的应用，再重试。";
 "Read a browser session in Settings." = "请在设置中从浏览器读取登录信息。";
-"Sign in with this service's own app or command-line tool first." = "请先用这个服务自己的应用或命令行工具登录。";
+"Sign in with this service's own app or command-line tool first." = "请先用该服务商的应用或命令行工具登录。";
 "The browser session expired. Sign in on the website, then read it again in Settings." = "浏览器登录信息已过期。请先在网站上登录，再到设置里重新读取。";
-"The saved login has expired. Sign in again with the service's own app or tool." = "保存的登录已过期。请用这个服务自己的应用或工具重新登录。";
+"The saved login has expired. Sign in again with the service's own app or tool." = "保存的登录已过期。请用该服务商的应用或工具重新登录。";
 "This account has no plan with usage limits." = "这个账号没有带用量额度的套餐。";
 
 /* ClinePass */
@@ -1091,13 +1091,13 @@
 "OpenCode console" = "OpenCode 控制台";
 "Account request log" = "账号请求记录";
 "Kept. The detailed card reads every request on the account with it." = "已保存。详细卡片会用它读取账号的每一次请求。";
-"No OpenCode console session found. Sign in at opencode.ai first." = "没有找到 OpenCode 控制台的登录状态。请先在 opencode.ai 登录。";
+"No OpenCode console session found. Sign in at opencode.ai first." = "未找到 OpenCode 控制台的登录信息。请先在 opencode.ai 登录。";
 "Costs as %@ charged them, for the whole account." = "金额为 %@ 的实际计费，覆盖整个账号。";
 "The console session has expired. Read it again in Settings." = "控制台登录已失效，请到设置里重新读取。";
 "The request log OpenCode's console keeps for 30 days — every machine and every app on the account, and what each request cost — and the plan's limits, when no key is set or the key is turned away. Blinky keeps only the console's sign-in cookies, encrypted on this Mac." = "OpenCode 控制台保留 30 天的请求记录：账号下所有设备、所有应用的每一次请求，以及每次的花费。没有设置密钥、或密钥被拒绝时，也会用它读取套餐额度。Blinky 只保存控制台的登录 Cookie，加密存放在这台 Mac 上。";
 "Turn on Detailed card above to see the request log on the card." = "在上方打开「详细卡片」，就能在卡片上看到请求记录。";
 "Read from %@ · workspace %@." = "已从 %@ 读取 · 工作区「%@」。";
-"The console turned this session away. Sign in again at opencode.ai, then read it again." = "控制台拒绝了这个登录状态。请在 opencode.ai 重新登录后再读取。";
+"The console turned this session away. Sign in again at opencode.ai, then read it again." = "控制台拒绝了此登录信息。请在 opencode.ai 重新登录后再读取。";
 "Read from %@, but the console didn't answer. It will be tried again on the next refresh." = "已从 %@ 读取，但控制台没有响应，下次刷新时会再试。";
 "Reading the account's records…" = "正在读取账号记录…";
 "From %@'s request log for the whole account — every machine and every app that uses it — with what each request was charged. The log keeps 30 days." = "来自 %@ 的账号请求记录，覆盖所有设备和所有使用它的应用，金额为每次请求的实际计费。记录保留 30 天。";
@@ -1109,8 +1109,8 @@
 "The usage DeepSeek's console keeps for the account — every key and every machine, day by day, and what was charged — and the balance, when no key is set or the key is turned away. Blinky keeps only the console's sign-in, encrypted on this Mac." = "DeepSeek 控制台记录的账号用量：覆盖所有密钥和所有设备，按天统计，并附有实际计费。没有设置密钥，或密钥被拒绝时，也会用它读取余额。Blinky 只保存控制台的登录信息，加密存放在这台 Mac 上。";
 "Reads Chrome, Edge, Brave, Arc and other Chromium browsers." = "可从 Chrome、Edge、Brave、Arc 等 Chromium 浏览器读取。";
 "No Chromium browser was found. Sign in at platform.deepseek.com in Chrome, Edge, Brave or Arc." = "没有找到 Chromium 浏览器。请在 Chrome、Edge、Brave 或 Arc 中登录 platform.deepseek.com。";
-"No DeepSeek console sign-in found. Sign in at platform.deepseek.com first." = "没有找到 DeepSeek 控制台的登录状态。请先在 platform.deepseek.com 登录。";
-"The console turned this sign-in away. Sign in again at platform.deepseek.com, then read it again." = "控制台拒绝了这个登录状态。请在 platform.deepseek.com 重新登录后再读取。";
+"No DeepSeek console sign-in found. Sign in at platform.deepseek.com first." = "未找到 DeepSeek 控制台的登录信息。请先在 platform.deepseek.com 登录。";
+"The console turned this sign-in away. Sign in again at platform.deepseek.com, then read it again." = "控制台拒绝了此登录信息。请在 platform.deepseek.com 重新登录后再读取。";
 
 "Period" = "时间范围";
 "Service status" = "服务状态";
@@ -1122,7 +1122,7 @@
 "Unrecognised status" = "无法识别的状态";
 "Couldn't read the status page." = "无法读取状态页。";
 "Status page" = "状态页";
-"As %@ reports it on its status page, read when this page opens and every five minutes while it stays open." = "以 %@ 状态页公布的为准。打开此页时读取一次，页面保持打开期间每 5 分钟更新。";
+"As %@ reports it on its status page, read when this page opens and every five minutes while it stays open." = "以 %@ 状态页为准，打开此页时读取，之后每 5 分钟更新。";
 "90 days ago" = "90 天前";
 "%@ days ago" = "%@ 天前";
 "Now" = "现在";
@@ -1211,7 +1211,7 @@
 "Usage recaps" = "用量报告";
 "Shareable cards for a day, a week, a month or a year, from this Mac's records." = "用这台 Mac 的本机记录，生成可以分享的日、周、月、年卡片。";
 "When a recap is ready" = "月报生成时";
-"Last month's recap, at the start of the month. Needs Token spend reading." = "每月月初提醒上个月的月报已生成。需要先开启「读取本机用量记录」。";
+"Last month's recap, at the start of the month. Needs Token spend reading." = "每月月初提醒上月月报。需开启「读取本机用量记录」。";
 "Your %@ recap is ready" = "%@ 的月报已生成";
 "The recap needs Token spend" = "月报需要先读取本机用量记录";
 "It is built from the usage records on this Mac, which Blinky reads only while Token spend reading is on." = "月报根据这台 Mac 上的用量记录生成。只有开启「读取本机用量记录」后，Blinky 才会读取。";
@@ -1305,7 +1305,7 @@
 "Rate source" = "汇率来源";
 "Your rate is used. Clear the field to use the day's rate." = "正在使用你填写的汇率。清空即改用当日汇率。";
 "The day's rate, updated %@. Type a rate to use your own." = "当日汇率，更新于 %@。也可以填写自己的汇率。";
-"No rate yet, so estimates stay in US dollars. Type a rate, or wait for the day's." = "还没有汇率，估算金额暂时仍以美元显示。可以填写汇率，或等待获取当日汇率。";
+"No rate yet, so estimates stay in US dollars. Type a rate, or wait for the day's." = "尚无汇率，估算金额暂以美元显示。可填写汇率，或等待当日汇率。";
 "US dollar" = "美元";
 "Chinese yuan" = "人民币";
 "Hong Kong dollar" = "港元";
@@ -1506,7 +1506,7 @@
 "Robot colour" = "小机器人颜色";
 "Robot figure" = "小机器人形象";
 "The object the robot is drawn as. It shows the same states whichever it is." = "选择小机器人的样子。无论哪种样子，表示的状态都相同。";
-"Replaces the provider's mark and shows what this account is doing. The figures are Open Bot Avatar by Dominik Scholz." = "代替服务商图标，显示这个账号当前的状态。小机器人的形象来自 Dominik Scholz 的 Open Bot Avatar。";
+"Replaces the provider's mark and shows what this account is doing. The figures are Open Bot Avatar by Dominik Scholz." = "代替服务商图标显示账号状态，形象来自 Dominik Scholz 的 Open Bot Avatar。";
 "The robot figures in the rings and their motion are Open Bot Avatar by Dominik Scholz, run as it is, under the MIT License." = "圆环中小机器人的形象和动作来自 Dominik Scholz 的 Open Bot Avatar，直接运行其原版代码，以 MIT 许可证授权。";
 "Controller" = "游戏手柄";
 "Barbell" = "杠铃";
@@ -1558,3 +1558,77 @@
 "This version of the agy CLI can't sign in from Blinky. Update it, or run agy in Terminal once." = "这个版本的 agy 无法在 Blinky 里登录。请更新它，或在终端里运行一次 agy。";
 "Install the agy CLI, or run agy in Terminal once, to sign in." = "请先安装 agy，或在终端里运行一次 agy，再登录。";
 "Signed in. Blinky reads Antigravity on the next refresh." = "已登录。下次刷新时 Blinky 会读取 Antigravity。";
+
+/* Added with Pulse 1.16.1 */
+"Near an edge, the rail docks and runs along it." = "拖近边缘时吸附并沿边排列。";
+"Where a ring turns from amber to red. A spent limit is always red." = "圆环由黄变红的位置。用完的限额总是红色。";
+"When off, the collapsed rail shows no alert colour." = "关闭后，收起的细条不显示警报色。";
+"The outer arc fills with time elapsed or empties with time left." = "外圈随已过时间填满，或随剩余时间缩短。";
+"Whether each limit runs out early, on the card." = "在卡片上预估限额会不会提前用完。";
+"Limit reset credits" = "额度重置券";
+"From this Mac's %@ logs, priced at models.dev's API rates. You are on a subscription, so this is not a charge." = "根据本机 %@ 日志，按 models.dev 的 API 价格折算。你是订阅套餐，这不是实际扣款。";
+"From this Mac's usage records." = "数据来自本机用量记录。";
+"An estimate: this Mac's spend this window, divided by the used percentage the provider reports. It reads low when the account is also used elsewhere; if the percentage rises while this Mac spends nothing, the window is no longer estimated. Windows with too little use are left out." = "推算值：本机本周期的花费除以服务商报告的已用百分比。账号在别处也用时会偏低；百分比涨而本机没花钱时，本周期停止推算。用量太少的不列出。";
+"So these windows can be found again with the Dock or ⌘-Tab; the icon goes when they close." = "窗口被盖住时，可从 Dock 或 ⌘-Tab 找回；窗口都关闭后图标随之消失。";
+"Clear glass that shows what is behind the panel, instead of a solid surface." = "透出面板后面的内容，替代纯色背景。";
+"Panel colour" = "面板颜色";
+"Light suits a bright screen. Not available with Liquid Glass." = "浅色适合明亮的屏幕。开启液态玻璃时不可用。";
+"Black" = "黑色";
+"Clearer to the right; the text turns black, which is hard to read over dark windows." = "越往右越透明，文字由白变黑；黑字在深色窗口上不易看清。";
+"Reads Antigravity while it is open, else the agy CLI." = "Antigravity 打开时直接读取，否则通过 agy CLI 读取。";
+"Grok's login expired. Use Grok to renew it." = "Grok 的登录已过期，用一次 Grok 即可续期。";
+"A Bearer token from app.devin.ai, a space, then your organization. Optional: without it, Blinky reads Devin's app. Stored encrypted on this Mac." = "在 app.devin.ai 获取 Bearer token，空格后填组织。可不填，Blinky 会读取 Devin 应用保存的套餐。加密保存在本机。";
+"Claude Code's saved login lasts a few hours, and only Claude Code can renew it. Claude Code also sends your limits to the registered status line command; with Blinky as that command, usage stays current after the login expires.\n\nThis edits ~/.claude/settings.json and the status line at the bottom of your Claude Code sessions. Your existing status line keeps working, and you can disconnect in Settings." = "Claude Code 保存的登录仅几小时有效，且只有 Claude Code 能续期。Claude Code 也会把限额发给已注册的状态栏命令；Blinky 担任该命令后，登录过期也能继续更新用量。\n\n此操作会修改 ~/.claude/settings.json 和 Claude Code 会话底部的状态栏。已有的状态栏照常工作，可随时在设置中断开。";
+"Authorize on GitHub's page. Blinky asks only to read your profile." = "在 GitHub 页面授权，只读取个人资料。";
+"Cursor account" = "Cursor 账号";
+"Optional. Without it, Blinky reads the Cursor editor's login." = "可选。不登录则读取 Cursor 编辑器的登录。";
+"JetBrains account" = "JetBrains 账号";
+"Optional. Without it, Blinky reads only the quota the IDE saved." = "可选。不登录则只读取 IDE 保存的额度。";
+"The saved login has expired or was refused. Sign in again." = "保存的登录已过期或被拒绝，请重新登录。";
+"Signed in. Blinky holds the token for this Mac." = "已登录。Blinky 在本机保存了令牌。";
+"Another gateway with its own address, key and name." = "添加另一个网关，单独填写它的地址、API key 和名称。";
+"Add" = "添加";
+"Forgets its address and key and takes it off the rail." = "清除它的地址和 API key，并从胶囊中移除。";
+"Blinky needs keychain access for the Claude desktop app's session. Refresh to ask again." = "读取 Claude 桌面端的登录信息需要钥匙串权限。点「刷新」重新请求。";
+"Blinky needs keychain access for Cursor's saved login. Refresh to ask again." = "读取 Cursor 保存的登录需要钥匙串权限。点「刷新」重新请求。";
+"An inner ring for the next-fullest limit." = "内圈显示用量第二高的限额。";
+"One ring per model group." = "每个模型分组一个圆环。";
+"The balance the ring counts as full." = "圆环以此余额为满额。";
+"Choose at least one service. Blinky reads logins and usage only after you finish; you can change this later in Settings." = "请至少勾选一个服务商。点「完成」后，Blinky 才读取其登录信息并查询用量；之后可在设置中更改。";
+"This version supports more services found on your Mac. Choose any to add; your current choices stay." = "此版本支持本机检测到的更多服务商。勾选要添加的即可，原有选择不变。";
+"Uses the Cursor account you sign in to in Settings, or the login the Cursor editor saved." = "使用你在设置中登录的 Cursor 账号；没有时读取 Cursor 编辑器保存的登录。";
+"Reads the login saved in ~/.grok/auth.json. No Keychain prompt." = "读取 ~/.grok/auth.json 里保存的登录信息。无需钥匙串授权。";
+"The address needs https://, unless the server is on your own network." = "地址需以 https:// 开头，局域网内的服务器除外。";
+"Where you signed in. Changing it clears the session." = "你登录的站点。更改后清除已保存的登录信息。";
+"Where your key is from. Each site has its own." = "密钥所属的站点，各站点的密钥分开保存。";
+"An extension is a program you add that reports one account's usage. Blinky draws its output as a ring, runs it only once you switch it on, and gives it no credentials." = "扩展是你添加的程序，报告一个账号的用量。Blinky 把其输出画成圆环，开启后才运行，且不提供任何凭据。";
+"From pulse-extension.json. Blinky saves this extension's settings under it." = "来自 pulse-extension.json。Blinky 按此 ID 保存扩展的设置。";
+"The app didn't save a quota Blinky can read on this Mac." = "应用没有在本机保存可读的额度。";
+"Without a sign-in, only the IDE's file is read." = "不登录则只读取 IDE 的文件。";
+"Reads the AI quota your JetBrains IDE saves on this Mac. After you sign in to a JetBrains account, Blinky asks JetBrains for it when the IDE saved none." = "读取 JetBrains IDE 在本机保存的 AI 额度。登录 JetBrains 账号后，IDE 没有保存额度时由 Blinky 向 JetBrains 查询。";
+"The IDE's saved quota, or JetBrains once signed in" = "IDE 保存的额度；登录后向 JetBrains 查询";
+"Reset credits on the card" = "在卡片上显示额度重置券";
+"How many limit reset credits are left, and when the next one expires. Asks Codex's app server on every refresh." = "还剩几张额度重置券，以及最近一张什么时候到期。每次刷新都会询问 Codex 的 app server。";
+"Start a new window" = "开始新窗口";
+"When the 5-hour window isn't counting down, sends “hi” to Haiku through Claude Code. Nothing is saved. A failure is notified once and not retried until the next reset." = "5 小时窗口没在倒计时时，通过 Claude Code 向 Haiku 发一条「hi」，不保存内容。失败会通知一次，下次重置前不再试。";
+"When the 5-hour or weekly window isn't counting down, sends “hi” to the cheapest model through Codex. Nothing is saved. A failure is notified once and not retried until the next reset." = "5 小时或每周窗口没在倒计时时，通过 Codex 向最便宜的模型发一条「hi」，不保存内容。失败会通知一次，下次重置前不再试。";
+"Couldn't start the window" = "窗口未能开始";
+"The tool didn't answer in time. No retry until the next reset." = "命令行工具没有及时响应，下次重置前不再试。";
+"The message didn't go through; check that the tool is signed in. No retry until the next reset." = "消息没有发出，请确认命令行工具已登录。下次重置前不再试。";
+"The command-line tool wasn't found. No retry until the next reset." = "没有找到命令行工具，下次重置前不再试。";
+"Starts outside these hours wait until they begin. Shared by Claude Code and Codex." = "时段外的启动推迟到时段开始。Claude Code 和 Codex 共用。";
+"From Claude Code's records: a cache lasts an hour or five minutes from the last request that used it. Switching model, changing tools or compacting starts a new one. Subagents are not included." = "来自 Claude Code 的记录：缓存保留 1 小时或 5 分钟，从最后一次使用算起。换模型、改工具或压缩对话会重建缓存。不含子 Agent。";
+"The menu opens on an overview of every account, with a tab for each." = "菜单显示所有账号概览，每个账号一个标签页。";
+"OpenCode's console keeps 30 days of requests: every machine and app on the account, and what each cost. It also gives the plan's limits when no key is set or the key is refused. Blinky keeps only the console's sign-in cookies, encrypted on this Mac." = "OpenCode 控制台保留 30 天的请求记录，涵盖账号下所有设备和应用，含每次请求的花费；未设置密钥或密钥被拒时，也用它读取套餐额度。Blinky 只保存控制台的登录 Cookie，加密存放在本机。";
+"DeepSeek's console usage for the account: every key and machine, by day, with what was charged. It also gives the balance when no key is set or the key is refused. Blinky keeps only the console's sign-in, encrypted on this Mac." = "DeepSeek 控制台按天记录的账号用量和实际计费，涵盖所有密钥和设备；未设置密钥或密钥被拒时，也用它读取余额。Blinky 只保存控制台的登录信息，加密存放在本机。";
+"Turn on Token spend reading to build it." = "月报需要开启「读取本机用量记录」。";
+"For amounts estimated from API prices. Balances a provider reports keep its currency." = "用于按 API 价格估算的金额。服务商报告的余额保持原币种。";
+"Credentials are hidden. A reply can show an email or balance, so it stays out of shared diagnostics." = "凭据已隐藏。回复可能含邮箱或余额，不放进可分享的诊断。";
+"Parts from and snaps to edges like a drop, and lags a little while dragged." = "像水滴一样拉开、吸附，拖动时略有滞后。";
+"Every figure shows the same states." = "各形象表示的状态相同。";
+"The robot figures in the rings and their motion are Open Bot Avatar by Dominik Scholz, under the MIT License. Its code runs as it is; the fur is drawn by a Metal port of its renderer." = "圆环中小机器人的形象和动作来自 Dominik Scholz 的 Open Bot Avatar，以 MIT 许可证授权。原版代码直接运行，毛绒由移植到 Metal 的渲染器绘制。";
+"Material" = "材质";
+"Flat" = "纯色";
+"Fluffy" = "毛绒";
+"You have used Blinky for two weeks. If it has been useful, a star on GitHub helps others find it." = "你已使用 Blinky 两周。如果觉得有用，欢迎在 GitHub 上点个 Star，帮助更多人找到 Blinky。";
+"Support Blinky on Afdian" = "在爱发电支持 Blinky";

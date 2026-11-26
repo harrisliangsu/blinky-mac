@@ -4,7 +4,7 @@ Service: [`AntigravityUsageService.swift`](../../Sources/Pulse/Providers/Antigra
 
 Two routes, chosen in Settings → *Read usage from*: **Automatic** (the default) tries the editor's **language server** while Antigravity is open, then the **`agy` CLI** when the server produced no figures; **CLI** asks only `agy`; **Desktop app** asks only the language server. The route that answered is recorded as `languageServer` or `antigravityCLI`.
 
-The odd one out. Extra accounts are not supported. `keepsLocalTranscripts` is false: it leaves no session files the history card can read, so history and the money estimate are left out rather than shown as zeroes. The activity mark is drawn from its conversation databases ([below](#activity-mark)).
+The odd one out. Extra accounts are not supported, and cannot be without breaking Antigravity's terms (see [below](#the-oauth-route-is-off-limits)). `keepsLocalTranscripts` is false: it leaves no session files the history card can read, so history and the money estimate are left out rather than shown as zeroes. The activity mark is drawn from its conversation databases ([below](#activity-mark)).
 
 ## The language server
 
@@ -94,6 +94,10 @@ So history, money estimate, and activity cannot be built from the language serve
 
 `~/.gemini` was **not** on that list and should have been: it holds `antigravity/`, `antigravity-ide/` and a `jetski-standalone-oauth-token` of `{auth_method, token}`. That is the Google OAuth route CodexBar calls experimental, and its own notes say the OAuth payload can only prove model availability — an all-100% placeholder rather than real quota. Worth knowing before anyone spends a day on it. It carries no token counts either, so it changes nothing above.
 
+### The OAuth route is off limits
+
+Antigravity's terms (section 6, [antigravity.google/terms](https://antigravity.google/terms)) call using third-party software to access the service — their example is OpenClaw with Antigravity OAuth — a breach that may get the Antigravity and Gemini CLI accounts suspended or terminated. Since early 2026 Google's developer forum has carried many such suspensions (`403` "disabled … for violation of Terms of Service"), some of which also disabled the official `agy`. So Pulse never reads `jetski-standalone-oauth-token` and never calls Google's backend with it, whatever it would unlock; that is also why a second Antigravity account (#124) is not offered. The two routes Pulse does use stay on this Mac: the running app's own language server, and the official `agy` CLI asked for `/usage` with no model request. Neither touches the OAuth token, and no suspension tied to either was found (checked 2026-11-25).
+
 Antigravity also reports a monthly credit *allowance*, never a balance, which is why `creditBalance` stays nil: an allowance shown there would read as what is left.
 
 ## Separate allowances, optionally one ring each
@@ -108,7 +112,7 @@ The plan carries a Gemini allowance and a separate one for Claude and GPT, repor
 
 ## Settings copy
 
-A picker, not a stated route: every provider with more than one route offers the choice (`hasSourceChoice`), so `Provider.soleRoute` is nil. Options are *Automatic* / *CLI* / *Desktop app* (`UsageSource.options(for:)`; *CLI* is `.tooling` titled by `title(for:)`). The subtitles: automatic “Reads Antigravity while it is open, and the agy CLI when it is not.”, CLI “Asks the agy CLI, using the login it already saved.”, desktop app “Asks the language server Antigravity runs while it is open.” Claude's desktop-route availability filter does not apply to it. `UsageRoute.soleRoute(for:)` is nil because the service records which route answered. The wording must not leak to other single-route providers. See [README.md](README.md).
+A picker, not a stated route: every provider with more than one route offers the choice (`hasSourceChoice`), so `Provider.soleRoute` is nil. Options are *Automatic* / *CLI* / *Desktop app* (`UsageSource.options(for:)`; *CLI* is `.tooling` titled by `title(for:)`). The subtitles: automatic “Reads Antigravity while it is open, else the agy CLI.”, CLI “Asks the agy CLI, using the login it already saved.”, desktop app “Asks the language server Antigravity runs while it is open.” Claude's desktop-route availability filter does not apply to it. `UsageRoute.soleRoute(for:)` is nil because the service records which route answered. The wording must not leak to other single-route providers. See [README.md](README.md).
 
 ## Activity mark
 

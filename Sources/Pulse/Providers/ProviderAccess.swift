@@ -15,8 +15,10 @@ extension Provider {
             .localized("Runs Kiro CLI's native ACP usage method with its saved login. Blinky does not read or store Kiro credentials.")
         case .antigravity:
             .localized("Reads the running editor's local language server and connection token, or runs the agy CLI with its saved login. Blinky does not request Keychain access.")
-        case .cursor, .grokBot:
+        case .cursor:
             .localized("Reads the login saved in Cursor's local database. No Keychain prompt.")
+        case .grokBot:
+            .localized("Uses the Cursor account you sign in to in Settings, or the login the Cursor editor saved.")
         case .grok:
             .localized("Reads ~/.grok/auth.json while that login is still good, and can keep its own login from Settings when the CLI's is missing or refused. Blinky does not write the CLI's file. No Keychain prompt.")
         case .openCodeGo:

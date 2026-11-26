@@ -80,7 +80,7 @@
 "Show floating panel" = "フローティングパネルを表示";
 "The usage rail at the edge of the screen." = "画面の端に使用量のレールを表示します。";
 "Hide in full screen" = "フルスクリーン中は隠す";
-"Keep the floating panel out of full-screen apps." = "他の App がフルスクリーンのときは自動的に隠します。";
+"Keep the floating panel out of full-screen apps." = "他の App がフルスクリーンのときは隠します。";
 "Hide from screenshots" = "スクリーンショットに写さない";
 "Screenshot tools that support it leave the floating panel out. Recordings and screen sharing may still show it." = "対応するスクリーンショットツールにはフローティングパネルが写りません。画面収録や画面共有では写ることがあります。";
 "Follow the active display" = "使用中のディスプレイを追う";
@@ -448,7 +448,7 @@
 /* Accounts */
 "Accounts" = "アカウント";
 "Add another account" = "アカウントを追加";
-"Opens the provider's own sign-in page." = "プロバイダ自身のサインインページを開きます。";
+"Opens the provider's own sign-in page." = "プロバイダのサインインページを開きます。";
 "Sign in…" = "サインイン…";
 "Sign out" = "サインアウト";
 "GitHub account" = "GitHub アカウント";
@@ -723,15 +723,15 @@
 "Enter a whole number from 1 to 65535." = "1〜65535 の整数を入力してください。";
 
 /* 監視するサービスの選択 */
-"Choose services to monitor" = "監視するサービスを選択";
-"Choose services to start monitoring…" = "サービスを選んで監視を開始…";
-"New services detected" = "新たに対応したサービス";
+"Choose services to monitor" = "監視するプロバイダを選択";
+"Choose services to start monitoring…" = "プロバイダを選んで監視を開始…";
+"New services detected" = "新たに対応したプロバイダ";
 "Choose at least one service. Blinky reads its login and checks usage only after you finish. You can change this later in Settings." = "サービスを 1 つ以上選んでください。「完了」を押すと、選んだサービスのログイン情報を読み取り、使用量の確認を始めます。後から設定で変更できます。";
 "This version supports more services found on your Mac. Choose any you want to add; your existing choices stay in place." = "このバージョンで新たに対応したサービスが Mac に見つかりました。追加するものを選んでください。これまでの選択はそのままです。";
 "Detected on this Mac" = "この Mac で検出";
-"Select detected services" = "検出したサービスを選択";
+"Select detected services" = "検出したプロバイダを選択";
 "Done" = "完了";
-"Enable a service in its settings to start monitoring." = "監視を始めるには、そのサービスの設定で有効にしてください。";
+"Enable a service in its settings to start monitoring." = "監視するには、そのプロバイダの設定で有効にしてください。";
 "Reads Claude Code's saved login from Keychain or its credentials file. May ask for Keychain access, including Claude Desktop's cookie storage." = "キーチェーンまたは認証情報ファイルから Claude Code のログインを読み取ります。Claude デスクトップの Cookie 保存領域を含め、キーチェーンへのアクセスを求めることがあります。";
 "Reads ~/.codex/auth.json and may run codex app-server with its saved login. Blinky does not request Keychain access." = "~/.codex/auth.json を読み取り、保存済みのログインで codex app-server を起動する場合があります。Blinky はキーチェーンへのアクセスを求めません。";
 "Reads the running editor's local language server and connection token, or runs the agy CLI with its saved login. Blinky does not request Keychain access." = "起動中のエディタのローカル言語サーバから使用量と接続トークンを読み取るか、保存済みのログインで agy CLI を起動します。Blinky はキーチェーンへのアクセスを求めません。";
@@ -870,11 +870,11 @@
 
 /* Profiled providers: shared wording */
 "No session found. Sign in at %@ first." = "セッションが見つかりません。先に %@ でサインインしてください。";
-"Nothing saved on this Mac yet. Open the service's app once, then retry." = "この Mac にはまだ何も保存されていません。そのサービスの App を一度開いてから、再試行してください。";
+"Nothing saved on this Mac yet. Open the service's app once, then retry." = "この Mac にはまだ何も保存されていません。そのプロバイダの App を一度開いて再試行してください。";
 "Read a browser session in Settings." = "設定でブラウザのセッションを読み取ってください。";
-"Sign in with this service's own app or command-line tool first." = "先にそのサービス自身の App かコマンドラインツールでサインインしてください。";
+"Sign in with this service's own app or command-line tool first." = "先にそのプロバイダの App かコマンドラインツールでサインインしてください。";
 "The browser session expired. Sign in on the website, then read it again in Settings." = "ブラウザのセッションの有効期限が切れました。Web サイトでサインインしてから、設定でもう一度読み取ってください。";
-"The saved login has expired. Sign in again with the service's own app or tool." = "保存されているログインの有効期限が切れました。そのサービス自身の App かツールでサインインし直してください。";
+"The saved login has expired. Sign in again with the service's own app or tool." = "保存されているログインの有効期限が切れました。そのプロバイダの App かツールでサインインし直してください。";
 "This account has no plan with usage limits." = "このアカウントには使用量の上限があるプランがありません。";
 
 /* ClinePass */
@@ -1124,7 +1124,7 @@
 "Unrecognised status" = "不明な状態";
 "Couldn't read the status page." = "ステータスページを読み込めませんでした。";
 "Status page" = "ステータスページ";
-"As %@ reports it on its status page, read when this page opens and every five minutes while it stays open." = "%@ がステータスページで公表している内容です。このページを開いたときに読み込み、開いている間は 5 分ごとに更新します。";
+"As %@ reports it on its status page, read when this page opens and every five minutes while it stays open." = "%@ のステータスページから、このページを開いたときと開いている間 5 分ごとに読み込みます。";
 "90 days ago" = "90 日前";
 "%@ days ago" = "%@ 日前";
 "Now" = "現在";
@@ -1213,7 +1213,7 @@
 "Usage recaps" = "使用量のまとめ";
 "Shareable cards for a day, a week, a month or a year, from this Mac's records." = "この Mac の記録から、1 日・1 週間・1 か月・1 年分の共有用カードを作ります。";
 "When a recap is ready" = "まとめができたとき";
-"Last month's recap, at the start of the month. Needs Token spend reading." = "月初に、先月のまとめができたことを知らせます。「ローカルの使用量記録を読み取る」がオンのときだけ使えます。";
+"Last month's recap, at the start of the month. Needs Token spend reading." = "月初に先月のまとめを知らせます。「ローカルの使用量記録を読み取る」がオンのときに使えます。";
 "Your %@ recap is ready" = "%@のまとめができました";
 "The recap needs Token spend" = "まとめには「トークン使用量」が必要です";
 "It is built from the usage records on this Mac, which Blinky reads only while Token spend reading is on." = "この Mac の使用量記録から作ります。Blinky が記録を読むのは、「ローカルの使用量記録を読み取る」がオンのときだけです。";
@@ -1307,7 +1307,7 @@
 "Rate source" = "レートの提供元";
 "Your rate is used. Clear the field to use the day's rate." = "入力したレートを使っています。空欄にするとその日のレートに戻ります。";
 "The day's rate, updated %@. Type a rate to use your own." = "その日のレートです（%@ 更新）。自分のレートを入力することもできます。";
-"No rate yet, so estimates stay in US dollars. Type a rate, or wait for the day's." = "まだレートがないため、推定額は米ドルのまま表示しています。レートを入力するか、その日のレートの取得を待ってください。";
+"No rate yet, so estimates stay in US dollars. Type a rate, or wait for the day's." = "レートがまだないため、推定額は米ドルで表示しています。レートを入力するか、当日のレートを待ってください。";
 "US dollar" = "米ドル";
 "Chinese yuan" = "人民元";
 "Hong Kong dollar" = "香港ドル";
@@ -1560,3 +1560,77 @@
 "This version of the agy CLI can't sign in from Blinky. Update it, or run agy in Terminal once." = "このバージョンの agy では Blinky からサインインできません。更新するか、ターミナルで agy を一度実行してください。";
 "Install the agy CLI, or run agy in Terminal once, to sign in." = "サインインするには、agy をインストールするか、ターミナルで agy を一度実行してください。";
 "Signed in. Blinky reads Antigravity on the next refresh." = "サインインしました。次の更新で Blinky が Antigravity を読み取ります。";
+
+/* Added with Pulse 1.16.1 */
+"Near an edge, the rail docks and runs along it." = "端に近づけると吸着し、端に沿って並びます。";
+"Where a ring turns from amber to red. A spent limit is always red." = "リングが黄から赤に変わる位置です。使い切った上限は常に赤です。";
+"When off, the collapsed rail shows no alert colour." = "オフにすると、折りたたんだレールに警告色を表示しません。";
+"The outer arc fills with time elapsed or empties with time left." = "外側のリングは経過時間で満ちるか、残り時間で減ります。";
+"Whether each limit runs out early, on the card." = "上限が早めに尽きるかをカードに表示します。";
+"Limit reset credits" = "上限リセット券";
+"From this Mac's %@ logs, priced at models.dev's API rates. You are on a subscription, so this is not a charge." = "この Mac の %@ のログを models.dev の API 料金で換算しています。サブスクリプションのため、実際の請求額ではありません。";
+"From this Mac's usage records." = "この Mac の使用量記録から集計します。";
+"An estimate: this Mac's spend this window, divided by the used percentage the provider reports. It reads low when the account is also used elsewhere; if the percentage rises while this Mac spends nothing, the window is no longer estimated. Windows with too little use are left out." = "推定値です。この Mac の今期間の支出を、プロバイダが報告する使用率で割っています。ほかの場所でも使っていると低めになり、この Mac で使っていないのに使用率が上がると、その期間は推定をやめます。使用量が少なすぎる期間は表示しません。";
+"So these windows can be found again with the Dock or ⌘-Tab; the icon goes when they close." = "他のウインドウに隠れても Dock や ⌘-Tab から戻れます。どちらも閉じるとアイコンも消えます。";
+"Clear glass that shows what is behind the panel, instead of a solid surface." = "不透明な背景ではなく、背後の内容が透けて見えるガラスにします。";
+"Panel colour" = "パネルの色";
+"Light suits a bright screen. Not available with Liquid Glass." = "ライトは明るい画面に向いています。Liquid Glass がオンのときは使えません。";
+"Black" = "黒";
+"Clearer to the right; the text turns black, which is hard to read over dark windows." = "右ほど透明になり、文字は白から黒へ変わります。黒い文字は暗いウインドウ上で読みにくくなります。";
+"Reads Antigravity while it is open, else the agy CLI." = "Antigravity が開いていればそこから、なければ agy CLI から読み取ります。";
+"Grok's login expired. Use Grok to renew it." = "Grok のログインが期限切れです。Grok を一度使うと更新されます。";
+"A Bearer token from app.devin.ai, a space, then your organization. Optional: without it, Blinky reads Devin's app. Stored encrypted on this Mac." = "app.devin.ai の Bearer トークン、スペース、組織名の順です。省略すると Devin の App が保存した内容を読みます。この Mac に暗号化して保存されます。";
+"Claude Code's saved login lasts a few hours, and only Claude Code can renew it. Claude Code also sends your limits to the registered status line command; with Blinky as that command, usage stays current after the login expires.\n\nThis edits ~/.claude/settings.json and the status line at the bottom of your Claude Code sessions. Your existing status line keeps working, and you can disconnect in Settings." = "Claude Code が保存するログインは数時間しか持たず、更新できるのは Claude Code だけです。Claude Code は登録されたステータスラインコマンドに上限を送るため、Blinky がそのコマンドになれば、ログインが切れても使用量を更新し続けられます。\n\nこの操作は ~/.claude/settings.json と、Claude Code のセッション下部のステータスラインを変更します。既存のステータスラインはそのまま動き、設定でいつでも接続を解除できます。";
+"Authorize on GitHub's page. Blinky asks only to read your profile." = "GitHub のページで承認します。求めるのはプロフィールの読み取りだけです。";
+"Cursor account" = "Cursor アカウント";
+"Optional. Without it, Blinky reads the Cursor editor's login." = "任意です。サインインしない場合は Cursor エディタのログインを読み取ります。";
+"JetBrains account" = "JetBrains アカウント";
+"Optional. Without it, Blinky reads only the quota the IDE saved." = "任意です。サインインしない場合は IDE が保存した利用枠だけを読み取ります。";
+"The saved login has expired or was refused. Sign in again." = "保存されたログインの有効期限が切れたか、拒否されました。もう一度サインインしてください。";
+"Signed in. Blinky holds the token for this Mac." = "サインイン済みです。Blinky はこの Mac にトークンを保持します。";
+"Another gateway with its own address, key and name." = "別のゲートウェイを追加します。アドレス、API キー、名前はそれぞれ個別に設定します。";
+"Add" = "追加";
+"Forgets its address and key and takes it off the rail." = "アドレスと API キーを破棄し、レールからも外します。";
+"Blinky needs keychain access for the Claude desktop app's session. Refresh to ask again." = "Claude デスクトップ App のセッションを読むにはキーチェーンの許可が必要です。更新すると再度確認します。";
+"Blinky needs keychain access for Cursor's saved login. Refresh to ask again." = "Cursor の保存済みログインを読むにはキーチェーンの許可が必要です。更新すると再度確認します。";
+"An inner ring for the next-fullest limit." = "内側のリングに 2 番目に使っている上限を表示します。";
+"One ring per model group." = "モデルグループごとにリングを表示します。";
+"The balance the ring counts as full." = "リングが満額とみなす残高です。";
+"Choose at least one service. Blinky reads logins and usage only after you finish; you can change this later in Settings." = "プロバイダを 1 つ以上選んでください。ログイン情報の読み取りと使用量の確認は「完了」の後に始めます。後から設定で変更できます。";
+"This version supports more services found on your Mac. Choose any to add; your current choices stay." = "このバージョンで対応したプロバイダが Mac に見つかりました。追加するものを選んでください。これまでの選択はそのままです。";
+"Uses the Cursor account you sign in to in Settings, or the login the Cursor editor saved." = "設定でサインインした Cursor アカウントを使います。ない場合は Cursor エディタが保存したログインを読み取ります。";
+"Reads the login saved in ~/.grok/auth.json. No Keychain prompt." = "~/.grok/auth.json に保存されたログインを読み取ります。キーチェーンの確認はありません。";
+"The address needs https://, unless the server is on your own network." = "サーバーが自分のネットワーク内にない場合、アドレスには https:// が必要です。";
+"Where you signed in. Changing it clears the session." = "サインインしたサイトです。変更するとセッションは消去されます。";
+"Where your key is from. Each site has its own." = "キーを発行したサイトです。キーはサイトごとに保存されます。";
+"An extension is a program you add that reports one account's usage. Blinky draws its output as a ring, runs it only once you switch it on, and gives it no credentials." = "拡張機能は自分で追加するプログラムで、1 つのアカウントの使用量を報告します。Blinky は出力をリングで表示し、オンにするまで実行せず、認証情報も渡しません。";
+"From pulse-extension.json. Blinky saves this extension's settings under it." = "pulse-extension.json の値です。設定はこの ID で保存されます。";
+"The app didn't save a quota Blinky can read on this Mac." = "App は Blinky が読み取れる利用枠をこの Mac に保存していません。";
+"Without a sign-in, only the IDE's file is read." = "サインインしない場合は IDE のファイルだけを読み取ります。";
+"Reads the AI quota your JetBrains IDE saves on this Mac. After you sign in to a JetBrains account, Blinky asks JetBrains for it when the IDE saved none." = "JetBrains IDE がこの Mac に保存した AI の利用枠を読み取ります。JetBrains アカウントにサインインすると、IDE が保存していないときは Blinky が JetBrains に問い合わせます。";
+"The IDE's saved quota, or JetBrains once signed in" = "IDE が保存した利用枠、サインイン後は JetBrains";
+"Reset credits on the card" = "カードにリセット券を表示";
+"How many limit reset credits are left, and when the next one expires. Asks Codex's app server on every refresh." = "残っている上限リセット券の枚数と、次の券の有効期限。更新のたびに Codex の app server に問い合わせます。";
+"Start a new window" = "新しいウィンドウを開始";
+"When the 5-hour window isn't counting down, sends “hi” to Haiku through Claude Code. Nothing is saved. A failure is notified once and not retried until the next reset." = "5 時間枠のカウントダウンが止まっているとき、Claude Code から Haiku に「hi」を送ります。内容は保存しません。失敗したら一度だけ通知し、次のリセットまで再試行しません。";
+"When the 5-hour or weekly window isn't counting down, sends “hi” to the cheapest model through Codex. Nothing is saved. A failure is notified once and not retried until the next reset." = "5 時間枠または週枠のカウントダウンが止まっているとき、Codex から最も安いモデルに「hi」を送ります。内容は保存しません。失敗したら一度だけ通知し、次のリセットまで再試行しません。";
+"Couldn't start the window" = "ウィンドウを開始できませんでした";
+"The tool didn't answer in time. No retry until the next reset." = "ツールが時間内に応答しませんでした。次のリセットまで再試行しません。";
+"The message didn't go through; check that the tool is signed in. No retry until the next reset." = "メッセージを送れませんでした。ツールにサインインしているか確認してください。次のリセットまで再試行しません。";
+"The command-line tool wasn't found. No retry until the next reset." = "コマンドラインツールが見つかりません。次のリセットまで再試行しません。";
+"Starts outside these hours wait until they begin. Shared by Claude Code and Codex." = "時間帯外の開始は時間帯の開始まで待ちます。Claude Code と Codex で共通です。";
+"From Claude Code's records: a cache lasts an hour or five minutes from the last request that used it. Switching model, changing tools or compacting starts a new one. Subagents are not included." = "Claude Code の記録から読み取ります。キャッシュは最後の使用から 1 時間または 5 分保たれます。モデルやツールの変更、会話の圧縮で作り直されます。サブエージェントは含みません。";
+"The menu opens on an overview of every account, with a tab for each." = "メニューに全アカウントの概要と、アカウントごとのタブを表示します。";
+"OpenCode's console keeps 30 days of requests: every machine and app on the account, and what each cost. It also gives the plan's limits when no key is set or the key is refused. Blinky keeps only the console's sign-in cookies, encrypted on this Mac." = "OpenCode のコンソールが 30 日間保持するリクエスト記録です。アカウントの全デバイス・全 App のリクエストと費用を含みます。キーが未設定か拒否されたときは、プランの上限もここから読みます。Blinky はコンソールのサインイン用 Cookie だけを、この Mac に暗号化して保存します。";
+"DeepSeek's console usage for the account: every key and machine, by day, with what was charged. It also gives the balance when no key is set or the key is refused. Blinky keeps only the console's sign-in, encrypted on this Mac." = "DeepSeek のコンソールが記録するアカウントの使用量です。全キー・全デバイスの日ごとの使用量と実際の請求額を含みます。キーが未設定か拒否されたときは、残高もここから読みます。Blinky はコンソールのサインイン情報だけを、この Mac に暗号化して保存します。";
+"Turn on Token spend reading to build it." = "作成するには「ローカルの使用量記録を読み取る」をオンにしてください。";
+"For amounts estimated from API prices. Balances a provider reports keep its currency." = "API 価格から見積もった金額に使います。プロバイダが報告する残高は元の通貨のままです。";
+"Credentials are hidden. A reply can show an email or balance, so it stays out of shared diagnostics." = "認証情報は伏せています。応答にメールアドレスや残高が含まれることがあるため、共有用の診断には含めません。";
+"Parts from and snaps to edges like a drop, and lags a little while dragged." = "しずくのように離れて吸い付き、ドラッグ中は少し遅れて付いてきます。";
+"Every figure shows the same states." = "どの姿でも表す状態は同じです。";
+"The robot figures in the rings and their motion are Open Bot Avatar by Dominik Scholz, under the MIT License. Its code runs as it is; the fur is drawn by a Metal port of its renderer." = "リングのロボットの姿と動きは Dominik Scholz の Open Bot Avatar（MIT ライセンス）です。元のコードをそのまま動かし、毛並みは Metal に移植したレンダラーで描いています。";
+"Material" = "質感";
+"Flat" = "フラット";
+"Fluffy" = "ふわふわ";
+"You have used Blinky for two weeks. If it has been useful, a star on GitHub helps others find it." = "Blinky をお使いいただいて 2 週間になります。お役に立っていれば、GitHub で Star を付けていただけると、より多くの人に届きます。";
+"Support Blinky on Afdian" = "Afdian で Blinky を応援";

@@ -170,12 +170,15 @@ actor UsageCache {
         // instead of asking to sign in.
         if case .unavailable(let reason) = fetched.state,
            [.apiKeyMissing, .ollamaSessionMissing, .qoderSessionMissing, .stepFunSessionMissing,
-            .xiaomiSessionMissing, .signedOut,
+            .xiaomiSessionMissing, .signedOut, .notSignedIn,
             .claudeDesktopNotSignedIn, .claudeDesktopKeyRefused, .cursorKeyRefused,
             .kimiSignInRequired, .kimiLoginExpired,
             .grokAccountSignInRequired, .grokAccountLoginExpired,
             .serverAddressMissing, .serverAddressRefused,
-            .sessionMissing, .localLoginMissing, .localAppMissing].contains(reason) {
+            .sessionMissing, .localLoginMissing, .localAppMissing,
+            // An IDE that stopped writing its quota would otherwise keep the
+            // last one it wrote on screen, stale, for good.
+            .localQuotaUnsaved].contains(reason) {
             return fetched
         }
 

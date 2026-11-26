@@ -16,7 +16,7 @@ struct StarRequestBanner: View {
                 .foregroundStyle(.yellow)
                 .accessibilityHidden(true)
 
-            Text(localized: "You have used Blinky for two weeks. If Blinky has been useful, a star on GitHub helps other people find it.")
+            Text(localized: "You have used Blinky for two weeks. If it has been useful, a star on GitHub helps others find it.")
                 .font(.system(size: 13))
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
