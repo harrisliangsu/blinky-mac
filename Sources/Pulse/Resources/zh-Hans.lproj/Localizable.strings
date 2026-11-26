@@ -1569,7 +1569,6 @@
 "From this Mac's %@ logs, priced at models.dev's API rates. You are on a subscription, so this is not a charge." = "根据本机 %@ 日志，按 models.dev 的 API 价格折算。你是订阅套餐，这不是实际扣款。";
 "From this Mac's usage records." = "数据来自本机用量记录。";
 "An estimate: this Mac's spend this window, divided by the used percentage the provider reports. It reads low when the account is also used elsewhere; if the percentage rises while this Mac spends nothing, the window is no longer estimated. Windows with too little use are left out." = "推算值：本机本周期的花费除以服务商报告的已用百分比。账号在别处也用时会偏低；百分比涨而本机没花钱时，本周期停止推算。用量太少的不列出。";
-"Show Dock icon while Settings or a recap is open" = "打开设置或月报、年报时显示 Dock 图标";
 "So these windows can be found again with the Dock or ⌘-Tab; the icon goes when they close." = "窗口被盖住时，可从 Dock 或 ⌘-Tab 找回；窗口都关闭后图标随之消失。";
 "Clear glass that shows what is behind the panel, instead of a solid surface." = "透出面板后面的内容，替代纯色背景。";
 "Panel colour" = "面板颜色";

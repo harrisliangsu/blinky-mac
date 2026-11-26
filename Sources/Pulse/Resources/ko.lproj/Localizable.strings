@@ -1571,7 +1571,6 @@
 "From this Mac's %@ logs, priced at models.dev's API rates. You are on a subscription, so this is not a charge." = "이 Mac의 %@ 로그를 models.dev의 API 요금으로 환산했습니다. 구독 요금제이므로 실제 청구액이 아닙니다.";
 "From this Mac's usage records." = "이 Mac의 사용량 기록으로 집계합니다.";
 "An estimate: this Mac's spend this window, divided by the used percentage the provider reports. It reads low when the account is also used elsewhere; if the percentage rises while this Mac spends nothing, the window is no longer estimated. Windows with too little use are left out." = "추정치입니다. 이 Mac의 이번 기간 지출을 제공업체가 알려 주는 사용률로 나눈 값입니다. 다른 곳에서도 쓰면 낮게 나오고, 이 Mac에서 쓰지 않는데 사용률이 오르면 그 기간은 추정을 멈춥니다. 사용량이 너무 적은 기간은 표시하지 않습니다.";
-"Show Dock icon while Settings or a recap is open" = "설정이나 리포트가 열려 있는 동안 Dock 아이콘 표시";
 "So these windows can be found again with the Dock or ⌘-Tab; the icon goes when they close." = "다른 창에 가려져도 Dock이나 ⌘-Tab으로 다시 찾을 수 있으며, 창을 모두 닫으면 아이콘도 사라집니다.";
 "Clear glass that shows what is behind the panel, instead of a solid surface." = "불투명한 배경 대신, 뒤에 있는 내용이 비쳐 보이는 유리를 씁니다.";
 "Panel colour" = "패널 색상";

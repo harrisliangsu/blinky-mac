@@ -1571,7 +1571,6 @@
 "From this Mac's %@ logs, priced at models.dev's API rates. You are on a subscription, so this is not a charge." = "この Mac の %@ のログを models.dev の API 料金で換算しています。サブスクリプションのため、実際の請求額ではありません。";
 "From this Mac's usage records." = "この Mac の使用量記録から集計します。";
 "An estimate: this Mac's spend this window, divided by the used percentage the provider reports. It reads low when the account is also used elsewhere; if the percentage rises while this Mac spends nothing, the window is no longer estimated. Windows with too little use are left out." = "推定値です。この Mac の今期間の支出を、プロバイダが報告する使用率で割っています。ほかの場所でも使っていると低めになり、この Mac で使っていないのに使用率が上がると、その期間は推定をやめます。使用量が少なすぎる期間は表示しません。";
-"Show Dock icon while Settings or a recap is open" = "設定やまとめを開いている間 Dock にアイコンを表示";
 "So these windows can be found again with the Dock or ⌘-Tab; the icon goes when they close." = "他のウインドウに隠れても Dock や ⌘-Tab から戻れます。どちらも閉じるとアイコンも消えます。";
 "Clear glass that shows what is behind the panel, instead of a solid surface." = "不透明な背景ではなく、背後の内容が透けて見えるガラスにします。";
 "Panel colour" = "パネルの色";

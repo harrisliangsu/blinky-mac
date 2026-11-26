@@ -1563,7 +1563,6 @@
 "From this Mac's %@ logs, priced at models.dev's API rates. You are on a subscription, so this is not a charge." = "По журналам %@ на этом Mac и ценам API с models.dev. У вас подписка, так что это не списанная сумма.";
 "From this Mac's usage records." = "По записям о расходе на этом Mac.";
 "An estimate: this Mac's spend this window, divided by the used percentage the provider reports. It reads low when the account is also used elsewhere; if the percentage rises while this Mac spends nothing, the window is no longer estimated. Windows with too little use are left out." = "Оценка: расход этого Mac за период, делённый на процент использования от сервиса. Если аккаунт используется и в другом месте, она занижена; если процент растёт, а этот Mac ничего не тратит, период больше не оценивается. Периоды с малым расходом не показаны.";
-"Show Dock icon while Settings or a recap is open" = "Показывать значок в Dock, когда открыты настройки или итоги";
 "So these windows can be found again with the Dock or ⌘-Tab; the icon goes when they close." = "Чтобы к этим окнам можно было вернуться через Dock или ⌘-Tab. После их закрытия значок исчезает.";
 "Clear glass that shows what is behind the panel, instead of a solid surface." = "Прозрачное стекло вместо сплошного фона: сквозь панель видно, что за ней.";
 "Panel colour" = "Цвет панели";

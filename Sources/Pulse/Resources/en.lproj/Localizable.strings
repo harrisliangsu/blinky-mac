@@ -1569,7 +1569,6 @@
 "From this Mac's %@ logs, priced at models.dev's API rates. You are on a subscription, so this is not a charge." = "From this Mac's %@ logs, priced at models.dev's API rates. You are on a subscription, so this is not a charge.";
 "From this Mac's usage records." = "From this Mac's usage records.";
 "An estimate: this Mac's spend this window, divided by the used percentage the provider reports. It reads low when the account is also used elsewhere; if the percentage rises while this Mac spends nothing, the window is no longer estimated. Windows with too little use are left out." = "An estimate: this Mac's spend this window, divided by the used percentage the provider reports. It reads low when the account is also used elsewhere; if the percentage rises while this Mac spends nothing, the window is no longer estimated. Windows with too little use are left out.";
-"Show Dock icon while Settings or a recap is open" = "Show Dock icon while Settings or a recap is open";
 "So these windows can be found again with the Dock or ⌘-Tab; the icon goes when they close." = "So these windows can be found again with the Dock or ⌘-Tab; the icon goes when they close.";
 "Clear glass that shows what is behind the panel, instead of a solid surface." = "Clear glass that shows what is behind the panel, instead of a solid surface.";
 "Panel colour" = "Panel colour";

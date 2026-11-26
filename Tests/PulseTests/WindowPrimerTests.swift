@@ -310,6 +310,10 @@ struct WindowPrimerTests {
 
         let restored = AppSettings(defaults: defaults)
         restored.restoreWindowStarter(from: defaults)
+        // Running-out notices start on, and they are usage alerts. This test
+        // is about the starter, so they are switched off first.
+        restored.exhaustionAlerts = false
+        restored.exhaustionNotifyBeforeReset = false
         #expect(restored.wantsAlerts)
         #expect(!restored.wantsUsageAlerts)
         #expect(restored.lastPrimerRun(for: .codex)?.outcome == .timedOut)
