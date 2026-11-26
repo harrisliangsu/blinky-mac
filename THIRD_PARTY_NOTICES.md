@@ -103,11 +103,20 @@ Apache License 2.0), drawn in one colour without its dark tile.
 The figures Pulse can draw in a ring in place of a provider's mark, and their
 motion, are [Open Bot Avatar](https://github.com/DominikScholz/open-bot-avatar)
 by Dominik Scholz. `Sources/Pulse/Resources/open-bot-avatar.js` is the
-`open-bot-avatar` package (v0.3.0, its DOM-free build) bundled unchanged for
+`open-bot-avatar` package (v0.4.0, its DOM-free build) bundled unchanged for
 JavaScriptCore, and `Sources/Pulse/Resources/open-bot-avatars.json` holds the
-figure definitions from the repository's `gallery/` (commit `5e64c08`); both are
+figure definitions from the repository's `gallery/` (commit `323ce6a`); both are
 made by `Scripts/vendor-open-bot-avatar.sh`. Pulse runs the original's renderer
 and paints the frames it returns (`Sources/Pulse/Panel/Robot`).
+
+The fluffy material's renderer is derived from Open Bot Avatar's: the WebGL2
+shaders (`dist/dom/fluffy/shaders.js`) are ported to Metal Shading Language in
+`Sources/Pulse/Panel/Robot/Fluffy/FluffyShaders.swift`, and its draw passes,
+level of detail, fibre and root textures and eye-socket distance tiles
+(`renderer.js`, `socket.js`, `marks.js`, `dom/paint.js`) are ported to Swift in
+`FluffyRenderer.swift`, `FluffyTextures.swift`, `BotAvatarEngine.swift` and
+`BotAvatarFrame.swift`. The fur's mesh and dye are still the bundled package's
+own code. These ports are covered by the same licence.
 
 The figures are Dominik Scholz's and the gallery's contributors' designs, not
 Pulse's, and Pulse does not present them as its own character or brand.
@@ -277,6 +286,20 @@ STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 ```
+
+## headroom
+
+JetBrains AI's sign-in and online quota route
+(`Sources/Pulse/Auth/JetBrainsLogin.swift`,
+`Sources/Pulse/Providers/Profiled/JetBrainsAIOnlineQuota.swift`) port the
+request sequence, parameters and reply handling of
+[rock3r/headroom](https://github.com/rock3r/headroom) at commit `9a2851d`
+(`core/auth/.../JetBrainsOAuth.kt`, `core/quota/.../JetBrainsAiQuotaReader.kt`,
+`core/quota/.../JetBrainsAccessOption.kt`), rewritten in Swift and changed:
+the grazie-lite fallback and the combined window are left out, and windows are
+mapped as Pulse maps the IDE's quota file. headroom is licensed under the
+Apache License, Version 2.0, the same licence as Pulse
+(<https://www.apache.org/licenses/LICENSE-2.0>); it ships no NOTICE file.
 
 ## Names and marks
 

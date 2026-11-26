@@ -21,7 +21,7 @@ struct QoderSiteRow: View {
     var body: some View {
         SettingsRow(
             String.localized("Site"),
-            subtitle: String.localized("Where you signed in. Changing it clears the saved session."),
+            subtitle: String.localized("Where you signed in. Changing it clears the session."),
             symbol: "globe.asia.australia"
         ) {
             Picker("", selection: Binding(
@@ -56,7 +56,7 @@ struct MiniMaxSiteRow: View {
     var body: some View {
         SettingsRow(
             String.localized("Site"),
-            subtitle: String.localized("Where your key is from. Each site keeps its own key."),
+            subtitle: String.localized("Where your key is from. Each site has its own."),
             symbol: "globe.asia.australia"
         ) {
             Picker("", selection: Binding(
@@ -89,7 +89,7 @@ struct StepFunSiteRow: View {
     var body: some View {
         SettingsRow(
             String.localized("Site"),
-            subtitle: String.localized("Where you signed in. Changing it clears the saved session."),
+            subtitle: String.localized("Where you signed in. Changing it clears the session."),
             symbol: "globe.asia.australia"
         ) {
             Picker("", selection: Binding(
@@ -127,9 +127,9 @@ struct ServerAddressRow: View {
         SettingsRow(
             String.localized("Server address"),
             subtitle: fields.serverAddressInvalid
-                ? String.localized("That address can't be used. It needs https://, unless the server is on your own network.")
+                ? String.localized("The address needs https://, unless the server is on your own network.")
                 : String.localized("Your own deployment's address, such as https://gateway.example.com. Blinky asks it for usage and sends nothing else."),
-                symbol: "server.rack"
+            symbol: "server.rack"
         ) {
             HStack(spacing: 8) {
                 TextField("", text: $fields.serverAddress)
@@ -199,7 +199,7 @@ struct BalanceBudgetRow: View {
     var body: some View {
         SettingsRow(
             String.localized("Full tank"),
-            subtitle: String.localized("What you call a full balance. The ring measures against it."),
+            subtitle: String.localized("The balance the ring counts as full."),
             symbol: "fuelpump"
         ) {
             HStack(spacing: 8) {

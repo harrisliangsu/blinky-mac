@@ -25,6 +25,12 @@ struct AccountConnectionGroup: View {
     @FocusState private var credentialFocused: Bool
     @FocusState private var addressFocused: Bool
 
+    /// Whether the latest reading says the stored login no longer works.
+    static func isSignedOut(_ usage: ProviderUsage?) -> Bool {
+        guard case .unavailable(.signedOut) = usage?.state else { return false }
+        return true
+    }
+
     @ViewBuilder
     var body: some View {
         if hasConnectionControls {
@@ -84,9 +90,9 @@ struct AccountConnectionGroup: View {
                     String.localized("GitHub account"),
                     subtitle: signIn.githubError
                         ?? (credentials.savedKey.isEmpty
-                            ? String.localized("Opens GitHub's own page. Blinky asks to read your profile, nothing else.")
+                            ? String.localized("Authorize on GitHub's page. Blinky asks only to read your profile.")
                             : String.localized("Signed in. Blinky holds a read-only token for this Mac.")),
-                            symbol: "person.crop.circle"
+                    symbol: "person.crop.circle"
                 ) {
                     if signIn.githubTask != nil {
                         Button(String.localized("Cancel")) { signIn.endGitHubSignIn() }
@@ -120,6 +126,10 @@ struct AccountConnectionGroup: View {
                         }
                     }
                 }
+            } else if account.isPrimary, ProviderSignInModel.primarySignIns.contains(account.provider) {
+                primarySignInRow
+                // JetBrains AI's route row follows below.
+                if account.provider.soleRoute != nil { SettingsRowDivider() }
             }
 
             if account.provider == .antigravity {
@@ -341,6 +351,50 @@ struct AccountConnectionGroup: View {
         }
     }
 
+    /// The first account's own sign-in: Grok Bot's Cursor account, JetBrains
+    /// AI's JetBrains account.
+    ///
+    /// A stored login that has expired or been refused is still stored:
+    /// "Signed in" with only Sign out would leave no way forward on this row,
+    /// so it offers a fresh sign-in too.
+    private var primarySignInRow: some View {
+        let provider = account.provider
+        let hasLogin = signIn.hasPrimaryLogin(provider)
+        let loginLapsed = hasLogin && Self.isSignedOut(store.usage[account.id])
+        let jetBrains = provider == .jetBrainsAI
+        return SettingsRow(
+            jetBrains ? String.localized("JetBrains account") : String.localized("Cursor account"),
+            subtitle: signIn.primaryError(provider)
+                ?? (loginLapsed
+                    ? String.localized("The saved login has expired or was refused. Sign in again.")
+                    : hasLogin
+                    ? String.localized("Signed in. Blinky holds the token for this Mac.")
+                    : jetBrains
+                    ? String.localized("Optional. Without it, Blinky reads only the quota the IDE saved.")
+                    : String.localized("Optional. Without it, Blinky reads the Cursor editor's login.")),
+            symbol: "person.crop.circle"
+        ) {
+            if signIn.isSigningInPrimary(provider) {
+                Button(String.localized("Cancel")) { signIn.cancelSignIn() }
+            } else if hasLogin {
+                HStack(spacing: 8) {
+                    if loginLapsed {
+                        Button(String.localized("Sign in again…")) {
+                            signIn.signIn(to: provider, replacing: account)
+                        }
+                        .disabled(signIn.signingIn != nil)
+                    }
+                    Button(String.localized("Sign out")) { signIn.signOutOfPrimary(provider) }
+                }
+            } else {
+                Button(String.localized("Sign in…")) {
+                    signIn.signIn(to: provider, replacing: account)
+                }
+                .disabled(signIn.signingIn != nil)
+            }
+        }
+    }
+
     private var antigravitySubtitle: String {
         if let notice = signIn.antigravity.notice {
             return Self.antigravityNotice(notice)
@@ -377,9 +431,10 @@ struct AccountConnectionGroup: View {
     /// Whether the card has anything to put in it — the same
     /// four questions it asks, answered before the heading is drawn.
     private var hasConnectionControls: Bool {
-        guard account.isPrimary else { return false }
+        // A gateway's added account has an address and a key of its own.
+        guard account.isPrimary || account.provider.addsAccountsByAddress else { return false }
         if account.provider.hasSourceChoice { return true }
-        if account.provider == .copilot { return true }
+        if account.provider == .copilot || account.provider == .grokBot { return true }
         if account.provider.usesAPIKey { return true }
         return account.isPrimary && account.provider.soleRoute != nil
     }
@@ -433,7 +488,7 @@ struct AccountConnectionGroup: View {
         // organisation and nothing on this Mac carries one. Optional, like
         // Volcengine's: without it Pulse reads the plan Devin's own app saved.
         case .devin:
-            .localized("A Bearer token from app.devin.ai, then a space, then your organization. Optional — Blinky can read what Devin's app saved. Stored encrypted on this Mac.")
+            .localized("A Bearer token from app.devin.ai, a space, then your organization. Optional: without it, Blinky reads Devin's app. Stored encrypted on this Mac.")
         default:
             .localized("Stored encrypted on this Mac.")
         }

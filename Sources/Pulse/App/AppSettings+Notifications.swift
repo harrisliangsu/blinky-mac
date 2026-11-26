@@ -247,7 +247,7 @@ extension AppSettings {
     /// Whether anything at all would be posted. What decides if permission is
     /// worth asking for.
     var wantsAlerts: Bool {
-        wantsUsageAlerts || alertsOnOutage || alertsOnRecap
+        wantsUsageAlerts || alertsOnOutage || alertsOnRecap || !primedProviders.isEmpty
     }
 
     /// Predicted or regular reset reminders, which are notifications of their

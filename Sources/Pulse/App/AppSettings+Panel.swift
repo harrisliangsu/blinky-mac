@@ -48,6 +48,7 @@ extension AppSettings.Key {
     static let robotAccounts = "settings.robotAccounts"
     static let robotColours = "settings.robotColours"
     static let robotFigures = "settings.robotFigures"
+    static let robotMaterials = "settings.robotMaterials"
 }
 
 extension AppSettings.Default {
@@ -216,6 +217,12 @@ extension AppSettings {
         onLayoutChange?()
     }
 
+    func robotMaterialsChanged(from old: [String: String]) {
+        guard robotMaterials != old else { return }
+        defaults.set(robotMaterials, forKey: Key.robotMaterials)
+        onLayoutChange?()
+    }
+
     /// The appearance last chosen, or Glass when only the old toggle is stored.
     static func restoredAppearance(from defaults: UserDefaults) -> PanelAppearance {
         if let stored = defaults.string(forKey: Key.panelAppearance).flatMap(PanelAppearance.init(rawValue:)) {
@@ -288,6 +295,16 @@ extension AppSettings {
 
     func setRobotFigure(_ figure: String?, for account: AccountKey) {
         robotFigures[account.id] = figure
+    }
+
+    /// The robot's material. A value Pulse does not know reads as Flat.
+    func robotMaterial(for account: AccountKey) -> RobotMaterial {
+        robotMaterials[account.id].flatMap(RobotMaterial.init(rawValue:)) ?? .flat
+    }
+
+    /// Flat, the default, is stored as nothing.
+    func setRobotMaterial(_ material: RobotMaterial, for account: AccountKey) {
+        robotMaterials[account.id] = material == .flat ? nil : material.rawValue
     }
 
     /// Through `onLayoutChange`: the rings change and the rail with them,
@@ -393,5 +410,6 @@ extension AppSettings {
         robotAccounts = Set(defaults.stringArray(forKey: Key.robotAccounts) ?? [])
         robotColours = defaults.dictionary(forKey: Key.robotColours) as? [String: String] ?? [:]
         robotFigures = defaults.dictionary(forKey: Key.robotFigures) as? [String: String] ?? [:]
+        robotMaterials = defaults.dictionary(forKey: Key.robotMaterials) as? [String: String] ?? [:]
     }
 }

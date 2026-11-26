@@ -80,7 +80,7 @@
 "Show floating panel" = "플로팅 패널 표시";
 "The usage rail at the edge of the screen." = "화면 가장자리에 사용량 레일을 표시합니다.";
 "Hide in full screen" = "전체 화면일 때 숨기기";
-"Keep the floating panel out of full-screen apps." = "다른 앱이 전체 화면일 때 자동으로 숨깁니다.";
+"Keep the floating panel out of full-screen apps." = "다른 앱이 전체 화면일 때 숨깁니다.";
 "Hide from screenshots" = "스크린샷에서 숨기기";
 "Screenshot tools that support it leave the floating panel out. Recordings and screen sharing may still show it." = "이 설정을 지원하는 스크린샷 도구에는 플로팅 패널이 찍히지 않습니다. 화면 기록과 화면 공유에서는 표시될 수 있습니다.";
 "Follow the active display" = "사용 중인 디스플레이 따라가기";
@@ -448,7 +448,7 @@
 /* Accounts */
 "Accounts" = "계정";
 "Add another account" = "계정 추가";
-"Opens the provider's own sign-in page." = "제공업체 자체 로그인 페이지를 엽니다.";
+"Opens the provider's own sign-in page." = "제공업체 로그인 페이지를 엽니다.";
 "Sign in…" = "로그인…";
 "Sign out" = "로그아웃";
 "GitHub account" = "GitHub 계정";
@@ -723,15 +723,15 @@
 "Enter a whole number from 1 to 65535." = "1에서 65535 사이의 정수를 입력하십시오.";
 
 /* 모니터링할 서비스 선택 */
-"Choose services to monitor" = "모니터링할 서비스 선택";
-"Choose services to start monitoring…" = "서비스를 선택해 모니터링 시작…";
-"New services detected" = "새로 지원하는 서비스 발견";
+"Choose services to monitor" = "모니터링할 제공업체 선택";
+"Choose services to start monitoring…" = "제공업체를 선택해 모니터링 시작…";
+"New services detected" = "새로 지원하는 제공업체 발견";
 "Choose at least one service. Blinky reads its login and checks usage only after you finish. You can change this later in Settings." = "서비스를 하나 이상 선택하십시오. 완료를 누른 뒤에만 선택한 서비스의 로그인 정보를 읽고 사용량을 확인합니다. 나중에 설정에서 바꿀 수 있습니다.";
 "This version supports more services found on your Mac. Choose any you want to add; your existing choices stay in place." = "이 버전에서 새로 지원하는 서비스가 Mac에서 발견되었습니다. 추가할 서비스를 선택하십시오. 기존 선택은 유지됩니다.";
 "Detected on this Mac" = "이 Mac에서 발견됨";
-"Select detected services" = "발견된 서비스 선택";
+"Select detected services" = "발견된 제공업체 선택";
 "Done" = "완료";
-"Enable a service in its settings to start monitoring." = "설정에서 서비스를 켜면 모니터링을 시작합니다.";
+"Enable a service in its settings to start monitoring." = "설정에서 제공업체를 켜면 모니터링합니다.";
 "Reads Claude Code's saved login from Keychain or its credentials file. May ask for Keychain access, including Claude Desktop's cookie storage." = "키체인 또는 인증 정보 파일에서 Claude Code의 로그인을 읽습니다. Claude 데스크탑의 쿠키 저장소를 포함해 키체인 접근 권한을 요청할 수 있습니다.";
 "Reads ~/.codex/auth.json and may run codex app-server with its saved login. Blinky does not request Keychain access." = "~/.codex/auth.json을 읽으며 저장된 로그인으로 codex app-server를 실행할 수 있습니다. Blinky는 키체인 접근 권한을 요청하지 않습니다.";
 "Reads the running editor's local language server and connection token, or runs the agy CLI with its saved login. Blinky does not request Keychain access." = "실행 중인 편집기의 로컬 언어 서버에서 사용량과 연결 토큰을 읽거나, 저장된 로그인으로 agy CLI를 실행합니다. Blinky는 키체인 접근 권한을 요청하지 않습니다.";
@@ -870,11 +870,11 @@
 
 /* Profiled providers: shared wording */
 "No session found. Sign in at %@ first." = "세션을 찾지 못했습니다. 먼저 %@에서 로그인하십시오.";
-"Nothing saved on this Mac yet. Open the service's app once, then retry." = "이 Mac에는 아직 저장된 정보가 없습니다. 해당 서비스의 앱을 한 번 연 뒤 다시 시도하십시오.";
+"Nothing saved on this Mac yet. Open the service's app once, then retry." = "이 Mac에 아직 저장된 정보가 없습니다. 해당 제공업체 앱을 한 번 연 뒤 다시 시도하십시오.";
 "Read a browser session in Settings." = "설정에서 브라우저 세션을 읽어 오십시오.";
-"Sign in with this service's own app or command-line tool first." = "먼저 해당 서비스의 앱이나 명령줄 도구로 로그인하십시오.";
+"Sign in with this service's own app or command-line tool first." = "먼저 해당 제공업체 앱이나 명령줄 도구로 로그인하십시오.";
 "The browser session expired. Sign in on the website, then read it again in Settings." = "브라우저 세션이 만료되었습니다. 웹사이트에서 로그인한 뒤 설정에서 다시 읽어 오십시오.";
-"The saved login has expired. Sign in again with the service's own app or tool." = "저장된 로그인이 만료되었습니다. 해당 서비스의 앱이나 도구로 다시 로그인하십시오.";
+"The saved login has expired. Sign in again with the service's own app or tool." = "저장된 로그인이 만료되었습니다. 해당 제공업체 앱이나 도구로 다시 로그인하십시오.";
 "This account has no plan with usage limits." = "이 계정에는 사용량 한도가 있는 플랜이 없습니다.";
 
 /* ClinePass */
@@ -1124,7 +1124,7 @@
 "Unrecognised status" = "알 수 없는 상태";
 "Couldn't read the status page." = "상태 페이지를 읽지 못했습니다.";
 "Status page" = "상태 페이지";
-"As %@ reports it on its status page, read when this page opens and every five minutes while it stays open." = "%@이(가) 상태 페이지에 공개한 내용입니다. 이 페이지를 열 때 읽어 오고, 열려 있는 동안 5분마다 업데이트합니다.";
+"As %@ reports it on its status page, read when this page opens and every five minutes while it stays open." = "%@ 상태 페이지 기준으로, 이 페이지를 열 때와 열려 있는 동안 5분마다 읽어 옵니다.";
 "90 days ago" = "90일 전";
 "%@ days ago" = "%@일 전";
 "Now" = "지금";
@@ -1213,7 +1213,7 @@
 "Usage recaps" = "사용량 리포트";
 "Shareable cards for a day, a week, a month or a year, from this Mac's records." = "이 Mac의 기록으로 하루, 한 주, 한 달 또는 한 해의 공유용 카드를 만듭니다.";
 "When a recap is ready" = "리포트가 준비되었을 때";
-"Last month's recap, at the start of the month. Needs Token spend reading." = "매월 초에 지난달 리포트가 준비되었음을 알립니다. ‘로컬 사용량 기록 읽기’가 켜져 있어야 합니다.";
+"Last month's recap, at the start of the month. Needs Token spend reading." = "매월 초 지난달 리포트를 알립니다. ‘로컬 사용량 기록 읽기’를 켜야 합니다.";
 "Your %@ recap is ready" = "%@ 리포트가 준비되었습니다";
 "The recap needs Token spend" = "리포트에는 토큰 사용량이 필요합니다";
 "It is built from the usage records on this Mac, which Blinky reads only while Token spend reading is on." = "이 Mac의 사용량 기록으로 만듭니다. Blinky는 ‘로컬 사용량 기록 읽기’가 켜져 있는 동안에만 기록을 읽습니다.";
@@ -1307,7 +1307,7 @@
 "Rate source" = "환율 출처";
 "Your rate is used. Clear the field to use the day's rate." = "직접 입력한 환율을 사용합니다. 칸을 비우면 당일 환율로 돌아갑니다.";
 "The day's rate, updated %@. Type a rate to use your own." = "당일 환율이며 %@에 업데이트되었습니다. 직접 환율을 입력할 수도 있습니다.";
-"No rate yet, so estimates stay in US dollars. Type a rate, or wait for the day's." = "아직 환율이 없어 추정 금액은 미국 달러로 표시됩니다. 환율을 입력하거나 당일 환율을 받아올 때까지 기다려 주세요.";
+"No rate yet, so estimates stay in US dollars. Type a rate, or wait for the day's." = "아직 환율이 없어 추정 금액을 미국 달러로 표시합니다. 환율을 입력하거나 당일 환율을 기다리십시오.";
 "US dollar" = "미국 달러";
 "Chinese yuan" = "중국 위안";
 "Hong Kong dollar" = "홍콩 달러";
@@ -1560,3 +1560,78 @@
 "This version of the agy CLI can't sign in from Blinky. Update it, or run agy in Terminal once." = "이 버전의 agy는 Blinky에서 로그인할 수 없습니다. 업데이트하거나 터미널에서 agy를 한 번 실행하세요.";
 "Install the agy CLI, or run agy in Terminal once, to sign in." = "로그인하려면 agy를 설치하거나 터미널에서 agy를 한 번 실행하세요.";
 "Signed in. Blinky reads Antigravity on the next refresh." = "로그인했습니다. 다음 새로 고침 때 Blinky가 Antigravity를 읽습니다.";
+
+/* Added with Pulse 1.16.1 */
+"Near an edge, the rail docks and runs along it." = "가장자리에 가까이 끌면 붙어서 가장자리를 따라 놓입니다.";
+"Where a ring turns from amber to red. A spent limit is always red." = "링이 노란색에서 빨간색으로 바뀌는 지점입니다. 다 쓴 한도는 항상 빨간색입니다.";
+"When off, the collapsed rail shows no alert colour." = "끄면 접힌 레일에 경고 색을 표시하지 않습니다.";
+"The outer arc fills with time elapsed or empties with time left." = "바깥쪽 링이 경과 시간만큼 차거나 남은 시간만큼 줄어듭니다.";
+"Whether each limit runs out early, on the card." = "한도가 미리 소진될지 카드에 표시합니다.";
+"Limit reset credits" = "한도 초기화 쿠폰";
+"From this Mac's %@ logs, priced at models.dev's API rates. You are on a subscription, so this is not a charge." = "이 Mac의 %@ 로그를 models.dev의 API 요금으로 환산했습니다. 구독 요금제이므로 실제 청구액이 아닙니다.";
+"From this Mac's usage records." = "이 Mac의 사용량 기록으로 집계합니다.";
+"An estimate: this Mac's spend this window, divided by the used percentage the provider reports. It reads low when the account is also used elsewhere; if the percentage rises while this Mac spends nothing, the window is no longer estimated. Windows with too little use are left out." = "추정치입니다. 이 Mac의 이번 기간 지출을 제공업체가 알려 주는 사용률로 나눈 값입니다. 다른 곳에서도 쓰면 낮게 나오고, 이 Mac에서 쓰지 않는데 사용률이 오르면 그 기간은 추정을 멈춥니다. 사용량이 너무 적은 기간은 표시하지 않습니다.";
+"Show Dock icon while Settings or a recap is open" = "설정이나 리포트가 열려 있는 동안 Dock 아이콘 표시";
+"So these windows can be found again with the Dock or ⌘-Tab; the icon goes when they close." = "다른 창에 가려져도 Dock이나 ⌘-Tab으로 다시 찾을 수 있으며, 창을 모두 닫으면 아이콘도 사라집니다.";
+"Clear glass that shows what is behind the panel, instead of a solid surface." = "불투명한 배경 대신, 뒤에 있는 내용이 비쳐 보이는 유리를 씁니다.";
+"Panel colour" = "패널 색상";
+"Light suits a bright screen. Not available with Liquid Glass." = "밝은 색은 밝은 화면에 어울립니다. 리퀴드 글래스를 켜면 사용할 수 없습니다.";
+"Black" = "검은색";
+"Clearer to the right; the text turns black, which is hard to read over dark windows." = "오른쪽일수록 투명해지고 글자가 검게 바뀝니다. 검은 글자는 어두운 창 위에서 읽기 어렵습니다.";
+"Reads Antigravity while it is open, else the agy CLI." = "Antigravity가 열려 있으면 그곳에서, 아니면 agy CLI로 읽습니다.";
+"Grok's login expired. Use Grok to renew it." = "Grok 로그인이 만료되었습니다. Grok을 한 번 쓰면 갱신됩니다.";
+"A Bearer token from app.devin.ai, a space, then your organization. Optional: without it, Blinky reads Devin's app. Stored encrypted on this Mac." = "app.devin.ai의 Bearer 토큰, 공백, 조직 이름 순입니다. 비워 두면 Devin 앱이 저장한 내용을 읽습니다. 이 Mac에 암호화되어 저장됩니다.";
+"Claude Code's saved login lasts a few hours, and only Claude Code can renew it. Claude Code also sends your limits to the registered status line command; with Blinky as that command, usage stays current after the login expires.\n\nThis edits ~/.claude/settings.json and the status line at the bottom of your Claude Code sessions. Your existing status line keeps working, and you can disconnect in Settings." = "Claude Code가 저장하는 로그인은 몇 시간만 유효하며, Claude Code만 갱신할 수 있습니다. Claude Code는 등록된 상태 표시줄 명령에 한도를 보내므로, Blinky가 그 명령이 되면 로그인이 만료돼도 사용량을 계속 업데이트합니다.\n\n이 작업은 ~/.claude/settings.json과 Claude Code 세션 아래쪽의 상태 표시줄을 바꿉니다. 기존 상태 표시줄은 그대로 동작하며, 설정에서 언제든 연결을 해제할 수 있습니다.";
+"Authorize on GitHub's page. Blinky asks only to read your profile." = "GitHub 페이지에서 승인합니다. 프로필 읽기 권한만 요청합니다.";
+"Cursor account" = "Cursor 계정";
+"Optional. Without it, Blinky reads the Cursor editor's login." = "선택 사항입니다. 로그인하지 않으면 Cursor 편집기의 로그인을 읽습니다.";
+"JetBrains account" = "JetBrains 계정";
+"Optional. Without it, Blinky reads only the quota the IDE saved." = "선택 사항입니다. 로그인하지 않으면 IDE가 저장한 한도만 읽습니다.";
+"The saved login has expired or was refused. Sign in again." = "저장된 로그인이 만료되었거나 거부되었습니다. 다시 로그인하세요.";
+"Signed in. Blinky holds the token for this Mac." = "로그인되었습니다. Blinky는 이 Mac에 토큰을 보관합니다.";
+"Another gateway with its own address, key and name." = "다른 게이트웨이를 추가합니다. 주소, API 키, 이름을 각각 따로 입력합니다.";
+"Add" = "추가";
+"Forgets its address and key and takes it off the rail." = "주소와 API 키를 지우고 레일에서도 내립니다.";
+"Blinky needs keychain access for the Claude desktop app's session. Refresh to ask again." = "Claude 데스크탑 앱 세션을 읽으려면 키체인 권한이 필요합니다. 새로 고치면 다시 묻습니다.";
+"Blinky needs keychain access for Cursor's saved login. Refresh to ask again." = "Cursor에 저장된 로그인을 읽으려면 키체인 권한이 필요합니다. 새로 고치면 다시 묻습니다.";
+"An inner ring for the next-fullest limit." = "안쪽 링에 두 번째로 많이 쓴 한도를 표시합니다.";
+"One ring per model group." = "모델 그룹마다 링을 하나씩 그립니다.";
+"The balance the ring counts as full." = "링이 가득 찬 것으로 보는 잔액입니다.";
+"Choose at least one service. Blinky reads logins and usage only after you finish; you can change this later in Settings." = "제공업체를 하나 이상 선택하십시오. 완료를 누른 뒤에만 로그인 정보를 읽고 사용량을 확인합니다. 나중에 설정에서 바꿀 수 있습니다.";
+"This version supports more services found on your Mac. Choose any to add; your current choices stay." = "이 버전에서 새로 지원하는 제공업체가 Mac에서 발견되었습니다. 추가할 항목을 고르십시오. 기존 선택은 유지됩니다.";
+"Uses the Cursor account you sign in to in Settings, or the login the Cursor editor saved." = "설정에서 로그인한 Cursor 계정을 사용합니다. 없으면 Cursor 편집기가 저장한 로그인을 읽습니다.";
+"Reads the login saved in ~/.grok/auth.json. No Keychain prompt." = "~/.grok/auth.json에 저장된 로그인을 읽습니다. 키체인 확인 창은 표시되지 않습니다.";
+"The address needs https://, unless the server is on your own network." = "서버가 내 네트워크 안에 있지 않으면 주소는 https://로 시작해야 합니다.";
+"Where you signed in. Changing it clears the session." = "로그인한 사이트입니다. 바꾸면 세션이 지워집니다.";
+"Where your key is from. Each site has its own." = "키를 발급받은 사이트입니다. 키는 사이트별로 저장됩니다.";
+"An extension is a program you add that reports one account's usage. Blinky draws its output as a ring, runs it only once you switch it on, and gives it no credentials." = "확장은 직접 추가하는 프로그램으로, 계정 하나의 사용량을 알려 줍니다. Blinky는 출력을 링으로 그리며, 켜기 전에는 실행하지 않고 인증 정보도 넘기지 않습니다.";
+"From pulse-extension.json. Blinky saves this extension's settings under it." = "pulse-extension.json의 값입니다. 설정은 이 ID로 저장됩니다.";
+"The app didn't save a quota Blinky can read on this Mac." = "앱이 이 Mac에 Blinky가 읽을 수 있는 할당량을 저장하지 않았습니다.";
+"Without a sign-in, only the IDE's file is read." = "로그인하지 않으면 IDE의 파일만 읽습니다.";
+"Reads the AI quota your JetBrains IDE saves on this Mac. After you sign in to a JetBrains account, Blinky asks JetBrains for it when the IDE saved none." = "JetBrains IDE가 이 Mac에 저장한 AI 사용량 한도를 읽습니다. JetBrains 계정에 로그인하면 IDE가 저장하지 않았을 때 Blinky가 JetBrains에 조회합니다.";
+"The IDE's saved quota, or JetBrains once signed in" = "IDE가 저장한 한도, 로그인 후에는 JetBrains";
+"Reset credits on the card" = "카드에 한도 초기화 쿠폰 표시";
+"How many limit reset credits are left, and when the next one expires. Asks Codex's app server on every refresh." = "남은 한도 초기화 쿠폰 수와 가장 먼저 만료되는 쿠폰의 만료 시각. 새로 고칠 때마다 Codex app server에 묻습니다.";
+"Start a new window" = "새 창 시작";
+"When the 5-hour window isn't counting down, sends “hi” to Haiku through Claude Code. Nothing is saved. A failure is notified once and not retried until the next reset." = "5시간 창의 카운트다운이 멈춰 있으면 Claude Code로 Haiku에 \"hi\"를 보냅니다. 내용은 저장하지 않습니다. 실패하면 한 번 알리고 다음 초기화까지 다시 시도하지 않습니다.";
+"When the 5-hour or weekly window isn't counting down, sends “hi” to the cheapest model through Codex. Nothing is saved. A failure is notified once and not retried until the next reset." = "5시간 또는 주간 창의 카운트다운이 멈춰 있으면 Codex로 가장 저렴한 모델에 \"hi\"를 보냅니다. 내용은 저장하지 않습니다. 실패하면 한 번 알리고 다음 초기화까지 다시 시도하지 않습니다.";
+"Couldn't start the window" = "창을 시작하지 못했습니다";
+"The tool didn't answer in time. No retry until the next reset." = "도구가 제때 응답하지 않았습니다. 다음 초기화까지 다시 시도하지 않습니다.";
+"The message didn't go through; check that the tool is signed in. No retry until the next reset." = "메시지를 보내지 못했습니다. 도구에 로그인했는지 확인하십시오. 다음 초기화까지 다시 시도하지 않습니다.";
+"The command-line tool wasn't found. No retry until the next reset." = "명령줄 도구를 찾을 수 없습니다. 다음 초기화까지 다시 시도하지 않습니다.";
+"Starts outside these hours wait until they begin. Shared by Claude Code and Codex." = "시간대 밖의 시작은 시간대가 시작될 때까지 기다립니다. Claude Code와 Codex가 함께 씁니다.";
+"From Claude Code's records: a cache lasts an hour or five minutes from the last request that used it. Switching model, changing tools or compacting starts a new one. Subagents are not included." = "Claude Code 기록에서 읽습니다. 캐시는 마지막 사용부터 1시간 또는 5분 유지됩니다. 모델이나 도구를 바꾸거나 대화를 압축하면 새로 만들어집니다. 하위 에이전트는 포함하지 않습니다.";
+"The menu opens on an overview of every account, with a tab for each." = "메뉴에 모든 계정의 개요와 계정별 탭을 보여 줍니다.";
+"OpenCode's console keeps 30 days of requests: every machine and app on the account, and what each cost. It also gives the plan's limits when no key is set or the key is refused. Blinky keeps only the console's sign-in cookies, encrypted on this Mac." = "OpenCode 콘솔이 30일 동안 보관하는 요청 기록으로, 계정의 모든 기기와 앱의 요청과 비용이 들어 있습니다. 키가 없거나 거부되면 요금제 한도도 여기서 읽습니다. Blinky는 콘솔 로그인 쿠키만 이 Mac에 암호화해 보관합니다.";
+"DeepSeek's console usage for the account: every key and machine, by day, with what was charged. It also gives the balance when no key is set or the key is refused. Blinky keeps only the console's sign-in, encrypted on this Mac." = "DeepSeek 콘솔이 기록하는 계정 사용량으로, 모든 키와 기기의 날짜별 사용량과 실제 청구액이 들어 있습니다. 키가 없거나 거부되면 잔액도 여기서 읽습니다. Blinky는 콘솔 로그인 정보만 이 Mac에 암호화해 보관합니다.";
+"Turn on Token spend reading to build it." = "만들려면 ‘로컬 사용량 기록 읽기’를 켜십시오.";
+"For amounts estimated from API prices. Balances a provider reports keep its currency." = "API 가격으로 추정한 금액에 씁니다. 제공업체가 알려 주는 잔액은 원래 통화로 표시합니다.";
+"Credentials are hidden. A reply can show an email or balance, so it stays out of shared diagnostics." = "인증 정보는 가렸습니다. 응답에 이메일이나 잔액이 있을 수 있어 공유용 진단에는 넣지 않습니다.";
+"Parts from and snaps to edges like a drop, and lags a little while dragged." = "물방울처럼 떨어지고 붙으며, 끌 때 조금 늦게 따라옵니다.";
+"Every figure shows the same states." = "어떤 모양이든 보여 주는 상태는 같습니다.";
+"The robot figures in the rings and their motion are Open Bot Avatar by Dominik Scholz, under the MIT License. Its code runs as it is; the fur is drawn by a Metal port of its renderer." = "링의 로봇 모양과 움직임은 Dominik Scholz의 Open Bot Avatar(MIT 라이선스)입니다. 원래 코드를 그대로 실행하며, 털은 Metal로 이식한 렌더러로 그립니다.";
+"Material" = "재질";
+"Flat" = "단색";
+"Fluffy" = "털";
+"You have used Blinky for two weeks. If it has been useful, a star on GitHub helps others find it." = "Blinky를 사용하신 지 2주가 되었습니다. 도움이 되었다면 GitHub에서 Star를 눌러 주세요. 더 많은 사람이 Blinky를 알게 됩니다.";
+"Support Blinky on Afdian" = "Afdian에서 Blinky 후원하기";

@@ -25,14 +25,14 @@ Accounts the stored rail does not mention are appended **in name order** (`AppSe
 | `.minimax` | [MiniMax](minimax.md) | `minimax` | Pasted key, one per site (`minimax.io` / `minimaxi.com`) | no | pasted key | no | none |
 | `.copilot` | [GitHub Copilot](copilot.md) | `github` | GitHub device login; token in `keys.dat` | no | sign-in | no | none |
 | `.grok` | [Grok](grok.md) | `grok` | CLI `~/.grok/auth.json`, else Pulse device-code login; Pulse OAuth for extras | yes | automatic / CLI / Blinky login | no | `~/.grok` exists |
-| `.grokBot` | [Grok Bot](grok-bot.md) | `xai` | Cursor cookie; Cursor web login for extras | yes | one, named (primary) | no | **standalone** `Grok Bot.app` only |
+| `.grokBot` | [Grok Bot](grok-bot.md) | `xai` | Cursor web login in Settings, else Cursor editor cookie; Cursor web login for extras | yes | `nil` (Connection **Cursor account** row on primary) | no | **standalone** `Grok Bot.app` only |
 | `.volcengine` | [Volcengine](volcengine.md) | `volcengine` | A pasted `AK:SK` pair, else `arkcli`'s own login (also the fallback when the keys' request is unreachable) | no | arkcli / signed endpoint | no | none — stays off until switched on |
 | `.commandCode` | [Command Code](command-code.md) | `commandcode` | Pasted key, else `~/.commandcode/auth.json` | no | pasted / found key | no | `~/.commandcode/auth.json` exists |
 | `.deepSeek` | [DeepSeek](deepseek.md) | `deepseek` | Pasted key; the console's sign-in from a Chromium browser's `localStorage` as a second credential (balance without a key, and the daily usage) | no | one, documented | no | none |
 | `.devin` | [Devin](devin.md) | `devin` | Browser `localStorage` (no keychain); optional pasted `token org` | no | saved plan / endpoint | no | the app's `state.vscdb` exists |
 | `.xiaomiMiMo` | [Xiaomi Coding Plan](xiaomi-coding-plan.md) | `xiaomimimo` | Browser session for `platform.xiaomimimo.com`, or a pasted `Cookie:` header | no | one, named | no | none |
-| `.sub2api` | [sub2api](sub2api.md) | `sub2api` | Pasted group key, **plus an address the reader types** | no | one, documented | no | none — stays off until switched on |
-| `.newAPI` | [New API](newapi.md) | `newapi` | Pasted relay key, **plus an address the reader types** | no | one, documented | no | none — stays off until switched on |
+| `.sub2api` | [sub2api](sub2api.md) | `sub2api` | Pasted group key, **plus an address the reader types** | yes, typed in | one, documented | no | none — stays off until switched on |
+| `.newAPI` | [New API](newapi.md) | `newapi` | Pasted relay key, **plus an address the reader types** | yes, typed in | one, documented | no | none — stays off until switched on |
 | `.v2ex` | [V2EX](v2ex.md) | `v2ex` | Pasted Personal Access Token | no | one, documented | no | none — stays off until switched on |
 | `.qoder` | [Qoder](qoder.md) | `qoder` | Browser session for the chosen site (`qoder.com` / `qoder.com.cn`), a pasted `Cookie:` header, or a personal token (`pt-` / `jt-`) | no | one, the account page's own | no | `Application Support/Qoder` or `QoderCN`, `Qoder.app`, `Qoder IDE.app`, or `~/.qoder` |
 | `.stepFun` | [StepFun](stepfun.md) | `stepfun` | Browser session for the chosen site (`platform.stepfun.com` / `platform.stepfun.ai`), or a pasted `Cookie:` header | no | one, the console's own | no | `~/.stepcode` (Step Code CLI) |
@@ -66,7 +66,7 @@ Each is one file under `Sources/Pulse/Providers/Profiled/`, with a notes page he
 | `.gemini` | [Gemini](gemini.md) | the tool's own login on this Mac | |
 | `.kiloCode` | [Kilo Code](kilo-code.md) | pasted key or the tool's own login | yes |
 | `.augment` | [Augment Code](augment.md) | browser session | |
-| `.jetBrainsAI` | [JetBrains AI](jetbrains-ai.md) | the tool's own login on this Mac | |
+| `.jetBrainsAI` | [JetBrains AI](jetbrains-ai.md) | the IDE's saved quota file; optionally a JetBrains account sign-in (Junie CLI client, `accounts.dat`) for the online quota | |
 | `.t3Chat` | [T3 Chat](t3-chat.md) | browser session | |
 | `.synthetic` | [Synthetic](synthetic.md) | pasted key | |
 | `.elevenLabs` | [ElevenLabs](elevenlabs.md) | pasted key | |
@@ -148,7 +148,7 @@ Some windows carry a length only so the row sorts: Kimi's rolling week, Cursor's
 
 ### Shared unavailability copy names no provider
 
-Shared `ProviderUsage.Unavailability` cases (`.apiKeyMissing`, `.apiKeyRefused`, `.signedOut`, `.unreachable`, …) stay generic; they once all said “Codex”, even for Claude Code. Provider-specific cases exist only where the *remedy* names a tool (`claudeLoginExpired`, `cursorSignInRequired`, `grokBotNotIncluded`, …); a Grok Bot primary may name Cursor, where its credential comes from. OpenCode Go uses `.apiKeyRefused`; there is no `.openCodeKeyRefused`.
+Shared `ProviderUsage.Unavailability` cases (`.apiKeyMissing`, `.apiKeyRefused`, `.signedOut`, `.unreachable`, …) stay generic; they once all said “Codex”, even for Claude Code. Provider-specific cases exist only where the *remedy* names a tool (`claudeLoginExpired`, `cursorSignInRequired`, `grokBotNotIncluded`, …); a Grok Bot primary may name Cursor when borrowing the editor's saved login (`.cursorLoginExpired`, `.cursorKeyRefused`), or report `.notSignedIn` / `.signedOut` for Settings web login. OpenCode Go uses `.apiKeyRefused`; there is no `.openCodeKeyRefused`.
 
 ### Disabled providers are not fetched
 
@@ -158,7 +158,7 @@ A switched-off provider is not on the refresh pass, and its Settings pane does n
 
 Chooser, legacy restoration, offer-once and empty rail: [`../architecture.md`](../architecture.md#provider-choice-before-monitoring). `ProviderDiscovery.swift` only checks that named files, directories or app bundles exist — it opens no database, key file, browser storage or Keychain — so OpenCode Go, mainland GLM and Command Code count as **detected even with empty or unreadable files**. Detection is a hint, never enables a ring; every provider starts unchecked in the chooser.
 
-`ProviderAccess.swift` writes the descriptions shown before selection and above a disabled provider's controls. Each names what will be read: Claude its CLI Keychain/file access and the desktop cookie-store grant; Codex its auth file and helper; Kiro its ACP helper (credentials stay in Kiro); Cursor and Grok Bot Cursor's local database; Grok its auth file; Devin Chromium web storage and the saved desktop plan (no Keychain prompt); Ollama, Xiaomi, Qoder and StepFun browser-session import, which can ask for browser Keychain access; key providers the entered key, plus local fallbacks for OpenCode, Zhipu and Command Code; Copilot its Settings login; Volcengine arkcli / access keys; Antigravity the local server, its connection token and the `agy` CLI.
+`ProviderAccess.swift` writes the descriptions shown before selection and above a disabled provider's controls. Each names what will be read: Claude its CLI Keychain/file access and the desktop cookie-store grant; Codex its auth file and helper; Kiro its ACP helper (credentials stay in Kiro); Cursor Cursor's local database; Grok Bot the Cursor login connected in Settings or Cursor's local database; Grok its auth file; Devin Chromium web storage and the saved desktop plan (no Keychain prompt); Ollama, Xiaomi, Qoder and StepFun browser-session import, which can ask for browser Keychain access; key providers the entered key, plus local fallbacks for OpenCode, Zhipu and Command Code; Copilot its Settings login; Volcengine arkcli / access keys; Antigravity the local server, its connection token and the `agy` CLI.
 
 ### Seeded state is not “Loading…”
 
@@ -174,7 +174,7 @@ Do not paper over `.apiKeyMissing`, `.ollamaSessionMissing`, `.qoderSessionMissi
 
 - `usesAPIKey` — Settings draws a paste field. Profiled: any credential but `.localLogin`. Hand-written: OpenCode Go, Kimi Code, Ollama Cloud, Z.ai, GLM Coding Plan, MiniMax, Volcengine, Command Code, DeepSeek, Devin, Xiaomi Coding Plan, sub2api, New API, V2EX, Qoder, StepFun. Optional for Volcengine, Command Code and Devin (each has a route needing nothing pasted); Devin's holds `token org`, whitespace-separated, for readers without a Chromium browser ([devin.md](devin.md)). For Ollama, Xiaomi, Qoder and StepFun the value is a **session cookie** (`usesSessionCookie`), never labelled an API key. Qoder's may also be a personal token (`pt-` / `jt-`).
 - `keepsOwnCredential` — something is stored in `keys.dat`: the paste providers **plus Copilot**. Reading `usesAPIKey` here once left a signed-in Copilot asking to sign in again: the token was saved and never loaded.
-- Extra-account OAuth and Cursor web logins live in `accounts.dat` ([authentication.md](authentication.md)).
+- Extra-account OAuth logins, Cursor web logins (primary and added Grok Bot) and JetBrains AI's JetBrains account login live in `accounts.dat` ([authentication.md](authentication.md)).
 
 Keys are read once per launch, not per refresh (`UsageStore.loadAPIKeys`).
 
@@ -183,7 +183,7 @@ Keys are read once per launch, not per refresh (`UsageStore.loadAPIKeys`).
 Claude Code, Codex, Volcengine, Kimi Code, Devin, Antigravity and Grok have `hasSourceChoice`, for primary accounts only (added accounts use their endpoint credential). Kimi can use a device-code subscription login or a console API key. Grok's automatic route reads the CLI's access token, then the device-code login Pulse holds ([grok.md](grok.md)). `.automatic` is the default and each service owns its fallback, including Volcengine's preference for configured keys ([volcengine.md](volcengine.md)). A pinned route *reports* its failure instead of answering from elsewhere. **Every provider with more than one route offers the choice**, automatic by default. Antigravity's are *Automatic* (language server, then CLI), *CLI* (`.tooling`, the `agy` CLI) and *Desktop app* (`.desktopApp`, the editor's language server); it has no endpoint, so `.endpoint` is not offered (`UsageSource.options(for:)`, `title(for:)`). Grok's are *Automatic*, *CLI login* (`.endpoint`) and *Blinky login* (`.tooling`).
 
 - For Claude, `.desktopApp` is offered only on the **primary** Claude Code account; an added account must not be offered a route `fetchAdded` ignores. Likewise an added Grok account gets no CLI-login row: `fetchAdded` never touches `~/.grok/auth.json`.
-- `Provider.soleRoute` is an exhaustive switch (as a ternary it once made Grok's pane read “Antigravity's language server”); nil draws no row. For Grok Bot it names **Cursor's** login, whose bill it is.
+- `Provider.soleRoute` is an exhaustive switch (as a ternary it once made Grok's pane read “Antigravity's language server”); nil draws no row (Copilot and Grok Bot draw their own sign-in rows in `AccountConnectionGroup`; JetBrains AI draws its **JetBrains account** sign-in row above its route row).
 
 ### Diagnostic route checks and repair
 
@@ -195,7 +195,9 @@ Claude's automatic route keeps an endpoint failure when a status-line capture an
 
 ### Extra accounts
 
-`supportsMultipleAccounts` is **Claude Code, Codex, Grok, Grok Bot, and Kimi Code**. Cursor itself is not on the list: the same web sign-in would work, but Cursor’s usage summary is read from the editor’s stored login and a second account has no editor behind it. Grok Bot needs nothing but the token. See [authentication.md](authentication.md) and [`MonitoredAccount.swift`](../../Sources/Pulse/Usage/MonitoredAccount.swift).
+`supportsMultipleAccounts` is **Claude Code, Codex, Grok, Grok Bot, Kimi Code, sub2api and New API**. Cursor itself is not on the list: the same web sign-in would work, but Cursor’s usage summary is read from the editor’s stored login and a second account has no editor behind it. Grok Bot needs nothing but the token. See [authentication.md](authentication.md) and [`MonitoredAccount.swift`](../../Sources/Pulse/Usage/MonitoredAccount.swift).
+
+Claude Code, Codex, Grok, Grok Bot and Kimi Code are signed in to: Pulse holds each added account's login in `accounts.dat` and reads it through `fetchAdded`. **sub2api and New API are typed in** (`addsAccountsByAddress`, #125): an added account is another deployment, with its own address (`serverAddresses`, keyed by account id), its own key (`keys.dat` under the account's slot, so the entry is the account id — `AppSettings.keySlot(for:)`) and its own name, read by the same service as the first account. Settings adds one without opening any page; removing it deletes the key first and refuses to go on if that fails (`removeGatewayAccount`), then clears every per-account setting and the kept reading.
 
 A provider's first account id is its raw value, so stored preferences and cache files survive the upgrade; making an upgrade look like a fresh install has already cost a release.
 
@@ -272,7 +274,7 @@ A provider with a status page Pulse can read gets a **Service status** group in 
 **New providers are profiled.** Write a `ProviderProfile` in its own file, `Sources/Pulse/Providers/Profiled/<Name>UsageService.swift`, carrying name, icon, credential kind, access sentence, key subtitle, route, balance and pacing flags, colour, setup slug, discovery hints and fetch. Add the case to `Provider` and one line to `Provider.profile` in `Profiled/ProfiledProviders.swift` — nothing else. Every case-by-case switch switches over `Provider.HandWrittenProvider` via `provider.handWritten` (nil for a profiled provider, whose answer then comes from the switch's `guard`/`else`), so a profiled case has no arm to add. `UsageStore` asks every primary account, profiled or not, side by side in one task group. Reference: [`Profiled/ClinePassUsageService.swift`](../../Sources/Pulse/Providers/Profiled/ClinePassUsageService.swift).
 
 - **Credential kinds** are those the app already draws and guards: `.apiKey(optional:)`, `.sessionCookie(host:cookies:)` (read on request, kept to the named cookies), `.browserStorage(origin:keys:)` (a Chromium `localStorage` sign-in, kept to the named keys), `.keyAndAddress` (self-hosted; the key goes only to that address), `.localLogin` (a login the provider's own tool saved, read-only). Another kind is a shared change, not a profile field.
-- **Failures** come from `ProfileHTTP`, so 401/403, 429 and 5xx mean the same for every provider. Use the provider-neutral reasons `sessionMissing`, `sessionExpired`, `localLoginMissing`, `localLoginExpired`, `localAppMissing` and `noPlan`, alongside the key, network and reply reasons.
+- **Failures** come from `ProfileHTTP`, so 401/403, 429 and 5xx mean the same for every provider. Use the provider-neutral reasons `sessionMissing`, `sessionExpired`, `localLoginMissing`, `localLoginExpired`, `localAppMissing`, `localQuotaUnsaved` (the app's file is there but holds no figures, as opposed to `noLimitsReported`, a quota without a size) and `noPlan`, alongside the key, network and reply reasons.
 - **Usage page.** If the provider has a page where a person views their own usage or billing, add one line to the table in `Providers/UsagePages.swift`; the menu bar's account tab links to it. A page only — not an API endpoint or a `Referer` — and none rather than a guess.
 - **Lengths** a reply states go through `UsageWindow.length(_:unitSeconds:)`, never a bare multiplication: a count near `Int.max` decodes fine and an unchecked `*` traps, ending the app (Kimi, Z.ai, LiteLLM and JetBrains did; `DurationOverflowTests`). An unstated length — a month, a weekly limit with only a reset — is `reportsLength: false`.
 - **Whole-bucket expiry**: opt into `expiresWholeBuckets` only when a full-remainder `nextExpiry` with no grouped `lots` gives the whole window's invalidation time. The shared cache then drops it at that time. Leave it off for pooled balances whose expiry describes only the earliest batch; see [cache rules](../refresh-and-data.md#cache).

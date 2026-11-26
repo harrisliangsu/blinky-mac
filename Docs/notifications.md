@@ -2,11 +2,11 @@
 
 Owns: when Pulse posts a system notification, what it says, and what it refuses to say. Settings copy and layout: [ui/settings.md](ui/settings.md). Where readings come from: [refresh-and-data.md](refresh-and-data.md).
 
-Source: [`Sources/Pulse/Usage/UsageAlerts.swift`](../Sources/Pulse/Usage/UsageAlerts.swift) for the usage notices, and [`Sources/Pulse/App/AppUpdate.swift`](../Sources/Pulse/App/AppUpdate.swift) with [`UpdateAnnouncement.swift`](../Sources/Pulse/App/UpdateAnnouncement.swift) for a newer version of Blinky. Settings: `AppSettings.alertThreshold` / `alertsOnReset` / `alertsOnFailure` / `lowBalanceAlerts` / `alertsOnOutage` / `alertsOnRecap`, plus the time-to-empty group (`exhaustionAlerts`, `exhaustionStages`, `exhaustionNotifyBeforeReset`). Every fetch goes through `UsageStore.commit(_:raw:for:)`, which passes both the raw result and the reconciled display reading. An explicit notification-setting change also calls `reconsiderAlerts()` after authorization succeeds. Celebrations (ribbons / Hero sound) are driven from the same `observe` path via `celebratesReset` / `celebratesHourlyReset` and `ResetCelebration`, and are not posted as notifications. Limit alerts use `ProviderUsage.current(at:)` to omit windows whose reset or whole-bucket expiry has passed; reconsidering such a reading also requests a refresh.
+Source: [`Sources/Pulse/Usage/UsageAlerts.swift`](../Sources/Pulse/Usage/UsageAlerts.swift) for the usage notices, and [`Sources/Pulse/App/AppUpdate.swift`](../Sources/Pulse/App/AppUpdate.swift) with [`UpdateAnnouncement.swift`](../Sources/Pulse/App/UpdateAnnouncement.swift) for a newer version of Blinky. Settings: `AppSettings.alertThreshold` / `alertsOnReset` / `alertsOnFailure` / `lowBalanceAlerts` / `alertsOnOutage` / `alertsOnRecap`, plus the time-to-empty group (`exhaustionAlerts`, `exhaustionStages`, `exhaustionNotifyBeforeReset`) and the per-provider window starter switch. Every fetch goes through `UsageStore.commit(_:raw:for:)`, which passes both the raw result and the reconciled display reading. An explicit notification-setting change also calls `reconsiderAlerts()` after authorization succeeds. Celebrations (ribbons / Hero sound) are driven from the same `observe` path via `celebratesReset` / `celebratesHourlyReset` and `ResetCelebration`, and are not posted as notifications. Limit alerts use `ProviderUsage.current(at:)` to omit windows whose reset or whole-bucket expiry has passed; reconsidering such a reading also requests a refresh.
 
 ## What can be said
 
-Nine things, and nothing else in that list. Each is something you would want to know *while looking at something else*, which is the test for belonging here rather than on the card. Advance reminders are a separate list, below: they are scheduled before a time, not spoken after a reading. The time-to-empty notices are the same list as the percentage ones: they speak after a reading, and they are not a second system. A newer version of Blinky is announced separately ([An update](#an-update)); it is not one of these nine.
+Ten things, and nothing else in that list. Each is something you would want to know *while looking at something else*, which is the test for belonging here rather than on the card. Advance reminders are a separate list, below: they are scheduled before a time, not spoken after a reading. The time-to-empty notices are the same list as the percentage ones: they speak after a reading, and they are not a second system. A newer version of Blinky is announced separately ([An update](#an-update)); it is not one of these ten.
 
 | Alert | Fires when | Gated by |
 |---|---|---|
@@ -19,6 +19,7 @@ Nine things, and nothing else in that list. Each is something you would want to 
 | Recap ready (`RecapNoticeRule`) | In the first three days of a month, last month had records in the scan Pulse already holds, and that month has not been announced | `alertsOnRecap`, and Token spend reading on |
 | `exhaustion` | The pace from one reading puts the time left inside a stage the reader set | `exhaustionAlerts`, the account is in the forecast list, and the window is the weekly limit or, when there is no weekly limit, the longest other one with a stated length and `resetsAt`. A five-hour window is not one of these |
 | `exhaustionBeforeReset` | That same pace runs out before that same window resets | `exhaustionNotifyBeforeReset`, and the same scope |
+| Window starter failure | A single attempt to send “hi” returns `toolMissing`, `failed`, or `timedOut` | The provider’s **Start a new window** switch |
 
 The percentage, failure, outage, recap and before-reset switches are off by default. The time-to-empty notice starts **on**, with one stage at 24 hours left. All ask for the **default sound**; the mute switch is macOS's own per-app "Play sound for notifications".
 
@@ -84,6 +85,12 @@ Requested 2026-10-04, after the status rows on the Codex, Claude Code and DeepSe
 - **Every five minutes, on its own clock** (`ServiceStatus.checkInterval`, a loop `UsageAlerts.start` begins), not the refresh pass, which stretches to 30 minutes when idle. Not more often: status pages are written by people minutes into an incident. A tick returns at once unless the switch is on and a provider with a page is in use. The sleep is on the continuous clock, so a tick due during sleep runs right after waking. Each check reads only the current state, one request per feed — a company's page shared by two providers (Cursor and Grok Bot) is read once; one check at a time, its feeds concurrently.
 - **Its own file**, `status-alerts.json`, not a field on `AlertMemory`: that type decodes as a whole, and a key old files lack would discard every limit already warned about. This switch alone writes no `alerts.json`.
 
+### Window starter failures
+
+Confirming **Start a new window** in the Claude Code or Codex account pane calls `requestAuthorizationIfNeeded`. A send failure uses this switch independently of `alertsOnFailure`, which counts failed usage reads. Both a clock-triggered start and an idle start can produce this notification. [Window starter](window-starter.md)
+
+Pulse records the attempt before requesting delivery. The title is the first account’s label. The notification explains what went wrong and when Pulse may try again. Each failed attempt requests one notification with the default sound and identifier `window-starter-<provider>`, so a later failure replaces the earlier one. A refresh or relaunch never replays a recorded failure. If permission is denied, the result remains in **Last started**. Authorization and delivery both use the `UsageAlerts.isSupported` guard.
+
 ### The monthly recap
 
 "Your September recap is ready", about the month that just ended. Off by default; **When a recap is ready** in the Notifications pane, greyed out in an unbundled build and, to turn it on, while Token spend reading is off (a switch already on stays operable). Opens [the recap window](recap.md#the-window). Rule: `RecapNoticeRule` (pure, `Usage/RecapPeriods.swift`); clock: `RecapNotice` (`Usage/RecapNotice.swift`). Pinned by `RecapWindowTests`.
@@ -144,7 +151,7 @@ Requested 2026-10-04, after the status rows on the Codex, Claude Code and DeepSe
 
 - **Failure:** a credential that went bad, a request that did not get through.
 - **Answered** (clears the failure streak and the reported-outage mark): complete answers without numbers — `grokBotNotIncluded`, `noLimitsReported`, `zaiNoCodingPlan` (a working key with no plan).
-- **Neutral:** setup steps (`apiKeyMissing`, `notSignedIn`, `volcengineSignInRequired`, `kimiSignInRequired`, `kimiLoginExpired`, `qoderSessionMissing`), an app not running, and `systemProxyOff` (Pulse chose not to ask; [networking.md](networking.md#holding-back)). Ark CLI's generic sign-in response cannot tell never-configured from expired, so it is not evidence of an outage.
+- **Neutral:** setup steps (`apiKeyMissing`, `notSignedIn`, `volcengineSignInRequired`, `kimiSignInRequired`, `kimiLoginExpired`, `qoderSessionMissing`), an app not running, `localQuotaUnsaved` (an app's file that holds no figures), and `systemProxyOff` (Pulse chose not to ask; [networking.md](networking.md#holding-back)). Ark CLI's generic sign-in response cannot tell never-configured from expired, so it is not evidence of an outage.
 
 **Three failures, not one** — six minutes to an hour and a half at the 2–30 minute interval. These endpoints are undocumented; one dropped connection is not news. Reported once per outage: `reportedFailure` is cleared only by a working reading.
 
@@ -156,7 +163,7 @@ It is updated even when a grant was refused or the build is unbundled, so neithe
 
 `AlertMemory.alerts(for:as:…)` is pure apart from `self`; the clock is passed in as `now`. Every rule here is covered by `AlertMemoryTests` ([testing.md](testing.md)); change one, change that.
 
-`UsageAlerts.observe` returns immediately when `AppSettings.wantsUsageAlerts` is false **and** `celebratesReset` is false (`wantsAlerts` adds the outage and recap switches, for permission only), so nothing is tracked and no file is written for a feature nobody has switched on. Ribbons keep the same file: they need the previous fraction to know a reset happened. Without that guard the memory was written on the first pass of every launch — measured — and failures were counted up against accounts for nothing.
+`UsageAlerts.observe` returns immediately when `AppSettings.wantsUsageAlerts` is false **and** `celebratesReset` is false (`wantsAlerts` adds the outage, recap, and window starter switches, for permission only), so nothing is tracked and no file is written for a feature nobody has switched on. Ribbons keep the same file: they need the previous fraction to know a reset happened. Without that guard the memory was written on the first pass of every launch — measured — and failures were counted up against accounts for nothing.
 
 ## Test notification
 

@@ -733,6 +733,9 @@ struct AlertMemory: Codable, Sendable, Equatable {
              .systemProxyOff,
              // Nothing set up yet, for a profiled provider.
              .sessionMissing, .localLoginMissing, .localAppMissing,
+             // The app's own file holds no figures: a fact about what it
+             // wrote, not about whether the service is up.
+             .localQuotaUnsaved,
              // An app that was never installed or never signed in, which is
              // the same standing as a CLI that is not there: true until
              // somebody does something, and not an outage to announce.
@@ -1252,6 +1255,40 @@ final class UsageAlerts {
         let formatter = ListFormatter()
         formatter.locale = LocalizationSource.locale
         return formatter.string(from: items) ?? items.joined(separator: ", ")
+    }
+
+    static func windowStarterFailure(for provider: Provider, outcome: WindowStarter.Outcome, title: String) -> UNNotificationRequest? {
+        let body: String
+        switch outcome {
+        case .sent: return nil
+        case .timedOut:
+            body = .localized("The tool didn't answer in time. No retry until the next reset.")
+        case .failed:
+            body = .localized("The message didn't go through; check that the tool is signed in. No retry until the next reset.")
+        case .toolMissing:
+            body = .localized("The command-line tool wasn't found. No retry until the next reset.")
+        }
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.subtitle = .localized("Couldn't start the window")
+        content.body = body
+        content.sound = .default
+        return UNNotificationRequest(identifier: "window-starter-\(provider.rawValue)", content: content, trigger: nil)
+    }
+
+    /// The attempt is already recorded in Settings. A pending permission
+    /// prompt may finish after a missing tool has already returned.
+    func postWindowStarterFailure(for provider: Provider, outcome: WindowStarter.Outcome) {
+        guard Self.isSupported, settings.primesWindows(for: provider),
+              let request = Self.windowStarterFailure(for: provider, outcome: outcome, title: settings.label(for: AccountKey(provider)))
+        else { return }
+        Task {
+            if let authorizationRequest {
+                guard await authorizationRequest.value else { return }
+            }
+            guard settings.primesWindows(for: provider) else { return }
+            try? await UNUserNotificationCenter.current().add(request)
+        }
     }
 
     private func post(_ alert: UsageAlert) {

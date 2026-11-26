@@ -185,10 +185,10 @@ struct UsageCacheTests {
 
         for reason: ProviderUsage.Unavailability in [
             .apiKeyMissing, .ollamaSessionMissing, .qoderSessionMissing, .stepFunSessionMissing,
-            .xiaomiSessionMissing, .signedOut,
+            .xiaomiSessionMissing, .signedOut, .notSignedIn,
             .claudeDesktopNotSignedIn, .claudeDesktopKeyRefused, .cursorKeyRefused,
             .kimiSignInRequired, .kimiLoginExpired,
-            .sessionMissing, .localLoginMissing, .localAppMissing
+            .sessionMissing, .localLoginMissing, .localAppMissing, .localQuotaUnsaved
         ] {
             let out = await cache.reconciled(.unavailable(Self.account, reason: reason))
             #expect(out.state == .unavailable(reason), "\(reason) must not be hidden behind the cache")

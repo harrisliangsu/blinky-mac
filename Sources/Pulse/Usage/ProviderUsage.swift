@@ -802,6 +802,10 @@ struct ProviderUsage: Identifiable, Equatable, Sendable {
         case localLoginExpired
         /// It reads what its own app keeps on this Mac, and nothing is there.
         case localAppMissing
+        /// What its own app keeps on this Mac is there, but the app marked the
+        /// figures unknown or failed instead of writing them. Not a quota
+        /// without a size (`noLimitsReported`): nothing was stated at all.
+        case localQuotaUnsaved
         /// The service answered: this account has no plan with limits. An
         /// answer, not an outage.
         case noPlan
@@ -816,7 +820,7 @@ struct ProviderUsage: Identifiable, Equatable, Sendable {
             case .claudeSignInRequired: .localized("Sign in to Claude Code to see usage.")
             case .claudeLoginExpired: .localized("Claude Code's saved login expired. Use Claude Code, or connect the status line.")
             case .claudeDesktopNotSignedIn: .localized("Sign in to the Claude desktop app to see usage.")
-            case .claudeDesktopKeyRefused: .localized("Blinky needs your keychain to read the Claude desktop app's session. Refresh to be asked again.")
+            case .claudeDesktopKeyRefused: .localized("Blinky needs keychain access for the Claude desktop app's session. Refresh to ask again.")
             case .claudeDesktopSessionExpired: .localized("The Claude desktop app's session was refused. Open it and sign in again.")
             case .codexNotInstalled: .localized("Codex isn't installed.")
             case .codexServerFailed: .localized("Couldn't start the Codex helper.")
@@ -827,9 +831,9 @@ struct ProviderUsage: Identifiable, Equatable, Sendable {
             case .antigravityNotAnswering: .localized("Antigravity is open but didn't answer. Restarting it usually helps.")
             case .cursorSignInRequired: .localized("Sign in to Cursor to see usage.")
             case .cursorLoginExpired: .localized("Cursor's saved login was refused. Open Cursor to renew it.")
-            case .cursorKeyRefused: .localized("Blinky needs your keychain to read Cursor's saved login. Refresh to be asked again.")
+            case .cursorKeyRefused: .localized("Blinky needs keychain access for Cursor's saved login. Refresh to ask again.")
             case .grokSignInRequired: .localized("Sign in to Grok to see usage.")
-            case .grokLoginExpired: .localized("Grok's saved login expired. Use Grok to renew it.")
+            case .grokLoginExpired: .localized("Grok's login expired. Use Grok to renew it.")
             case .grokAccountSignInRequired: .localized("Sign in to Grok once in Settings to see usage.")
             case .grokAccountLoginExpired: .localized("Blinky's Grok login expired. Sign in again in Settings.")
             case .kimiSignInRequired: .localized("Sign in to Kimi Code in Settings, or paste an API key.")
@@ -860,7 +864,7 @@ struct ProviderUsage: Identifiable, Equatable, Sendable {
             case .devinPlanUnread: .localized("Open Devin and sign in, so it can record your plan.")
             case .devinOrganizationMissing: .localized("Add your Devin organization after the token, separated by a space.")
             case .serverAddressMissing: .localized("Add the server address in Settings.")
-            case .serverAddressRefused: .localized("That address can't be used. It needs https://, unless the server is on your own network.")
+            case .serverAddressRefused: .localized("The address needs https://, unless the server is on your own network.")
             case .apiKeyMissing: .localized("Add an API key in Settings.")
             case .apiKeyRefused: .localized("That key was refused. Check it in Settings.")
             case .unreachable: .localized("The service didn't respond.")
@@ -877,6 +881,7 @@ struct ProviderUsage: Identifiable, Equatable, Sendable {
             case .localLoginMissing: .localized("Sign in with this service's own app or command-line tool first.")
             case .localLoginExpired: .localized("The saved login has expired. Sign in again with the service's own app or tool.")
             case .localAppMissing: .localized("Nothing saved on this Mac yet. Open the service's app once, then retry.")
+            case .localQuotaUnsaved: .localized("The app didn't save a quota Blinky can read on this Mac.")
             case .noPlan: .localized("This account has no plan with usage limits.")
             }
         }

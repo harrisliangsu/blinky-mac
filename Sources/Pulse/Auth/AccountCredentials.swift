@@ -26,6 +26,10 @@ struct AccountCredentials: Codable, Equatable, Sendable {
     /// over the new login. Absent from logins saved before it existed; see
     /// `renewalOf`.
     var signIn: String? = UUID().uuidString
+    /// The OpenID ID token, for the one login that is asked with it: JetBrains
+    /// AI trades it for a token per licence (`JetBrainsAIQuota`). Nil for
+    /// every other provider, and absent from logins saved before it existed.
+    var idToken: String? = nil
 
     /// A minute's headroom: a token that expires while the request is in
     /// flight comes back refused, and the retry costs more than renewing early.
@@ -61,6 +65,19 @@ enum AccountCredentialStore {
 
     static func credentials(for account: AccountKey) -> AccountCredentials? {
         load()?[account.id]
+    }
+
+    /// What is stored for one account, telling "nothing stored" apart from a
+    /// file that is there and cannot be read.
+    enum StoredLogin: Equatable, Sendable {
+        case none
+        case login(AccountCredentials)
+        case unreadable
+    }
+
+    static func storedLogin(for account: AccountKey) -> StoredLogin {
+        guard let all = load() else { return .unreadable }
+        return all[account.id].map(StoredLogin.login) ?? .none
     }
 
     /// Every read-modify-write of the file, so a renewal's check and its write

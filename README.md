@@ -82,7 +82,11 @@ A scheduled check notifies you first. Click the notification to open the update 
 ### Rings at a glance
 - **Colours that follow usage** — Red alert, Gradient, or Quiet. Each account can also have a colour of its own.
 - **Used or left** — `75% used` or `25% left`, with an optional clock arc for how much of the window has passed.
-- **Live activity** — a turning dot while an agent is working, and an optional robot that reacts to each account, drawn as one of 23 figures from Dominik Scholz's Open Bot Avatar.
+- **Live activity** — a turning dot while an agent is working, and an optional robot that reacts to each account, drawn as one of 23 figures from Dominik Scholz's Open Bot Avatar, in flat colour or fur.
+
+<p align="center">
+  <img src="Docs/images/rings.png" width="620" alt="Rings on the dark rail: low and near-limit usage, remaining mode, window clock, second limit, working dot and robot figures">
+</p>
 
 ### Details when you point at a ring
 - **Every limit and its reset** on one card, in continuous or segmented bars.
@@ -95,11 +99,19 @@ A scheduled check notifies you first. Click the notification to open the update 
   <img src="Docs/images/detailed-card.png" width="620" alt="The same Codex card, compact and detailed">
 </p>
 
+<p align="center">
+  <img src="Docs/images/menu-bar.png" width="620" alt="Menu bar readings as a figure, a small ring and split limits, with the menu dashboard open (a mock-up of the bar)">
+</p>
+
 ### Stays out of the way
 - **Any edge** — left, right, top, beside the Dock, or anywhere at all; it folds to a sliver when idle.
 - **Notifications you choose** — a limit crossing a line, spent, reset, failing checks, a low balance, or a provider outage. A weekly or monthly limit coming back can show a ribbon.
 - **Six languages** — English, Simplified and Traditional Chinese, Japanese, Korean and Russian.
-- **Optional extras** — global shortcuts, following the active display, hiding from screenshots, and starting a usage window after a reset.
+- **Optional extras** — global shortcuts, following the active display, hiding from screenshots, and starting an idle usage window.
+
+<p align="center">
+  <img src="Docs/images/placement.png" width="620" alt="The rail docked across the top of a screen, and the sliver it folds to when idle">
+</p>
 
 ### Spend, status and the rest
 - **Token spend** — what 54 local clients have used, priced at public API rates, by day, model and agent, over any span you choose. Under Token activity, Performance lists each model's cache hit rate, cache, input and output when the records classified them, and — when Claude Code, Codex, Grok, or Kimi can time a reply — the span's output speed and each timed model's speed, in tok/s, with the first-token wait. With Token spend on, the button on the usage card's header opens those lists beside the panel. Settings keeps the reading switch and Usage recaps. Share copies what that window is showing.
@@ -108,6 +120,14 @@ A scheduled check notifies you first. Click the notification to open the update 
 - **Service status** — 44 providers' own status pages, and a notification when one reports an outage.
 - **Connection diagnostics** — where each figure came from, and the servers' own replies.
 - **For power users** — several accounts per provider, Kimi Code device-code sign-in, a personal token for Qoder, extensions for your own sources, and `--json` for scripts.
+
+<p align="center">
+  <img src="Docs/images/recap.png" width="620" alt="Recap cards for a week, a month and a year">
+</p>
+
+<p align="center">
+  <img src="Docs/images/status-diagnostics.png" width="620" alt="Service status from a provider's own status page, and the connection diagnostics">
+</p>
 
 <p align="center">
   <img src="Docs/images/spend.webp" height="290" alt="Token spend: total, tokens by kind, and the daily pattern">

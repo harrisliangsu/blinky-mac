@@ -155,7 +155,7 @@ struct SettingsView: View {
                                 )
                             }
                             AccountPane(
-                                account: account, store: store, settings: settings,
+                                account: account, store: store, settings: settings, alerts: alerts,
                                 navigation: navigation, history: history, flows: flows, scroll: proxy
                             )
                         case .spend:

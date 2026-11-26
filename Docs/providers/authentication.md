@@ -2,7 +2,7 @@
 
 Pulse is not an official integration of any of these products. Where it signs in, it drives a **public client the product already ships** (a CLI, an editor plugin, a login page). Settings says so before anyone starts: the consent page names that product, not Pulse, and the provider can change or withdraw the client.
 
-Current code: [`OAuthLogin.swift`](../../Sources/Pulse/Auth/OAuthLogin.swift), [`LoopbackCallback.swift`](../../Sources/Pulse/Auth/LoopbackCallback.swift), [`GitHubDeviceLogin.swift`](../../Sources/Pulse/Auth/GitHubDeviceLogin.swift), [`CursorWebLogin.swift`](../../Sources/Pulse/Auth/CursorWebLogin.swift), [`AccountCredentials.swift`](../../Sources/Pulse/Auth/AccountCredentials.swift), [`APIKeyStore.swift`](../../Sources/Pulse/Auth/APIKeyStore.swift), [`LocalSecrets.swift`](../../Sources/Pulse/Auth/LocalSecrets.swift), [`BrowserCookies.swift`](../../Sources/Pulse/Auth/BrowserCookies.swift), [`ClaudeDesktopSession.swift`](../../Sources/Pulse/Providers/ClaudeDesktopSession.swift).
+Current code: [`OAuthLogin.swift`](../../Sources/Pulse/Auth/OAuthLogin.swift), [`LoopbackCallback.swift`](../../Sources/Pulse/Auth/LoopbackCallback.swift), [`GitHubDeviceLogin.swift`](../../Sources/Pulse/Auth/GitHubDeviceLogin.swift), [`CursorWebLogin.swift`](../../Sources/Pulse/Auth/CursorWebLogin.swift), [`JetBrainsLogin.swift`](../../Sources/Pulse/Auth/JetBrainsLogin.swift), [`AccountCredentials.swift`](../../Sources/Pulse/Auth/AccountCredentials.swift), [`APIKeyStore.swift`](../../Sources/Pulse/Auth/APIKeyStore.swift), [`LocalSecrets.swift`](../../Sources/Pulse/Auth/LocalSecrets.swift), [`BrowserCookies.swift`](../../Sources/Pulse/Auth/BrowserCookies.swift), [`ClaudeDesktopSession.swift`](../../Sources/Pulse/Providers/ClaudeDesktopSession.swift).
 
 This is not a catalogue of secrets. Client ids below are public (they ship in every copy of those CLIs and plugins). Do not copy refresh tokens, cookies, or `accounts.dat` / `keys.dat` into issues.
 
@@ -12,7 +12,7 @@ This is not a catalogue of secrets. Client ids below are public (they ship in ev
 |---|---|---|
 | Pasted API key, or Ollama / Qoder session cookie | `keys.dat` (`APIKeyStore`) | Nobody. User pastes or re-reads the browser. |
 | Copilot GitHub token | `keys.dat` as well (`keepsOwnCredential`) | Sign in again. Device tokens here are not the CLI refresh path. |
-| Extra-account logins (Claude Code, Codex, Grok, Grok Bot, Kimi Code) | `accounts.dat` (`AccountCredentialStore`) | `LiveUsageServices.fetchAdded` (`UsageServices.swift`) via `OAuthLogin.refresh` for the OAuth providers. Grok Bot has **no** refresh endpoint in Cursor’s client. Kimi Code’s **primary** subscription login lives here too. |
+| Extra-account logins (Claude Code, Codex, Grok, Grok Bot, Kimi Code), primary Grok Bot web login, and the JetBrains account login for JetBrains AI | `accounts.dat` (`AccountCredentialStore`) | `LiveUsageServices.fetchAdded` (`UsageServices.swift`) via `OAuthLogin.refresh` for the OAuth providers. Grok Bot has **no** refresh endpoint in Cursor’s client. JetBrains AI renews in its own fetch (`JetBrainsLogin.refresh`, written with `renewed`). Kimi Code’s **primary** subscription login lives here too. |
 | Kimi Code subscription login (primary) | `accounts.dat` as well, keyed by the primary `kimiCode` account | `KimiCodeUsageService` via `OAuthLogin.refresh`. Access ~15 minutes; refresh ~30 days and **rotates**. A pasted console key still lives in `keys.dat` and wins when both exist. |
 | Grok primary fallback | `accounts.dat`, keyed by the primary `grok` account | `GrokUsageService` via `OAuthLogin.refresh`, and only after `~/.grok/auth.json` is missing, expired, or refused. The renewal is stored back into `accounts.dat`. It is never written into the CLI’s file. |
 
@@ -22,7 +22,7 @@ A file that exists but will not decode is **not** empty. Treating it as empty me
 
 Pulse does **not** keep a Keychain item of its own for these. Chromium / Claude Desktop / Safari reads may *prompt* for someone else’s Safe Storage key; that is borrowing, not Pulse storing a secret there.
 
-**Do not say “only OpenCode Go holds a credential” or “Pulse never holds a credential”.** Primary Claude Code, Codex, Cursor, Grok, Grok Bot, and Antigravity borrow another tool’s login while it is still good. Pulse *does* hold pasted keys, Ollama sessions, Copilot’s token, Kimi Code’s subscription login, Grok’s primary fallback login, and every extra-account login.
+**Do not say “only OpenCode Go holds a credential” or “Pulse never holds a credential”.** Primary Claude Code, Codex, Cursor, Grok, fallback Grok Bot, and Antigravity borrow another tool’s login while it is still good. Pulse *does* hold pasted keys, Ollama sessions, Copilot’s token, Kimi Code’s subscription login, Grok’s primary fallback login, primary Grok Bot web logins, JetBrains account logins, and every extra-account login.
 
 ## Why sign in at all, rather than copy the CLI
 
@@ -34,10 +34,11 @@ Pulse’s extra-account login has its own refresh token and does not read or wri
 
 ## Extra accounts: who can have them
 
-[`Provider.supportsMultipleAccounts`](../../Sources/Pulse/Usage/MonitoredAccount.swift) is **`.claudeCode`, `.codex`, `.grok`, `.grokBot`, `.kimiCode`**. Not Cursor.
+[`Provider.supportsMultipleAccounts`](../../Sources/Pulse/Usage/MonitoredAccount.swift) is **`.claudeCode`, `.codex`, `.grok`, `.grokBot`, `.kimiCode`**, signed in to, plus **`.sub2api`, `.newAPI`**, typed in. Not Cursor.
 
 - Claude Code / Codex / Grok: `OAuthLogin` public CLI clients.
 - Grok Bot: **not OAuth** — [`CursorWebLogin`](../../Sources/Pulse/Auth/CursorWebLogin.swift) (Cursor’s login page + poll).
+- sub2api / New API: **no sign-in at all** (`addsAccountsByAddress`). An added account is another deployment's address and key, typed into Settings; nothing goes to `accounts.dat` and `fetchAdded` never sees it. See [README.md](README.md#extra-accounts).
 - Cursor itself is omitted on purpose. See [cursor.md](cursor.md) and [grok-bot.md](grok-bot.md).
 
 `AccountKey` for the first account is the provider’s raw value (`claudeCode`, not `claudeCode#…`). Added accounts get a slot generated once and never reused, so removing one and adding another cannot inherit settings.
@@ -137,22 +138,33 @@ Tokens live in `accounts.dat` under `AccountKey(.kimiCode)`, not `keys.dat`, bec
 
 A pasted console key still wins. Extra accounts use the same device-code login and never the pasted key.
 
-## Grok Bot extras — Cursor web login, not OAuth
+## Grok Bot — Cursor web login, not OAuth
 
-Cursor publishes no authorize/token pair for a third party. Calling this OAuth sets the wrong expectations.
+Cursor publishes no authorize/token pair for a third party. Calling this OAuth sets the wrong expectations. Used both for the primary account’s **Cursor account** sign-in in Settings (`AccountKey(.grokBot)`) and for extra Grok Bot accounts.
 
 1. Browser: `https://cursor.com/loginDeepControl?challenge=…&uuid=…&mode=login&redirectTarget=sand`.
 2. Poll: `https://api2.cursor.sh/auth/poll?uuid=…&verifier=…`. **404 means “not yet”, not “wrong address”.** Only a 403 carrying `error` ends the attempt.
 
 Proof key is PKCE’s algorithm. The verifier is 32 random bytes **base64url-encoded**; the challenge is the base64url of the SHA-256 of **that encoded string**, not of the raw bytes. Read out of `Grok Bot.app` (`Contents/Resources/app.asar`), not inferred.
 
-Tokens last about **sixty days** (measured from `exp` on one Mac). No refresh endpoint exists in Cursor’s client. When one ages out, `fetchAdded` reports `.signedOut` and the remedy is to sign in again.
+Tokens last about **sixty days** (measured from `exp` on one Mac). No refresh endpoint exists in Cursor’s client. When an added account’s token ages out, `fetchAdded` reports `.signedOut`; when the primary web login ages out, `GrokBotUsageService` reports `.signedOut` without falling back to the editor’s database, and the remedy is to sign in again.
 
 `OAuthLogin.Configuration.of(.grokBot)` is nil. `fetchAdded` still calls `OAuthLogin.refresh` when the token is no longer fresh; that fails closed into `.signedOut`, which is the honest path.
 
 **A renewal that fails is classified, not assumed signed out** (`LiveUsageServices.renewalFailure`). The token endpoint not answering is `.unreachable`, a 429 `.rateLimited`, a 5xx `.serverError`, an unreadable reply `.unreadableReply`; only a refusal (400/401/403, such as `invalid_grant`) or a provider with no renewal is `.signedOut`. Every failure used to be `.signedOut`, which takes no cached reading, so a dropped network cleared the ring and asked for a sign-in over a login that was still good. `OAuthLogin.post` throws `.unreachable` and `.rejected(status:detail:)` for this; the sign-in pane shows them with the same words as before. `RenewalFailureTests`.
 
-Pulse does **not** read `~/Library/Application Support/Grok Bot/sand-secrets.json`. That file was identified during investigation; the extra-account token Pulse obtained itself is what is stored.
+Pulse does **not** read `~/Library/Application Support/Grok Bot/sand-secrets.json`. That file was identified during investigation; the web-login token Pulse obtained itself is what is stored.
+
+## JetBrains AI — the Junie CLI's client, loopback redirect
+
+[`JetBrainsLogin`](../../Sources/Pulse/Auth/JetBrainsLogin.swift). For the **first** account only, from the **JetBrains account** row in JetBrains AI's Connection card (`ProviderSignInModel.primarySignIns`, shared with Grok Bot's Cursor account row); JetBrains AI has no added accounts. It exists because IDEs from 2026.3 on keep the AI quota in memory (#122), and the IDE's own JetBrains Account login sits in closed licensing code that Pulse does not read.
+
+- Client `junie-cli`, the Junie CLI's public one. Authorize `https://junie.jetbrains.com/cli-auth`, token `https://oauth.account.jetbrains.com/oauth2/token`. Scopes `offline_access openid jb-authn-service`. PKCE S256.
+- Redirect `http://localhost:<port>` with **no path**, on the first free port of **62345–62364**: the client is registered for exactly those. A busy port moves to the next; all twenty busy is `portBusy`.
+- Authorize items are `client_id, scope, state, code_challenge, code_challenge_method, redirect_uri` and **no** `response_type`; the exchange is the four specification fields plus the verifier, as a form. Renewal sends `grant_type`, `refresh_token`, `client_id` and nothing else.
+- The ID token is kept (`AccountCredentials.idToken`): the licence route trades it for a JetBrains AI token. A renewal without one keeps the stored one.
+- Renewed inside the JetBrains AI fetch, not `fetchAdded`, and written with `AccountCredentialStore.renewed`, so a sign-out while a renewal is out stays signed out. Audience-switch tokens, including any new refresh token they return, are never stored.
+- Source: rock3r/headroom (Apache-2.0), `JetBrainsOAuth.kt` at `9a2851d`, which names these as the Junie CLI's. **Not tried against a live account from Pulse.** The online quota route that uses this login: [jetbrains-ai.md](jetbrains-ai.md).
 
 ## Browser cookies
 

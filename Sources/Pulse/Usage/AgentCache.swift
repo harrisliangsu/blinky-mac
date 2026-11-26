@@ -23,6 +23,7 @@ enum AgentCache {
     /// 12: Antigravity's `gemini-3.8-flash-n`, `-control` and `-xpe` rows
     /// were unpriced (#90).
     /// 13: Kimi's ledger also reads Kimi Code's store, and names its models.
+    /// 14: Antigravity's `gemini-4-argon-trial` rows were unpriced.
     ///
     /// **A bump also tells `AgentArchive` the readers changed.** Its marks
     /// were taken under the old ones, so after a bump they stand only for
@@ -30,7 +31,7 @@ enum AgentCache {
     /// archive itself: it is a file of its own, and this cache is what the
     /// first marks are taken from — a stable read a store has deleted from
     /// since.
-    static let version = 13
+    static let version = 14
 
     /// Whether the stores' real inputs, and the money behind their cost, are
     /// the same as when the ledger was kept.
