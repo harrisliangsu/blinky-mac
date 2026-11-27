@@ -6,6 +6,11 @@
 Sparkle 更新窗口优先使用本文件（中文）；缺条目时回退英文 CHANGELOG.md。GitHub Release 仍由 [Scripts/release-notes.py](Scripts/release-notes.py) 生成双语正文。
 在打 tag 之前写好 `## x.y.z` 条目；语法与英文相同：列表、`**粗体**`、`` `代码` ``、`[链接](https://example.com)`。
 
+## 1.5.49
+
+- **Codex 的卡片显示上一次模型调用的速度。** 在「设置 → 供应商 → Codex」的「面板」中打开「详细卡片」，并在「Token 消耗」中打开「读取本机用量记录」后，第一个账号的卡片显示上一步速度，以及那次调用结束了多久；超过一小时后这一行不再显示。[#126](https://github.com/qunqin24/Pulse/issues/126)
+- **Gemini 服务商改名为 Gemini CLI。** 在「设置 → 供应商」和卡片标题中，这一项现在称为 Gemini CLI，以便和 Gemini 应用区分开。
+
 ## 1.5.48
 
 - **Grok Bot 不装 Cursor 也能登录。** 在「设置 → 供应商 → Grok Bot → 连接」中通过 Cursor 网页登录即可；保存的登录过期或被拒绝时，同一行可以重新登录，读不到登录信息时不会改用别的来源。感谢 [@sunny0826](https://github.com/qunqin24/Pulse/pull/121) 贡献。

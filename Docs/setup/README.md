@@ -26,7 +26,7 @@ One page per provider: where its key or login comes from, and where it goes in P
 - [DimAgent](dimagent.md)
 - [ElevenLabs](elevenlabs.md)
 - [Factory](factory.md)
-- [Gemini](gemini.md)
+- [Gemini CLI](gemini.md)
 - [GitHub Copilot](copilot.md)
 - [GitKraken AI](gitkraken.md)
 - [Grok](grok.md)
