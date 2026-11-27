@@ -6,22 +6,22 @@
         <description>Updates for Blinky.</description>
         <language>zh-CN</language>
         <item>
-            <title>1.5.48</title>
-            <pubDate>Thu, 26 Nov 2026 02:08:05 -0000</pubDate>
-            <sparkle:version>1.5.48</sparkle:version>
-            <sparkle:shortVersionString>1.5.48</sparkle:shortVersionString>
+            <title>1.5.49</title>
+            <pubDate>Fri, 27 Nov 2026 02:07:41 -0000</pubDate>
+            <sparkle:version>1.5.49</sparkle:version>
+            <sparkle:shortVersionString>1.5.49</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.48</link>
+            <link>https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.49</link>
             <description><![CDATA[<style>
   h2 { font-size: 1.05em; margin: 0 0 .5em; }
   ul { margin: 0; padding-left: 1.2em; }
   li { margin: .3em 0; }
   p { margin: .8em 0 0; }
-</style><h2>Blinky 1.5.48</h2><ul><li><strong>Grok Bot can sign in without Cursor installed.</strong> Under Settings → Providers → Grok Bot → Connection, sign in through Cursor&#x27;s page; when a saved login has expired or been refused, Sign in again is on that row, and an unreadable store is not replaced by another login. Thanks to <a href="https://github.com/qunqin24/Pulse/pull/121">@sunny0826</a> for the contribution.</li><li><strong>JetBrains AI can sign in to a JetBrains account.</strong> From IDE 2026.3, which no longer saves the quota on this Mac, sign in under Settings → Providers → JetBrains AI → Connection and Blinky asks JetBrains; “the IDE saved no quota” and “no limits” stay different. Thanks to <a href="https://github.com/qunqin24/Pulse/issues/122">@tyler4400</a> for reporting it.</li><li><strong>sub2api and New API can add more accounts.</strong> Under Settings → Providers, open that provider&#x27;s Accounts and choose Add another account; each account has its own address, API key and name. Thanks to <a href="https://github.com/qunqin24/Pulse/issues/125">@iblueer</a> for the suggestion.</li><li><strong>An idle usage window starts once.</strong> With Start a new window on for Claude Code or Codex, a window that is not already counting down gets one “hi”; a failed send is notified once, and nothing is sent again while a countdown is running. Thanks to <a href="https://github.com/qunqin24/Pulse/pull/128">@tyler4400</a> for the contribution.</li><li><strong>The robot in the ring can be fluffy.</strong> The figures are Open Bot Avatar 0.4.0. Under an account&#x27;s Appearance, set Material to Fluffy and the coat is drawn with Metal; Flat stays the default.</li><li><strong>Antigravity&#x27;s Gemini 4 Argon trial is priced.</strong> <code>gemini-4-argon-trial</code> in Token spend is estimated at Gemini 4 Argon&#x27;s rates.</li><li><strong>Antigravity does not offer another account.</strong> Adding one would use an OAuth route that breaks Antigravity&#x27;s terms, so Settings has no such row.</li><li><strong>Settings and status text is shorter.</strong> The same shortening is in all six languages.</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.48">Release notes on GitHub</a></p>]]></description>
-            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.48/Blinky-1.5.48.zip"
-                       length="23963127"
+</style><h2>Blinky 1.5.49</h2><ul><li><strong>Codex&#x27;s card shows the last model call&#x27;s speed.</strong> With Detailed card on under Settings → Providers → Codex → Panel, and Read local usage records on under Token spend, the first account&#x27;s card shows that speed and how long ago the call ended; after an hour the line is no longer shown. <a href="https://github.com/qunqin24/Pulse/issues/126">#126</a></li><li><strong>The Gemini provider is named Gemini CLI.</strong> Under Settings → Providers, and on the card&#x27;s title, that provider is now Gemini CLI, apart from the Gemini app.</li></ul><p><a href="https://github.com/harrisliangsu/blinky-mac/releases/tag/v1.5.49">Release notes on GitHub</a></p>]]></description>
+            <enclosure url="https://github.com/harrisliangsu/blinky-mac/releases/download/v1.5.49/Blinky-1.5.49.zip"
+                       length="23993011"
                        type="application/octet-stream"
-                       sparkle:edSignature="DKe44ePyDK0DdEZ6uPePo0h+VcDzeJndjobvkmAvBF8IoRysYteWfsYvvh/+WWIHtCm8mTcTAqBhvkfvn3zkCA==" />
+                       sparkle:edSignature="hAfM1Ijx32VIACoxZKVETBPVcSB5VSXiSYjZxPV2felGdQNMV2KSGFsOOor0TQU5W5TWUVk0rqv5bIRNTfa/Bg==" />
         </item>
     </channel>
 </rss>
