@@ -10,6 +10,11 @@ of the GitHub Release page. The Chinese half lives in
 Add the entry **before** tagging, in the small grammar the converter knows:
 bullets, `**bold**`, `` `code` `` and `[links](https://example.com)`.
 
+## 1.5.49
+
+- **Codex's card shows the last model call's speed.** With Detailed card on under Settings → Providers → Codex → Panel, and Read local usage records on under Token spend, the first account's card shows that speed and how long ago the call ended; after an hour the line is no longer shown. [#126](https://github.com/qunqin24/Pulse/issues/126)
+- **The Gemini provider is named Gemini CLI.** Under Settings → Providers, and on the card's title, that provider is now Gemini CLI, apart from the Gemini app.
+
 ## 1.5.48
 
 - **Grok Bot can sign in without Cursor installed.** Under Settings → Providers → Grok Bot → Connection, sign in through Cursor's page; when a saved login has expired or been refused, Sign in again is on that row, and an unreadable store is not replaced by another login. Thanks to [@sunny0826](https://github.com/qunqin24/Pulse/pull/121) for the contribution.
