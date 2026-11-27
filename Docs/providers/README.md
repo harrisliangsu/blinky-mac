@@ -63,7 +63,7 @@ Each is one file under `Sources/Pulse/Providers/Profiled/`, with a notes page he
 | `.alibabaTokenPlan` | [Alibaba Token Plan](alibaba-token-plan.md) | the tool's own login on this Mac | |
 | `.qwenCloud` | [Qwen Cloud](qwen-cloud.md) | browser session | |
 | `.factory` | [Factory](factory.md) | pasted key | |
-| `.gemini` | [Gemini](gemini.md) | the tool's own login on this Mac | |
+| `.gemini` | [Gemini CLI](gemini.md) | the tool's own login on this Mac | |
 | `.kiloCode` | [Kilo Code](kilo-code.md) | pasted key or the tool's own login | yes |
 | `.augment` | [Augment Code](augment.md) | browser session | |
 | `.jetBrainsAI` | [JetBrains AI](jetbrains-ai.md) | the IDE's saved quota file; optionally a JetBrains account sign-in (Junie CLI client, `accounts.dat`) for the online quota | |
